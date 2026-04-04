@@ -32,8 +32,22 @@ namespace LightenUp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                // TAMBAHAN: Cek status akun di database sebelum melakukan proses login
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    // Jika dia adalah Psychologist dan belum di-approve oleh HR
+                    if (user.RoleType == "Psychologist" && !user.IsApprovedByHR)
+                    {
+                        ModelState.AddModelError(string.Empty, "Akun Anda sedang ditinjau. Silakan tunggu persetujuan dari HR sebelum dapat masuk.");
+                        return View(model);
+                    }
+                }
+
+                // Jika sudah di-approve (atau Patient), lanjutkan proses pencocokan password
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded) return RedirectToAction("Index", "Home");
+
                 ModelState.AddModelError(string.Empty, "Email atau Kata Sandi salah.");
             }
             return View(model);
@@ -63,7 +77,6 @@ namespace LightenUp.Web.Controllers
                     return View(model);
                 }
 
-                // PERUBAHAN PENTING:
                 // SIMPAN SEMENTARA KE TEMPDATA (TIDAK LANGSUNG MASUK DATABASE)
                 TempData["RegisterData"] = JsonSerializer.Serialize(model);
                 return RedirectToAction("VerifyEmail", new { email = model.Email });
@@ -122,6 +135,11 @@ namespace LightenUp.Web.Controllers
             {
                 // Baca kembali data pendaftaran
                 var registerData = JsonSerializer.Deserialize<PublicRegisterViewModel>(registerDataJson);
+
+                if (registerData == null || string.IsNullOrEmpty(registerData.Email))
+                {
+                    return RedirectToAction("Register");
+                }
 
                 var user = new ApplicationUser
                 {
