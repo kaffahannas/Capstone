@@ -1,29 +1,37 @@
 using LightenUp.Web.Data;
-using LightenUp.Web.Models; // Tambahkan ini agar mengenali ApplicationUser
+using LightenUp.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// 1. KONEKSI DATABASE
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-// PERUBAHAN PENTING: 
-// 1. Ubah IdentityUser menjadi ApplicationUser
-// 2. Tambahkan .AddRoles<IdentityRole>() karena kita butuh role HR, dll.
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+// 2. PENGATURAN IDENTITY (SISTEM AUTENTIKASI)
+// Catatan: RequireConfirmedAccount = true berarti login akan DITOLAK 
+// jika EmailConfirmed milik user tersebut bernilai 'false' di database.
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+
+    // (Opsional) Jika ingin mengatur tingkat kerumitan password, bisa di sini:
+    // options.Password.RequireDigit = false;
+    // options.Password.RequireNonAlphanumeric = false;
+})
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// 3. MVC (Controller & Views)
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 4. PIPELINE REQUEST HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -31,7 +39,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -40,12 +47,16 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// 5. MENGAKTIFKAN FITUR LOGIN DAN IZIN AKSES
+app.UseAuthentication(); // <-- Sangat Penting! Harus diletakkan SEBELUM Authorization
 app.UseAuthorization();
 
+// 6. MENGATUR RUTE URL (Alamat bawaan)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
-app.Run();
+// 7. JALANKAN APLIKASI
 app.Run();

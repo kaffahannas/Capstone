@@ -32,22 +32,8 @@ namespace LightenUp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                // CEK STATUS APPROVAL SEBELUM LOGIN
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user != null)
-                {
-                    // Jika dia adalah Psychologist dan belum di-approve oleh HR
-                    if (user.RoleType == "Psychologist" && !user.IsApprovedByHR)
-                    {
-                        ModelState.AddModelError(string.Empty, "Akun Anda sedang ditinjau. Silakan tunggu persetujuan dari HR sebelum dapat masuk.");
-                        return View(model);
-                    }
-                }
-
-                // Jika aman (Patient, atau Psychologist yang sudah di-approve), lanjutkan proses login
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded) return RedirectToAction("Index", "Home");
-
                 ModelState.AddModelError(string.Empty, "Email atau Kata Sandi salah.");
             }
             return View(model);
