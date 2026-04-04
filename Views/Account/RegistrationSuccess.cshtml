@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Pendaftaran Berhasil";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+
+    <div class="auth-wrapper">
+        <div class="auth-container register-card" style="text-align: center; padding: 60px 30px;">
+
+            <!-- Ikon Centang Sukses SVG -->
+            <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto 20px auto;">
+                <circle cx="50" cy="50" r="50" fill="#E0E7FF" />
+                <circle cx="50" cy="50" r="35" fill="#8B5CF6" />
+                <path d="M40 50L46.5 56.5L60 43" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+
+            <h1 class="auth-title" style="font-size: 24px;">Pembuatan Akun Selesai!</h1>
+            <p class="auth-subtitle" style="margin-bottom: 40px;">Akun Anda telah berhasil dibuat. Silakan masuk menggunakan email dan kata sandi yang telah Anda daftarkan.</p>
+
+            <a href="/Account/Login" class="btn-submit" style="text-decoration: none; display: inline-block; box-sizing: border-box;">Masuk ke Aplikasi</a>
+
+        </div>
+    </div>
+
+</body>
+</html>

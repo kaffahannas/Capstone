@@ -1,0 +1,116 @@
+﻿@model LightenUp.Web.Models.ViewModels.VerifyOtpViewModel
+
+@{
+    ViewData["Title"] = "Verifikasi Email";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+
+    <div class="auth-wrapper">
+        <div class="auth-container register-card" style="padding-bottom: 50px;">
+
+            <a href="javascript:history.back()" class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#1f2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+
+            <h1 class="auth-title">Verifikasi Email</h1>
+            <p class="auth-subtitle">Masukkan 4 digit kode OTP (Simulasi: Ketik <strong>1234</strong>) yang dikirim ke alamat email <strong style="color: #1f2937;">@Model.Email</strong></p>
+
+            <form id="otpForm" asp-action="VerifyEmail" method="post">
+                <!-- Data Asli yang akan dikirim ke Server (Disembunyikan) -->
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="OtpCode" id="OtpCode" />
+
+                <!-- 4 Kotak Input Visual -->
+                <div class="otp-wrapper">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
+                </div>
+
+                <span asp-validation-for="OtpCode" class="text-danger mb-3 text-center d-block"></span>
+
+                <!-- Teks Info dan Timer -->
+                <div class="otp-text-info text-center" id="timerContainer">
+                    Belum menerima kode OTP? <span id="countdownTimer">01:15</span>
+                </div>
+
+                <button type="submit" class="btn-submit">Verifikasi</button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Script JavaScript untuk memindahkan kursor & Timer Countdown -->
+    <script>
+        // === LOGIKA PINDAH KURSOR KOTAK OTP ===
+        const inputs = document.querySelectorAll('.otp-input');
+        const hiddenOtp = document.getElementById('OtpCode');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                // Hanya izinkan angka
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+
+                // Pindah otomatis ke kanan jika sudah diisi
+                if (e.target.value !== '' && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+                updateHiddenOtp();
+            });
+
+            // Logika Hapus (Backspace) pindah ke kiri
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        function updateHiddenOtp() {
+            let otpValue = '';
+            inputs.forEach(input => { otpValue += input.value; });
+            hiddenOtp.value = otpValue;
+        }
+
+        // === LOGIKA TIMER BERJALAN MUNDUR ===
+        let timeLeft = 75; // 75 detik = 01:15
+        const timerElement = document.getElementById('countdownTimer');
+        const timerContainer = document.getElementById('timerContainer');
+
+        const countdownInterval = setInterval(() => {
+            timeLeft--;
+
+            // Hitung menit dan detik
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            // Format angka agar selalu 2 digit (misal 01:09)
+            let formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+            let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+
+            timerElement.textContent = formattedMinutes + ":" + formattedSeconds;
+
+            // Jika waktu habis
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                // Ubah teks menjadi tombol "Kirim Ulang" yang bisa diklik
+                timerContainer.innerHTML = `Waktu habis. <a href="#" style="color: var(--primary-purple); font-weight: 600; text-decoration: none;">Kirim Ulang OTP</a>`;
+            }
+        }, 1000); // 1000 milidetik = 1 detik
+    </script>
+</body>
+</html>

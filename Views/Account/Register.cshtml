@@ -1,0 +1,76 @@
+﻿@model LightenUp.Web.Models.ViewModels.PublicRegisterViewModel
+
+@{
+    ViewData["Title"] = "Buat Akun";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+
+    <div class="auth-wrapper">
+        <div class="auth-container register-card">
+
+            <a href="javascript:history.back()" class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#1f2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+
+            <h1 class="auth-title">Buat Akun</h1>
+            <p class="auth-subtitle">Lengkapi kolom dibawah untuk melanjutkan...</p>
+
+            <form asp-action="Register" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-group">
+                    <label asp-for="FullName" class="form-label">Nama Lengkap</label>
+                    <input asp-for="FullName" class="form-control-custom" placeholder="John Doe" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email" class="form-control-custom" placeholder="johndoe@lightenup.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="role-selection-group">
+                    <label class="role-selection-label">Pilih Jenis Akun</label>
+                    <div class="role-cards">
+                        <div class="role-card-wrapper">
+                            <input type="radio" asp-for="AccountType" value="Patient" id="rolePatient" class="role-card-input" required />
+                            <label class="role-card-label" for="rolePatient">Client</label>
+                        </div>
+                        <div class="role-card-wrapper">
+                            <input type="radio" asp-for="AccountType" value="Psychologist" id="rolePsy" class="role-card-input" required />
+                            <label class="role-card-label" for="rolePsy">Psikolog</label>
+                        </div>
+                    </div>
+                    <span asp-validation-for="AccountType" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-submit">Berikutnya</button>
+            </form>
+
+            <div class="auth-footer" style="margin-top: 30px;">
+                <span>Sudah memiliki akun?</span>
+                <a href="/Account/Login">Masuk</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
