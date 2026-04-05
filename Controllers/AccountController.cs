@@ -3,7 +3,7 @@ using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json; // Tambahan untuk mengubah data menjadi format JSON
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LightenUp.Web.Controllers
@@ -32,29 +32,44 @@ namespace LightenUp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                // TAMBAHAN: Cek status akun di database sebelum melakukan proses login
                 var user = await _userManager.FindByEmailAsync(model.Email);
+
                 if (user != null)
                 {
-                    // Jika dia adalah Psychologist dan belum di-approve oleh HR
+                    // Psychologist belum di-approve
                     if (user.RoleType == "Psychologist" && !user.IsApprovedByHR)
                     {
                         ModelState.AddModelError(string.Empty, "Akun Anda sedang ditinjau. Silakan tunggu persetujuan dari HR sebelum dapat masuk.");
                         return View(model);
                     }
-                }
 
-                // Jika sudah di-approve (atau Patient), lanjutkan proses pencocokan password
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded) return RedirectToAction("Index", "Home");
+                    var result = await _signInManager.PasswordSignInAsync(
+                        model.Email,
+                        model.Password,
+                        model.RememberMe,
+                        lockoutOnFailure: false
+                    );
+
+                    if (result.Succeeded)
+                    {
+                        // 🔥 ADMIN CHECK
+                        if (await _userManager.IsInRoleAsync(user, "Admin"))
+                        {
+                            return RedirectToAction("Dashboard", "Admin");
+                        }
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
 
                 ModelState.AddModelError(string.Empty, "Email atau Kata Sandi salah.");
             }
+
             return View(model);
         }
 
         // ==========================================
-        // 2. HALAMAN REGISTER (Simpan Sementara)
+        // 2. HALAMAN REGISTER
         // ==========================================
         [HttpGet]
         public IActionResult Register() => View();
@@ -77,63 +92,65 @@ namespace LightenUp.Web.Controllers
                     return View(model);
                 }
 
-                // SIMPAN SEMENTARA KE TEMPDATA (TIDAK LANGSUNG MASUK DATABASE)
                 TempData["RegisterData"] = JsonSerializer.Serialize(model);
                 return RedirectToAction("VerifyEmail", new { email = model.Email });
             }
+
             return View(model);
         }
 
         // ==========================================
-        // 3. HALAMAN VERIFIKASI EMAIL (OTP)
+        // 3. VERIFIKASI EMAIL (OTP)
         // ==========================================
         [HttpGet]
         public IActionResult VerifyEmail(string email)
         {
-            TempData.Keep("RegisterData"); // Pertahankan data register di memori
+            TempData.Keep("RegisterData");
             if (string.IsNullOrEmpty(email)) return RedirectToAction("Register");
+
             return View(new VerifyOtpViewModel { Email = email });
         }
 
         [HttpPost]
         public IActionResult VerifyEmail(VerifyOtpViewModel model)
         {
-            TempData.Keep("RegisterData"); // Pertahankan data register untuk langkah selanjutnya
+            TempData.Keep("RegisterData");
+
             if (ModelState.IsValid)
             {
-                // Simulasi OTP Benar
                 if (model.OtpCode == "1234")
                 {
                     return RedirectToAction("CreatePassword", new { email = model.Email });
                 }
+
                 ModelState.AddModelError("OtpCode", "Kode OTP salah. Ketik '1234'.");
             }
+
             return View(model);
         }
 
         // ==========================================
-        // 4. HALAMAN BUAT KATA SANDI & SIMPAN KE DB
+        // 4. BUAT PASSWORD & SIMPAN KE DB
         // ==========================================
         [HttpGet]
         public IActionResult CreatePassword(string email)
         {
             TempData.Keep("RegisterData");
             if (string.IsNullOrEmpty(email)) return RedirectToAction("Register");
+
             return View(new CreatePasswordViewModel { Email = email });
         }
 
         [HttpPost]
         public async Task<IActionResult> CreatePassword(CreatePasswordViewModel model)
         {
-            // Ambil kembali data pendaftaran dari memori sementara
             var registerDataJson = TempData["RegisterData"] as string;
 
-            // Jika pengguna mengakses halaman ini tanpa lewat register / refresh terlalu lama
-            if (string.IsNullOrEmpty(registerDataJson)) return RedirectToAction("Register");
+            if (string.IsNullOrEmpty(registerDataJson))
+                return RedirectToAction("Register");
 
             if (ModelState.IsValid)
             {
-                // Baca kembali data pendaftaran
                 var registerData = JsonSerializer.Deserialize<PublicRegisterViewModel>(registerDataJson);
 
                 if (registerData == null || string.IsNullOrEmpty(registerData.Email))
@@ -145,18 +162,19 @@ namespace LightenUp.Web.Controllers
                 {
                     UserName = registerData.Email,
                     Email = registerData.Email,
-                    EmailConfirmed = true, // <--- TAMBAHAN PENTING AGAR BISA LOGIN
+                    EmailConfirmed = true,
                     FullName = registerData.FullName,
                     RoleType = registerData.AccountType,
                     IsApprovedByHR = (registerData.AccountType == "Patient")
                 };
 
-                // SEKARANG BARU KITA BUAT USER BESERTA PASSWORDNYA DI DATABASE!
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    // Masukkan juga ke tabel spesifik (Patients / Psychologists)
+                    // 🔥 ASSIGN ROLE
+                    await _userManager.AddToRoleAsync(user, registerData.AccountType);
+
                     if (registerData.AccountType == "Patient")
                     {
                         _context.Patients.Add(new Patient { UserId = user.Id });
@@ -168,23 +186,21 @@ namespace LightenUp.Web.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    // Setelah sukses, pindah ke halaman notifikasi berhasil
                     return RedirectToAction("RegistrationSuccess");
                 }
 
-                // Jika ada error (misal password kurang rumit), tampilkan errornya
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
-            TempData.Keep("RegisterData"); // Pertahankan jika ada error validasi
+            TempData.Keep("RegisterData");
             return View(model);
         }
 
         // ==========================================
-        // 5. HALAMAN SUKSES PENDAFTARAN
+        // 5. SUCCESS PAGE
         // ==========================================
         [HttpGet]
         public IActionResult RegistrationSuccess()
