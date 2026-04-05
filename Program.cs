@@ -14,7 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // PERUBAHAN PENTING: 
 // 1. Ubah IdentityUser menjadi ApplicationUser
 // 2. Tambahkan .AddRoles<IdentityRole>() karena kita butuh role HR, dll.
-
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
