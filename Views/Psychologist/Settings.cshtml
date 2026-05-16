@@ -1,0 +1,46 @@
+@model LightenUp.Web.Models.ViewModels.PsySettingsViewModel
+@{
+    ViewData["Title"] = "Pengaturan";
+    Layout = "_LayoutDashboard";
+}
+
+<div style="padding: 32px; max-width: 560px;">
+    @if (TempData["success"] is string ok)
+    {
+        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
+    }
+
+    <h1 style="margin: 0 0 8px;">Pengaturan</h1>
+    <p style="color:#6B7280; margin-bottom: 24px;">Atur visibilitas dan preferensi akun Anda.</p>
+
+    <form method="post" style="background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+            <div style="flex:1;">
+                <strong>Terima kerjasama B2B</strong>
+                <p style="color:#6B7280; font-size:13px; margin: 4px 0 0;">
+                    Saat aktif, profil Anda dapat ditemukan oleh HR perusahaan di Direktori Psikolog. Mereka dapat memilih
+                    Anda sebagai mitra dan mengirimkan permintaan worksheet/sesi.
+                </p>
+            </div>
+            <label style="display:inline-block; position:relative; width:44px; height:24px;">
+                <input type="checkbox" asp-for="AcceptsB2B" style="display:none;" id="b2bToggle" />
+                <span id="slider" style="position:absolute; inset:0; background:@(Model.AcceptsB2B ? "#7C3AED" : "#D1D5DB"); border-radius:999px; cursor:pointer;">
+                    <span style="position:absolute; width:20px; height:20px; top:2px; left:@(Model.AcceptsB2B ? "22px" : "2px"); background:#fff; border-radius:999px; transition:left 0.15s;"></span>
+                </span>
+            </label>
+        </div>
+
+        <div style="margin-top: 24px; display:flex; justify-content:flex-end;">
+            <button type="submit" style="padding: 10px 24px; background: #7C3AED; color:#fff; border:none; border-radius:999px; cursor:pointer;">Simpan</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const cb = document.getElementById('b2bToggle');
+    const slider = document.getElementById('slider');
+    cb.addEventListener('change', () => {
+        slider.style.background = cb.checked ? '#7C3AED' : '#D1D5DB';
+        slider.querySelector('span').style.left = cb.checked ? '22px' : '2px';
+    });
+</script>

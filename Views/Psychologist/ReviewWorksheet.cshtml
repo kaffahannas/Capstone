@@ -1,0 +1,68 @@
+@model LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel
+@{
+    ViewData["Title"] = "Tinjau Worksheet";
+    Layout = "_LayoutDashboard";
+}
+
+<div style="padding: 32px; max-width: 720px;">
+    @if (TempData["success"] is string ok)
+    {
+        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
+    }
+
+    <a asp-action="Worksheet" style="text-decoration:none; color:#111;">← Worksheet</a>
+
+    <h1 style="margin: 16px 0;">Tinjau: @Model.TaskName</h1>
+    <div style="color:#6B7280; margin-bottom: 16px;">Pasien: <strong>@Model.PatientName</strong></div>
+
+    <div style="background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:20px; margin-bottom:16px;">
+        <h3 style="margin: 0 0 8px;">Deskripsi Tugas</h3>
+        <p style="color:#6B7280;">@(Model.Description ?? "—")</p>
+
+        <h3 style="margin: 16px 0 8px;">Bukti Kegiatan</h3>
+        @if (!string.IsNullOrEmpty(Model.ProofImagePath))
+        {
+            <img src="@Model.ProofImagePath" style="max-width:100%; border-radius:8px;" alt="bukti" />
+        }
+        else
+        {
+            <div style="padding:16px; border:1px dashed #E5E7EB; border-radius:8px; text-align:center; color:#9CA3AF;">
+                Pasien belum mengunggah bukti.
+            </div>
+        }
+
+        <h3 style="margin: 16px 0 8px;">Catatan Pasien</h3>
+        <p style="background:#FAF5FF; padding:10px 14px; border-radius:8px; min-height:40px;">
+            @(string.IsNullOrEmpty(Model.PatientNote) ? "—" : Model.PatientNote)
+        </p>
+    </div>
+
+    <form method="post" style="background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:20px;">
+        <input type="hidden" asp-for="WorksheetId" />
+        <h3 style="margin:0 0 8px;">Umpan Balik Anda</h3>
+        <textarea asp-for="PsychologistFeedback" rows="4"
+                  style="width:100%; padding:10px 12px; border:1px solid #E5E7EB; border-radius:8px; font-family:inherit; font-size:14px;"></textarea>
+
+        <div style="display:flex; gap:10px; margin-top:16px;">
+            <button type="submit" name="action" value="SaveNote"
+                    style="padding: 10px 16px; background:#fff; color:#7C3AED; border:1px solid #7C3AED; border-radius:999px; cursor:pointer;">
+                Simpan Catatan
+            </button>
+            @if (Model.Status == "Completed")
+            {
+                <button type="submit" name="action" value="Reopen"
+                        style="padding: 10px 16px; background:#F59E0B; color:#fff; border:none; border-radius:999px; cursor:pointer;">
+                    Buka Kembali
+                </button>
+            }
+            else
+            {
+                <button type="submit" name="action" value="Complete"
+                        style="padding: 10px 16px; background:#7C3AED; color:#fff; border:none; border-radius:999px; cursor:pointer;">
+                    Tandai Selesai
+                </button>
+            }
+        </div>
+        <small style="display:block; margin-top:12px; color:#6B7280;">Status saat ini: <strong>@Model.Status</strong></small>
+    </form>
+</div>

@@ -1,0 +1,25 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingRelationshipViewModel
+@{
+    ViewData["Title"] = "Status Hubungan";
+}
+
+<h1 class="onb-title">Status Hubungan</h1>
+
+<form asp-action="Relationship" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <select asp-for="RelationshipStatus" class="onb-select">
+        <option value="">Pilih Status Hubungan</option>
+        <option value="Single">Single/Lajang</option>
+        <option value="Dating">Sudah memiliki pasangan, namun belum menikah</option>
+        <option value="Married">Sudah Menikah</option>
+        <option value="Divorced">Bercerai</option>
+        <option value="PreferNotToSay">Tidak ingin menyebutkan</option>
+    </select>
+    <span asp-validation-for="RelationshipStatus" class="text-danger"></span>
+
+    <div class="onb-footer">
+        <a asp-action="Birthdate" class="onb-btn onb-btn-secondary">Sebelumnya</a>
+        <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
+    </div>
+</form>

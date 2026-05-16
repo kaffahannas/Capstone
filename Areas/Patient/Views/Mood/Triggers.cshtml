@@ -1,0 +1,46 @@
+@model LightenUp.Web.Models.ViewModels.MoodTrackerSessionViewModel
+@using LightenUp.Web.Models.ViewModels
+@{
+    ViewData["Title"] = "Pemicu";
+    ViewBag.Step = "2/4";
+}
+
+<h2 class="mood-question">
+    <a asp-action="Feeling" asp-route-feeling="@Model.Feeling" asp-route-triggers="@string.Join(",", Model.Triggers)" asp-route-note="@Model.Note"
+       style="color:inherit; text-decoration:none; margin-right:8px;">←</a>
+    Apa yang membuat kamu merasakan itu?
+</h2>
+<p class="mood-helper">Pilih kategori dibawah ini, Anda dapat memilih lebih dari satu</p>
+
+<form asp-action="Triggers" method="post">
+    <input type="hidden" asp-for="Feeling" />
+    <input type="hidden" asp-for="Note" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="trigger-chips">
+        @foreach (var t in MoodOptions.Triggers)
+        {
+            <label class="trigger-chip @(Model.Triggers.Contains(t.Value) ? "selected" : "")">
+                <input type="checkbox" name="Triggers" value="@t.Value"
+                       checked="@(Model.Triggers.Contains(t.Value))" style="display:none" />
+                @t.Label
+            </label>
+        }
+    </div>
+    <span asp-validation-for="Triggers" class="text-danger"></span>
+
+    <button type="submit" class="btn-primary" style="width:100%; padding:14px;">Berikutnya</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.trigger-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const cb = chip.querySelector('input');
+                cb.checked = !cb.checked;
+                chip.classList.toggle('selected', cb.checked);
+            });
+        });
+    </script>
+}

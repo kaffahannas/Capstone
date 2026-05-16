@@ -1,0 +1,85 @@
+@using LightenUp.Web.Models.ViewModels
+@{
+    var roster = ViewBag.Roster as List<HrRosterRow> ?? new();
+    var companyName = ViewBag.Company as string ?? "";
+    var now = (DateTime)(ViewBag.Now ?? DateTime.Now);
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <title>Laporan @companyName - LightenUp</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; color: #111; max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        h1 { font-size: 22px; margin: 0 0 4px; }
+        small { color: #6B7280; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+        .stat { border: 1px solid #E5E7EB; border-radius: 8px; padding: 14px; text-align: center; }
+        .stat .n { font-size: 26px; font-weight: 700; margin: 6px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+        th, td { padding: 8px 10px; border-bottom: 1px solid #E5E7EB; text-align: left; }
+        th { background: #F9FAFB; font-weight: 600; }
+        .badge { padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+        .b-sehat { background: #D1FAE5; color: #047857; }
+        .b-beresiko { background: #FEF3C7; color: #B45309; }
+        .b-bahaya { background: #FEE2E2; color: #B91C1C; }
+        @@media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+    <button class="no-print" onclick="window.print()" style="float:right; padding:8px 16px; background:#7C3AED; color:#fff; border:none; border-radius:6px; cursor:pointer;">Cetak / Simpan PDF</button>
+
+    <h1>Laporan Karyawan — @companyName</h1>
+    <small>Generated @now.ToString("d MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</small>
+
+    <div class="stats">
+        <div class="stat">
+            <small>Total Aktif</small>
+            <div class="n">@roster.Count</div>
+        </div>
+        <div class="stat">
+            <small>Sehat</small>
+            <div class="n" style="color:#047857;">@roster.Count(r => r.MentalHealthStatus == "Sehat")</div>
+        </div>
+        <div class="stat">
+            <small>Beresiko + Bahaya</small>
+            <div class="n" style="color:#B45309;">@roster.Count(r => r.MentalHealthStatus != "Sehat")</div>
+        </div>
+    </div>
+
+    <h2 style="font-size: 16px; margin-top: 32px;">Daftar Karyawan</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Divisi</th>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Last Check</th>
+                <th>Mood %</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in roster)
+            {
+                <tr>
+                    <td>@r.FullName</td>
+                    <td>@r.Email</td>
+                    <td>@(r.Division ?? "—")</td>
+                    <td>@(r.EmployeeId ?? "—")</td>
+                    <td><span class="badge b-@r.MentalHealthStatus.ToLowerInvariant()">@r.MentalHealthStatus</span></td>
+                    <td>@r.LastCheckDate</td>
+                    <td>@(r.TotalMoodPercent?.ToString() + "%" ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script>
+        // Auto-open the print dialog on load.
+        window.addEventListener('load', () => setTimeout(() => window.print(), 300));
+    </script>
+</body>
+</html>

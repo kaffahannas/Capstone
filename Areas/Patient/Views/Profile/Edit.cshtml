@@ -1,0 +1,129 @@
+@model LightenUp.Web.Models.ViewModels.PatientProfileEditViewModel
+@{
+    ViewData["Title"] = "Edit Profil";
+    ViewBag.ActiveNav = "Profil";
+}
+
+<div style="max-width: 720px;">
+    <a asp-action="Index" style="text-decoration:none; color:#111;">← Profil Saya</a>
+
+    <h2 style="margin: 16px 0 24px;">Edit Profile</h2>
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:12px;"></div>
+
+        <!-- ───── Personal ───── -->
+        <div class="lu-card" style="margin-bottom: 16px;">
+            <h3 class="lu-card-title">Informasi Pribadi</h3>
+
+            <div style="margin-bottom:12px;">
+                <label asp-for="ProfilePicture" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Foto Profil</label>
+                <input asp-for="ProfilePicture" type="file" accept="image/*" />
+            </div>
+
+            <div style="margin-bottom:12px;">
+                <label asp-for="FullName" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nama Lengkap</label>
+                <input asp-for="FullName" class="onb-input" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <div>
+                    <label asp-for="Phone" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nomor Telepon</label>
+                    <input asp-for="Phone" class="onb-input" />
+                </div>
+                <div>
+                    <label asp-for="DateOfBirth" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Tanggal Lahir</label>
+                    <input asp-for="DateOfBirth" type="date" class="onb-input" />
+                </div>
+            </div>
+
+            <div style="margin-top:12px;">
+                <label asp-for="Gender" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Gender</label>
+                <select asp-for="Gender" class="onb-select">
+                    <option value="">Pilih</option>
+                    <option value="Male">Laki-Laki</option>
+                    <option value="Female">Perempuan</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ───── Work Info ───── -->
+        <div class="lu-card" style="margin-bottom: 16px;">
+            <h3 class="lu-card-title">Informasi Pekerjaan</h3>
+
+            @if (Model.IsAlreadyB2B)
+            {
+                <p style="font-size:13px; color:#6B7280;">Perusahaan: <strong>@Model.CurrentCompanyName</strong></p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div>
+                        <label asp-for="Department" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Divisi</label>
+                        <input asp-for="Department" class="onb-input" />
+                    </div>
+                    <div>
+                        <label asp-for="EmployeeId" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Employee ID</label>
+                        <input asp-for="EmployeeId" class="onb-input" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                <label asp-for="ReferralCode" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Kode Referral Perusahaan (opsional)</label>
+                <input asp-for="ReferralCode" class="onb-input" placeholder="Masukkan kode referral untuk bergabung" />
+                <span asp-validation-for="ReferralCode" class="text-danger"></span>
+            }
+        </div>
+
+        <!-- ───── Emergency Contact ───── -->
+        <div class="lu-card" style="margin-bottom: 16px;">
+            <h3 class="lu-card-title">Kontak Darurat (Orang Terdekat)</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+                <div>
+                    <label asp-for="EmergencyContactName" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nama</label>
+                    <input asp-for="EmergencyContactName" class="onb-input" />
+                </div>
+                <div>
+                    <label asp-for="EmergencyContactRelation" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Hubungan</label>
+                    <input asp-for="EmergencyContactRelation" class="onb-input" placeholder="Pasangan, Saudara, ..." />
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <div>
+                    <label asp-for="EmergencyContactPhone" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Telepon</label>
+                    <input asp-for="EmergencyContactPhone" class="onb-input" />
+                </div>
+                <div>
+                    <label asp-for="EmergencyContactEmail" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Email</label>
+                    <input asp-for="EmergencyContactEmail" type="email" class="onb-input" />
+                    <span asp-validation-for="EmergencyContactEmail" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ───── Notification preferences ───── -->
+        <div class="lu-card prefs-card" style="margin-bottom: 16px;">
+            <h3 class="lu-card-title">Preferensi dan Notifikasi</h3>
+            <div class="prefs-row">
+                <span class="label">Pengingat Untuk Check Mood</span>
+                <label class="toggle"><input type="checkbox" asp-for="RemindMoodCheck" /><span class="slider"></span></label>
+            </div>
+            <div class="prefs-row">
+                <span class="label">Pengingat Sesi Konseling</span>
+                <label class="toggle"><input type="checkbox" asp-for="RemindCounselingSession" /><span class="slider"></span></label>
+            </div>
+            <div class="prefs-row">
+                <span class="label">Notifikasi dari HR dan Psikolog</span>
+                <label class="toggle"><input type="checkbox" asp-for="AllowHrPsychologistNotif" /><span class="slider"></span></label>
+            </div>
+            <div class="prefs-row">
+                <span class="label">Pilih Waktu Notifikasi Pengingat</span>
+                <input asp-for="ReminderTime" type="time" style="border:1px solid #E5E7EB; border-radius:8px; padding:6px 10px;" />
+            </div>
+        </div>
+
+        <div style="display:flex; gap:12px;">
+            <a asp-action="Index" class="btn-secondary" style="flex:1; text-align:center;">Batal</a>
+            <button type="submit" class="btn-primary" style="flex:1;">Simpan Perubahan</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,49 @@
+@model LightenUp.Web.Models.ViewModels.HrReportListViewModel
+@{
+    ViewData["Title"] = "Laporan";
+    ViewBag.ActiveNav = "Klien";
+}
+
+<div style="max-width: 900px;">
+    @if (TempData["success"] is string ok)
+    {
+        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
+    }
+    @if (TempData["error"] is string err)
+    {
+        <div style="background:#FEE2E2; color:#B91C1C; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@err</div>
+    }
+
+    <h2 style="margin-bottom: 16px;">Laporan ke Psikolog</h2>
+
+    <div class="task-chips" style="margin-bottom: 16px;">
+        <a class="task-chip @(Model.Tab == "All" ? "selected" : "")" asp-action="Index" asp-route-tab="All">Semua</a>
+        <a class="task-chip @(Model.Tab == "Draft" ? "selected" : "")" asp-action="Index" asp-route-tab="Draft">Draft</a>
+        <a class="task-chip @(Model.Tab == "Sent" ? "selected" : "")" asp-action="Index" asp-route-tab="Sent">Sudah Terkirim</a>
+    </div>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="dash-card-empty">
+            <p>Belum ada laporan.</p>
+            <small style="color:#6B7280;">Buat laporan dari halaman detail pasien.</small>
+        </div>
+    }
+    else
+    {
+        foreach (var r in Model.Items)
+        {
+            <div class="lu-card" style="margin-bottom:12px; display:flex; align-items:center; gap:12px;">
+                <div style="flex:1;">
+                    <h4 style="margin:0;">@r.PatientName</h4>
+                    <small style="color:#6B7280;">Untuk @r.PsychologistName · @r.CreatedAt.ToString("d MMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</small>
+                </div>
+                <span class="status-badge @(r.Status == "Sent" ? "sehat" : "beresiko")">@r.Status</span>
+                @if (r.Status == "Draft")
+                {
+                    <a class="btn-pill" asp-action="Edit" asp-route-id="@r.ReportId">Edit</a>
+                }
+            </div>
+        }
+    }
+</div>

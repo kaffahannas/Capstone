@@ -1,0 +1,180 @@
+@model LightenUp.Web.Models.ViewModels.PatientStatistikViewModel
+@{
+    ViewData["Title"] = "Statistik";
+    ViewBag.ActiveNav = "Statistik";
+
+    // Pre-build JSON payloads server-side so the view doesn't have to do JS-side string juggling.
+    var trendLabels = string.Join(",", Model.MoodTrend.Select(p => $"\"{p.Date:dd/MM}\""));
+    var trendData = string.Join(",", Model.MoodTrend.Select(p => p.Score.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+
+    var triggerLabels = string.Join(",", Model.TopTriggers.Select(t => $"\"{System.Web.HttpUtility.JavaScriptStringEncode(t.Label)}\""));
+    var triggerData = string.Join(",", Model.TopTriggers.Select(t => t.Count));
+}
+
+@section Head {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+}
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+    <h2 style="margin:0;">Statistik</h2>
+    <div style="display:flex; gap:8px;">
+        @foreach (var w in new[] { 7, 30, 90 })
+        {
+            <a class="task-chip @(Model.Window == w ? "selected" : "")" asp-action="Index" asp-route-window="@w">@w hari</a>
+        }
+    </div>
+</div>
+
+<!-- ───── Row 1: Mood trend (full width) ───── -->
+<div class="lu-card" style="margin-bottom:20px;">
+    <h3 class="lu-card-title">Tren Mood</h3>
+    @if (!Model.MoodTrend.Any())
+    {
+        <div class="dash-card-empty" style="margin:0;">
+            <p>Belum ada data mood. Mulai melacak mood untuk melihat trennya.</p>
+            <a class="btn-pill" asp-area="Patient" asp-controller="Mood" asp-action="Feeling">+ Lacak Mood</a>
+        </div>
+    }
+    else
+    {
+        <canvas id="moodTrendChart" height="100"></canvas>
+    }
+</div>
+
+<!-- ───── Row 2: Radar + Triggers ───── -->
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px;">
+    <div class="lu-card">
+        <h3 class="lu-card-title">Check-In Radar</h3>
+        @if (!Model.HasRadarData)
+        {
+            <div class="dash-card-empty" style="margin:0;">
+                <p>Belum ada check-in dalam @Model.Window hari terakhir.</p>
+                <a class="btn-pill" asp-area="Patient" asp-controller="Journal" asp-action="CheckIn">+ Daily Check</a>
+            </div>
+        }
+        else
+        {
+            <canvas id="radarChart" height="220"></canvas>
+        }
+    </div>
+
+    <div class="lu-card">
+        <h3 class="lu-card-title">Pemicu Teratas</h3>
+        @if (!Model.TopTriggers.Any())
+        {
+            <div class="dash-card-empty" style="margin:0;">
+                <p>Belum ada pemicu tercatat.</p>
+            </div>
+        }
+        else
+        {
+            <canvas id="triggersChart" height="220"></canvas>
+        }
+    </div>
+</div>
+
+<!-- ───── Row 3: Engagement ───── -->
+<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px;">
+    <div class="lu-card" style="text-align:center;">
+        <div style="font-size:32px;">🔥</div>
+        <div style="font-size:32px; font-weight:700; color:#7C3AED; margin:8px 0;">@Model.Engagement.CurrentStreak</div>
+        <div style="font-size:13px; color:#6B7280;">Hari Streak Berjalan</div>
+    </div>
+    <div class="lu-card" style="text-align:center;">
+        <div style="font-size:32px;">📅</div>
+        <div style="font-size:32px; font-weight:700; color:#7C3AED; margin:8px 0;">@Model.Engagement.TotalDaysTracked</div>
+        <div style="font-size:13px; color:#6B7280;">Total Hari Tercatat</div>
+    </div>
+    <div class="lu-card" style="text-align:center;">
+        <div style="font-size:32px;">🏆</div>
+        <div style="font-size:32px; font-weight:700; color:#7C3AED; margin:8px 0;">@Model.Engagement.LongestStreak</div>
+        <div style="font-size:13px; color:#6B7280;">Streak Terpanjang</div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const purple = '#7C3AED';
+        const purpleSoft = 'rgba(124, 58, 237, 0.15)';
+
+        @if (Model.MoodTrend.Any())
+        {
+            <text>
+            new Chart(document.getElementById('moodTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(trendLabels)],
+                    datasets: [{
+                        label: 'Mood (1–5)',
+                        data: [@Html.Raw(trendData)],
+                        borderColor: purple,
+                        backgroundColor: purpleSoft,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { min: 0, max: 5, ticks: { stepSize: 1 } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            </text>
+        }
+
+        @if (Model.HasRadarData)
+        {
+            <text>
+            new Chart(document.getElementById('radarChart'), {
+                type: 'radar',
+                data: {
+                    labels: ['Fokus', 'Cemas (rendah)', 'Tidur', 'Beban Pikiran (rendah)', 'Emosi', 'Keseluruhan'],
+                    datasets: [{
+                        label: 'Rata-rata',
+                        data: [
+                            @Model.Radar.Focus.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                            @Model.Radar.Anxiety.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                            @Model.Radar.Sleep.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                            @Model.Radar.MindLoad.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                            @Model.Radar.Emotion.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                            @Model.Radar.Overall.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                        ],
+                        backgroundColor: purpleSoft,
+                        borderColor: purple,
+                        pointBackgroundColor: purple
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { r: { min: 0, max: 5, ticks: { stepSize: 1 } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            </text>
+        }
+
+        @if (Model.TopTriggers.Any())
+        {
+            <text>
+            new Chart(document.getElementById('triggersChart'), {
+                type: 'bar',
+                data: {
+                    labels: [@Html.Raw(triggerLabels)],
+                    datasets: [{
+                        label: 'Jumlah',
+                        data: [@Html.Raw(triggerData)],
+                        backgroundColor: purple
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+            </text>
+        }
+    </script>
+}

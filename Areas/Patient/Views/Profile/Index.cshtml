@@ -1,0 +1,135 @@
+@model LightenUp.Web.Models.ViewModels.PatientProfileViewModel
+@{
+    ViewData["Title"] = "Profil Saya";
+    ViewBag.ActiveNav = "Profil";
+
+    string mailto(string? email) => string.IsNullOrEmpty(email) ? "#" : $"mailto:{email}";
+    string tel(string? phone) => string.IsNullOrEmpty(phone) ? "#" : $"tel:{phone}";
+}
+
+<div style="max-width: 720px;">
+
+    @if (TempData["success"] is string ok)
+    {
+        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:16px;">@ok</div>
+    }
+
+    <!-- ───── Header ───── -->
+    <div class="profile-header">
+        <span class="profile-avatar-wrap">
+            <img class="profile-avatar"
+                 src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : Model.ProfilePicture)"
+                 alt="Foto profil" />
+            <a asp-action="Edit" class="cam" title="Edit foto">📷</a>
+        </span>
+        <div class="profile-name">@Model.FullName</div>
+        <span class="status-badge @Model.MentalHealthStatus.ToLowerInvariant()">
+            @if (Model.MentalHealthStatus == "Sehat") { <span>● Sehat</span> }
+            else if (Model.MentalHealthStatus == "Beresiko") { <span>⚠ Beresiko</span> }
+            else { <span>● Bahaya</span> }
+        </span>
+    </div>
+
+    <!-- ───── 2x2 info grid ───── -->
+    <div class="info-grid">
+        <div class="info-card">
+            <h4 class="info-card-title">🏢 Work Info</h4>
+            <div class="info-card-body">
+                @if (Model.IsB2B)
+                {
+                    <div><strong>@(Model.Department ?? "Divisi belum diatur")</strong></div>
+                    <div>ID: @(Model.EmployeeId ?? "-")</div>
+                    <div style="font-size:11px; margin-top:4px;">@Model.CompanyName</div>
+                }
+                else
+                {
+                    <div><strong>Tipe Akun: Pengguna Publik</strong></div>
+                    <div>Belum tergabung dalam perusahaan.</div>
+                }
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h4 class="info-card-title">✉️ Contact Info</h4>
+            <div class="info-card-body">
+                <div><strong>@Model.Email</strong></div>
+                <div>@(string.IsNullOrEmpty(Model.Phone) ? "Telepon belum diatur" : Model.Phone)</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h4 class="info-card-title">💚 Kesehatan Mental</h4>
+            <div class="info-card-body">
+                <div>Total Mood: <strong>@(Model.TotalMoodPercent.HasValue ? $"{Model.TotalMoodPercent}%" : "Belum ada data")</strong></div>
+                <div>Terakhir Check: <strong>@Model.LastCheckLabel</strong></div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h4 class="info-card-title">🗓 Sesi Konseling</h4>
+            <div class="info-card-body">
+                @if (Model.MentalHealthStatus == "Bahaya")
+                {
+                    <div>Terakhir: <strong>@(Model.LastSessionAt?.ToString("d MMM yyyy", new System.Globalization.CultureInfo("id-ID")) ?? "—")</strong></div>
+                    <div>Selanjutnya: <strong>@(Model.NextSessionAt?.ToString("d MMM yyyy", new System.Globalization.CultureInfo("id-ID")) ?? "Belum dijadwalkan")</strong></div>
+                }
+                else if (Model.RecommendSession)
+                {
+                    <div style="color:#B45309;"><strong>Anda Disarankan Melakukan Sesi Konseling!</strong></div>
+                }
+                else
+                {
+                    <div>Belum ada</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ───── Preferensi dan Notifikasi ───── -->
+    <div class="lu-card prefs-card">
+        <h3 class="lu-card-title">Preferensi dan Notifikasi</h3>
+        <div class="prefs-row">
+            <span class="label">Pengingat Untuk Check Mood</span>
+            <label class="toggle"><input type="checkbox" disabled checked="@Model.RemindMoodCheck" /><span class="slider"></span></label>
+        </div>
+        <div class="prefs-row">
+            <span class="label">Pengingat Sesi Konseling</span>
+            <label class="toggle"><input type="checkbox" disabled checked="@Model.RemindCounselingSession" /><span class="slider"></span></label>
+        </div>
+        <div class="prefs-row">
+            <span class="label">Notifikasi dari HR dan Psikolog</span>
+            <label class="toggle"><input type="checkbox" disabled checked="@Model.AllowHrPsychologistNotif" /><span class="slider"></span></label>
+        </div>
+        <div class="prefs-row">
+            <span class="label">Waktu Notifikasi Pengingat</span>
+            <strong>@Model.ReminderTime</strong>
+        </div>
+        <p style="font-size:12px; color:#6B7280; margin: 12px 0 0;">Atur preferensi di halaman <a asp-action="Edit">Edit Profile</a>.</p>
+    </div>
+
+    <!-- ───── Support ───── -->
+    <h3 style="font-size: 14px; margin: 16px 0 8px;">Support</h3>
+    <div class="support-buttons">
+        <a class="support-btn purple @(string.IsNullOrEmpty(Model.EmergencyContactEmail) && string.IsNullOrEmpty(Model.EmergencyContactPhone) ? "disabled" : "")"
+           href="@(!string.IsNullOrEmpty(Model.EmergencyContactEmail) ? mailto(Model.EmergencyContactEmail) : tel(Model.EmergencyContactPhone))">
+            Kontak Orang Terdekat
+        </a>
+        <a class="support-btn blue @(string.IsNullOrEmpty(Model.CompanyHrEmail) ? "disabled" : "")"
+           href="@mailto(Model.CompanyHrEmail)">
+            Kontak HRD
+        </a>
+        <a class="support-btn green @(string.IsNullOrEmpty(Model.PsychologistEmail) ? "disabled" : "")"
+           href="@mailto(Model.PsychologistEmail)">
+            Kontak Psychologist
+        </a>
+    </div>
+
+    <!-- ───── Actions ───── -->
+    <div style="display:flex; gap:12px; margin-top:24px;">
+        <a class="btn-secondary" asp-action="Edit" style="flex:1; text-align:center;">Edit Profile</a>
+        <form asp-controller="Account" asp-action="Logout" asp-area="" method="post" style="flex:1;">
+            <button type="submit" style="width:100%; padding:12px; background:#EF4444; color:#fff; border:none; border-radius:999px; font-weight:500; cursor:pointer;">Log Out</button>
+        </form>
+    </div>
+
+</div>

@@ -1,0 +1,26 @@
+@{
+    var step = ViewBag.Step as string ?? "";
+}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/patient.css" asp-append-version="true" />
+</head>
+<body style="background: #FAFAFA; padding: 40px 20px;">
+    <div class="mood-shell">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:14px;">😊 Mood Tracker</strong>
+            <a href="/Patient/Dashboard" style="text-decoration:none; color:#111; font-size:20px;">&times;</a>
+        </div>
+        <div class="mood-step-label">@step</div>
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

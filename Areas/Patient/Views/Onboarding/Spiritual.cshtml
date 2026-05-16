@@ -1,0 +1,23 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingSpiritualViewModel
+@{
+    ViewData["Title"] = "Aktivitas Spiritual";
+}
+
+<h1 class="onb-title">Aktif dalam kegiatan spiritual?</h1>
+
+<form asp-action="Spiritual" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <select asp-for="SpiritualActivity" class="onb-select">
+        <option value="">Pilih jawaban</option>
+        <option value="Active">Aktif</option>
+        <option value="Rare">Jarang</option>
+        <option value="Inactive">Tidak Aktif</option>
+    </select>
+    <span asp-validation-for="SpiritualActivity" class="text-danger"></span>
+
+    <div class="onb-footer">
+        <a asp-action="Relationship" class="onb-btn onb-btn-secondary">Sebelumnya</a>
+        <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
+    </div>
+</form>

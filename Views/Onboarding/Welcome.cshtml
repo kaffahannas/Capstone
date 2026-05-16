@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Selamat Datang";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+
+    <div class="auth-wrapper">
+        
+        <div class="logo-container" style="margin-bottom: 20px;">
+            <svg width="50" height="50" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 5L90 27V73L50 95L10 73V27L50 5Z" fill="url(#hexGradient)" />
+                <circle cx="50" cy="50" r="18" fill="white" />
+                <line x1="50" y1="14" x2="50" y2="22" stroke="white" stroke-width="3" stroke-linecap="round" />
+                <line x1="50" y1="78" x2="50" y2="86" stroke="white" stroke-width="3" stroke-linecap="round" />
+                <line x1="14" y1="50" x2="22" y2="50" stroke="white" stroke-width="3" stroke-linecap="round" />
+                <line x1="78" y1="50" x2="86" y2="50" stroke="white" stroke-width="3" stroke-linecap="round" />
+                <defs>
+                    <linearGradient id="hexGradient" x1="10" y1="5" x2="90" y2="95" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#C4B5FD" />
+                        <stop offset="1" stop-color="#8CE0FF" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span class="app-name" style="font-size: 28px;">LightenUp</span>
+        </div>
+
+        <div class="auth-container register-card">
+            
+            <h1 class="auth-title" style="font-size: 22px; margin-bottom: 15px;">Selamat datang,<br />@ViewBag.FullName!</h1>
+            
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+                LightenUp adalah platform pendukung operasional bagi penyedia jasa layanan psikologi, seperti manajemen data pasien, kelola catatan konseling, dan mood tracker.
+            </p>
+
+            <p style="font-size: 13px; color: var(--text-dark); font-weight: 600; margin-bottom: 10px;">
+                Sebagai permulaan, Anda dapat melengkapi data penyedia layanan psikologi seperti:
+            </p>
+
+            <ul style="font-size: 13px; color: var(--text-muted); line-height: 1.8; padding-left: 20px; margin-bottom: 30px;">
+                <li>Foto diri</li>
+                <li>Status akademik, gelar</li>
+                <li>Universitas asal gelar</li>
+                <li>Nomor SIAP HIMPSI</li>
+                <li>Nomor SIPP</li>
+                <li>Scan Surat Tanda Registrasi (STR) Psikolog Klinis</li>
+                <li>Scan dokumen pendukung lainnya</li>
+            </ul>
+
+            <a href="/Onboarding/Step1" class="btn-submit" style="text-align: center; display: block; box-sizing: border-box; text-decoration: none;">Lengkapi Data Diri</a>
+
+        </div>
+    </div>
+
+</body>
+</html>

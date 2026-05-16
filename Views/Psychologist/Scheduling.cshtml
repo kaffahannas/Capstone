@@ -1,0 +1,102 @@
+@using LightenUp.Web.Models
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Jadwal Keseluruhan";
+
+    var sessions = ViewBag.Sessions as List<Schedule> ?? new List<Schedule>();
+    var today = (DateTime)(ViewBag.Today ?? DateTime.Today);
+    var filter = ViewBag.Filter as string ?? "Semua";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    var grouped = sessions
+        .GroupBy(s => s.SessionStart.Date)
+        .OrderBy(g => g.Key)
+        .ToList();
+
+    string DayHeader(DateTime d)
+    {
+        if (d == today) return $"Hari Ini ({d.ToString("d MMMM", idCulture)})";
+        if (d == today.AddDays(1)) return $"Besok ({d.ToString("d MMMM", idCulture)})";
+        if (d == today.AddDays(-1)) return $"Kemarin ({d.ToString("d MMMM", idCulture)})";
+        return d.ToString("dddd, d MMMM", idCulture);
+    }
+
+    (string css, string label) StatusOf(Schedule s)
+    {
+        if (s.Status == "Cancelled") return ("background:#FEE2E2; color:#B91C1C;", "Dibatalkan");
+        if (s.Status == "Completed") return ("background:#D1FAE5; color:#059669;", "Selesai");
+        var now = DateTime.Now;
+        var end = s.SessionStart.AddMinutes(s.DurationMinutes);
+        if (now < s.SessionStart) return ("background:#FEF3C7; color:#D97706;", "Akan Datang");
+        if (now <= end) return ("background:#DBEAFE; color:#1D4ED8;", "On Going");
+        return ("background:#E5E7EB; color:#374151;", "Selesai");
+    }
+}
+
+<div class="dashboard-header" style="margin-bottom: 20px;">
+    <div>
+        <h1 class="text-header">Jadwal Konseling</h1>
+        <p class="text-subtitle">Pantau seluruh jadwal konseling aktif dari semua mitra perusahaan Anda.</p>
+    </div>
+    <a href="@Url.Action("AddSchedule", "Psychologist")" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--primary-purple); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Tambah Jadwal
+    </a>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border-color);">
+    <h2 style="margin: 0; font-size: 18px; color: var(--text-dark);">@today.ToString("MMMM yyyy", idCulture)</h2>
+    <div style="display: flex; gap: 8px;">
+        <a class="filter-btn @(filter == "Semua" ? "active" : "")" href="?filter=Semua">Semua</a>
+        <a class="filter-btn @(filter == "Selesai" ? "active" : "")" href="?filter=Selesai">Selesai</a>
+        <a class="filter-btn @(filter == "Dibatalkan" ? "active" : "")" href="?filter=Dibatalkan">Dibatalkan</a>
+    </div>
+</div>
+
+@if (!grouped.Any())
+{
+    <div style="padding: 60px; text-align: center; color: #9CA3AF; border: 1px dashed var(--border-color); border-radius: 12px;">
+        Belum ada jadwal konseling.
+    </div>
+}
+else
+{
+    foreach (var dayGroup in grouped)
+    {
+        <div style="margin-bottom: 30px;">
+            <h3 style="font-size: 15px; font-weight: 700; color: var(--text-dark); margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+                @DayHeader(dayGroup.Key)
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                @foreach (var s in dayGroup.OrderBy(x => x.SessionStart))
+                {
+                    var (badgeCss, badgeLabel) = StatusOf(s);
+                    var leftBorder = s.Status switch { "Completed" => "var(--primary-purple)", "Cancelled" => "#EF4444", _ => "#F59E0B" };
+                    <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid @leftBorder;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div style="width: 80px; text-align: center;">
+                                <span style="display: block; font-size: 18px; font-weight: 700; color: @(s.Status == "Completed" ? "var(--primary-purple)" : "var(--text-dark)");">@s.SessionStart.ToString("HH:mm")</span>
+                                <span style="display: block; font-size: 12px; color: var(--text-muted);">WIB</span>
+                            </div>
+                            <div style="width: 1px; height: 40px; background: var(--border-color);"></div>
+                            <div>
+                                <h4 style="margin: 0 0 4px 0; font-size: 16px; color: var(--text-dark);">@(s.Patient?.User?.FullName ?? "—")</h4>
+                                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                                    @(s.Patient?.Company?.Name ?? "Pasien Publik")
+                                    @if (!string.IsNullOrEmpty(s.Notes))
+                                    {
+                                        <span>&bull; @s.Notes</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <span class="status-badge" style="@badgeCss">@badgeLabel</span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}

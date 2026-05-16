@@ -1,0 +1,65 @@
+@using Microsoft.AspNetCore.Identity
+@using LightenUp.Web.Models
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var fullName = user?.FullName ?? "Sahabat";
+    var profilePicture = user?.ProfilePicture;
+    var active = ViewBag.ActiveNav as string ?? "Beranda";
+}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/patient.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body>
+    <div class="app-shell">
+
+        <aside class="app-sidebar">
+            <div class="brand">
+                <span class="brand-mark">L</span>
+                <span class="brand-name">LightenUp</span>
+            </div>
+
+            <nav class="side-nav">
+                <a class="side-nav-item @(active == "Beranda" ? "active" : "")"
+                   asp-controller="Dashboard" asp-action="Index">
+                    <span class="ico">🏠</span><span>Beranda</span>
+                </a>
+                <a class="side-nav-item @(active == "Statistik" ? "active" : "")"
+                   asp-controller="Statistik" asp-action="Index">
+                    <span class="ico">📊</span><span>Statistik</span>
+                </a>
+                <a class="side-nav-item @(active == "Profil" ? "active" : "")"
+                   asp-controller="Profile" asp-action="Index">
+                    <span class="ico">👤</span><span>Profil</span>
+                </a>
+            </nav>
+
+            <form asp-controller="Account" asp-action="Logout" asp-area="" method="post" class="side-nav-logout">
+                <button type="submit" class="logout-btn">Keluar</button>
+            </form>
+        </aside>
+
+        <main class="app-main">
+            <header class="app-topbar">
+                <h2 class="greeting">Hai, @fullName</h2>
+                <button type="button" class="bell-btn" title="Notifikasi (segera hadir)">🔔</button>
+            </header>
+
+            <div class="app-content">
+                @RenderBody()
+            </div>
+        </main>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

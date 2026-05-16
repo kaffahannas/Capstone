@@ -1,0 +1,39 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingGenderViewModel
+@{
+    ViewData["Title"] = "Pilih Gender";
+}
+
+<h1 class="onb-title">Pilih gender</h1>
+
+<form asp-action="Gender" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="onb-choice-grid">
+        <label class="onb-choice-card @(Model.Gender == "Male" ? "selected" : "")">
+            <input class="onb-choice-input" type="radio" asp-for="Gender" value="Male" />
+            <span class="icon">♂️</span>
+            <span class="label">Laki-Laki</span>
+        </label>
+        <label class="onb-choice-card @(Model.Gender == "Female" ? "selected" : "")">
+            <input class="onb-choice-input" type="radio" asp-for="Gender" value="Female" />
+            <span class="icon">♀️</span>
+            <span class="label">Perempuan</span>
+        </label>
+    </div>
+    <span asp-validation-for="Gender" class="text-danger"></span>
+
+    <div class="onb-footer">
+        <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.onb-choice-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.onb-choice-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,15 @@
+@model int
+@{
+    ViewData["Title"] = "Data Tersimpan";
+    ViewBag.ActiveNav = "Beranda";
+}
+
+<div style="max-width: 480px; margin: 60px auto; text-align:center;">
+    <div style="width:80px; height:80px; margin:0 auto 24px; background:#7C3AED; border-radius:999px; display:grid; place-items:center; color:#fff; font-size:36px;">✓</div>
+    <h2>Data Berhasil Disimpan!</h2>
+    <p style="color:#6B7280;">Kerjakan tugas lainnya untuk terus berkembang.</p>
+
+    <div style="margin-top:32px;">
+        <a class="btn-primary" asp-action="Index">Kembali ke Tugas Kamu</a>
+    </div>
+</div>

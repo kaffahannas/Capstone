@@ -1,0 +1,101 @@
+@model LightenUp.Web.Models.ViewModels.HrDivisionReportViewModel
+@{
+    ViewData["Title"] = $"Divisi {Model.DivisionName}";
+    ViewBag.ActiveNav = "Statistik";
+
+    var labels = Json.Serialize(Model.Dates.Select(d => d.ToString("dd/MM")));
+    var data = Json.Serialize(Model.AvgScores);
+}
+
+@section Head {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        @@media print {
+            .app-sidebar, .app-topbar, .no-print { display: none !important; }
+            .app-main { padding: 0 !important; }
+        }
+    </style>
+}
+
+<div style="max-width: 760px;">
+    <a class="no-print" asp-action="Index" style="text-decoration:none; color:#111;">← Statistik</a>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin: 16px 0;">
+        <h2 style="margin:0;">Lihat Laporan Divisi @Model.DivisionName</h2>
+        <div class="no-print" style="display:flex; gap:6px;">
+            @foreach (var w in new[] { 7, 30, 90 })
+            {
+                <a class="task-chip @(Model.Window == w ? "selected" : "")"
+                   asp-action="Division" asp-route-name="@Model.DivisionName" asp-route-window="@w">@w hari</a>
+            }
+        </div>
+    </div>
+
+    <div class="lu-card" style="margin-bottom:20px;">
+        <h3 class="lu-card-title">Perubahan Mood dari Waktu ke Waktu</h3>
+        @if (Model.AvgScores.Sum() == 0)
+        {
+            <p style="color:#9CA3AF;">Belum ada data mood untuk divisi ini.</p>
+        }
+        else
+        {
+            <canvas id="moodChart" height="100"></canvas>
+        }
+    </div>
+
+    <div class="lu-card" style="margin-bottom:20px;">
+        <h3 class="lu-card-title">Status Karyawan</h3>
+        <canvas id="statusChart" height="220"></canvas>
+        <div style="display:flex; justify-content:center; gap:16px; margin-top:12px; font-size:13px;">
+            <span style="color:#10B981;">● Sehat (@Model.Sehat)</span>
+            <span style="color:#F59E0B;">● Beresiko (@Model.Beresiko)</span>
+            <span style="color:#EF4444;">● Bahaya (@Model.Bahaya)</span>
+        </div>
+    </div>
+
+    <div class="no-print" style="display:flex; gap:12px;">
+        <a asp-action="Index" class="btn-secondary" style="flex:1; text-align:center;">Batalkan</a>
+        <button type="button" class="btn-primary" style="flex:1;" onclick="window.print()">Simpan (PDF/Image)</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        @if (Model.AvgScores.Sum() > 0)
+        {
+            <text>
+            new Chart(document.getElementById('moodChart'), {
+                type: 'line',
+                data: {
+                    labels: @Html.Raw(labels),
+                    datasets: [{
+                        data: @Html.Raw(data),
+                        borderColor: '#7C3AED',
+                        backgroundColor: 'rgba(124, 58, 237, 0.15)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { min: 0, max: 5, ticks: { stepSize: 1 } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            </text>
+        }
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Sehat', 'Beresiko', 'Bahaya'],
+                datasets: [{
+                    data: [@Model.Sehat, @Model.Beresiko, @Model.Bahaya],
+                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444']
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } } }
+        });
+    </script>
+}

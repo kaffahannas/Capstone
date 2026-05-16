@@ -1,0 +1,23 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingReferralViewModel
+@{
+    ViewData["Title"] = "Kode Referral";
+}
+
+<h1 class="onb-title">Punya kode referral perusahaan?</h1>
+<p class="onb-subtitle">Opsional. Bisa kamu isi nanti dari halaman profil.</p>
+
+<form asp-action="ReferralCode" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input asp-for="ReferralCode" class="onb-input" placeholder="Masukkan kode referral (opsional)" />
+    <span asp-validation-for="ReferralCode" class="text-danger"></span>
+
+    <div class="onb-info">
+        Karyawan dari perusahaan mitra LightenUp dapat menggunakan kode referral untuk mengakses layanan tanpa biaya berlangganan.
+    </div>
+
+    <div class="onb-footer">
+        <a asp-action="AppGoals" class="onb-btn onb-btn-secondary">Sebelumnya</a>
+        <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
+    </div>
+</form>

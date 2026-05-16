@@ -1,0 +1,37 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingSleepViewModel
+@{
+    ViewData["Title"] = "Kualitas Tidur";
+    var options = new[]
+    {
+        ("VeryGood", "Sangat Baik (7-8 jam sehari)"),
+        ("Average", "Biasa Saja"),
+        ("Poor", "Kurang Baik (kurang dari 7 jam sehari)"),
+        ("Bad", "Buruk (kurang dari 5 jam sehari)"),
+        ("VeryBad", "Sangat Buruk (tidak bisa tidur dalam beberapa hari)")
+    };
+}
+
+<h1 class="onb-title">Bagaimana kualitas tidur kamu?</h1>
+<p class="onb-subtitle"><strong>Pilih dalam 3 bulan terakhir</strong></p>
+
+<form asp-action="SleepQuality" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <ul class="onb-list">
+        @foreach (var opt in options)
+        {
+            <li>
+                <label>
+                    <input type="radio" asp-for="SleepQuality" value="@opt.Item1" />
+                    @opt.Item2
+                </label>
+            </li>
+        }
+    </ul>
+    <span asp-validation-for="SleepQuality" class="text-danger"></span>
+
+    <div class="onb-footer">
+        <a asp-action="Medication" class="onb-btn onb-btn-secondary">Sebelumnya</a>
+        <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
+    </div>
+</form>

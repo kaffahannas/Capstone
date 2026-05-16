@@ -1,0 +1,48 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingTermsViewModel
+@{
+    ViewData["Title"] = "Syarat dan Ketentuan";
+}
+
+<h1 class="onb-title">Syarat dan Ketentuan</h1>
+<p class="onb-subtitle">Selamat datang di aplikasi LightenUp! Dengan mengakses atau menggunakan aplikasi ini, Anda setuju untuk terikat dengan Syarat dan Ketentuan berikut.</p>
+
+<form asp-action="Terms" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="onb-terms-text">
+        <h3>1. Persyaratan Umum</h3>
+        <ul>
+            <li>Pengguna harus berusia minimal 13 tahun. Pengguna di bawah 18 tahun harus memperoleh izin dari orang tua atau wali.</li>
+            <li>Penggunaan aplikasi ini untuk keperluan pribadi dan tidak boleh digunakan untuk tujuan komersial.</li>
+        </ul>
+
+        <h3>2. Pengumpulan dan Penggunaan Data</h3>
+        <ul>
+            <li>LightenUp mengumpulkan data yang relevan untuk memberikan layanan pelacakan suasana hati dan jurnal kepada pengguna.</li>
+            <li>Data yang Anda masukkan bersifat pribadi dan tidak akan dibagikan kepada pihak ketiga tanpa izin Anda, kecuali diwajibkan oleh hukum atau ketentuan yang berlaku.</li>
+        </ul>
+
+        <h3>3. Privasi dan Keamanan</h3>
+        <ul>
+            <li>Kami mengutamakan keamanan data pengguna dan menerapkan berbagai metode perlindungan. Namun, LightenUp tidak bertanggung jawab atas kebocoran data yang disebabkan oleh kelalaian pihak ketiga di luar kendali kami.</li>
+        </ul>
+
+        <h3>4. Tanggung Jawab Pengguna</h3>
+        <ul>
+            <li>Anda bertanggung jawab atas keamanan akun, kerahasiaan kata sandi, dan semua aktivitas yang terjadi di bawah akun Anda.</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 16px;">
+        <label style="display:flex; gap:10px; align-items:flex-start; font-size:13px;">
+            <input type="checkbox" asp-for="Accepted" style="margin-top:3px;" />
+            <span>Saya telah membaca dan menyetujui Syarat &amp; Ketentuan di atas.</span>
+        </label>
+        <span asp-validation-for="Accepted" class="text-danger"></span>
+    </div>
+
+    <div class="onb-footer">
+        <a asp-action="ReferralCode" class="onb-btn onb-btn-secondary">Sebelumnya</a>
+        <button type="submit" class="onb-btn onb-btn-primary">Saya Setuju</button>
+    </div>
+</form>

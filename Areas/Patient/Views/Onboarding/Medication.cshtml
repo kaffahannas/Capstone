@@ -1,0 +1,39 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingMedicationViewModel
+@{
+    ViewData["Title"] = "Riwayat Obat";
+}
+
+<h1 class="onb-title">Apakah ada riwayat konsumsi obat terkait konseling/terapi dalam 3 bulan terakhir?</h1>
+
+<form asp-action="Medication" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="onb-pill-row">
+        <label class="onb-pill @(Model.HasMedicationHistory == true ? "selected" : "")">
+            <input type="radio" asp-for="HasMedicationHistory" value="true" style="display:none" />
+            Ada
+        </label>
+        <label class="onb-pill @(Model.HasMedicationHistory == false ? "selected" : "")">
+            <input type="radio" asp-for="HasMedicationHistory" value="false" style="display:none" />
+            Tidak Ada
+        </label>
+    </div>
+    <span asp-validation-for="HasMedicationHistory" class="text-danger"></span>
+
+    <div class="onb-footer">
+        <a asp-action="CounselingHistory" class="onb-btn onb-btn-secondary">Sebelumnya</a>
+        <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.onb-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                document.querySelectorAll('.onb-pill').forEach(p => p.classList.remove('selected'));
+                pill.classList.add('selected');
+                pill.querySelector('input').checked = true;
+            });
+        });
+    </script>
+}

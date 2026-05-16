@@ -1,0 +1,109 @@
+@model LightenUp.Web.Models.ViewModels.PsyRequestsViewModel
+@{
+    ViewData["Title"] = "Permintaan HR";
+    Layout = "_LayoutDashboard";
+}
+
+<style>
+    .req-card {
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+    }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab { padding: 6px 16px; border-radius: 999px; border: 1px solid #E5E7EB; text-decoration: none; color: #111; font-size: 13px; }
+    .tab.active { background: #7C3AED; color: #fff; border-color: #7C3AED; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; }
+    .badge.Pending { background: #FEF3C7; color: #B45309; }
+    .badge.Approved { background: #D1FAE5; color: #047857; }
+    .badge.Rejected { background: #FEE2E2; color: #B91C1C; }
+</style>
+
+<div style="padding: 32px;">
+    @if (TempData["success"] is string ok)
+    {
+        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
+    }
+    @if (TempData["error"] is string err)
+    {
+        <div style="background:#FEE2E2; color:#B91C1C; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@err</div>
+    }
+
+    <h1 style="margin: 0 0 16px;">Permintaan dari HR</h1>
+
+    <div class="tabs">
+        <a class="tab @(Model.Tab == "Pending" ? "active" : "")" asp-action="Index" asp-route-tab="Pending">Menunggu</a>
+        <a class="tab @(Model.Tab == "Approved" ? "active" : "")" asp-action="Index" asp-route-tab="Approved">Disetujui</a>
+        <a class="tab @(Model.Tab == "Rejected" ? "active" : "")" asp-action="Index" asp-route-tab="Rejected">Ditolak</a>
+        <a class="tab @(Model.Tab == "All" ? "active" : "")" asp-action="Index" asp-route-tab="All">Semua</a>
+    </div>
+
+    @if (!Model.Items.Any())
+    {
+        <div style="padding: 40px; text-align: center; border: 1px dashed #E5E7EB; border-radius: 12px; color: #6B7280;">
+            <p>Tidak ada permintaan.</p>
+        </div>
+    }
+    else
+    {
+        foreach (var r in Model.Items)
+        {
+            <div class="req-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                        <strong>@r.RequestType</strong> · @r.PatientName
+                        <small style="color:#6B7280; margin-left:8px;">@r.CompanyName · oleh @r.HrName</small>
+                    </div>
+                    <span class="badge @r.Status">@r.Status</span>
+                </div>
+
+                <div style="font-size: 13px; color: #374151; margin-bottom: 8px;">
+                    @if (r.RequestType == "Worksheet")
+                    {
+                        <div><strong>Usulan tugas:</strong> @(r.ProposedTaskName ?? "—")</div>
+                        <div><strong>Usulan deadline:</strong> @(r.ProposedDeadline?.ToString("d MMM yyyy", new System.Globalization.CultureInfo("id-ID")) ?? "—")</div>
+                    }
+                    else if (r.RequestType == "Schedule")
+                    {
+                        <div><strong>Usulan tanggal:</strong> @(r.ProposedSessionDate?.ToString("d MMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID")) ?? "—")</div>
+                    }
+                    @if (!string.IsNullOrEmpty(r.Notes))
+                    {
+                        <div style="margin-top: 8px;"><strong>Catatan HR:</strong> @r.Notes</div>
+                    }
+                </div>
+
+                @if (r.Status == "Pending")
+                {
+                    <form asp-action="Respond" method="post">
+                        <input type="hidden" name="Id" value="@r.Id" />
+                        <textarea name="Note" rows="2" placeholder="Catatan untuk HR (opsional)..."
+                                  style="width:100%; padding:8px 10px; border:1px solid #E5E7EB; border-radius:6px; font-family:inherit; font-size:13px; margin-bottom: 8px;"></textarea>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="submit" name="Action" value="Reject"
+                                    style="padding: 8px 16px; background: #fff; color: #B91C1C; border: 1px solid #FCA5A5; border-radius: 6px; cursor: pointer;">
+                                Tolak
+                            </button>
+                            <button type="submit" name="Action" value="Approve"
+                                    style="padding: 8px 16px; background: #7C3AED; color: #fff; border: none; border-radius: 6px; cursor: pointer;">
+                                Setujui (buat @r.RequestType)
+                            </button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div style="font-size:12px; color:#6B7280;">
+                        Ditanggapi @r.CreatedAt.ToString("d MMM yyyy HH:mm")
+                        @if (!string.IsNullOrEmpty(r.RespondedNote))
+                        {
+                            <div>"@r.RespondedNote"</div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>

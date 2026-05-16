@@ -1,0 +1,72 @@
+@model LightenUp.Web.Models.ViewModels.HrWorksheetReviewViewModel
+@{
+    ViewData["Title"] = "Tinjau Worksheet";
+    ViewBag.ActiveNav = "Monitoring";
+}
+
+<a asp-action="Index" style="text-decoration:none; color:#111;">← Riwayat Worksheet</a>
+
+<div style="max-width: 720px; margin-top:16px;">
+
+    @if (TempData["success"] is string ok)
+    {
+        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
+    }
+
+    <div class="lu-card" style="margin-bottom:16px;">
+        <div style="font-size:13px; color:#6B7280;">Data Pasien</div>
+        <h3 style="margin:6px 0;">@Model.PatientName</h3>
+        <div style="font-size:13px; color:#6B7280;">
+            Status: <span class="status-badge @(Model.Status.ToLowerInvariant())">@Model.StatusLabel</span>
+        </div>
+    </div>
+
+    <div class="lu-card" style="margin-bottom:16px;">
+        <h3 class="lu-card-title">@Model.TaskName</h3>
+        <p style="color:#6B7280;">@Model.Description</p>
+        <small style="color:#6B7280;">Diajukan: @(Model.SubmittedAt?.ToString("d MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID")) ?? "Belum diajukan")</small>
+
+        <h4 style="margin: 16px 0 8px;">Periksa Tugas</h4>
+        @if (!string.IsNullOrEmpty(Model.ProofImagePath))
+        {
+            <img src="@Model.ProofImagePath" alt="Bukti kegiatan" style="max-width:100%; border-radius:8px;" />
+        }
+        else
+        {
+            <div style="padding:24px; border:1.5px dashed #E5E7EB; border-radius:8px; text-align:center; color:#9CA3AF;">
+                Pasien belum mengunggah bukti kegiatan.
+            </div>
+        }
+
+        <h4 style="margin: 16px 0 8px;">Catatan Pasien</h4>
+        <p style="background:#FAF5FF; padding:10px 14px; border-radius:8px; min-height:40px;">
+            @(string.IsNullOrEmpty(Model.PatientNote) ? "—" : Model.PatientNote)
+        </p>
+
+        @if (!string.IsNullOrEmpty(Model.PsychologistFeedback))
+        {
+            <h4 style="margin: 16px 0 8px;">Umpan Balik Psikolog</h4>
+            <p style="background:#F0F9FF; padding:10px 14px; border-radius:8px;">@Model.PsychologistFeedback</p>
+        }
+    </div>
+
+    <form asp-action="SaveNote" method="post" class="lu-card" style="margin-bottom:16px;">
+        <h3 class="lu-card-title">Beri Catatan</h3>
+        <input type="hidden" name="WorksheetId" value="@Model.WorksheetId" />
+        <textarea name="HrNote" rows="4" class="mood-textarea" placeholder="Tambahkan catatan dari HR...">@Model.HrNote</textarea>
+        <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+            <button type="submit" class="btn-pill">Simpan</button>
+        </div>
+    </form>
+
+    <div style="display:grid; gap:10px;">
+        @if (!string.IsNullOrEmpty(Model.PatientEmail))
+        {
+            <a class="btn-primary" href="mailto:@Model.PatientEmail" style="text-align:center;">Hubungi Karyawan</a>
+        }
+        @if (!string.IsNullOrEmpty(Model.PsychologistEmail))
+        {
+            <a class="btn-primary" href="mailto:@Model.PsychologistEmail" style="text-align:center;">Hubungi Psikolog Terkait</a>
+        }
+    </div>
+</div>

@@ -1,0 +1,100 @@
+@model LightenUp.Web.Models.ViewModels.TaskDetailViewModel
+@using LightenUp.Web.Models.ViewModels
+@{
+    ViewData["Title"] = Model.TaskName;
+    ViewBag.ActiveNav = "Beranda";
+    var indoDeadline = Model.Deadline.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
+}
+
+<a asp-action="Index" style="text-decoration:none; color:#111;">← Tugas Kamu</a>
+
+@if (TempData["error"] is string err)
+{
+    <div style="background:#FEE2E2; color:#B91C1C; padding:10px 14px; border-radius:8px; margin:12px 0;">@err</div>
+}
+
+<!-- ───── Summary ───── -->
+<div class="task-summary-card" style="margin-top:16px;">
+    <h2 style="margin:0 0 6px;">@Model.TaskName</h2>
+    <p style="color:#6B7280; margin:0 0 12px;">@Model.Description</p>
+    <div style="font-size:13px; color:#6B7280;">
+        Status: <strong class="@WorksheetStatus.CssClass(Model.Status)">@Model.StatusLabel</strong>
+        &middot; Deadline: <strong>@indoDeadline</strong>
+        &middot; Oleh: <strong>@Model.PsychologistName</strong>
+    </div>
+</div>
+
+@if (Model.IsLocked)
+{
+    <!-- ───── Read-only completed view ───── -->
+    <div class="lu-card">
+        <h3 class="lu-card-title">Foto Kegiatan</h3>
+        @if (!string.IsNullOrEmpty(Model.ProofImagePath))
+        {
+            <img src="@Model.ProofImagePath" alt="Bukti" style="max-width:100%; border-radius:8px;" />
+        }
+        else
+        {
+            <p style="color:#9CA3AF;">Tidak ada foto.</p>
+        }
+
+        <h3 class="lu-card-title" style="margin-top:20px;">Catatan Kamu</h3>
+        <p>@(Model.Note ?? "—")</p>
+
+        @if (!string.IsNullOrEmpty(Model.PsychologistFeedback))
+        {
+            <h3 class="lu-card-title" style="margin-top:20px;">Umpan Balik Psikolog</h3>
+            <p>@Model.PsychologistFeedback</p>
+        }
+    </div>
+}
+else
+{
+    <!-- ───── Submit panel ───── -->
+    <form asp-action="Submit" method="post" enctype="multipart/form-data" class="task-submit-panel">
+        <input type="hidden" name="WorksheetId" value="@Model.WorksheetId" />
+
+        <h3>Upload Foto Kegiatanmu Disini!</h3>
+        <label class="upload-dropzone" id="dropzone">
+            <input type="file" name="Photo" accept="image/*" id="photoInput" />
+            @if (!string.IsNullOrEmpty(Model.ProofImagePath))
+            {
+                <img src="@Model.ProofImagePath" alt="Foto" id="preview" />
+                <p style="margin:8px 0 0; font-size:12px; color:#6B7280;">Klik untuk mengganti foto.</p>
+            }
+            else
+            {
+                <div class="placeholder" id="placeholder">
+                    <div style="font-size:32px; margin-bottom:8px;">📷</div>
+                    <p>Klik untuk memilih foto<br/><small>JPG, PNG, WEBP, GIF — max 20MB</small></p>
+                </div>
+                <img id="preview" style="display:none;" alt="Foto" />
+            }
+        </label>
+
+        <h3 style="margin-top:16px;">Deskripsikan Perasaanmu</h3>
+        <textarea name="Note" class="mood-textarea" placeholder="Ceritakan bagaimana perasaanmu setelah mengerjakan tugas ini...">@Model.Note</textarea>
+
+        <div style="margin-top:16px;">
+            <button type="submit" class="btn-primary" style="width:100%; padding:14px;">Simpan</button>
+        </div>
+    </form>
+}
+
+@section Scripts {
+    <script>
+        const input = document.getElementById('photoInput');
+        if (input) {
+            input.addEventListener('change', e => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const url = URL.createObjectURL(file);
+                const img = document.getElementById('preview');
+                img.src = url;
+                img.style.display = '';
+                const ph = document.getElementById('placeholder');
+                if (ph) ph.style.display = 'none';
+            });
+        }
+    </script>
+}

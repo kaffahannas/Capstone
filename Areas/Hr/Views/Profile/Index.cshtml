@@ -1,0 +1,79 @@
+@model LightenUp.Web.Models.ViewModels.HrProfileViewModel
+@{
+    ViewData["Title"] = "Profil Saya";
+    ViewBag.ActiveNav = "Profil";
+}
+
+<div style="max-width: 720px;">
+
+    @if (TempData["success"] is string ok)
+    {
+        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:16px;">@ok</div>
+    }
+
+    <div class="profile-header">
+        <span class="profile-avatar-wrap">
+            <img class="profile-avatar"
+                 src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : Model.ProfilePicture)"
+                 alt="Foto profil" />
+            <a asp-action="Edit" class="cam" title="Edit foto">📷</a>
+        </span>
+        <div class="profile-name">HR @Model.CompanyName.ToUpper()</div>
+        <span class="status-badge @(Model.IsActive ? "sehat" : "")">
+            @(Model.IsActive ? "● Aktif" : "● Tidak Aktif")
+        </span>
+    </div>
+
+    <div class="lu-card" style="margin-bottom:24px;">
+        <div style="display:grid; grid-template-columns: 140px 1fr; gap:8px 16px; font-size:14px;">
+            <div style="color:#6B7280;">Full Name</div><div><strong>@Model.FullName</strong></div>
+            <div style="color:#6B7280;">Email</div><div>@Model.Email</div>
+            <div style="color:#6B7280;">Phone Number</div><div>@(Model.Phone ?? "—")</div>
+            <div style="color:#6B7280;">Employee ID</div><div>@(Model.EmployeeId ?? "—")</div>
+            <div style="color:#6B7280;">Divisi</div><div>@(Model.Department ?? "—")</div>
+            <div style="color:#6B7280;">Perusahaan</div><div>@Model.CompanyName</div>
+            @if (!string.IsNullOrEmpty(Model.ReferralCode))
+            {
+                <div style="color:#6B7280;">Kode Referral</div>
+                <div><strong style="color:#7C3AED; letter-spacing:1px;">@Model.ReferralCode</strong></div>
+            }
+        </div>
+    </div>
+
+    <div class="lu-card prefs-card" style="margin-bottom:24px;">
+        <h3 class="lu-card-title">Preferensi dan Notifikasi</h3>
+        <div class="prefs-row">
+            <span class="label">Pengingat Untuk Check Mood</span>
+            <label class="toggle"><input type="checkbox" disabled checked="@Model.RemindEmployeeCheck" /><span class="slider"></span></label>
+        </div>
+        <div class="prefs-row">
+            <span class="label">Pengingat Sesi Konseling</span>
+            <label class="toggle"><input type="checkbox" disabled checked="@Model.RemindCounselingSession" /><span class="slider"></span></label>
+        </div>
+        <div class="prefs-row">
+            <span class="label">Notifikasi Karyawan dan Psikolog</span>
+            <label class="toggle"><input type="checkbox" disabled checked="@Model.AllowEmployeePsyNotif" /><span class="slider"></span></label>
+        </div>
+        <div class="prefs-row">
+            <span class="label">Frekuensi Notifikasi</span>
+            <strong>@Model.Frequency</strong>
+        </div>
+        <p style="font-size:12px; color:#6B7280; margin:12px 0 0;">
+            Atur preferensi di halaman <a asp-action="Edit">Edit Profile</a>.
+        </p>
+    </div>
+
+    <h3 style="font-size:14px; margin: 8px 0;">Support</h3>
+    <div class="support-buttons">
+        <a class="support-btn purple" asp-controller="Employees" asp-action="Index">Pengaturan Karyawan</a>
+        <a class="support-btn blue" asp-controller="Reports" asp-action="Index">Laporan Psikolog</a>
+        <a class="support-btn green" asp-controller="Employees" asp-action="Index">Kontak Karyawan</a>
+    </div>
+
+    <div style="display:flex; gap:12px; margin-top:24px;">
+        <a class="btn-secondary" asp-action="Edit" style="flex:1; text-align:center;">Edit Profile</a>
+        <form asp-controller="Account" asp-action="Logout" asp-area="" method="post" style="flex:1;">
+            <button type="submit" style="width:100%; padding:12px; background:#EF4444; color:#fff; border:none; border-radius:999px; font-weight:500; cursor:pointer;">Log Out</button>
+        </form>
+    </div>
+</div>

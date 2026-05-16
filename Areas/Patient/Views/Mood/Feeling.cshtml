@@ -1,0 +1,39 @@
+@model LightenUp.Web.Models.ViewModels.MoodTrackerSessionViewModel
+@using LightenUp.Web.Models.ViewModels
+@{
+    ViewData["Title"] = "Apa yang kamu rasakan";
+    ViewBag.Step = "1/4";
+}
+
+<h2 class="mood-question">Apa yang kamu rasakan hari ini?</h2>
+<p class="mood-helper">Pilih kategori dibawah ini...</p>
+
+<form asp-action="Feeling" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mood-grid">
+        @foreach (var f in MoodOptions.Feelings)
+        {
+            <label class="mood-card @f.Value.ToLowerInvariant() @(Model.Feeling == f.Value ? "selected" : "")">
+                <input type="radio" asp-for="Feeling" value="@f.Value" style="display:none" />
+                <span class="emoji">@f.Emoji</span>
+                <span class="name">@f.Label</span>
+            </label>
+        }
+    </div>
+    <span asp-validation-for="Feeling" class="text-danger"></span>
+
+    <button type="submit" class="btn-primary" style="width:100%; padding:14px;">Berikutnya</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.mood-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.mood-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                card.querySelector('input').checked = true;
+            });
+        });
+    </script>
+}

@@ -1,0 +1,168 @@
+﻿@model LightenUp.Web.Models.ViewModels.OnboardingStep2ViewModel
+
+@{
+    ViewData["Title"] = "Langkah 2";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Hanya memanggil CSS Eksternal (Lebih bersih!) -->
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+
+    <div class="auth-wrapper">
+        <div class="auth-container register-card">
+            
+            <a href="/Onboarding/Step1" class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#1f2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+
+            <!-- Logo -->
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" style="width: 28px; height: auto;" onerror="this.style.display='none'" />
+                <span style="font-weight: 700; color: #a476f5; font-size: 20px; letter-spacing: -0.5px;">LightenUp</span>
+            </div>
+
+            <h1 class="auth-title" style="font-size: 24px;">Langkah 2: Status<br />Akademik</h1>
+            
+            <!-- Indikator Progres (66.66% untuk Step 2) -->
+            <div class="progress-container" style="width: 100%; height: 8px; background-color: #E5E7EB; border-radius: 10px; margin-top: 12px; margin-bottom: 25px; overflow: hidden;">
+                <div class="progress-bar" style="height: 100%; background-color: var(--primary-purple); width: 66.66%; border-radius: 10px;"></div>
+            </div>
+
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 25px;">
+                Silakan masukkan informasi akademis Anda.
+            </p>
+
+            <form asp-action="Step2" method="post" enctype="multipart/form-data">
+                
+                <div class="form-group">
+                    <label asp-for="LastDegree" class="form-label">Gelar Terakhir</label>
+                    <select asp-for="LastDegree" class="form-control-custom" style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M6 9L12 15L18 9\' stroke=\'%236B7280\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>'); background-repeat: no-repeat; background-position: right 0px center; background-size: 20px; cursor: pointer;">
+                        <option value="">Pilih kategori</option>
+                        <option value="S1 Psikologi">S1 Psikologi</option>
+                        <option value="S2 Magister Profesi Psikologi">S2 Magister Profesi Psikologi</option>
+                        <option value="S2 Magister Sains Psikologi">S2 Magister Sains Psikologi</option>
+                        <option value="S3 Psikologi">S3 Psikologi</option>
+                    </select>
+                    <span asp-validation-for="LastDegree" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="University" class="form-label">Universitas Asal</label>
+                    <input asp-for="University" class="form-control-custom" placeholder="Contoh: Universitas Indonesia" />
+                    <span asp-validation-for="University" class="text-danger"></span>
+                </div>
+                
+                <div style="margin-top: 30px; margin-bottom: 10px;">
+                    <label class="form-label">Dokumen pendukung</label>
+                </div>
+
+                <!-- Area Upload Dokumen -->
+                <!-- Menggunakan inline flex fallback agar bentuk kotak tetap sempurna meski auth.css belum terupdate -->
+                <label class="upload-area" id="uploadArea" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; box-sizing: border-box; border: 2px dashed #D1D5DB; border-radius: 12px; padding: 40px 20px; background-color: #F9FAFB; cursor: pointer; transition: all 0.3s ease; margin-bottom: 15px;">
+                    
+                    <svg id="uploadIcon" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px; margin-bottom: 12px; transition: stroke 0.3s ease;">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg>
+                    
+                    <div class="upload-text" id="uploadText" style="font-size: 14px; font-weight: 600; color: #1f2937; margin-bottom: 4px; text-align: center;">
+                        Upload file
+                    </div>
+                    <div class="upload-subtext" id="uploadSubtext" style="font-size: 12px; color: #6b7280; text-align: center;">
+                        Format JPG/PDF, maksimal 5 MB
+                    </div>
+
+                    <input asp-for="AcademicDocument" type="file" accept="image/jpeg, image/png, application/pdf" style="display: none;" id="fileInput" />
+                </label>
+                
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <span asp-validation-for="AcademicDocument" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-submit">Simpan dan Lanjutnya</button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Script JavaScript untuk Fitur Drag and Drop File -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const uploadIcon = document.getElementById('uploadIcon');
+            const uploadText = document.getElementById('uploadText');
+            const uploadSubtext = document.getElementById('uploadSubtext');
+
+            // Mencegah browser membuka file di tab baru saat di-drag
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+            // Efek visual saat file di-drag masuk ke kotak
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.style.borderColor = '#8b5cf6'; /* Ungu */
+                    uploadArea.style.backgroundColor = '#F5F3FF';
+                    uploadIcon.style.stroke = '#8b5cf6';
+                }, false);
+            });
+
+            // Efek visual saat file batal dimasukkan
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    if(!uploadArea.classList.contains('has-file')) {
+                        uploadArea.style.borderColor = '#D1D5DB';
+                        uploadArea.style.backgroundColor = '#F9FAFB';
+                        uploadIcon.style.stroke = '#9CA3AF';
+                    }
+                }, false);
+            });
+
+            // Memproses file yang di-drop
+            uploadArea.addEventListener('drop', function(e) {
+                let dt = e.dataTransfer;
+                let files = dt.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    updateUI(files[0].name);
+                }
+            }, false);
+
+            // Memproses file yang dipilih melalui klik
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    updateUI(e.target.files[0].name);
+                }
+            });
+
+            // Merubah tampilan kotak menjadi warna hijau sukses
+            function updateUI(fileName) {
+                uploadText.textContent = fileName;
+                uploadText.style.color = '#10B981'; // Hijau
+                uploadSubtext.textContent = 'Dokumen siap diunggah';
+            
+                uploadArea.classList.add('has-file');
+                uploadArea.style.borderColor = '#10B981';
+                uploadArea.style.backgroundColor = '#ECFDF5';
+                uploadIcon.style.stroke = '#10B981';
+            }
+    </script>
+</body>
+</html>

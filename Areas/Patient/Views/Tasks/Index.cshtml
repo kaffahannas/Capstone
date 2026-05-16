@@ -1,0 +1,110 @@
+@model LightenUp.Web.Models.ViewModels.TaskListViewModel
+@using LightenUp.Web.Models.ViewModels
+@{
+    ViewData["Title"] = "Tugas Kamu";
+    ViewBag.ActiveNav = "Beranda";
+
+    var statusChips = new[]
+    {
+        ("Assigned",   "Belum Dikerjakan"),
+        ("InProgress", "Sedang Dikerjakan"),
+        ("Completed",  "Selesai")
+    };
+    var periodChips = new[]
+    {
+        ("HariIni",  "Hari Ini"),
+        ("Mingguan", "Mingguan"),
+        ("Bulanan",  "Bulanan"),
+        ("Tahunan",  "Tahunan")
+    };
+}
+
+<div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+    <span style="font-size:22px;">✏️</span>
+    <h2 style="margin:0; font-size:20px;">Tugas Kamu</h2>
+</div>
+
+<form method="get" id="filterForm">
+    <div class="tasks-toolbar">
+        <label class="task-search">
+            <span class="icon">🔍</span>
+            <input type="search" name="search" placeholder="Cari Tugas..." value="@Model.Search" />
+        </label>
+    </div>
+
+    <p class="onb-subtitle" style="margin-top:0;">Pilih kategori dibawah ini, Anda dapat memilih lebih dari satu</p>
+    <div class="task-chips">
+        @foreach (var c in statusChips)
+        {
+            var selected = Model.Statuses.Contains(c.Item1);
+            <label class="task-chip @(selected ? "selected" : "")">
+                <input type="checkbox" name="status" value="@c.Item1" checked="@selected" style="display:none" onchange="document.getElementById('filterForm').submit()" />
+                @c.Item2
+            </label>
+        }
+        @foreach (var c in periodChips)
+        {
+            var selected = Model.Periods.Contains(c.Item1);
+            <label class="task-chip @(selected ? "selected" : "")">
+                <input type="checkbox" name="period" value="@c.Item1" checked="@selected" style="display:none" onchange="document.getElementById('filterForm').submit()" />
+                @c.Item2
+            </label>
+        }
+    </div>
+</form>
+
+@if (!Model.Items.Any())
+{
+    <div class="dash-card-empty">
+        <p>Tidak ada tugas yang cocok.</p>
+    </div>
+}
+else
+{
+    foreach (var t in Model.Items)
+    {
+        <a class="task-card @WorksheetStatus.CssClass(t.Status)" asp-action="Detail" asp-route-id="@t.WorksheetId">
+            <div>
+                <h4>@t.TaskName</h4>
+                <p class="desc">@t.Description</p>
+                <div class="meta">
+                    <span>Status: <strong>@t.StatusLabel</strong></span>
+                    <span style="margin-left:auto;">@t.PsychologistName</span>
+                </div>
+            </div>
+            <div class="right">
+                <span class="date-tag">@t.DateLabel</span>
+                <span class="badge-dot"></span>
+            </div>
+        </a>
+    }
+
+    @if (Model.HasMore)
+    {
+        <div style="text-align:right; margin-top:16px;">
+            <a class="btn-pill ghost"
+               asp-action="Index"
+               asp-route-search="@Model.Search"
+               asp-route-page="@(Model.Page + 1)"
+               asp-route-status="@string.Join(",", Model.Statuses)"
+               asp-route-period="@string.Join(",", Model.Periods)">
+                Lihat Tugas Lainnya ›
+            </a>
+        </div>
+    }
+}
+
+@section Scripts {
+    <script>
+        // Toggle .selected class on chip click
+        document.querySelectorAll('.task-chip').forEach(chip => {
+            chip.addEventListener('click', e => {
+                if (e.target.tagName === 'INPUT') return;
+                const cb = chip.querySelector('input');
+                cb.checked = !cb.checked;
+                chip.classList.toggle('selected', cb.checked);
+                document.getElementById('filterForm').submit();
+            });
+        });
+    </script>
+}

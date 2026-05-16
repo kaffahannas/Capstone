@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Linq; // Tambahan untuk memanipulasi data database (FirstOrDefault)
 
 namespace LightenUp.Web.Controllers
 {
@@ -13,12 +14,14 @@ namespace LightenUp.Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _config;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
+            _config = config;
         }
 
         // ==========================================
@@ -36,13 +39,33 @@ namespace LightenUp.Web.Controllers
 
                 if (user != null)
                 {
-                    // Psychologist belum di-approve
-                    if (user.RoleType == "Psychologist" && !user.IsApprovedByHR)
+                    // Cek khusus untuk Role Psychologist
+                    if (user.RoleType == "Psychologist")
                     {
-                        ModelState.AddModelError(string.Empty, "Akun Anda sedang ditinjau. Silakan tunggu persetujuan dari HR sebelum dapat masuk.");
-                        return View(model);
+                        // Ambil data detail psikolog dari database
+                        var psychData = _context.Psychologists.FirstOrDefault(p => p.UserId == user.Id);
+
+                        // LOGIKA 1: Cek apakah sudah mengisi onboarding (Patokannya LicenseNumber/SIPP)
+                        bool hasCompletedOnboarding = psychData != null && !string.IsNullOrEmpty(psychData.LicenseNumber);
+
+                        if (!hasCompletedOnboarding)
+                        {
+                            // Belum isi biodata onboarding -> Izinkan login sementara, lempar ke Welcome Onboarding
+                            var loginOnboardingResult = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                            if (loginOnboardingResult.Succeeded)
+                            {
+                                return RedirectToAction("Welcome", "Onboarding");
+                            }
+                        }
+                        // LOGIKA 2: Sudah isi biodata TAPI belum di-approve HR -> TOLAK LOGIN
+                        else if (!user.IsApprovedByHR)
+                        {
+                            ModelState.AddModelError(string.Empty, "Biodata sudah diterima. Silakan tunggu persetujuan dari HR sebelum dapat mengakses Dashboard.");
+                            return View(model);
+                        }
                     }
 
+                    // Jika Patient, Admin, atau Psikolog yang SUDAH isi data & SUDAH di-approve
                     var result = await _signInManager.PasswordSignInAsync(
                         model.Email,
                         model.Password,
@@ -52,13 +75,60 @@ namespace LightenUp.Web.Controllers
 
                     if (result.Succeeded)
                     {
-                        // 🔥 ADMIN CHECK
+                        // ─── Cross-host guard ───
+                        // HR users must log in on the HR host; everyone else on the patient host.
+                        var hrHost = _config["Site:HrHost"];
+                        var patientHost = _config["Site:PatientHost"];
+                        var currentHost = HttpContext.Request.Host.ToString();
+                        bool isHrAccount = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
+                        bool onHrHost = !string.IsNullOrEmpty(hrHost) && currentHost.Equals(hrHost, StringComparison.OrdinalIgnoreCase);
+                        bool onPatientHost = !string.IsNullOrEmpty(patientHost) && currentHost.Equals(patientHost, StringComparison.OrdinalIgnoreCase);
+
+                        if (isHrAccount && onPatientHost && !string.IsNullOrEmpty(hrHost))
+                        {
+                            await _signInManager.SignOutAsync();
+                            ModelState.AddModelError(string.Empty,
+                                $"Akun HR harus login melalui situs HR. Buka https://{hrHost}/ kemudian masuk lagi.");
+                            return View(model);
+                        }
+                        if (!isHrAccount && onHrHost && !string.IsNullOrEmpty(patientHost))
+                        {
+                            await _signInManager.SignOutAsync();
+                            ModelState.AddModelError(string.Empty,
+                                $"Akun ini bukan akun HR. Silakan login di https://{patientHost}/");
+                            return View(model);
+                        }
+
+                        // Admin → Admin dashboard
                         if (await _userManager.IsInRoleAsync(user, "Admin"))
                         {
                             return RedirectToAction("Dashboard", "Admin");
                         }
 
-                        return RedirectToAction("Index", "Home");
+                        // HR → resume onboarding if incomplete, else home
+                        if (isHrAccount)
+                        {
+                            var hr = _context.HrStaffs.FirstOrDefault(h => h.UserId == user.Id);
+                            if (hr == null || hr.OnboardingCompletedAt == null)
+                            {
+                                return RedirectToAction("Welcome", "Onboarding", new { area = "Hr" });
+                            }
+                            return RedirectToAction("Index", "Home", new { area = "Hr" });
+                        }
+
+                        // Patient → resume onboarding if incomplete, else dashboard
+                        if (user.RoleType == "Patient")
+                        {
+                            var patient = _context.Patients.FirstOrDefault(p => p.UserId == user.Id);
+                            if (patient == null || patient.OnboardingCompletedAt == null)
+                            {
+                                return RedirectToAction("Welcome", "Onboarding", new { area = "Patient" });
+                            }
+                            return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
+                        }
+
+                        // Psychologist → existing flow (root Psychologist controller)
+                        return RedirectToAction("Index", "Psychologist");
                     }
                 }
 
@@ -79,7 +149,7 @@ namespace LightenUp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (model.AccountType != "Patient" && model.AccountType != "Psychologist")
+                if (model.AccountType != "Patient" && model.AccountType != "Psychologist" && model.AccountType != "HR")
                 {
                     ModelState.AddModelError("", "Jenis akun tidak valid.");
                     return View(model);
@@ -177,11 +247,25 @@ namespace LightenUp.Web.Controllers
 
                     if (registerData.AccountType == "Patient")
                     {
-                        _context.Patients.Add(new Patient { UserId = user.Id });
+                        var newPatient = new Patient { UserId = user.Id };
+                        _context.Patients.Add(newPatient);
+                        await _context.SaveChangesAsync();
+
+                        // Default notification preferences for the new patient
+                        _context.PatientNotificationPreferences.Add(new PatientNotificationPreference
+                        {
+                            PatientId = newPatient.PatientId
+                            // Other fields use model defaults (all toggles on, 09:00)
+                        });
                     }
                     else if (registerData.AccountType == "Psychologist")
                     {
                         _context.Psychologists.Add(new Psychologist { UserId = user.Id });
+                    }
+                    else if (registerData.AccountType == "HR")
+                    {
+                        _context.HrStaffs.Add(new HrStaff { UserId = user.Id });
+                        // HrNotificationPreference is created during onboarding completion.
                     }
 
                     await _context.SaveChangesAsync();
@@ -206,6 +290,17 @@ namespace LightenUp.Web.Controllers
         public IActionResult RegistrationSuccess()
         {
             return View();
+        }
+
+        // ==========================================
+        // 6. LOGOUT
+        // ==========================================
+        [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login");
         }
     }
 }

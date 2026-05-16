@@ -1,0 +1,78 @@
+@using Microsoft.AspNetCore.Identity
+@using LightenUp.Web.Models
+@using LightenUp.Web.Data
+@using Microsoft.EntityFrameworkCore
+@inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext DbContext
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var fullName = user?.FullName ?? "HR";
+    var hr = user == null ? null : await DbContext.HrStaffs
+        .Include(h => h.Company)
+        .FirstOrDefaultAsync(h => h.UserId == user.Id);
+    var companyName = hr?.Company?.Name ?? "";
+    var active = ViewBag.ActiveNav as string ?? "Beranda";
+
+    // Time-of-day greeting in Bahasa
+    var hour = DateTime.Now.Hour;
+    var greeting = hour switch
+    {
+        >= 4 and < 11 => "Selamat pagi",
+        >= 11 and < 15 => "Selamat siang",
+        >= 15 and < 19 => "Selamat sore",
+        _ => "Selamat malam"
+    };
+}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp HR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/patient.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="brand">
+                <span class="brand-mark">L</span>
+                <span class="brand-name">LightenUp <small style="display:block; font-size:11px; color:#6B7280;">HR Console</small></span>
+            </div>
+
+            <nav class="side-nav">
+                <a class="side-nav-item @(active == "Beranda" ? "active" : "")" asp-controller="Home" asp-action="Index"><span class="ico">🏠</span><span>Beranda</span></a>
+                <a class="side-nav-item @(active == "Klien" ? "active" : "")" asp-controller="Employees" asp-action="Index"><span class="ico">👥</span><span>Klien</span></a>
+                <a class="side-nav-item @(active == "Statistik" ? "active" : "")" asp-controller="Statistik" asp-action="Index"><span class="ico">📊</span><span>Statistik</span></a>
+                <a class="side-nav-item @(active == "Monitoring" ? "active" : "")" asp-controller="Worksheets" asp-action="Index"><span class="ico">📋</span><span>Monitoring</span></a>
+                <a class="side-nav-item @(active == "Profil" ? "active" : "")" asp-controller="Profile" asp-action="Index"><span class="ico">👤</span><span>Profil</span></a>
+            </nav>
+
+            <form asp-controller="Account" asp-action="Logout" asp-area="" method="post" class="side-nav-logout">
+                <button type="submit" class="logout-btn">Keluar</button>
+            </form>
+        </aside>
+
+        <main class="app-main">
+            <header class="app-topbar">
+                <div>
+                    <h2 class="greeting">@greeting, @fullName 👋</h2>
+                    @if (!string.IsNullOrEmpty(companyName))
+                    {
+                        <small style="color:#6B7280;">HR @companyName</small>
+                    }
+                </div>
+                <button type="button" class="bell-btn" title="Notifikasi (segera hadir)">🔔</button>
+            </header>
+
+            <div class="app-content">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

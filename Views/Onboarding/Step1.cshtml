@@ -1,0 +1,195 @@
+﻿@model LightenUp.Web.Models.ViewModels.OnboardingStep1ViewModel
+
+@{
+    ViewData["Title"] = "Langkah 1";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <style>
+            /* Desain Khusus untuk Kotak Upload (Diperbagus) */
+            .upload-area {
+                border: 2px dashed #CBD5E1;
+                border-radius: 16px;
+                padding: 50px 20px;
+                text-align: center;
+                background-color: #F8FAFC;
+                cursor: pointer;
+                transition: all 0.2s ease-in-out;
+                position: relative;
+                margin-bottom: 25px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 200px;
+            }
+
+                /* Efek saat kursor di atas kotak atau saat file di-drag */
+                .upload-area:hover, .upload-area.dragover {
+                    border-color: var(--primary-purple);
+                    background-color: #F3F0FF;
+                }
+
+            /* Ikon dokumen upload */
+            .upload-icon {
+                color: #94A3B8;
+                margin-bottom: 16px;
+                width: 48px;
+                height: 48px;
+                transition: color 0.2s ease-in-out;
+            }
+
+            .upload-area:hover .upload-icon, .upload-area.dragover .upload-icon {
+                color: var(--primary-purple);
+            }
+
+            /* Kondisi ketika file sudah berhasil dipilih/dimasukkan */
+            .upload-area.has-file {
+                border-color: #10B981; /* Warna hijau */
+                background-color: #ECFDF5;
+            }
+
+                .upload-area.has-file .upload-icon {
+                    color: #10B981;
+                }
+
+            /* Progress Bar Sederhana */
+            .progress-container {
+                width: 100%;
+                height: 8px;
+                background-color: #E5E7EB;
+                border-radius: 10px;
+                margin-bottom: 30px;
+                overflow: hidden;
+            }
+
+            .progress-bar {
+                height: 100%;
+                background-color: var(--primary-purple);
+                width: 33.33%; /* Step 1 dari 3 */
+                border-radius: 10px;
+            }
+    </style>
+</head>
+<body class="auth-page">
+
+    <div class="auth-wrapper">
+        <div class="auth-container register-card">
+            
+            <a href="/Onboarding/Welcome" class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#1f2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+
+            <!-- Logo Memanggil File Gambar .ico -->
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" style="width: 38px; height: auto;" onerror="this.style.display='none'" />
+                <span style="font-weight: 700; color: #a476f5; font-size: 24px; letter-spacing: -0.5px;">LightenUp</span>
+            </div>
+
+            <h1 class="auth-title" style="font-size: 22px;">Langkah 1: Masukkan<br />Foto Diri</h1>
+            
+            <!-- Indikator Progres -->
+            <div class="progress-container mt-3">
+                <div class="progress-bar"></div>
+            </div>
+
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 25px;">
+                Catatan: Pastikan foto yang dilampirkan adalah foto yang bersifat formal & terlihat profesional, untuk menjaga kredibilitas penyedia layanan psikologi.
+            </p>
+
+            <form asp-action="Step1" method="post" enctype="multipart/form-data">
+                
+                <!-- Area Upload (Bisa di-klik atau Drag & Drop) -->
+                <label class="upload-area" id="uploadArea">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <polyline points="9 15 12 12 15 15"></polyline>
+                    </svg>
+                    
+                    <div style="font-size: 15px; font-weight: 600; color: var(--text-dark); margin-bottom: 6px;" id="uploadText">
+                        Upload file
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-muted);" id="uploadSubtext">
+                        Format JPG/PNG, maksimal 2MB
+                    </div>
+
+                    <!-- Input tersembunyi -->
+                    <input asp-for="ProfilePhoto" type="file" accept="image/jpeg, image/png" style="display: none;" id="fileInput" />
+                </label>
+                
+                <span asp-validation-for="ProfilePhoto" class="text-danger mb-3" style="text-align:center; display:block;"></span>
+
+                <button type="submit" class="btn-submit" style="margin-top: 10px;">Simpan dan Lanjutnya</button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Script JavaScript untuk Drag & Drop dan Update Teks -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            // Mematikan efek default browser saat file ditarik ke layar
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Tambah/Hapus efek highlight saat file diarahkan ke kotak
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+            });
+
+            // Menangkap file saat di-drop
+            uploadArea.addEventListener('drop', function(e) {
+                let dt = e.dataTransfer;
+                let files = dt.files;
+            
+                if (files.length > 0) {
+                    fileInput.files = files; // Memasukkan file yang di-drop ke input form
+                    updateUI(files[0].name);
+                }
+            }, false);
+
+            // Menangkap file saat diklik biasa (pilih dari folder)
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    updateUI(e.target.files[0].name);
+                }
+            });
+
+            // Fungsi memperbarui tampilan setelah file dimasukkan
+            function updateUI(fileName) {
+                document.getElementById('uploadText').textContent = fileName;
+                document.getElementById('uploadText').style.color = '#10B981'; // Hijau
+                document.getElementById('uploadSubtext').textContent = 'File siap diunggah';
+                uploadArea.classList.add('has-file');
+            }
+    </script>
+</body>
+</html>

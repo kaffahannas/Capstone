@@ -1,0 +1,248 @@
+﻿@model LightenUp.Web.Controllers.PsychologistDashboardViewModel
+
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Dashboard Psikolog";
+}
+
+<div class="dashboard-header">
+    <div>
+        <h1 class="text-header">Selamat pagi, @Model.PsychologistName 👋</h1>
+        <p class="text-subtitle">Berikut adalah ringkasan aktivitas, daftar client, dan mitra perusahaan Anda.</p>
+    </div>
+</div>
+
+<div class="summary-grid">
+    <div class="summary-card">
+        <div class="summary-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+        </div>
+       
+        <div>
+            <h3 style="margin: 0; font-size: 28px; font-weight: 700; color: var(--text-dark);">@Model.TotalClients</h3>
+            <p style="margin: 0; font-size: 14px; color: var(--text-muted);">Total Client Aktif</p>
+        </div>
+    </div>
+</div>
+
+<div class="patient-list-container" style="margin-bottom: 40px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0; font-size: 18px; color: var(--text-dark);">Daftar Client Aktif</h2>
+        
+        <div style="display: flex; gap: 12px;">
+            <div style="display: flex; align-items: center; background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; width: 200px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="margin-right: 8px;">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Cari client..." style="border: none; outline: none; width: 100%; font-size: 13px;" />
+            </div>
+            
+            <button style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; border: 1px solid var(--border-color); background: white; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                Filter
+            </button>
+
+            <button onclick="openAddClientModal()" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; border: none; background: var(--primary-purple); color: white; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Tambah Client
+            </button>
+        </div>
+    </div>
+
+    @if (Model.Patients == null || Model.Patients.Count == 0)
+    {
+        <div style="text-align: center; padding: 30px 0; color: var(--text-muted);">
+            <p>Belum ada data pasien yang terdaftar.</p>
+        </div>
+    }
+    else
+    {
+        @foreach (var patient in Model.Patients)
+        {
+            <div class="patient-card">
+                <div class="patient-info">
+                    <div class="avatar">
+                        @(patient.FullName.Length > 0 ? patient.FullName.Substring(0, 1).ToUpper() : "?")
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; font-size: 16px; color: var(--text-dark);">@patient.FullName</h3>
+                        <p style="margin: 0; font-size: 13px; color: var(--text-muted);">
+                            @patient.Gender • Aktif sejak @patient.JoinedDate.ToString("dd MMM yyyy")
+                        </p>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 24px;">
+                    <span class="status-badge status-@(patient.Status?.ToLower() ?? "sehat")">
+                        @patient.Status
+                    </span>
+                    <a href="/Psychologist/PatientDetail/@patient.PatientId" style="padding: 8px 16px; border-radius: 8px; background: var(--light-purple); color: var(--primary-purple); text-decoration: none; font-size: 13px; font-weight: 600;">
+                        Lihat Detail
+                    </a>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="margin: 0; font-size: 18px; color: var(--text-dark);">Perusahaan Mitra</h2>
+    <button onclick="openAddCompanyModal()" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--primary-purple); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Tambah Perusahaan
+    </button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+    
+    @if (Model.PartnerCompanies != null && Model.PartnerCompanies.Any())
+    {
+        @foreach (var company in Model.PartnerCompanies)
+        {
+            <div class="detail-card" style="cursor: pointer; padding: 20px; transition: 0.2s; border: 1px solid var(--border-color); margin-bottom: 0;"
+                 onclick="window.location.href='/Psychologist/CompanyDetail?companyName=@Uri.EscapeDataString(company.Name)'"
+                 onmouseover="this.style.borderColor='var(--primary-purple)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--light-purple); color: var(--primary-purple); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">
+                        @(string.IsNullOrEmpty(company.Name) ? "?" : company.Name.Substring(0, 1).ToUpper())
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; font-size: 16px; color: var(--text-dark);">@company.Name</h3>
+                        <p style="margin: 0; font-size: 13px; color: var(--text-muted);">Mitra Terverifikasi</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <span class="status-badge status-sehat" style="font-size: 11px;">Analitik Segera Hadir</span>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p style="font-size: 14px; color: var(--text-muted);">Belum ada perusahaan mitra yang menangani client Anda.</p>
+    }
+
+</div>
+
+<div class="modal-overlay" id="addCompanyModal">
+    <div class="modal-container" style="max-width: 450px;">
+        <div class="modal-header">
+            <h2 class="modal-title">Hubungkan Kemitraan</h2>
+            <button class="close-btn" onclick="closeAddCompanyModal()">&times;</button>
+        </div>
+        
+        <form asp-action="JoinCompany" method="post" style="padding: 10px 0;">
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Masukkan Kode Referral yang diberikan oleh HR Perusahaan untuk membuka akses database karyawan mereka.</p>
+            
+            <div class="form-group">
+                <label class="form-label">Kode Referral Perusahaan</label>
+                <input type="text" name="referralCode" class="form-control" placeholder="Contoh: LIGHTEN-B2B-X1" required style="text-transform: uppercase;" />
+            </div>
+            
+            <div class="modal-footer" style="margin-top: 30px;">
+                <button type="button" class="btn-outline" onclick="closeAddCompanyModal()">Batalkan</button>
+                <button type="submit" class="btn-fill">Hubungkan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-overlay" id="addClientModal">
+    <div class="modal-container" style="max-width:550px; padding: 0;">
+        <div class="modal-header" style="padding: 24px 24px 10px 24px;">
+            <h2 class="modal-title" style="margin: 0; font-size: 18px; color: var(--text-dark);">Daftar Client Tersedia</h2>
+            <button class="close-btn" onclick="closeAddClientModal()" style="background:transparent; border:none; font-size:20px; cursor:pointer;">&times;</button>
+        </div>
+        
+        <div style="padding: 0 24px 16px 24px; border-bottom: 1px solid var(--border-color);">
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; display: block;">Filter berdasarkan Kategori:</label>
+            <select id="clientFilterSelect" onchange="filterClients()" class="form-control" style="background: white; padding: 10px;">
+                <option value="all">Semua Kategori</option>
+                <option value="null">Publik (B2C)</option>
+                @if (Model.PartnerCompanies != null)
+                {
+                    @foreach (var comp in Model.PartnerCompanies)
+                    {
+                        <option value="@comp.CompanyId">Karyawan @comp.Name (B2B)</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div style="padding: 16px 24px 24px 24px; max-height: 350px; overflow-y: auto;" id="clientListContainer">
+            @if (Model.UnassignedPatients != null && Model.UnassignedPatients.Any())
+            {
+                @foreach (var unassigned in Model.UnassignedPatients)
+                {
+                    <div class="unassigned-item" data-companyid="@(unassigned.CompanyId?.ToString() ?? "null")" style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding: 12px 0;">
+                        
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--light-purple); color: var(--primary-purple); display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                @(unassigned.FullName.Length > 0 ? unassigned.FullName.Substring(0, 1).ToUpper() : "?")
+                            </div>
+                            <div>
+                                <h4 style="margin:0; font-size: 14px; color: var(--text-dark);">@unassigned.FullName</h4>
+                                <p style="margin:0; font-size:11px; font-weight: 600; color: var(--primary-purple);">
+                                    <span style="display:inline-block; padding:2px 8px; background:#F3E8FF; border-radius:12px;">@unassigned.CompanyName</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <form asp-action="AssignClient" asp-controller="Psychologist" method="post">
+                            <input type="hidden" name="patientId" value="@unassigned.PatientId" />
+                            <button type="submit" style="padding:8px 16px; background:var(--primary-purple); color:white; border:none; border-radius:8px; cursor:pointer; font-size: 12px; font-weight: 600;">Tambahkan</button>
+                        </form>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="text-align:center; padding: 20px;">
+                    <p style="color:var(--text-muted); font-size: 13px;">Tidak ada client yang tersedia saat ini.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fungsi untuk Filter Daftar Client (Live / Instan)
+    function filterClients() {
+        var selectedValue = document.getElementById("clientFilterSelect").value;
+        var items = document.querySelectorAll(".unassigned-item");
+        
+        items.forEach(function(item) {
+            var itemCompanyId = item.getAttribute("data-companyid");
+            if (selectedValue === "all" || itemCompanyId === selectedValue) {
+                item.style.display = "flex";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const modalAddCompany = document.getElementById("addCompanyModal");
+        window.openAddCompanyModal = function() { if(modalAddCompany) modalAddCompany.classList.add("active"); }
+        window.closeAddCompanyModal = function() { if(modalAddCompany) modalAddCompany.classList.remove("active"); }
+
+        const modalAddClient = document.getElementById("addClientModal");
+        window.openAddClientModal = function() { if(modalAddClient) modalAddClient.classList.add("active"); }
+        window.closeAddClientModal = function() { if(modalAddClient) modalAddClient.classList.remove("active"); }
+    });
+</script>

@@ -1,0 +1,37 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingAppGoalsViewModel
+@{
+    ViewData["Title"] = "Tujuan Penggunaan";
+    var goals = new[]
+    {
+        ("MoodTracking", "Melakukan tracking mood"),
+        ("Journaling", "Mengidentifikasi kebiasaan sehari-hari melalui journaling"),
+        ("PersonalGoals", "Menyesuaikan goal pribadi"),
+        ("Unsure", "Belum tahu")
+    };
+}
+
+<h1 class="onb-title">Apa tujuan kamu menggunakan LightenUp?</h1>
+<p class="onb-subtitle"><strong>Pilih tujuan penggunaan aplikasi</strong></p>
+
+<form asp-action="AppGoals" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <ul class="onb-list">
+        @foreach (var g in goals)
+        {
+            <li>
+                <label>
+                    <input type="checkbox" name="AppGoals" value="@g.Item1"
+                           checked="@(Model.AppGoals.Contains(g.Item1))" />
+                    @g.Item2
+                </label>
+            </li>
+        }
+    </ul>
+    <span asp-validation-for="AppGoals" class="text-danger"></span>
+
+    <div class="onb-footer">
+        <a asp-action="SleepQuality" class="onb-btn onb-btn-secondary">Sebelumnya</a>
+        <button type="submit" class="onb-btn onb-btn-primary">Kirim</button>
+    </div>
+</form>

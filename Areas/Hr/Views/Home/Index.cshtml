@@ -1,0 +1,156 @@
+@model LightenUp.Web.Models.ViewModels.HrDashboardViewModel
+@{
+    ViewData["Title"] = "Beranda";
+    ViewBag.ActiveNav = "Beranda";
+}
+
+<div style="max-width: 760px;">
+
+    @* ─── Active count + 3 status cards ─── *@
+    <h3 style="font-size:14px; color:#6B7280; margin: 4px 0;">Client aktif</h3>
+    <div style="font-size: 28px; font-weight: 600; margin-bottom: 16px;">
+        <span style="font-size:22px;">👥</span> @Model.ActiveCount orang
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom:20px;">
+        <div class="lu-card" style="text-align:center;">
+            <div style="font-size:32px;">✅</div>
+            <div style="font-size:24px; font-weight:700; color:#047857;">@Model.SehatCount</div>
+            <div style="font-size:13px; color:#6B7280;">Sehat</div>
+        </div>
+        <div class="lu-card" style="text-align:center;">
+            <div style="font-size:32px;">⚠️</div>
+            <div style="font-size:24px; font-weight:700; color:#B45309;">@Model.BeresikoCount</div>
+            <div style="font-size:13px; color:#6B7280;">Beresiko</div>
+        </div>
+        <div class="lu-card" style="text-align:center;">
+            <div style="font-size:32px;">🔴</div>
+            <div style="font-size:24px; font-weight:700; color:#B91C1C;">@Model.BahayaCount</div>
+            <div style="font-size:13px; color:#6B7280;">Bahaya</div>
+        </div>
+    </div>
+
+    @* ─── Bahaya banner ─── *@
+    @if (Model.ShowBahayaBanner)
+    {
+        <div style="background:#FEE2E2; border:1px solid #FCA5A5; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <div style="color:#B91C1C;">
+                <span style="font-size:18px; margin-right:8px;">⚠️</span>
+                <strong>Ada @Model.BahayaCount karyawan dalam kondisi bahaya!</strong>
+            </div>
+            <a class="btn-pill" asp-controller="Employees" asp-action="Index" asp-route-status="Bahaya" style="background:#fff; color:#B91C1C;">
+                Segera Laporkan Ke Psikolog
+            </a>
+        </div>
+    }
+
+    @* ─── Search + filters ─── *@
+    <form method="get" asp-controller="Employees" asp-action="Index" id="searchForm">
+        <div style="position:relative; margin-bottom:12px;">
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#6B7280;">🔍</span>
+            <input type="search" name="search" placeholder="Cari Client...." autocomplete="off"
+                   id="searchInput"
+                   style="width:100%; padding:12px 14px 12px 40px; border:1px solid #E5E7EB; border-radius:12px; font-family:inherit; font-size:14px;" />
+
+            @* Dropdown for live-filter suggestions *@
+            <div id="searchResults" style="display:none; position:absolute; top:48px; left:0; right:0; background:#fff; border:1px solid #E5E7EB; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.05); z-index:20; max-height:280px; overflow-y:auto;"></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:20px;">
+            <select name="division" class="onb-select">
+                <option value="">Semua Divisi</option>
+                @foreach (var d in Model.Divisions)
+                {
+                    <option value="@d">@d</option>
+                }
+            </select>
+            <select name="status" class="onb-select">
+                <option value="">Semua Status</option>
+                <option value="Sehat">Sehat</option>
+                <option value="Beresiko">Beresiko</option>
+                <option value="Bahaya">Bahaya</option>
+            </select>
+        </div>
+    </form>
+
+    @* ─── Client summary card ─── *@
+    <div class="lu-card" style="text-align:center; margin-bottom:20px;">
+        <p style="margin: 0 0 12px;">Anda mempunyai <strong>@Model.ActiveCount client aktif</strong></p>
+        <a class="btn-primary" asp-controller="Employees" asp-action="Add">+ Tambah client baru</a>
+        @if (!string.IsNullOrEmpty(Model.CompanyReferralCode))
+        {
+            <div style="font-size:12px; color:#6B7280; margin-top:8px;">
+                Kode referral perusahaan: <strong style="color:#7C3AED; letter-spacing:1px;">@Model.CompanyReferralCode</strong>
+            </div>
+        }
+    </div>
+
+    @* ─── Monitor buttons ─── *@
+    <div style="display:grid; gap:10px; margin-bottom:20px;">
+        <a class="btn-primary" asp-controller="Schedules" asp-action="Index" style="text-align:center;">Monitor Jadwal Client</a>
+        <a class="btn-primary" asp-controller="Worksheets" asp-action="Index" style="text-align:center;">Monitor Worksheet Client</a>
+    </div>
+
+    @* ─── Psy buttons ─── *@
+    <div style="display:grid; gap:10px;">
+        <a class="btn-primary" asp-controller="Psychologists" asp-action="Index" style="text-align:center; padding:14px;">
+            <span style="margin-right:8px;">👤</span> Cari Psikolog
+        </a>
+        @if (!string.IsNullOrEmpty(Model.PrimaryPsychologistEmail))
+        {
+            <a class="btn-primary" href="mailto:@Model.PrimaryPsychologistEmail" style="text-align:center; padding:14px;">
+                <span style="margin-right:8px;">✉️</span> Kontak Psikolog
+            </a>
+        }
+        else
+        {
+            <button type="button" class="btn-primary" disabled style="text-align:center; padding:14px; opacity:0.5; cursor:not-allowed;">
+                <span style="margin-right:8px;">✉️</span> Kontak Psikolog (belum ada)
+            </button>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Preloaded client list for live search
+        const clients = @Html.Raw(Json.Serialize(Model.ClientsPreview));
+        const input = document.getElementById('searchInput');
+        const results = document.getElementById('searchResults');
+
+        input.addEventListener('input', () => {
+            const q = input.value.trim().toLowerCase();
+            if (q.length < 2) { results.style.display = 'none'; return; }
+
+            const matches = clients
+                .filter(c => c.fullName.toLowerCase().includes(q) || (c.department || '').toLowerCase().includes(q))
+                .slice(0, 5);
+
+            if (matches.length === 0) {
+                results.innerHTML = '<div style="padding:12px; color:#6B7280;">Tidak ada hasil.</div>';
+            } else {
+                results.innerHTML = matches.map(c => `
+                    <a href="/Hr/Employees/Detail/${c.patientId}"
+                       style="display:flex; padding:10px 14px; text-decoration:none; color:#111; border-bottom:1px solid #F3F4F6; align-items:center; gap:10px;">
+                        <span style="flex:1;">
+                            <strong style="display:block;">${c.fullName}</strong>
+                            <small style="color:#6B7280;">${c.department || '—'}</small>
+                        </span>
+                        <span style="font-size:11px; padding:2px 8px; border-radius:999px; background:#EDE9FE; color:#7C3AED;">${c.status}</span>
+                    </a>
+                `).join('');
+            }
+            results.style.display = '';
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#searchForm')) results.style.display = 'none';
+        });
+
+        // Submit search on Enter
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('searchForm').submit();
+        });
+    </script>
+}

@@ -1,0 +1,23 @@
+@model LightenUp.Web.Models.ViewModels.HrOnboardingPhotoViewModel
+@{
+    ViewData["Title"] = "Foto Diri";
+}
+
+<h1 class="onb-title">Langkah 1: Masukkan Foto Diri</h1>
+<p class="onb-subtitle">Pastikan foto yang dilampirkan adalah foto yang bersifat formal &amp; terlihat professional, untuk menjaga kredibilitas penyedia layanan psikologi.</p>
+
+<form asp-action="Photo" method="post" enctype="multipart/form-data" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <label style="display:block; padding:30px; border:1.5px dashed #C4B5FD; border-radius:12px; text-align:center; cursor:pointer; background:#FAF5FF;">
+        <input type="file" asp-for="Photo" accept="image/*" style="display:none;" />
+        <div style="font-size:32px; margin-bottom:8px;">📷</div>
+        <strong style="display:block; margin-bottom:4px;">Upload file</strong>
+        <small style="color:#6B7280;">Format JPG, maksimal 2MB</small>
+    </label>
+    <span asp-validation-for="Photo" class="text-danger"></span>
+
+    <div class="onb-footer">
+        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutnya</button>
+    </div>
+</form>

@@ -1,0 +1,83 @@
+@model LightenUp.Web.Models.ViewModels.OnboardingCounselingViewModel
+@{
+    ViewData["Title"] = "Riwayat Konseling";
+    var methods = new[]
+    {
+        ("CBT", "Cognitive-Behavioural Therapy (CBT)"),
+        ("Hypnotherapy", "Hipnoterapi"),
+        ("NLP", "Neuro-Linguistic Programming (NLP)"),
+        ("NarrativeTherapy", "Terapi Naratif"),
+        ("Psychoanalysis", "Psikoanalis"),
+        ("Unsure", "Kurang tahu"),
+        ("Other", "Lainnya (isi sendiri)")
+    };
+}
+
+<h1 class="onb-title">Pernah mengikuti konseling/terapi psikologi?</h1>
+
+<form asp-action="CounselingHistory" method="post" class="onb-content">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="onb-pill-row">
+        <label class="onb-pill @(Model.HasPreviousCounseling == true ? "selected" : "")">
+            <input type="radio" asp-for="HasPreviousCounseling" value="true" style="display:none" />
+            Pernah
+        </label>
+        <label class="onb-pill @(Model.HasPreviousCounseling == false ? "selected" : "")">
+            <input type="radio" asp-for="HasPreviousCounseling" value="false" style="display:none" />
+            Belum Pernah
+        </label>
+    </div>
+    <span asp-validation-for="HasPreviousCounseling" class="text-danger"></span>
+
+    <div class="onb-conditional" id="methodsBlock" hidden="@(Model.HasPreviousCounseling != true)">
+        <strong style="font-size:14px;">Pilih metode konseling yang pernah dilakukan:</strong>
+        <ul class="onb-list">
+            @foreach (var m in methods)
+            {
+                <li>
+                    <label>
+                        <input type="checkbox" name="CounselingMethods" value="@m.Item1"
+                               checked="@(Model.CounselingMethods.Contains(m.Item1))" />
+                        @m.Item2
+                    </label>
+                </li>
+            }
+        </ul>
+        <span asp-validation-for="CounselingMethods" class="text-danger"></span>
+        <div id="otherField" hidden="@(!Model.CounselingMethods.Contains("Other"))">
+            <input asp-for="CounselingMethodOther" class="onb-input" placeholder="Jelaskan lainnya" />
+            <span asp-validation-for="CounselingMethodOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="onb-footer">
+        <a asp-action="Spiritual" class="onb-btn onb-btn-secondary">Sebelumnya</a>
+        <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        const pills = document.querySelectorAll('.onb-pill');
+        const methodsBlock = document.getElementById('methodsBlock');
+        const otherCheckbox = document.querySelector('input[name="CounselingMethods"][value="Other"]');
+        const otherField = document.getElementById('otherField');
+
+        pills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                pills.forEach(p => p.classList.remove('selected'));
+                pill.classList.add('selected');
+                const radio = pill.querySelector('input[type="radio"]');
+                radio.checked = true;
+                methodsBlock.hidden = radio.value !== 'True' && radio.value !== 'true';
+            });
+        });
+
+        if (otherCheckbox) {
+            otherCheckbox.addEventListener('change', e => {
+                otherField.hidden = !e.target.checked;
+            });
+        }
+    </script>
+}

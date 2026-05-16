@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Selamat Datang";
+    ViewBag.HideChrome = true;
+}
+
+<div class="onb-welcome">
+    <div class="onb-welcome-emoji">👋</div>
+    <h1>Selamat datang, @(ViewBag.HrName ?? "HR")!</h1>
+    <p>
+        LightenUp adalah platform pendukung operasional bagi penyedia jasa layanan psikologi.
+        Sebagai permulaan, lengkapi data HR sebuah perusahaan: foto diri, status akademik,
+        dan informasi perusahaan.
+    </p>
+</div>
+
+<form asp-action="Welcome" method="post" class="onb-footer" style="border-top: 0;">
+    <button type="submit" class="onb-btn onb-btn-primary">Lengkapi data HR</button>
+</form>

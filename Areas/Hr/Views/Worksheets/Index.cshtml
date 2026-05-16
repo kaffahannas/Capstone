@@ -1,0 +1,94 @@
+@model LightenUp.Web.Models.ViewModels.HrWorksheetListViewModel
+@using LightenUp.Web.Models.ViewModels
+@{
+    ViewData["Title"] = "Riwayat Worksheet";
+    ViewBag.ActiveNav = "Monitoring";
+    var statuses = new[] { ("Assigned", "Belum Dikerjakan"), ("InProgress", "Sedang Dikerjakan"), ("Completed", "Selesai") };
+    var periods = new[] { ("HariIni", "Hari Ini"), ("Mingguan", "Minggu"), ("Bulanan", "Bulan"), ("Tahunan", "Tahun") };
+    int totalPages = (int)Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+}
+
+<div style="max-width: 900px;">
+    @if (TempData["success"] is string ok)
+    {
+        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
+    }
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2 style="margin:0;">Cari Riwayat Worksheet</h2>
+        <a class="btn-pill" asp-action="Request">+ Permintaan Worksheet</a>
+    </div>
+
+    <form method="get">
+        <div style="position:relative; margin-bottom:12px;">
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#6B7280;">🔍</span>
+            <input type="search" name="search" placeholder="Cari nama pasien atau tugas..." value="@Model.Search"
+                   style="width:100%; padding:10px 14px 10px 40px; border:1px solid #E5E7EB; border-radius:999px; font-family:inherit;" />
+        </div>
+
+        <p style="margin: 8px 0 4px; font-size:13px; color:#6B7280;">Pilih Rentang Waktu</p>
+        <div class="task-chips" style="margin-bottom: 12px;">
+            @foreach (var p in periods)
+            {
+                <label class="task-chip @(Model.Period == p.Item1 ? "selected" : "")">
+                    <input type="radio" name="period" value="@p.Item1" checked="@(Model.Period == p.Item1)" style="display:none" onchange="this.form.submit()" />
+                    @p.Item2
+                </label>
+            }
+            @if (Model.Period != null)
+            {
+                <a class="task-chip" asp-action="Index" asp-route-search="@Model.Search">Clear</a>
+            }
+        </div>
+
+        <p style="margin: 8px 0 4px; font-size:13px; color:#6B7280;">Pilih Status Worksheet</p>
+        <div class="task-chips" style="margin-bottom: 20px;">
+            @foreach (var s in statuses)
+            {
+                var sel = Model.Statuses.Contains(s.Item1);
+                <label class="task-chip @(sel ? "selected" : "")">
+                    <input type="checkbox" name="status" value="@s.Item1" checked="@sel" style="display:none" onchange="this.form.submit()" />
+                    @s.Item2
+                </label>
+            }
+        </div>
+    </form>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="dash-card-empty"><p>Tidak ada worksheet yang cocok.</p></div>
+    }
+    else
+    {
+        foreach (var w in Model.Items)
+        {
+            <a class="task-card @WorksheetStatus.CssClass(w.Status)" asp-action="Review" asp-route-id="@w.WorksheetId"
+               style="background: linear-gradient(135deg, #7C3AED, #5B21B6); color:#fff; border:0;">
+                <div>
+                    <h4 style="color:#fff; margin:0 0 6px;">@w.TaskName</h4>
+                    <div style="font-size:12px; opacity:0.9;">
+                        @w.PatientName · @w.DateLabel
+                    </div>
+                    <div style="font-size:12px; margin-top:8px;">
+                        Status: <strong style="text-decoration:underline;">@w.StatusLabel</strong>
+                    </div>
+                </div>
+                <div class="right">
+                    <span style="font-size:11px; opacity:0.85; align-self:flex-end;">@w.PsychologistName</span>
+                    <span style="width:14px; height:14px; border-radius:999px; background:#fff;"></span>
+                </div>
+            </a>
+        }
+
+        @if (totalPages > 1)
+        {
+            <div style="text-align:right; margin-top:12px;">
+                @for (int p = 1; p <= totalPages; p++)
+                {
+                    <a class="task-chip @(p == Model.Page ? "selected" : "")" asp-action="Index"
+                       asp-route-search="@Model.Search" asp-route-period="@Model.Period" asp-route-page="@p">@p</a>
+                }
+            </div>
+        }
+    }
+</div>

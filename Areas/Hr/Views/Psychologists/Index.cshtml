@@ -1,0 +1,37 @@
+@model LightenUp.Web.Models.ViewModels.HrPsychologistDirectoryViewModel
+@{
+    ViewData["Title"] = "Direktori Psikolog";
+    ViewBag.ActiveNav = "Klien";
+}
+
+<div style="max-width: 900px;">
+    <h2 style="margin-bottom: 16px;">Direktori Psikolog</h2>
+    <p style="color:#6B7280;">Psikolog terverifikasi yang bersedia untuk kerja sama B2B.</p>
+
+    @if (!Model.Psychologists.Any())
+    {
+        <div class="dash-card-empty"><p>Belum ada psikolog yang tersedia untuk dipilih.</p></div>
+    }
+    else
+    {
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:16px;">
+            @foreach (var p in Model.Psychologists)
+            {
+                <a class="lu-card" asp-action="Profile" asp-route-id="@p.PsychologistId" style="text-decoration:none; color:inherit; text-align:center;">
+                    <img src="@(string.IsNullOrEmpty(p.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : p.ProfilePicture)"
+                         style="width:80px; height:80px; border-radius:999px; object-fit:cover; background:#EDE9FE; margin-bottom:10px;" />
+                    <div style="font-weight:600;">@p.FullName</div>
+                    <small style="color:#6B7280; display:block; margin-top:4px;">@(p.Specialization ?? "Psikolog")</small>
+                    @if (p.ExperienceYears.HasValue)
+                    {
+                        <small style="color:#6B7280; display:block;">@p.ExperienceYears thn pengalaman</small>
+                    }
+                    @if (p.AlreadyPartnered)
+                    {
+                        <span class="status-badge sehat" style="margin-top:8px; display:inline-block;">Mitra</span>
+                    }
+                </a>
+            }
+        </div>
+    }
+</div>

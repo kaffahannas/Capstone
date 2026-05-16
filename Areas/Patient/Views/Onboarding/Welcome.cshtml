@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Selamat Datang";
+    ViewBag.HideChrome = true;
+}
+
+<div class="onb-welcome">
+    <div class="onb-welcome-emoji">🤩</div>
+    <h1>Hai, @(ViewBag.PatientName ?? "Sahabat")!</h1>
+    <p>Lengkapi data diri kamu untuk dapat mulai menggunakan aplikasi ini dengan pengalaman yang dipersonalisasi.</p>
+</div>
+
+<form asp-action="Welcome" method="post" class="onb-footer" style="border-top: 0;">
+    <button type="submit" class="onb-btn onb-btn-primary">Lengkapi Data Diri</button>
+</form>
