@@ -54,8 +54,15 @@
                             <input type="radio" asp-for="AccountType" value="Psychologist" id="rolePsy" class="role-card-input" required />
                             <label class="role-card-label" for="rolePsy">Psikolog</label>
                         </div>
+                        <div class="role-card-wrapper">
+                            <input type="radio" asp-for="AccountType" value="HR" id="roleHr" class="role-card-input" required />
+                            <label class="role-card-label" for="roleHr">HR</label>
+                        </div>
                     </div>
                     <span asp-validation-for="AccountType" class="text-danger"></span>
+                    <small style="display:block; margin-top:10px; font-size:11px; color:#6B7280;">
+                        Akun Psikolog &amp; HR perlu disetujui tim LightenUp setelah onboarding selesai.
+                    </small>
                 </div>
 
                 <button type="submit" class="btn-submit">Berikutnya</button>

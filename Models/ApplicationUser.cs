@@ -14,7 +14,13 @@ namespace LightenUp.Web.Models
 
         public string? ProfilePicture { get; set; }
         public bool IsActive { get; set; } = true;
-        public bool IsApprovedByHR { get; set; } = false;
+
+        // True = LightenUp Admin has approved the account.
+        // - Patient: auto-true on creation (B2C/B2B both self-serve)
+        // - Psychologist: starts false; Admin reviews license docs to approve
+        // - HR: starts false; Admin reviews company info to approve
+        // - Admin: always true (only Admin-created)
+        public bool IsApprovedByAdmin { get; set; } = false;
 
         public virtual Patient? Patient { get; set; }
         public virtual Psychologist? Psychologist { get; set; }

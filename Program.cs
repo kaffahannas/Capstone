@@ -56,7 +56,7 @@ using (var scope = app.Services.CreateScope())
                 EmailConfirmed = true,
                 FullName = "System Admin",
                 RoleType = "Admin",
-                IsApprovedByHR = true
+                IsApprovedByAdmin = true
             };
 
             var result = await userManager.CreateAsync(newAdmin, adminPassword);
@@ -94,35 +94,32 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // ───── Hostname-based area gating ─────
-// In production, the Patient host (e.g. app.lightenup.com) cannot reach /Hr/*,
-// and the HR host (e.g. hr.lightenup.com) cannot reach Patient/Psychologist routes.
-// In dev, set Site:PatientHost=localhost:7040 and Site:HrHost=localhost:7041
-// in user-secrets or appsettings.Development.json.
+// Customer site (Site:PatientHost) hosts Patient/Psychologist/HR. /Admin/* is BLOCKED here.
+// Admin console (Site:AdminHost) hosts only LightenUp staff. Only /Admin*, /AdminAuth*, static reachable.
 var patientHost = builder.Configuration["Site:PatientHost"];
-var hrHost = builder.Configuration["Site:HrHost"];
-if (!string.IsNullOrWhiteSpace(patientHost) || !string.IsNullOrWhiteSpace(hrHost))
+var adminHost = builder.Configuration["Site:AdminHost"];
+if (!string.IsNullOrWhiteSpace(patientHost) || !string.IsNullOrWhiteSpace(adminHost))
 {
     app.Use(async (context, next) =>
     {
         var host = context.Request.Host.ToString();
         var path = context.Request.Path.Value ?? string.Empty;
-        var isHrPath = path.StartsWith("/Hr", StringComparison.OrdinalIgnoreCase);
+        var isAdminPath = path.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase)
+                       || path.StartsWith("/AdminAuth", StringComparison.OrdinalIgnoreCase);
 
-        // On the patient host, block anything under /Hr.
+        // On the customer host, block anything under /Admin or /AdminAuth.
         if (!string.IsNullOrWhiteSpace(patientHost) &&
-            host.Equals(patientHost, StringComparison.OrdinalIgnoreCase) && isHrPath)
+            host.Equals(patientHost, StringComparison.OrdinalIgnoreCase) && isAdminPath)
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             return;
         }
 
-        // On the HR host, only allow /Hr/*, the shared login/account routes, and static files.
-        if (!string.IsNullOrWhiteSpace(hrHost) &&
-            host.Equals(hrHost, StringComparison.OrdinalIgnoreCase) && !isHrPath)
+        // On the Admin host, only allow Admin paths + static files.
+        if (!string.IsNullOrWhiteSpace(adminHost) &&
+            host.Equals(adminHost, StringComparison.OrdinalIgnoreCase) && !isAdminPath)
         {
             var allowed =
-                path.StartsWith("/Account/", StringComparison.OrdinalIgnoreCase) ||
-                path.StartsWith("/Identity/", StringComparison.OrdinalIgnoreCase) ||
                 path.Equals("/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/css/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/js/", StringComparison.OrdinalIgnoreCase) ||
@@ -134,6 +131,11 @@ if (!string.IsNullOrWhiteSpace(patientHost) || !string.IsNullOrWhiteSpace(hrHost
             if (!allowed)
             {
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
+                return;
+            }
+            if (path.Equals("/", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Response.Redirect("/AdminAuth/Login");
                 return;
             }
         }

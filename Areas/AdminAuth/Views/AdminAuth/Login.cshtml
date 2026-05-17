@@ -1,0 +1,70 @@
+@model LightenUp.Web.Models.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Admin Login - LightenUp";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #1F2937 0%, #4C1D95 100%); display: grid; place-items: center; padding: 20px; }
+        .admin-card { width: 100%; max-width: 420px; background: white; border-radius: 16px; padding: 40px 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .admin-brand { text-align: center; margin-bottom: 28px; }
+        .admin-brand .mark { width: 56px; height: 56px; background: #7C3AED; color: white; border-radius: 14px; display: grid; place-items: center; font-weight: 700; font-size: 22px; margin: 0 auto 12px; }
+        .admin-brand h1 { font-size: 20px; margin: 0; color: #111; }
+        .admin-brand small { color: #6B7280; }
+        .field { margin-bottom: 14px; }
+        .field label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+        .field input { width: 100%; padding: 12px 14px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; font-family: inherit; }
+        .field input:focus { outline: none; border-color: #7C3AED; }
+        .remember-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #374151; margin-bottom: 18px; }
+        .btn-submit { width: 100%; padding: 12px; background: #111827; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        .btn-submit:hover { background: #1F2937; }
+        .err-summary { background: #FEE2E2; border: 1px solid #FCA5A5; color: #B91C1C; padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
+        .info-strip { background: #F3F4F6; border-radius: 8px; padding: 10px 12px; font-size: 11px; color: #6B7280; margin-top: 20px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="admin-card">
+        <div class="admin-brand">
+            <div class="mark">L</div>
+            <h1>LightenUp Admin</h1>
+            <small>Internal staff only</small>
+        </div>
+
+        <form asp-action="Login" method="post">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="All" class="err-summary"></div>
+            }
+
+            <div class="field">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" type="email" placeholder="admin@lightenup.com" autocomplete="email" />
+            </div>
+
+            <div class="field">
+                <label asp-for="Password">Kata Sandi</label>
+                <input asp-for="Password" type="password" autocomplete="current-password" />
+            </div>
+
+            <div class="remember-row">
+                <input type="checkbox" asp-for="RememberMe" id="rememberMe" />
+                <label for="rememberMe" style="margin:0; font-size:13px; font-weight:400;">Ingat saya</label>
+            </div>
+
+            <button type="submit" class="btn-submit">Masuk ke Admin Console</button>
+        </form>
+
+        <div class="info-strip">
+            ⚠️ Akses dibatasi untuk staf LightenUp. Aktivitas login dicatat untuk audit keamanan.
+            Jika Anda bukan staf, silakan login di situs utama.
+        </div>
+    </div>
+</body>
+</html>

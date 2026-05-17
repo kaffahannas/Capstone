@@ -39,95 +39,83 @@ namespace LightenUp.Web.Controllers
 
                 if (user != null)
                 {
-                    // Cek khusus untuk Role Psychologist
-                    if (user.RoleType == "Psychologist")
-                    {
-                        // Ambil data detail psikolog dari database
-                        var psychData = _context.Psychologists.FirstOrDefault(p => p.UserId == user.Id);
-
-                        // LOGIKA 1: Cek apakah sudah mengisi onboarding (Patokannya LicenseNumber/SIPP)
-                        bool hasCompletedOnboarding = psychData != null && !string.IsNullOrEmpty(psychData.LicenseNumber);
-
-                        if (!hasCompletedOnboarding)
-                        {
-                            // Belum isi biodata onboarding -> Izinkan login sementara, lempar ke Welcome Onboarding
-                            var loginOnboardingResult = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-                            if (loginOnboardingResult.Succeeded)
-                            {
-                                return RedirectToAction("Welcome", "Onboarding");
-                            }
-                        }
-                        // LOGIKA 2: Sudah isi biodata TAPI belum di-approve HR -> TOLAK LOGIN
-                        else if (!user.IsApprovedByHR)
-                        {
-                            ModelState.AddModelError(string.Empty, "Biodata sudah diterima. Silakan tunggu persetujuan dari HR sebelum dapat mengakses Dashboard.");
-                            return View(model);
-                        }
-                    }
-
-                    // Jika Patient, Admin, atau Psikolog yang SUDAH isi data & SUDAH di-approve
                     var result = await _signInManager.PasswordSignInAsync(
-                        model.Email,
-                        model.Password,
-                        model.RememberMe,
-                        lockoutOnFailure: false
-                    );
+                        model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
 
                     if (result.Succeeded)
                     {
                         // ─── Cross-host guard ───
-                        // HR users must log in on the HR host; everyone else on the patient host.
-                        var hrHost = _config["Site:HrHost"];
+                        // Admin accounts may only log in on the Admin host.
+                        // Customer accounts (Patient/Psychologist/HR) may only log in on the customer host.
+                        var adminHost = _config["Site:AdminHost"];
                         var patientHost = _config["Site:PatientHost"];
                         var currentHost = HttpContext.Request.Host.ToString();
-                        bool isHrAccount = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
-                        bool onHrHost = !string.IsNullOrEmpty(hrHost) && currentHost.Equals(hrHost, StringComparison.OrdinalIgnoreCase);
-                        bool onPatientHost = !string.IsNullOrEmpty(patientHost) && currentHost.Equals(patientHost, StringComparison.OrdinalIgnoreCase);
+                        bool isAdminAccount = await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin";
+                        bool onAdminHost = !string.IsNullOrEmpty(adminHost) && currentHost.Equals(adminHost, StringComparison.OrdinalIgnoreCase);
+                        bool onCustomerHost = !string.IsNullOrEmpty(patientHost) && currentHost.Equals(patientHost, StringComparison.OrdinalIgnoreCase);
 
-                        if (isHrAccount && onPatientHost && !string.IsNullOrEmpty(hrHost))
+                        if (isAdminAccount && onCustomerHost && !string.IsNullOrEmpty(adminHost))
                         {
                             await _signInManager.SignOutAsync();
                             ModelState.AddModelError(string.Empty,
-                                $"Akun HR harus login melalui situs HR. Buka https://{hrHost}/ kemudian masuk lagi.");
+                                $"Akun Admin harus login di https://{adminHost}/");
                             return View(model);
                         }
-                        if (!isHrAccount && onHrHost && !string.IsNullOrEmpty(patientHost))
+                        if (!isAdminAccount && onAdminHost && !string.IsNullOrEmpty(patientHost))
                         {
                             await _signInManager.SignOutAsync();
                             ModelState.AddModelError(string.Empty,
-                                $"Akun ini bukan akun HR. Silakan login di https://{patientHost}/");
+                                $"Akun ini bukan akun Admin. Silakan login di https://{patientHost}/");
                             return View(model);
                         }
 
-                        // Admin → Admin dashboard
-                        if (await _userManager.IsInRoleAsync(user, "Admin"))
+                        // ─── Approval gate (Psychologist + HR need Admin approval) ───
+                        bool isPsy = await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist";
+                        bool isHr = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
+
+                        if ((isPsy || isHr) && !user.IsApprovedByAdmin)
                         {
-                            return RedirectToAction("Dashboard", "Admin");
+                            // Check if onboarding is done yet — let them finish it first, then they wait.
+                            bool onboardingDone = false;
+                            if (isPsy)
+                            {
+                                var psy = _context.Psychologists.FirstOrDefault(p => p.UserId == user.Id);
+                                onboardingDone = psy != null && !string.IsNullOrEmpty(psy.LicenseNumber);
+                                if (!onboardingDone)
+                                    return RedirectToAction("Welcome", "Onboarding");  // psy onboarding (root controller)
+                            }
+                            else // HR
+                            {
+                                var hr = _context.HrStaffs.FirstOrDefault(h => h.UserId == user.Id);
+                                onboardingDone = hr != null && hr.OnboardingCompletedAt != null;
+                                if (!onboardingDone)
+                                    return RedirectToAction("Welcome", "Onboarding", new { area = "Hr" });
+                            }
+                            // Onboarding done but not yet approved → show pending screen
+                            return RedirectToAction("PendingApproval");
                         }
 
-                        // HR → resume onboarding if incomplete, else home
-                        if (isHrAccount)
+                        // ─── Role-based dashboard routing ───
+                        if (isAdminAccount)
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+
+                        if (isHr)
                         {
                             var hr = _context.HrStaffs.FirstOrDefault(h => h.UserId == user.Id);
                             if (hr == null || hr.OnboardingCompletedAt == null)
-                            {
                                 return RedirectToAction("Welcome", "Onboarding", new { area = "Hr" });
-                            }
                             return RedirectToAction("Index", "Home", new { area = "Hr" });
                         }
 
-                        // Patient → resume onboarding if incomplete, else dashboard
                         if (user.RoleType == "Patient")
                         {
                             var patient = _context.Patients.FirstOrDefault(p => p.UserId == user.Id);
                             if (patient == null || patient.OnboardingCompletedAt == null)
-                            {
                                 return RedirectToAction("Welcome", "Onboarding", new { area = "Patient" });
-                            }
                             return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
                         }
 
-                        // Psychologist → existing flow (root Psychologist controller)
+                        // Psychologist
                         return RedirectToAction("Index", "Psychologist");
                     }
                 }
@@ -235,7 +223,7 @@ namespace LightenUp.Web.Controllers
                     EmailConfirmed = true,
                     FullName = registerData.FullName,
                     RoleType = registerData.AccountType,
-                    IsApprovedByHR = (registerData.AccountType == "Patient")
+                    IsApprovedByAdmin = (registerData.AccountType == "Patient")
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -301,6 +289,29 @@ namespace LightenUp.Web.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login");
+        }
+
+        // ==========================================
+        // 7. PENDING APPROVAL (Psy + HR waiting for Admin review)
+        // ==========================================
+        [HttpGet]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<IActionResult> PendingApproval()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login");
+
+            // If they're now approved (or never needed it), bounce them to the right place
+            if (user.IsApprovedByAdmin)
+            {
+                await _signInManager.SignOutAsync();
+                TempData["info"] = "Akun Anda sudah disetujui. Silakan login kembali.";
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.FullName = user.FullName;
+            ViewBag.RoleType = user.RoleType;
+            return View();
         }
     }
 }

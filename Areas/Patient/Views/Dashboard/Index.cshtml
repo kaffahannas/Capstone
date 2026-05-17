@@ -5,31 +5,65 @@
     ViewBag.ActiveNav = "Beranda";
 }
 
-<!-- ───── Calendar widget ───── -->
+<!-- ───── Calendar widget (Harian / Mingguan / Bulanan) ───── -->
+@{
+    var calView = ViewBag.CalendarView as string ?? "Mingguan";
+}
 <div class="lu-card cal-widget">
     <div class="cal-header">
-        <select class="cal-view-select" onchange="/* view-switching coming */ return false;">
-            <option>Tampilan: Mingguan</option>
-            <option>Tampilan: Harian</option>
-            <option>Tampilan: Bulanan</option>
+        <select class="cal-view-select" onchange="window.location.href='?view=' + this.value">
+            <option value="Harian" selected="@(calView == "Harian")">Tampilan: Harian</option>
+            <option value="Mingguan" selected="@(calView == "Mingguan")">Tampilan: Mingguan</option>
+            <option value="Bulanan" selected="@(calView == "Bulanan")">Tampilan: Bulanan</option>
         </select>
         <div class="cal-nav">
-            <button type="button">‹</button>
             <span>@Model.MonthYearLabel</span>
-            <button type="button">›</button>
         </div>
         <span style="width: 60px;"></span>
     </div>
-    <div class="cal-week">
-        @foreach (var day in Model.Week)
-        {
-            <div class="cal-day @(day.IsToday ? "today" : "")">
-                <div class="dow">@day.DayOfWeekShort</div>
-                <div class="num">@day.Date.Day</div>
-                <div class="dot @MoodPalette.CssClass(day.FeelingForDay)"></div>
-            </div>
-        }
-    </div>
+
+    @if (calView == "Harian")
+    {
+        var todayCell = Model.Week.First();
+        <div style="text-align:center; padding: 20px 0;">
+            <div style="font-size:13px; color:#6B7280; margin-bottom:4px;">@todayCell.DayOfWeekShort</div>
+            <div style="font-size:48px; font-weight:600; color:var(--lu-primary); margin-bottom:12px;">@todayCell.Date.Day</div>
+            @if (!string.IsNullOrEmpty(todayCell.FeelingForDay))
+            {
+                <div class="dot @MoodPalette.CssClass(todayCell.FeelingForDay)" style="width:28px; height:28px; margin:0 auto;"></div>
+                <div style="font-size:14px; margin-top:8px;">@MoodPalette.Emoji(todayCell.FeelingForDay) @MoodPalette.Label(todayCell.FeelingForDay)</div>
+            }
+            else
+            {
+                <div style="color:#9CA3AF; font-size:13px;">Belum melacak mood hari ini</div>
+            }
+        </div>
+    }
+    else if (calView == "Bulanan")
+    {
+        <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+            @foreach (var day in Model.Week)
+            {
+                <div class="cal-day @(day.IsToday ? "today" : "")" style="padding: 6px 2px;">
+                    <div class="num" style="font-size:13px;">@day.Date.Day</div>
+                    <div class="dot @MoodPalette.CssClass(day.FeelingForDay)" style="width:6px; height:6px; margin:2px auto 0;"></div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="cal-week">
+            @foreach (var day in Model.Week)
+            {
+                <div class="cal-day @(day.IsToday ? "today" : "")">
+                    <div class="dow">@day.DayOfWeekShort</div>
+                    <div class="num">@day.Date.Day</div>
+                    <div class="dot @MoodPalette.CssClass(day.FeelingForDay)"></div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 <div class="dash-grid">
@@ -86,14 +120,33 @@
         @if (Model.OpenTaskCount == 0)
         {
             <div class="dash-card-empty">
-                <p>Anda belum memiliki tugas lain</p>
+                <p>Anda belum memiliki tugas baru dari psikolog.</p>
                 <a class="btn-pill" asp-controller="Tasks" asp-action="Index">+ Lihat Tugas</a>
             </div>
         }
         else
         {
-            <p class="task-count"><strong>@Model.OpenTaskCount tugas</strong> anda belum selesai!</p>
-            <a class="btn-pill" asp-controller="Tasks" asp-action="Index">+ Lihat Tugas</a>
+            <p class="task-count" style="margin-bottom:10px;"><strong>@Model.OpenTaskCount tugas</strong> menunggu kamu kerjakan</p>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+                @foreach (var w in Model.OpenWorksheets)
+                {
+                    var idLabel = w.Status == "Assigned" ? "🟠 Baru"
+                                : w.Status == "InProgress" ? "🟡 Sedang Ditinjau"
+                                : "⚪ " + w.StatusLabel;
+                    <a asp-controller="Tasks" asp-action="Detail" asp-route-id="@w.WorksheetId"
+                       style="display:block; padding:10px 12px; border:1px solid var(--lu-border); border-radius:8px; text-decoration:none; color:inherit;">
+                        <div style="display:flex; justify-content:space-between; gap:8px;">
+                            <strong style="font-size:13px;">@w.TaskName</strong>
+                            <small style="white-space:nowrap;">@idLabel</small>
+                        </div>
+                        <div style="font-size:11px; color:#6B7280; margin-top:4px;">
+                            Deadline: @w.Deadline.ToString("d MMM yyyy", new System.Globalization.CultureInfo("id-ID"))
+                            · @w.PsychologistName
+                        </div>
+                    </a>
+                }
+            </div>
+            <a class="btn-pill" asp-controller="Tasks" asp-action="Index">Lihat Semua Tugas</a>
         }
     </div>
 

@@ -1,0 +1,51 @@
+@{
+    ViewData["Title"] = "Menunggu Persetujuan";
+    Layout = null;
+    var roleLabel = (ViewBag.RoleType as string) switch
+    {
+        "Psychologist" => "Psikolog",
+        "HR" => "HR Perusahaan",
+        _ => "Akun"
+    };
+}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <style>
+        .pending-card { max-width: 520px; margin: 80px auto; background: white; border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+        .pending-icon { width: 80px; height: 80px; background: #FEF3C7; color: #B45309; border-radius: 999px; display: grid; place-items: center; font-size: 36px; margin: 0 auto 20px; }
+        .pending-steps { text-align: left; margin: 24px 0; padding: 16px 20px; background: #F9FAFB; border-radius: 12px; font-size: 13px; color: #374151; line-height: 1.7; }
+        .pending-steps strong { color: #111; }
+    </style>
+</head>
+<body class="auth-page">
+    <div class="pending-card">
+        <div class="pending-icon">⏳</div>
+        <h1 style="font-size: 24px; margin: 0 0 8px;">Hai, @ViewBag.FullName</h1>
+        <p style="color:#6B7280; margin: 0 0 8px;">Akun <strong>@roleLabel</strong> Anda sedang menunggu persetujuan dari tim LightenUp.</p>
+
+        <div class="pending-steps">
+            <strong>Apa yang terjadi sekarang?</strong>
+            <ol style="margin: 8px 0 0; padding-left: 18px;">
+                <li>Tim LightenUp akan meninjau dokumen onboarding Anda.</li>
+                <li>Proses biasanya memakan waktu <strong>1–2 hari kerja</strong>.</li>
+                <li>Anda akan menerima email saat akun disetujui.</li>
+                <li>Setelah disetujui, login kembali untuk mengakses dashboard.</li>
+            </ol>
+        </div>
+
+        <p style="font-size: 12px; color:#9CA3AF; margin: 0 0 24px;">
+            Punya pertanyaan? Hubungi <a href="mailto:support@lightenup.com" style="color:#7C3AED;">support@lightenup.com</a>
+        </p>
+
+        <form asp-action="Logout" method="post">
+            <button type="submit" style="padding: 12px 32px; background: #7C3AED; color: white; border: none; border-radius: 999px; font-weight: 600; cursor: pointer;">Keluar</button>
+        </form>
+    </div>
+</body>
+</html>

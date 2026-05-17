@@ -85,27 +85,6 @@
         </div>
     </div>
 
-    <!-- ───── Preferensi dan Notifikasi ───── -->
-    <div class="lu-card prefs-card">
-        <h3 class="lu-card-title">Preferensi dan Notifikasi</h3>
-        <div class="prefs-row">
-            <span class="label">Pengingat Untuk Check Mood</span>
-            <label class="toggle"><input type="checkbox" disabled checked="@Model.RemindMoodCheck" /><span class="slider"></span></label>
-        </div>
-        <div class="prefs-row">
-            <span class="label">Pengingat Sesi Konseling</span>
-            <label class="toggle"><input type="checkbox" disabled checked="@Model.RemindCounselingSession" /><span class="slider"></span></label>
-        </div>
-        <div class="prefs-row">
-            <span class="label">Notifikasi dari HR dan Psikolog</span>
-            <label class="toggle"><input type="checkbox" disabled checked="@Model.AllowHrPsychologistNotif" /><span class="slider"></span></label>
-        </div>
-        <div class="prefs-row">
-            <span class="label">Waktu Notifikasi Pengingat</span>
-            <strong>@Model.ReminderTime</strong>
-        </div>
-        <p style="font-size:12px; color:#6B7280; margin: 12px 0 0;">Atur preferensi di halaman <a asp-action="Edit">Edit Profile</a>.</p>
-    </div>
 
     <!-- ───── Support ───── -->
     <h3 style="font-size: 14px; margin: 16px 0 8px;">Support</h3>

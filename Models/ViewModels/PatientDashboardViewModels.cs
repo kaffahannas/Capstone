@@ -36,6 +36,17 @@ namespace LightenUp.Web.Models.ViewModels
 
         // Tasks card
         public int OpenTaskCount { get; set; }
+        public List<PatientWorksheetPreview> OpenWorksheets { get; set; } = new();
+    }
+
+    public class PatientWorksheetPreview
+    {
+        public int WorksheetId { get; set; }
+        public string TaskName { get; set; } = "";
+        public string Status { get; set; } = "";       // Assigned / InProgress / Completed
+        public string StatusLabel { get; set; } = "";  // Belum Dikerjakan / Sedang Dikerjakan / Selesai
+        public DateTime Deadline { get; set; }
+        public string PsychologistName { get; set; } = "";
     }
 
     // Lightweight enum-string helpers used in views.

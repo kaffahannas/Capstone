@@ -44,7 +44,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             var psychologists = await _context.Psychologists
                 .Include(p => p.User)
-                .Where(p => p.AcceptsB2B && p.User != null && p.User.IsApprovedByHR)
+                .Where(p => p.AcceptsB2B && p.User != null && p.User.IsApprovedByAdmin)
                 .OrderBy(p => p.User!.FullName)
                 .ToListAsync();
 

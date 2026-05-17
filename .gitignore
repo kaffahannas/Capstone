@@ -365,3 +365,6 @@ FodyWeavers.xsd
 _figma/
 CLAUDE.md
 Migrations/
+
+# Uploaded files
+wwwroot/uploads/

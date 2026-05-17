@@ -160,45 +160,264 @@ namespace LightenUp.Web.Controllers
                 ageStr = $"{age} tahun";
             }
 
+            // Today's journal entry (free-write)
+            var todayJournal = await _context.Journals
+                .Where(j => j.PatientId == id && j.JournalDate.Date == DateTime.Today)
+                .OrderByDescending(j => j.UpdatedAt)
+                .FirstOrDefaultAsync();
+
+            // ─── Mood data (last 7 days) ───
+            var from7 = DateTime.Today.AddDays(-6);
+            var moods = await _context.MoodTrackers
+                .Where(m => m.PatientId == id && m.MoodDate >= from7)
+                .OrderBy(m => m.MoodDate)
+                .ToListAsync();
+
+            var chartDates = Enumerable.Range(0, 7).Select(i => from7.AddDays(i)).ToList();
+            var chartScores = chartDates.Select(d =>
+            {
+                var m = moods.FirstOrDefault(x => x.MoodDate.Date == d.Date);
+                return m == null ? 0.0 : (double)(m.Feeling switch
+                {
+                    "Overjoyed" => 5, "Happy" => 4, "Calm" => 4,
+                    "Neutral" => 3, "Disappointed" => 2, "Angry" => 1, _ => 0
+                });
+            }).ToList();
+
+            int sehatN = 0, beresikoN = 0, bahayaN = 0;
+            foreach (var s in chartScores.Where(x => x > 0))
+            {
+                if (s >= 4) sehatN++;
+                else if (s >= 2.5) beresikoN++;
+                else bahayaN++;
+            }
+            int totalN = Math.Max(1, sehatN + beresikoN + bahayaN);
+
+            // Today's schedule (if any) and open worksheet count
+            var todaySession = await _context.Schedules
+                .Where(s => s.PatientId == id && s.SessionStart >= DateTime.Today && s.SessionStart < DateTime.Today.AddDays(1) && s.Status == "Scheduled")
+                .OrderBy(s => s.SessionStart)
+                .FirstOrDefaultAsync();
+            var openWorksheetCount = await _context.Worksheets.CountAsync(w => w.PatientId == id && w.Status != "Completed");
+
+            ViewBag.Symptoms = patient.Symptoms;
+            ViewBag.MoodLabels = System.Text.Json.JsonSerializer.Serialize(chartDates.Select(d => d.ToString("dd/MM")));
+            ViewBag.MoodScores = System.Text.Json.JsonSerializer.Serialize(chartScores);
+            ViewBag.SehatPct = (int)Math.Round((double)sehatN / totalN * 100);
+            ViewBag.BeresikoPct = (int)Math.Round((double)beresikoN / totalN * 100);
+            ViewBag.BahayaPct = (int)Math.Round((double)bahayaN / totalN * 100);
+            ViewBag.HasMoodData = moods.Any();
+            ViewBag.TodaySession = todaySession;
+            ViewBag.OpenWorksheetCount = openWorksheetCount;
+
             var viewModel = new PatientDetailViewModel
             {
                 PatientId = patient.PatientId,
                 FullName = patient.User?.FullName ?? "Anonim",
-                Gender = patient.Gender ?? "Belum diatur",
+                Gender = patient.Gender == "Male" ? "Laki-laki" : (patient.Gender == "Female" ? "Perempuan" : (patient.Gender ?? "Belum diatur")),
                 Age = ageStr,
-                Location = patient.Company != null ? patient.Company.Address : "Pasien Publik",
+                Location = patient.Company != null ? (patient.Company.Address ?? patient.Company.Name) : "Pasien Publik",
                 Phone = patient.User?.PhoneNumber ?? "-",
                 Status = patient.MentalHealthStatus ?? "Sehat",
-                JournalContent = "Belum ada catatan jurnal terbaru.",
-                Complaint = "Tidak ada keluhan"
+                JournalContent = string.IsNullOrEmpty(todayJournal?.Content) ? "Belum ada catatan jurnal hari ini." : todayJournal!.Content,
+                Complaint = string.IsNullOrEmpty(patient.Symptoms) ? "Tidak ada keluhan" : patient.Symptoms
             };
 
             return View(viewModel);
         }
 
         // ==========================================
-        // 5. PROFIL (DINAMIS DARI DATABASE)
+        // 5. PROFIL (FULL DB)
         // ==========================================
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.GetUserAsync(User);
-            var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            if (user == null) return RedirectToAction("Login", "Account");
+            var psych = await _context.Psychologists
+                .Include(p => p.NotificationPreference)
+                .FirstOrDefaultAsync(p => p.UserId == user.Id);
+            if (psych == null) return NotFound();
 
-            var viewModel = new PsychologistProfileViewModel
+            // Workload counts
+            var activeCases = await _context.Assignments
+                .CountAsync(a => a.PsychologistId == psych.PsychologistId && a.Status == "Active");
+            var employeesCount = await _context.Assignments
+                .Where(a => a.PsychologistId == psych.PsychologistId)
+                .Select(a => a.PatientId).Distinct().CountAsync();
+
+            var prefs = psych.NotificationPreference;
+
+            var viewModel = new LightenUp.Web.Models.ViewModels.PsyProfileExtViewModel
             {
                 FullName = user.FullName,
                 Email = user.Email ?? "",
+                Phone = user.PhoneNumber,
                 ProfilePicture = user.ProfilePicture,
-                Specialization = psych?.Specialization ?? "Belum diatur",
-                LastDegree = psych?.LastDegree ?? "Belum diatur",
-                University = psych?.University ?? "Belum diatur",
-                PracticeLocation = psych?.PracticeLocation ?? "Belum diatur",
-                SiapNumber = psych?.SiapNumber ?? "-",
-                SippNumber = psych?.LicenseNumber ?? "-"
+                Specialization = psych.Specialization,
+                LastDegree = psych.LastDegree,
+                University = psych.University,
+                PracticeLocation = psych.PracticeLocation,
+                OfficeAddress = psych.OfficeAddress,
+                SiapNumber = psych.SiapNumber,
+                SippNumber = psych.LicenseNumber,
+                ExperienceYears = psych.ExperienceYears,
+                IsActive = user.IsActive,
+                AvailabilityText = string.IsNullOrEmpty(psych.AvailabilityText) ? "Mon-Fri: 9AM-5PM" : psych.AvailabilityText!,
+                IsAvailable = psych.IsAvailable,
+                Employees = employeesCount,
+                ActiveCases = activeCases,
+                RemindNewReports = prefs?.RemindNewReports ?? true,
+                RemindFollowUp = prefs?.RemindFollowUp ?? true,
+                AllowHrPatientNotif = prefs?.AllowHrPatientNotif ?? false,
+                Frequency = prefs?.Frequency ?? "Daily"
             };
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetAvailability(bool isAvailable)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+            var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            if (psych != null)
+            {
+                psych.IsAvailable = isAvailable;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Profile));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SavePrefs(bool remindNewReports, bool remindFollowUp, bool allowHrPatientNotif, string frequency)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+            var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            if (psych == null) return NotFound();
+
+            var prefs = await _context.PsyNotificationPreferences.FirstOrDefaultAsync(n => n.PsychologistId == psych.PsychologistId);
+            if (prefs == null)
+            {
+                prefs = new PsyNotificationPreference { PsychologistId = psych.PsychologistId };
+                _context.PsyNotificationPreferences.Add(prefs);
+            }
+            prefs.RemindNewReports = remindNewReports;
+            prefs.RemindFollowUp = remindFollowUp;
+            prefs.AllowHrPatientNotif = allowHrPatientNotif;
+            if (frequency is "Daily" or "Weekly" or "Monthly") prefs.Frequency = frequency;
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Preferensi disimpan.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        // ═════════════════════════════════════════
+        //  Add Schedule (real, DB-wired)
+        // ═════════════════════════════════════════
+        private async Task<List<LightenUp.Web.Models.ViewModels.PsyPatientOption>> LoadPatientOptionsAsync(int psyId)
+        {
+            return await _context.Assignments
+                .Where(a => a.PsychologistId == psyId && a.Status == "Active")
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Include(a => a.Patient).ThenInclude(p => p!.Company)
+                .Select(a => new LightenUp.Web.Models.ViewModels.PsyPatientOption
+                {
+                    PatientId = a.PatientId,
+                    FullName = a.Patient!.User!.FullName,
+                    CompanyName = a.Patient.Company != null ? a.Patient.Company.Name : null
+                })
+                .Distinct()
+                .OrderBy(o => o.FullName)
+                .ToListAsync();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddSchedule(int? patientId = null)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            var vm = new LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel
+            {
+                AvailablePatients = await LoadPatientOptionsAsync(psyId.Value)
+            };
+            if (patientId.HasValue) vm.PatientId = patientId.Value;
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSchedule(LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel model)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            if (!ModelState.IsValid)
+            {
+                model.AvailablePatients = await LoadPatientOptionsAsync(psyId.Value);
+                return View(model);
+            }
+
+            var sessionStart = model.SessionDate.Date.Add(model.SessionTime);
+            _context.Schedules.Add(new Schedule
+            {
+                PsychologistId = psyId.Value,
+                PatientId = model.PatientId,
+                SessionStart = sessionStart,
+                DurationMinutes = model.DurationMinutes,
+                Status = "Scheduled",
+                Notes = model.Notes
+            });
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Jadwal konseling baru ditambahkan.";
+            return RedirectToAction(nameof(Scheduling));
+        }
+
+        // ═════════════════════════════════════════
+        //  Add Task / Worksheet (real, DB-wired)
+        // ═════════════════════════════════════════
+        [HttpGet]
+        public async Task<IActionResult> AddTask(int? patientId = null)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            var vm = new LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel
+            {
+                AvailablePatients = await LoadPatientOptionsAsync(psyId.Value)
+            };
+            if (patientId.HasValue) vm.PatientId = patientId.Value;
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddTask(LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel model)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            if (!ModelState.IsValid)
+            {
+                model.AvailablePatients = await LoadPatientOptionsAsync(psyId.Value);
+                return View(model);
+            }
+
+            var deadline = model.DeadlineDate.Date.Add(model.DeadlineTime);
+            _context.Worksheets.Add(new Worksheet
+            {
+                PsychologistId = psyId.Value,
+                PatientId = model.PatientId,
+                TaskName = model.TaskName,
+                Description = model.Description,
+                Deadline = deadline,
+                Status = "Assigned",
+                CreatedAt = DateTime.Now
+            });
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Worksheet baru ditambahkan.";
+            return RedirectToAction(nameof(Worksheet));
         }
 
         // ==========================================
@@ -320,27 +539,11 @@ namespace LightenUp.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> WorksheetDetail(int id)
+        public IActionResult WorksheetDetail(int id)
         {
-            var psyId = await CurrentPsychologistIdAsync();
-            if (psyId == null) return RedirectToAction(nameof(Index));
-
-            var w = await _context.Worksheets
-                .Include(x => x.Patient).ThenInclude(p => p!.User)
-                .FirstOrDefaultAsync(x => x.WorksheetId == id && x.PsychologistId == psyId);
-            if (w == null) return NotFound();
-
-            var (label, css) = MapStatus(w.Status);
-            return View(new WorksheetDetailViewModel
-            {
-                TaskId = w.WorksheetId,
-                PatientName = w.Patient?.User?.FullName ?? "—",
-                Status = label,
-                StatusClass = css,
-                TaskDate = w.Deadline.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID")),
-                TaskName = w.TaskName,
-                PsychologistNote = w.PsychologistFeedback ?? string.Empty
-            });
+            // Consolidated into ReviewWorksheet which has the full DB-driven review flow
+            // (mark Complete + give feedback). Old WorksheetDetail.cshtml had hardcoded data.
+            return RedirectToAction(nameof(ReviewWorksheet), new { id });
         }
 
         [HttpGet]
@@ -477,6 +680,16 @@ namespace LightenUp.Web.Controllers
             ViewBag.SehatCount = patients.Count(p => p.MentalHealthStatus == "Sehat");
             ViewBag.BeresikoCount = patients.Count(p => p.MentalHealthStatus == "Beresiko");
             ViewBag.BahayaCount = patients.Count(p => p.MentalHealthStatus == "Bahaya");
+            return View();
+        }
+
+        // ═════════════════════════════════════════
+        //  Stub: Report patient to HR (full impl is Psy slice 9, future)
+        // ═════════════════════════════════════════
+        [HttpGet]
+        public IActionResult ReportToHr(int patientId)
+        {
+            ViewBag.PatientId = patientId;
             return View();
         }
 

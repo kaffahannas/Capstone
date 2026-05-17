@@ -1,0 +1,73 @@
+@using Microsoft.AspNetCore.Identity
+@using LightenUp.Web.Models
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var fullName = user?.FullName ?? "Admin";
+    var active = ViewBag.ActiveNav as string ?? "Dashboard";
+}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · LightenUp Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body>
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <span class="brand-mark">L</span>
+                <div>
+                    <span class="brand-name">LightenUp</span>
+                    <small>Admin Console</small>
+                </div>
+            </div>
+
+            <nav class="admin-nav">
+                <a class="admin-nav-item @(active == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index">
+                    <span class="ico">🏠</span> Dashboard
+                </a>
+                <a class="admin-nav-item @(active == "Approvals" ? "active" : "")" asp-controller="Approvals" asp-action="Index">
+                    <span class="ico">✅</span> Persetujuan
+                </a>
+                <a class="admin-nav-item @(active == "Users" ? "active" : "")" asp-controller="Users" asp-action="Index">
+                    <span class="ico">👥</span> Pengguna
+                </a>
+                <a class="admin-nav-item @(active == "Companies" ? "active" : "")" asp-controller="Companies" asp-action="Index">
+                    <span class="ico">🏢</span> Perusahaan
+                </a>
+                <a class="admin-nav-item @(active == "Invite" ? "active" : "")" asp-controller="Invite" asp-action="Index">
+                    <span class="ico">➕</span> Tambah Admin
+                </a>
+                <a class="admin-nav-item @(active == "Settings" ? "active" : "")" asp-controller="Settings" asp-action="Index">
+                    <span class="ico">⚙️</span> Pengaturan
+                </a>
+            </nav>
+
+            <form asp-area="AdminAuth" asp-controller="AdminAuth" asp-action="Logout" method="post" class="admin-logout">
+                <button type="submit">Keluar</button>
+            </form>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <h2>@ViewData["Title"]</h2>
+                <div class="admin-user">
+                    <strong>@fullName</strong>
+                    <span class="role-chip">Admin</span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

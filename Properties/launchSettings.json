@@ -27,11 +27,11 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "https-hr": {
+    "https-admin": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "Hr",
+      "launchUrl": "AdminAuth/Login",
       "applicationUrl": "https://localhost:7041",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

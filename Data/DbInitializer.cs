@@ -39,7 +39,7 @@ namespace LightenUp.Web.Data
                 Email = "dr.dina@lightenup.com",
                 FullName = "Dr. Dina",
                 RoleType = "Psychologist",
-                IsApprovedByHR = true
+                IsApprovedByAdmin = true
             };
 
             // Password untuk semua user dummy ini adalah "Password123!"
@@ -60,14 +60,14 @@ namespace LightenUp.Web.Data
             // 3. BUAT AKUN PASIEN (Karyawan)
             // =====================================
             // Pasien 1 (Kaffah)
-            var userKaffah = new ApplicationUser { UserName = "kaffah@perusahaana.com", Email = "kaffah@perusahaana.com", FullName = "Kaffah An Nas", RoleType = "Patient", IsApprovedByHR = true };
+            var userKaffah = new ApplicationUser { UserName = "kaffah@perusahaana.com", Email = "kaffah@perusahaana.com", FullName = "Kaffah An Nas", RoleType = "Patient", IsApprovedByAdmin = true };
             await userManager.CreateAsync(userKaffah, "Password123!");
 
             var patientKaffah = new Patient { UserId = userKaffah.Id, CompanyId = compA.CompanyId, Gender = "Laki-laki", MentalHealthStatus = "Sehat" };
             context.Patients.Add(patientKaffah);
 
             // Pasien 2 (Siti)
-            var userSiti = new ApplicationUser { UserName = "siti@perusahaana.com", Email = "siti@perusahaana.com", FullName = "Siti Aisyah", RoleType = "Patient", IsApprovedByHR = true };
+            var userSiti = new ApplicationUser { UserName = "siti@perusahaana.com", Email = "siti@perusahaana.com", FullName = "Siti Aisyah", RoleType = "Patient", IsApprovedByAdmin = true };
             await userManager.CreateAsync(userSiti, "Password123!");
 
             var patientSiti = new Patient { UserId = userSiti.Id, CompanyId = compA.CompanyId, Gender = "Perempuan", MentalHealthStatus = "Beresiko" };
