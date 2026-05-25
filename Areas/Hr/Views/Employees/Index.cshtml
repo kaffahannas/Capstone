@@ -2,114 +2,244 @@
 @{
     ViewData["Title"] = "Klien Aktif";
     ViewBag.ActiveNav = "Klien";
+
+    var cid        = new System.Globalization.CultureInfo("id-ID");
     int totalPages = (int)Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+
+    int totalSehat    = Model.Items.Count(e => e.Status == "Sehat");
+    int totalBeresiko = Model.Items.Count(e => e.Status == "Beresiko");
+    int totalBahaya   = Model.Items.Count(e => e.Status == "Bahaya");
 }
 
-<div style="max-width: 900px;">
+<div class="hrem-page">
 
+    @* ── Hero ── *@
+    <div class="hrd-hero hrem-hero">
+        <div class="hrd-hero-bg" aria-hidden="true"></div>
+        <div class="hrd-hero-inner">
+
+            <div class="hrd-hero-left">
+                <p class="hrd-hero-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Manajemen Karyawan
+                </p>
+                <h1 class="hrd-hero-title">Daftar Klien Aktif</h1>
+                <p class="hrd-hero-sub">@DateTime.Now.ToString("dddd, d MMMM yyyy", cid)</p>
+            </div>
+
+            <div class="hrd-stats">
+                <div class="hrd-stat">
+                    <span class="hrd-stat-ico">👥</span>
+                    <span class="hrd-stat-val">@Model.TotalCount</span>
+                    <span class="hrd-stat-lbl">Total Klien</span>
+                </div>
+                <div class="hrd-stat hrd-stat--sehat">
+                    <span class="hrd-stat-ico">✅</span>
+                    <span class="hrd-stat-val">@totalSehat</span>
+                    <span class="hrd-stat-lbl">Sehat</span>
+                </div>
+                <div class="hrd-stat hrd-stat--beresiko">
+                    <span class="hrd-stat-ico">⚠️</span>
+                    <span class="hrd-stat-val">@totalBeresiko</span>
+                    <span class="hrd-stat-lbl">Beresiko</span>
+                </div>
+                @if (totalBahaya > 0)
+                {
+                    <div class="hrd-stat hrd-stat--bahaya">
+                        <span class="hrd-stat-ico">🚨</span>
+                        <span class="hrd-stat-val">@totalBahaya</span>
+                        <span class="hrd-stat-lbl">Bahaya</span>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+
+    @* ── Success toast ── *@
     @if (TempData["success"] is string ok)
     {
-        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
-    }
-
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <div>
-            <h2 style="margin:0; font-size:20px;">Client aktif</h2>
-            <div style="font-size: 22px; font-weight: 600; margin-top:4px;">👥 @Model.TotalCount orang</div>
-        </div>
-        <a class="btn-primary" asp-action="Add">+ Tambah Client</a>
-    </div>
-
-    @* ─── Tab toggle ─── *@
-    <div class="task-chips" style="margin-bottom:16px;">
-        <a class="task-chip @(Model.Tab == "Semua" ? "selected" : "")"
-           asp-action="Index"
-           asp-route-tab="Semua"
-           asp-route-search="@Model.Search" asp-route-division="@Model.Division" asp-route-status="@Model.Status">Semua</a>
-        <a class="task-chip @(Model.Tab == "Sesi" ? "selected" : "")"
-           asp-action="Index"
-           asp-route-tab="Sesi"
-           asp-route-search="@Model.Search" asp-route-division="@Model.Division" asp-route-status="@Model.Status">Sesi Hari Ini</a>
-    </div>
-
-    @* ─── Filter form ─── *@
-    <form method="get" style="display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:10px; margin-bottom:20px;">
-        <input type="hidden" name="tab" value="@Model.Tab" />
-        <input type="search" name="search" placeholder="Cari nama..." value="@Model.Search"
-               style="padding:10px 14px; border:1px solid #E5E7EB; border-radius:8px; font-family:inherit;" />
-        <select name="division" class="onb-select">
-            <option value="">Semua Divisi</option>
-            @foreach (var d in Model.Divisions)
-            {
-                <option value="@d" selected="@(Model.Division == d)">@d</option>
-            }
-        </select>
-        <select name="status" class="onb-select">
-            <option value="">Semua Status</option>
-            <option value="Sehat" selected="@(Model.Status == "Sehat")">Sehat</option>
-            <option value="Beresiko" selected="@(Model.Status == "Beresiko")">Beresiko</option>
-            <option value="Bahaya" selected="@(Model.Status == "Bahaya")">Bahaya</option>
-        </select>
-        <button type="submit" class="btn-pill">Filter</button>
-    </form>
-
-    @* ─── Cards ─── *@
-    @if (!Model.Items.Any())
-    {
-        <div class="dash-card-empty">
-            <p>Tidak ada client yang cocok.</p>
+        <div class="hrem-toast hrem-toast--ok" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            @ok
         </div>
     }
-    else
-    {
-        foreach (var e in Model.Items)
-        {
-            <a class="task-card" asp-action="Detail" asp-route-id="@e.PatientId" style="grid-template-columns: 60px 1fr auto; align-items:center;">
-                <div>
-                    <img src="@(string.IsNullOrEmpty(e.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : e.ProfilePicture)"
-                         style="width:48px; height:48px; border-radius:999px; object-fit:cover; background:#EDE9FE;" />
+
+    @* ── Main card ── *@
+    <div class="hrem-card">
+
+        @* ── Card header: title + search + filters ── *@
+        <div class="hrem-card-head">
+            <div class="hrem-head-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <h2 class="hrem-card-title">Karyawan</h2>
+                <span class="hrem-count-chip">@Model.TotalCount</span>
+            </div>
+
+            <form method="get" class="hrem-head-right" id="filterForm">
+                <input type="hidden" name="tab" value="@Model.Tab" />
+                <div class="hrem-search-wrap">
+                    <svg class="hrem-search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="search" name="search" placeholder="Cari nama karyawan..."
+                           value="@Model.Search" class="hrem-search-input"
+                           autocomplete="off" id="empSearch" />
                 </div>
-                <div>
-                    <h4 style="margin:0;">@e.FullName</h4>
-                    @if (Model.Tab == "Sesi" && e.TodaySessionStart.HasValue)
+                <select name="status" class="hrem-select" onchange="this.form.submit()" aria-label="Filter status">
+                    <option value="">Semua Status</option>
+                    <option value="Sehat"    selected="@(Model.Status == "Sehat"    ? "selected" : null)">Sehat</option>
+                    <option value="Beresiko" selected="@(Model.Status == "Beresiko" ? "selected" : null)">Beresiko</option>
+                    <option value="Bahaya"   selected="@(Model.Status == "Bahaya"   ? "selected" : null)">Bahaya</option>
+                </select>
+                <select name="division" class="hrem-select" onchange="this.form.submit()" aria-label="Filter divisi">
+                    <option value="">Semua Divisi</option>
+                    @foreach (var d in Model.Divisions)
                     {
-                        <div class="meta">
-                            @e.TodaySessionStart.Value.ToString("HH:mm") - @e.TodaySessionStart.Value.AddMinutes(e.TodaySessionDurationMinutes ?? 60).ToString("HH:mm")
-                            &nbsp;·&nbsp; @(e.TodaySessionTitle ?? "Sesi")
-                        </div>
+                        <option value="@d" selected="@(Model.Division == d ? "selected" : null)">@d</option>
                     }
-                    else
-                    {
-                        <div class="meta">
-                            Aktif Sejak @(e.OnboardingCompletedAt?.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID")) ?? "—")
-                            @if (!string.IsNullOrEmpty(e.Department))
-                            {
-                                <span>· @e.Department</span>
-                            }
-                        </div>
-                    }
-                    <div class="meta">@e.Gender</div>
-                </div>
-                <span class="status-badge @e.Status.ToLowerInvariant()">@e.Status</span>
+                </select>
+            </form>
+        </div>
+
+        @* ── Tab pills ── *@
+        <div class="hrem-tabs">
+            <a class="hrem-tab @(Model.Tab == "Semua" ? "hrem-tab--active" : "")"
+               asp-action="Index" asp-route-tab="Semua"
+               asp-route-search="@Model.Search" asp-route-division="@Model.Division" asp-route-status="@Model.Status">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                Semua Klien
             </a>
-        }
+            <a class="hrem-tab @(Model.Tab == "Sesi" ? "hrem-tab--active" : "")"
+               asp-action="Index" asp-route-tab="Sesi"
+               asp-route-search="@Model.Search" asp-route-division="@Model.Division" asp-route-status="@Model.Status">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Sesi Hari Ini
+                @if (Model.Tab == "Sesi" && Model.Items.Any())
+                {
+                    <span class="hrem-tab-badge">@Model.Items.Count</span>
+                }
+            </a>
+        </div>
 
-        @* Pagination *@
+        @* ── Employee list ── *@
+        <div class="hrem-list">
+            @if (!Model.Items.Any())
+            {
+                <div class="hrem-empty">
+                    <div class="hrem-empty-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <p class="hrem-empty-title">
+                        @if (!string.IsNullOrEmpty(Model.Search) || !string.IsNullOrEmpty(Model.Status) || !string.IsNullOrEmpty(Model.Division))
+                        {
+                            <span>Tidak ada hasil yang cocok</span>
+                        }
+                        else if (Model.Tab == "Sesi")
+                        {
+                            <span>Tidak ada sesi hari ini</span>
+                        }
+                        else
+                        {
+                            <span>Belum ada klien aktif</span>
+                        }
+                    </p>
+                    <p class="hrem-empty-sub">Karyawan dapat mendaftar sendiri menggunakan kode referral perusahaan.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var e in Model.Items)
+                {
+                    var initials  = string.Join("", (e.FullName ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpper(p[0])));
+                    var statusCss = (e.Status ?? "") switch { "Bahaya" => "bahaya", "Beresiko" => "beresiko", _ => "sehat" };
+
+                    <a href="@Url.Action("Detail", "Employees", new { area = "Hr", id = e.PatientId })"
+                       class="hrem-row hrem-row--@statusCss">
+
+                        <div class="hrem-row-avatar hrem-avatar--@statusCss" aria-hidden="true">@initials</div>
+
+                        <div class="hrem-row-info">
+                            <span class="hrem-row-name">@e.FullName</span>
+                            <span class="hrem-row-meta">
+                                <span class="hrem-row-dept">@(string.IsNullOrEmpty(e.Department) ? "—" : e.Department)</span>
+                                <span class="hrem-row-sep" aria-hidden="true">·</span>
+                                @if (Model.Tab == "Sesi" && e.TodaySessionStart.HasValue)
+                                {
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    <span>Sesi @e.TodaySessionStart.Value.ToString("HH:mm")–@e.TodaySessionStart.Value.AddMinutes(e.TodaySessionDurationMinutes ?? 60).ToString("HH:mm")</span>
+                                }
+                                else
+                                {
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                    <span>Sejak @(e.OnboardingCompletedAt?.ToString("d MMM yyyy", cid) ?? "—")</span>
+                                }
+                            </span>
+                        </div>
+
+                        <div class="hrem-row-right">
+                            <span class="hrd-status hrd-status--@statusCss">
+                                <span class="hrd-status-dot" aria-hidden="true"></span>
+                                @(e.Status ?? "—")
+                            </span>
+                            <span class="hrem-row-arrow" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </span>
+                        </div>
+
+                    </a>
+                }
+            }
+        </div>
+
+        @* ── Pagination ── *@
         @if (totalPages > 1)
         {
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
-                <small style="color:#6B7280;">Menampilkan @((Model.Page - 1) * Model.PageSize + 1)-@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) dari @Model.TotalCount entri</small>
-                <div style="display:flex; gap:6px;">
-                    @for (int p = 1; p <= totalPages; p++)
+            <div class="hrem-pagination">
+                <span class="hrem-page-info">Halaman @Model.Page dari @totalPages · @Model.TotalCount klien</span>
+                <div class="hrem-page-btns">
+                    @if (Model.Page > 1)
                     {
-                        <a class="task-chip @(p == Model.Page ? "selected" : "")"
-                           asp-action="Index"
-                           asp-route-tab="@Model.Tab"
-                           asp-route-search="@Model.Search" asp-route-division="@Model.Division" asp-route-status="@Model.Status"
-                           asp-route-page="@p">@p</a>
+                        <a class="hrem-page-btn"
+                           asp-action="Index" asp-route-tab="@Model.Tab" asp-route-search="@Model.Search"
+                           asp-route-division="@Model.Division" asp-route-status="@Model.Status" asp-route-page="@(Model.Page - 1)"
+                           aria-label="Sebelumnya">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                        </a>
+                    }
+                    @for (int p = Math.Max(1, Model.Page - 2); p <= Math.Min(totalPages, Model.Page + 2); p++)
+                    {
+                        <a class="hrem-page-btn @(p == Model.Page ? "hrem-page-btn--active" : "")"
+                           asp-action="Index" asp-route-tab="@Model.Tab" asp-route-search="@Model.Search"
+                           asp-route-division="@Model.Division" asp-route-status="@Model.Status" asp-route-page="@p">@p</a>
+                    }
+                    @if (Model.Page < totalPages)
+                    {
+                        <a class="hrem-page-btn"
+                           asp-action="Index" asp-route-tab="@Model.Tab" asp-route-search="@Model.Search"
+                           asp-route-division="@Model.Division" asp-route-status="@Model.Status" asp-route-page="@(Model.Page + 1)"
+                           aria-label="Berikutnya">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
                     }
                 </div>
             </div>
         }
-    }
+
+    </div>
+
 </div>
+
+@section Scripts {
+<script>
+(function () {
+    // Submit search on Enter
+    const inp = document.getElementById('empSearch');
+    if (inp) {
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('filterForm').submit();
+        });
+        // Auto-submit on clear (x button)
+        inp.addEventListener('search', () => document.getElementById('filterForm').submit());
+    }
+})();
+</script>
+}

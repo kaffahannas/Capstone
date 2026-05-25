@@ -1,59 +1,57 @@
 @model LightenUp.Web.Models.ViewModels.HrOnboardingCompanyViewModel
 @{
     ViewData["Title"] = "Data Perusahaan";
+    var existingDoc = ViewBag.ExistingSupportDocumentUrl as string;
 }
 
 <h1 class="onb-title">Langkah 3: Data Perusahaan</h1>
-<p class="onb-subtitle">Daftarkan perusahaan baru atau bergabung dengan perusahaan yang sudah terdaftar.</p>
+<p class="onb-subtitle">Daftarkan perusahaan Anda. Kode referral untuk karyawan akan dibuat otomatis setelah langganan perusahaan aktif.</p>
 
 <form asp-action="Company" method="post" enctype="multipart/form-data" class="onb-content">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="onb-pill-row">
-        <label class="onb-pill @(Model.Mode == "Create" ? "selected" : "")">
-            <input type="radio" asp-for="Mode" value="Create" style="display:none" />
-            Daftar Perusahaan Baru
-        </label>
-        <label class="onb-pill @(Model.Mode == "Join" ? "selected" : "")">
-            <input type="radio" asp-for="Mode" value="Join" style="display:none" />
-            Gabung via Kode Referral
-        </label>
+    <div style="margin-bottom: 14px;">
+        <label asp-for="CompanyAddress" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Lokasi Perusahaan</label>
+        <textarea asp-for="CompanyAddress" rows="2" class="onb-textarea" placeholder="Jl. Ki Hajar Dewantara, Kota Jababeka, Cikarang Baru, Bekasi"></textarea>
+        <span asp-validation-for="CompanyAddress" class="text-danger"></span>
     </div>
 
-    @* ─── Create new company block ─── *@
-    <div id="createBlock" hidden="@(Model.Mode != "Create")" class="onb-conditional" style="margin-top:20px;">
-        <div style="margin-bottom: 14px;">
-            <label asp-for="CompanyAddress" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Lokasi Perusahaan</label>
-            <textarea asp-for="CompanyAddress" rows="2" class="mood-textarea" placeholder="Jl. Ki Hajar Dewantara, Kota Jababeka, Cikarang Baru, Bekasi"></textarea>
-            <span asp-validation-for="CompanyAddress" class="text-danger"></span>
-        </div>
+    <div style="margin-bottom: 14px;">
+        <label asp-for="CompanyName" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nama Perusahaan</label>
+        <input asp-for="CompanyName" class="onb-input" placeholder="PT. ABDI JAYA" />
+        <span asp-validation-for="CompanyName" class="text-danger"></span>
+    </div>
 
-        <div style="margin-bottom: 14px;">
-            <label asp-for="CompanyName" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nama Perusahaan</label>
-            <input asp-for="CompanyName" class="onb-input" placeholder="PT. ABDI JAYA" />
-            <span asp-validation-for="CompanyName" class="text-danger"></span>
-        </div>
+    <div style="margin-bottom: 14px;">
+        <label asp-for="RegistrationNumber" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nomor Perusahaan</label>
+        <input asp-for="RegistrationNumber" class="onb-input" placeholder="20171274-2020-02-1002" />
+    </div>
 
-        <div style="margin-bottom: 14px;">
-            <label asp-for="RegistrationNumber" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nomor Perusahaan</label>
-            <input asp-for="RegistrationNumber" class="onb-input" placeholder="20171274-2020-02-1002" />
-        </div>
-
-        <div>
-            <label style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Scan Dokumen Pendukung</label>
-            <label style="display:block; padding:24px; border:1.5px dashed #C4B5FD; border-radius:12px; text-align:center; cursor:pointer; background:#FAF5FF;">
-                <input type="file" asp-for="SupportDocument" accept="image/*,.pdf" style="display:none;" />
+    <div class="onb-upload-block">
+        <label style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Scan Dokumen Pendukung</label>
+        @if (!string.IsNullOrEmpty(existingDoc))
+        {
+            <div class="onb-upload-preview" id="existingSupportPreview">
+                @if (existingDoc.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    <a href="@existingDoc" target="_blank" rel="noopener" class="onb-file-link">📄 Dokumen tersimpan (PDF) — lihat</a>
+                }
+                else
+                {
+                    <img src="@existingDoc" alt="Dokumen pendukung" class="onb-upload-thumb" />
+                }
+                <p class="onb-upload-hint">File sudah diunggah. Pilih file baru untuk mengganti.</p>
+            </div>
+        }
+        <label class="onb-upload-zone">
+            <input type="file" asp-for="SupportDocument" accept="image/*,.pdf" class="onb-upload-input" data-preview="supportPreview" />
+            <div class="onb-upload-placeholder">
+                <span class="onb-upload-icon">📄</span>
                 <strong>Upload file</strong>
-                <small style="display:block; color:#6B7280;">Format JPG/PDF, maksimal 5 MB</small>
-            </label>
-        </div>
-    </div>
-
-    @* ─── Join existing company block ─── *@
-    <div id="joinBlock" hidden="@(Model.Mode != "Join")" class="onb-conditional" style="margin-top:20px;">
-        <label asp-for="ReferralCode" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Kode Referral Perusahaan</label>
-        <input asp-for="ReferralCode" class="onb-input" placeholder="ABC123" style="text-transform: uppercase;" />
-        <span asp-validation-for="ReferralCode" class="text-danger"></span>
+                <small>Format JPG/PDF, maksimal 5 MB</small>
+            </div>
+            <div id="supportPreview" class="onb-upload-preview onb-upload-preview-new" hidden></div>
+        </label>
     </div>
 
     <div style="margin-top: 16px;">
@@ -64,23 +62,6 @@
 
     <div class="onb-footer">
         <a asp-action="Academic" class="onb-btn onb-btn-secondary">Sebelumnya</a>
-        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutnya</button>
+        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutkan</button>
     </div>
 </form>
-
-@section Scripts {
-    <script>
-        const pills = document.querySelectorAll('.onb-pill');
-        const createBlock = document.getElementById('createBlock');
-        const joinBlock = document.getElementById('joinBlock');
-
-        pills.forEach(p => p.addEventListener('click', () => {
-            pills.forEach(x => x.classList.remove('selected'));
-            p.classList.add('selected');
-            const v = p.querySelector('input').value;
-            p.querySelector('input').checked = true;
-            createBlock.hidden = (v !== 'Create');
-            joinBlock.hidden = (v !== 'Join');
-        }));
-    </script>
-}

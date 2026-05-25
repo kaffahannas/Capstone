@@ -1,11 +1,11 @@
 ﻿:root {
-    --primary-purple: #8b5cf6;
-    --primary-purple-hover: #7c3aed;
-    --light-purple: #f3f0ff;
+    --primary-purple: #7C3AED;
+    --primary-purple-hover: #6D28D9;
+    --light-purple: #EDE9FE;
     --text-dark: #1f2937;
     --text-muted: #6b7280;
     --border-color: #e5e7eb;
-    --bg-desktop: #8fa0c0; /* Warna background cadangan */
+    --bg-desktop: #8fa0c0;
 }
 
 /* =======================================
@@ -48,14 +48,14 @@ body.auth-page {
 /* =======================================
    RESPONSIF HP (MOBILE)
    ======================================= */
-@media (max-width: 599px) {
+@media (max-width: 575.98px) {
     .auth-wrapper {
         min-height: 100vh;
         justify-content: flex-start;
     }
 
     body.login-page .auth-wrapper {
-        justify-content: flex-end; /* Login di HP nempel bawah */
+        justify-content: flex-end;
     }
 
     .auth-container.login-card {
@@ -64,7 +64,7 @@ body.auth-page {
 
     .auth-container.register-card {
         padding: 20px 24px;
-        border-radius: 35px 35px 0 0; /* Tambahkan lengkungan juga untuk Register di HP agar senada */
+        border-radius: 35px 35px 0 0;
         margin-top: 20px;
     }
 }
@@ -72,7 +72,7 @@ body.auth-page {
 /* =======================================
    RESPONSIF LAPTOP (DESKTOP)
    ======================================= */
-@media (min-width: 600px) {
+@media (min-width: 576px) {
     .auth-wrapper {
         padding: 40px 0;
         justify-content: center;
@@ -80,7 +80,7 @@ body.auth-page {
 
     .auth-container {
         border-radius: 24px;
-        box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15);
+        box-shadow: 0 10px 40px rgba(124, 58, 237, 0.15);
     }
 }
 
@@ -99,7 +99,7 @@ body.auth-page {
 .app-name {
     font-weight: 700;
     font-size: 38px;
-    color: #a476f5;
+    color: var(--primary-purple);
     letter-spacing: -0.5px;
 }
 
@@ -239,6 +239,7 @@ body.auth-page {
     cursor: pointer;
     transition: 0.3s;
     margin-top: 10px;
+    min-height: 2.75rem;
 }
 
     .btn-submit:hover {
@@ -327,8 +328,9 @@ body.auth-page {
 
 .otp-input {
     width: 100%;
-    aspect-ratio: 1/1; /* Memastikan input berbentuk kotak */
+    aspect-ratio: 1/1;
     max-width: 65px;
+    min-height: 2.75rem;
     height: 65px;
     border: 1px solid var(--border-color);
     border-radius: 12px;

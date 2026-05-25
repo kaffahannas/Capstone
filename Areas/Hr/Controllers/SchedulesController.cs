@@ -1,4 +1,5 @@
 using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    [RequiresCompanySubscription]
     public class SchedulesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -88,8 +90,16 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 DbStatus = s.Status,
                 DisplayStatus = DisplayStatus(s),
                 Notes = s.Notes,
+                MeetingLink = s.MeetingLink,
                 PsychologistName = s.Psychologist?.User?.FullName ?? "—"
             }).ToList();
+
+            var patients = await _context.Patients
+                .Include(p => p.User)
+                .Where(p => p.CompanyId == companyId && p.EmploymentStatus == "active")
+                .OrderBy(p => p.User!.FullName)
+                .Select(p => new HrSimplePatient { PatientId = p.PatientId, FullName = p.User!.FullName, Department = p.Department })
+                .ToListAsync();
 
             ViewBag.ActiveNav = "Monitoring";
             return View(new HrScheduleListViewModel
@@ -99,7 +109,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 Page = page,
                 PageSize = pageSize,
                 TotalCount = total,
-                Items = items
+                Items = items,
+                AvailablePatients = patients
             });
         }
 
@@ -194,14 +205,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.AvailablePatients = await _context.Patients
-                    .Include(p => p.User)
-                    .Where(p => p.CompanyId == hr.CompanyId && p.EmploymentStatus == "active")
-                    .OrderBy(p => p.User!.FullName)
-                    .Select(p => new HrSimplePatient { PatientId = p.PatientId, FullName = p.User!.FullName, Department = p.Department })
-                    .ToListAsync();
-                ViewBag.ActiveNav = "Monitoring";
-                return View(model);
+                TempData["error"] = "Pastikan Anda telah memilih pasien.";
+                return RedirectToAction(nameof(Index));
             }
 
             var psychologistId = await _context.Assignments
@@ -225,6 +230,67 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan jadwal dikirim ke psikolog terkait.";
             return RedirectToAction(nameof(Index));
+        }
+
+        // ═════════════════════════════════════════════
+        //  RequestModal  (AJAX — used by Employee Detail modal)
+        // ═════════════════════════════════════════════
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestModal(
+            [FromForm] int patientId,
+            [FromForm] string? proposedSessionDate,
+            [FromForm] string? notes)
+        {
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null)
+                return Json(new { ok = false, errors = new[] { "Sesi tidak valid. Silakan login ulang." } });
+
+            var patient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.PatientId == patientId && p.CompanyId == hr.CompanyId);
+            if (patient == null)
+                return Json(new { ok = false, errors = new[] { "Karyawan tidak ditemukan." } });
+
+            DateTime? dt = null;
+            if (!string.IsNullOrEmpty(proposedSessionDate) &&
+                DateTime.TryParse(proposedSessionDate, out var parsed))
+                dt = parsed;
+
+            var psychologistId = await _context.Assignments
+                .Where(a => a.PatientId == patientId && a.Status == "Active")
+                .OrderByDescending(a => a.AssignedAt)
+                .Select(a => (int?)a.PsychologistId)
+                .FirstOrDefaultAsync();
+
+            var user = await _userManager.GetUserAsync(User);
+            _context.PsychologistRequests.Add(new PsychologistRequest
+            {
+                RequestedByHrUserId = user!.Id,
+                PatientId = patientId,
+                PsychologistId = psychologistId,
+                RequestType = "Schedule",
+                Notes = string.IsNullOrWhiteSpace(notes) ? null : notes,
+                ProposedSessionDate = dt,
+                Status = "Pending",
+                CreatedAt = DateTime.Now
+            });
+            await _context.SaveChangesAsync();
+            return Json(new { ok = true, message = "Permintaan jadwal sesi dikirim ke psikolog." });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ScheduleDetailModal(int id)
+        {
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null) return Unauthorized();
+
+            var schedule = await _context.Schedules
+                .Include(s => s.Patient).ThenInclude(p => p!.User)
+                .Include(s => s.Psychologist).ThenInclude(p => p!.User)
+                .FirstOrDefaultAsync(s => s.ScheduleId == id && s.Patient!.CompanyId == hr.CompanyId);
+
+            if (schedule == null) return NotFound();
+
+            return PartialView("_ScheduleDetailModal", schedule);
         }
     }
 }

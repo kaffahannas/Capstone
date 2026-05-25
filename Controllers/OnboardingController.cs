@@ -1,14 +1,11 @@
 ﻿using LightenUp.Web.Data;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LightenUp.Web.Controllers
 {
@@ -17,13 +14,13 @@ namespace LightenUp.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserUploadService _uploads;
 
-        public OnboardingController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public OnboardingController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, UserUploadService uploads)
         {
             _userManager = userManager;
             _context = context;
-            _webHostEnvironment = webHostEnvironment;
+            _uploads = uploads;
         }
 
         // ==========================================
@@ -58,22 +55,14 @@ namespace LightenUp.Web.Controllers
 
                 if (model.ProfilePhoto != null)
                 {
-                    // Tentukan lokasi penyimpanan file
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profiles");
-                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                    // Buat nama unik dan simpan file fisik
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.ProfilePhoto.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    var path = await _uploads.ReplaceAsync(
+                        user.Id, UserUploadService.Categories.Profile, model.ProfilePhoto,
+                        user.ProfilePicture, allowedExtensions: UserUploadService.ProfileExtensions);
+                    if (path != null)
                     {
-                        await model.ProfilePhoto.CopyToAsync(fileStream);
+                        user.ProfilePicture = path;
+                        await _userManager.UpdateAsync(user);
                     }
-
-                    // Update data profil user
-                    user.ProfilePicture = "/uploads/profiles/" + uniqueFileName;
-                    await _userManager.UpdateAsync(user);
                 }
 
                 // Lanjut ke langkah 2
@@ -105,18 +94,11 @@ namespace LightenUp.Web.Controllers
 
                 if (model.AcademicDocument != null)
                 {
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "documents");
-                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_Akademik_" + model.AcademicDocument.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await model.AcademicDocument.CopyToAsync(fileStream);
-                    }
-
-                    psych.AcademicDocumentUrl = "/uploads/documents/" + uniqueFileName;
+                    var path = await _uploads.ReplaceAsync(
+                        user.Id, UserUploadService.Categories.Documents, model.AcademicDocument,
+                        psych.AcademicDocumentUrl, namePrefix: "academic",
+                        allowedExtensions: UserUploadService.DocumentExtensions);
+                    if (path != null) psych.AcademicDocumentUrl = path;
                 }
 
                 // Simpan data teks
@@ -155,18 +137,11 @@ namespace LightenUp.Web.Controllers
                 // Proses Upload Scan STR / SIPP
                 if (model.StrDocument != null)
                 {
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "documents");
-                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_STR_" + model.StrDocument.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await model.StrDocument.CopyToAsync(fileStream);
-                    }
-
-                    psych.StrDocumentUrl = "/uploads/documents/" + uniqueFileName;
+                    var path = await _uploads.ReplaceAsync(
+                        user.Id, UserUploadService.Categories.Documents, model.StrDocument,
+                        psych.StrDocumentUrl, namePrefix: "str",
+                        allowedExtensions: UserUploadService.DocumentExtensions);
+                    if (path != null) psych.StrDocumentUrl = path;
                 }
 
                 // Simpan data inputan teks

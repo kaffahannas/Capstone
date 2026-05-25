@@ -4,82 +4,188 @@
     var companyName = ViewBag.Company as string ?? "";
     var now = (DateTime)(ViewBag.Now ?? DateTime.Now);
     Layout = null;
+
+    int sehat = roster.Count(r => r.MentalHealthStatus == "Sehat");
+    int beresiko = roster.Count(r => r.MentalHealthStatus == "Beresiko");
+    int bahaya = roster.Count(r => r.MentalHealthStatus == "Bahaya");
+    int total = roster.Count;
 }
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8" />
-    <title>Laporan @companyName - LightenUp</title>
+    <title>Laporan_Kesehatan_Mental_@companyName.Replace(" ", "_")</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; color: #111; max-width: 900px; margin: 40px auto; padding: 0 20px; }
-        h1 { font-size: 22px; margin: 0 0 4px; }
-        small { color: #6B7280; }
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
-        .stat { border: 1px solid #E5E7EB; border-radius: 8px; padding: 14px; text-align: center; }
-        .stat .n { font-size: 26px; font-weight: 700; margin: 6px 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
-        th, td { padding: 8px 10px; border-bottom: 1px solid #E5E7EB; text-align: left; }
-        th { background: #F9FAFB; font-weight: 600; }
-        .badge { padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #EEF2FF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #E5E7EB;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 40px; 
+            background: #fff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        /* Page styling for printing */
+        @@page { size: A4; margin: 15mm; }
+        
+        .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 30px; }
+        .header-left { display: flex; flex-direction: column; gap: 4px; }
+        .logo-text { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+        .report-title { font-size: 28px; font-weight: 800; color: var(--text-main); margin: 0; }
+        .report-meta { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        
+        .kpi-container { display: flex; gap: 24px; margin-bottom: 40px; }
+        .chart-box { width: 200px; height: 200px; flex-shrink: 0; position: relative; }
+        .stats-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-content: center; }
+        
+        .kpi-card { padding: 20px; border-radius: 16px; text-align: center; border: 1px solid var(--border); }
+        .kpi-card h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0; }
+        .kpi-card .val { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; }
+        
+        .c-sehat { background: #ECFDF5; border-color: #A7F3D0; color: #059669; }
+        .c-sehat .val { color: #059669; }
+        .c-beresiko { background: #FFFBEB; border-color: #FDE68A; color: #D97706; }
+        .c-beresiko .val { color: #D97706; }
+        .c-bahaya { background: #FEF2F2; border-color: #FECACA; color: #DC2626; }
+        .c-bahaya .val { color: #DC2626; }
+        .c-total { background: #F3F4F6; border-color: #E5E7EB; color: #4B5563; }
+        .c-total .val { color: #111827; }
+
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { padding: 12px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+        tr:nth-child(even) td { background: #F9FAFB; }
+        
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .b-sehat { background: #D1FAE5; color: #047857; }
         .b-beresiko { background: #FEF3C7; color: #B45309; }
         .b-bahaya { background: #FEE2E2; color: #B91C1C; }
-        @@media print { .no-print { display: none; } }
+        
+        .footer { margin-top: 40px; text-align: center; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 16px; }
+
+        @@media print { 
+            .no-print { display: none !important; } 
+            body { padding: 0; }
+        }
+        
+        .print-btn { 
+            position: fixed; top: 20px; right: 20px; 
+            background: var(--primary); color: #fff; border: none; 
+            padding: 12px 24px; border-radius: 8px; font-weight: 600; 
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
-    <button class="no-print" onclick="window.print()" style="float:right; padding:8px 16px; background:#7C3AED; color:#fff; border:none; border-radius:6px; cursor:pointer;">Cetak / Simpan PDF</button>
+    <button class="no-print print-btn" onclick="window.print()">🖨️ Cetak PDF Sekarang</button>
 
-    <h1>Laporan Karyawan — @companyName</h1>
-    <small>Generated @now.ToString("d MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</small>
+    <div class="header">
+        <div class="header-left">
+            <h1 class="report-title">Laporan Kesehatan Mental</h1>
+            <div class="report-meta">Perusahaan: <strong>@companyName</strong> &nbsp;|&nbsp; Tanggal: @now.ToString("dd MMMM yyyy, HH:mm", new System.Globalization.CultureInfo("id-ID"))</div>
+        </div>
+        <div class="logo-text">LightenUp<span style="color:#A78BFA">.</span></div>
+    </div>
 
-    <div class="stats">
-        <div class="stat">
-            <small>Total Aktif</small>
-            <div class="n">@roster.Count</div>
+    <div class="kpi-container">
+        <div class="chart-box">
+            <canvas id="mainChart"></canvas>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                <div style="font-size: 28px; font-weight: 800; color: var(--text-main);">@total</div>
+                <div style="font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Karyawan</div>
+            </div>
         </div>
-        <div class="stat">
-            <small>Sehat</small>
-            <div class="n" style="color:#047857;">@roster.Count(r => r.MentalHealthStatus == "Sehat")</div>
-        </div>
-        <div class="stat">
-            <small>Beresiko + Bahaya</small>
-            <div class="n" style="color:#B45309;">@roster.Count(r => r.MentalHealthStatus != "Sehat")</div>
+        
+        <div class="stats-grid">
+            <div class="kpi-card c-sehat">
+                <h3>Sehat</h3>
+                <div class="val">@sehat</div>
+            </div>
+            <div class="kpi-card c-beresiko">
+                <h3>Beresiko</h3>
+                <div class="val">@beresiko</div>
+            </div>
+            <div class="kpi-card c-bahaya">
+                <h3>Bahaya</h3>
+                <div class="val">@bahaya</div>
+            </div>
         </div>
     </div>
 
-    <h2 style="font-size: 16px; margin-top: 32px;">Daftar Karyawan</h2>
+    <h2 class="section-title">Direktori Karyawan</h2>
     <table>
         <thead>
             <tr>
-                <th>Nama</th>
-                <th>Email</th>
+                <th>No.</th>
+                <th>Nama Lengkap</th>
+                <th>Email / Kontak</th>
                 <th>Divisi</th>
-                <th>ID</th>
-                <th>Status</th>
-                <th>Last Check</th>
-                <th>Mood %</th>
+                <th>ID Karyawan</th>
+                <th>Status Mental</th>
+                <th>Update Terakhir</th>
             </tr>
         </thead>
         <tbody>
+            @{int i = 1;}
             @foreach (var r in roster)
             {
                 <tr>
-                    <td>@r.FullName</td>
+                    <td style="color:var(--text-muted); font-weight:600;">@i</td>
+                    <td style="font-weight:600; color:var(--text-main);">@r.FullName</td>
                     <td>@r.Email</td>
                     <td>@(r.Division ?? "—")</td>
-                    <td>@(r.EmployeeId ?? "—")</td>
+                    <td style="font-family: monospace;">@(r.EmployeeId ?? "—")</td>
                     <td><span class="badge b-@r.MentalHealthStatus.ToLowerInvariant()">@r.MentalHealthStatus</span></td>
                     <td>@r.LastCheckDate</td>
-                    <td>@(r.TotalMoodPercent?.ToString() + "%" ?? "—")</td>
                 </tr>
+                i++;
             }
         </tbody>
     </table>
+    
+    <div class="footer">
+        Laporan ini digenerate secara otomatis oleh sistem HR Console LightenUp pada @now.ToString("dd/MM/yyyy HH:mm:ss"). 
+        <br>Data bersifat konfidensial dan hanya ditujukan untuk keperluan internal HR.
+    </div>
 
     <script>
-        // Auto-open the print dialog on load.
-        window.addEventListener('load', () => setTimeout(() => window.print(), 300));
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById('mainChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sehat', 'Beresiko', 'Bahaya'],
+                    datasets: [{
+                        data: [@sehat, @beresiko, @bahaya],
+                        backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    animation: { duration: 0 } // Disable animation for immediate print rendering
+                }
+            });
+
+            // Auto-open print dialog slightly after chart renders
+            setTimeout(() => window.print(), 500);
+        });
     </script>
 </body>
 </html>

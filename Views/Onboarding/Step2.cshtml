@@ -1,4 +1,4 @@
-﻿@model LightenUp.Web.Models.ViewModels.OnboardingStep2ViewModel
+@model LightenUp.Web.Models.ViewModels.OnboardingStep2ViewModel
 
 @{
     ViewData["Title"] = "Langkah 2";
@@ -29,7 +29,7 @@
             <!-- Logo -->
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
                 <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" style="width: 28px; height: auto;" onerror="this.style.display='none'" />
-                <span style="font-weight: 700; color: #a476f5; font-size: 20px; letter-spacing: -0.5px;">LightenUp</span>
+                <span style="font-weight: 700; color: #7C3AED; font-size: 20px; letter-spacing: -0.5px;">LightenUp</span>
             </div>
 
             <h1 class="auth-title" style="font-size: 24px;">Langkah 2: Status<br />Akademik</h1>
@@ -118,9 +118,9 @@
             // Efek visual saat file di-drag masuk ke kotak
             ['dragenter', 'dragover'].forEach(eventName => {
                 uploadArea.addEventListener(eventName, () => {
-                    uploadArea.style.borderColor = '#8b5cf6'; /* Ungu */
+                    uploadArea.style.borderColor = '#7C3AED'; /* Ungu */
                     uploadArea.style.backgroundColor = '#F5F3FF';
-                    uploadIcon.style.stroke = '#8b5cf6';
+                    uploadIcon.style.stroke = '#7C3AED';
                 }, false);
             });
 

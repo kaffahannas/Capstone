@@ -1,128 +1,455 @@
 @model LightenUp.Web.Models.ViewModels.HrStatistikOverviewViewModel
 @{
-    ViewData["Title"] = "Statistik";
+    ViewData["Title"] = "Statistik Perusahaan";
     ViewBag.ActiveNav = "Statistik";
-    int total = Math.Max(1, Model.ActiveCount);
+    var cid = new System.Globalization.CultureInfo("id-ID");
 
     var divLabels = Json.Serialize(Model.Divisions.Select(d => d.Name));
     var divStress = Json.Serialize(Model.Divisions.Select(d => d.StressPct));
+    var divSehat  = Json.Serialize(Model.Divisions.Select(d => d.SehatPct));
+
+    int total = Math.Max(1, Model.ActiveCount);
+    var healthScore = (int)Math.Round((double)Model.Sehat / total * 100);
+    var scoreLabel  = healthScore >= 70 ? "Sangat Baik" : healthScore >= 40 ? "Perlu Perhatian" : "Kritis";
+    var scoreSuffix = healthScore >= 70 ? "👍" : healthScore >= 40 ? "⚠️" : "🚨";
+    var arcOffset   = (int)Math.Round(207.35 * (1 - healthScore / 100.0));
 }
 
 @section Head {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+    /* Modal Styling */
+    .psy-modal-overlay {
+        position: fixed; inset: 0; background: rgba(17, 24, 39, 0.7);
+        backdrop-filter: blur(8px); z-index: 1000; display: none;
+        align-items: center; justify-content: center; padding: 20px;
+        opacity: 0; transition: opacity 0.3s;
+    }
+    .psy-modal-overlay.is-active { display: flex; opacity: 1; }
+    .psy-modal-content {
+        background: #fff; border-radius: 24px; width: 100%;
+        max-width: 600px; max-height: 90vh; overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        transform: scale(0.95); transition: transform 0.3s; position: relative;
+    }
+    .psy-modal-overlay.is-active .psy-modal-content { transform: scale(1); }
+    .psy-modal-header { padding: 40px 32px; color: #fff; text-align: center; position: relative; }
+    .psy-modal-close {
+        position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2);
+        border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .psy-modal-body { padding: 32px; }
+    .psy-modal-footer {
+        padding: 24px 32px; background: #F9FAFB; border-top: 1px solid #F3F4F6;
+        display: flex; justify-content: flex-end; gap: 12px;
+        border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+    }
+    .btn-mitra {
+        background: var(--lu-primary); color: #fff; border: none;
+        padding: 12px 24px; border-radius: 12px; font-weight: 600;
+        cursor: pointer; transition: background 0.2s;
+    }
+    .btn-mitra:hover { background: #6D28D9; }
+    </style>
 }
 
-<div style="max-width: 900px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <div>
-            <h2 style="margin:0;">Data Keseluruhan Karyawan</h2>
-            <small style="color:#6B7280;">@Model.CompanyName</small>
+@* ── Hero (same stat-hero pattern as Psychologist/Statistics) ── *@
+<div class="stat-hero">
+    <div class="stat-hero-left">
+        <p class="stat-hero-eyebrow">HR · Laporan Kesehatan Mental</p>
+        <h1 class="stat-hero-title">Statistik @Model.CompanyName</h1>
+        <p class="stat-hero-sub">@DateTime.Now.ToString("dddd, d MMMM yyyy", cid) · Ringkasan kesehatan mental seluruh karyawan</p>
+        <div style="display:flex;gap:10px;margin-top:10px;">
+            <a class="sch-hero-btn" asp-action="ExportCsv" style="font-size:13px;">📥 Export CSV</a>
+            <a class="sch-hero-btn" asp-action="Print" target="_blank" style="font-size:13px;background:rgba(255,255,255,0.15);">🖨️ Cetak PDF</a>
         </div>
-        <div style="display:flex; gap:8px;">
-            <a class="btn-pill ghost" asp-action="ExportCsv">Export CSV</a>
-            <a class="btn-pill" asp-action="Print" target="_blank">Export PDF</a>
+    </div>
+    <div class="stat-hero-score">
+        <div class="stat-score-ring">
+            <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+                <circle cx="40" cy="40" r="33" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="7"/>
+                <circle cx="40" cy="40" r="33" fill="none" stroke="white" stroke-width="7"
+                        stroke-linecap="round"
+                        stroke-dasharray="207.35"
+                        stroke-dashoffset="@arcOffset"
+                        transform="rotate(-90 40 40)"
+                        style="transition: stroke-dashoffset 1s ease;"/>
+            </svg>
+            <div class="stat-score-inner">
+                <span class="stat-score-pct">@healthScore<small>%</small></span>
+            </div>
+        </div>
+        <div class="stat-score-meta">
+            <p class="stat-score-name">Wellness Score @scoreSuffix</p>
+            <p class="stat-score-label">@scoreLabel · @Model.ActiveCount karyawan aktif</p>
+        </div>
+    </div>
+</div>
+
+@* ── KPI cards (stat-kpi-row) ── *@
+<div class="stat-kpi-row">
+    <div class="stat-kpi stat-kpi--total">
+        <div class="stat-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="stat-kpi-body">
+            <span class="stat-kpi-value">@Model.ActiveCount</span>
+            <span class="stat-kpi-label">Total Karyawan</span>
+        </div>
+        <div class="stat-kpi-bar stat-kpi-bar--total" style="width:100%"></div>
+    </div>
+
+    <div class="stat-kpi stat-kpi--sehat">
+        <div class="stat-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="stat-kpi-body">
+            <span class="stat-kpi-value">@Model.Sehat</span>
+            <span class="stat-kpi-label">Sehat</span>
+        </div>
+        @{ var sehatPct = (int)Math.Round((double)Model.Sehat / total * 100); }
+        <div class="stat-kpi-bar stat-kpi-bar--sehat" style="width:@sehatPct%"></div>
+    </div>
+
+    <div class="stat-kpi stat-kpi--beresiko">
+        <div class="stat-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="stat-kpi-body">
+            <span class="stat-kpi-value">@Model.Beresiko</span>
+            <span class="stat-kpi-label">Beresiko</span>
+        </div>
+        @{ var beresikoPct = (int)Math.Round((double)Model.Beresiko / total * 100); }
+        <div class="stat-kpi-bar stat-kpi-bar--beresiko" style="width:@beresikoPct%"></div>
+    </div>
+
+    <div class="stat-kpi stat-kpi--bahaya">
+        <div class="stat-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="stat-kpi-body">
+            <span class="stat-kpi-value">@Model.Bahaya</span>
+            <span class="stat-kpi-label">Bahaya</span>
+        </div>
+        @{ var bahayaPct = (int)Math.Round((double)Model.Bahaya / total * 100); }
+        <div class="stat-kpi-bar stat-kpi-bar--bahaya" style="width:@bahayaPct%"></div>
+    </div>
+</div>
+
+@* ── Charts row ── *@
+<div class="stat-charts-row">
+
+    <div class="stat-chart-card stat-chart-card--donut">
+        <div class="stat-chart-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            <h3 class="stat-chart-title">Distribusi Status Karyawan</h3>
+        </div>
+        @if (Model.ActiveCount == 0)
+        {
+            <div class="stat-empty">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+                <p>Belum ada karyawan aktif</p>
+            </div>
+        }
+        else
+        {
+            <div class="stat-donut-wrap">
+                <div class="stat-canvas-wrap"><canvas id="pieChart"></canvas></div>
+                <ul class="stat-legend">
+                    <li class="stat-legend-item">
+                        <span class="stat-legend-dot" style="background:#10B981"></span>
+                        <span>Sehat</span>
+                        <strong>@Model.Sehat</strong>
+                    </li>
+                    <li class="stat-legend-item">
+                        <span class="stat-legend-dot" style="background:#F59E0B"></span>
+                        <span>Beresiko</span>
+                        <strong>@Model.Beresiko</strong>
+                    </li>
+                    <li class="stat-legend-item">
+                        <span class="stat-legend-dot" style="background:#EF4444"></span>
+                        <span>Bahaya</span>
+                        <strong>@Model.Bahaya</strong>
+                    </li>
+                </ul>
+            </div>
+        }
+    </div>
+
+    <div class="stat-chart-card stat-chart-card--bar">
+        <div class="stat-chart-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <h3 class="stat-chart-title">Tingkat Stress per Divisi</h3>
+        </div>
+        @if (!Model.Divisions.Any())
+        {
+            <div class="stat-empty">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <p>Belum ada data divisi</p>
+            </div>
+        }
+        else
+        {
+            <div class="stat-canvas-wrap"><canvas id="barChart"></canvas></div>
+        }
+    </div>
+
+</div>
+
+@* ── Division cards ── *@
+@if (Model.Divisions.Any())
+{
+    <div class="stat-section-head">
+        <div class="stat-section-title-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <h2 class="stat-section-title">Ringkasan per Divisi</h2>
+            <span class="stat-section-chip">@Model.Divisions.Count() divisi</span>
         </div>
     </div>
 
-    <p style="margin: 0 0 12px;"><strong>Client aktif:</strong> 👥 @Model.ActiveCount orang</p>
-
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:24px;">
-        <div class="lu-card" style="text-align:center;">
-            <div style="font-size:28px;">✅</div>
-            <div style="font-size:22px; font-weight:700; color:#047857;">@Model.Sehat</div>
-            <div style="font-size:12px; color:#6B7280;">Sehat</div>
-        </div>
-        <div class="lu-card" style="text-align:center;">
-            <div style="font-size:28px;">⚠️</div>
-            <div style="font-size:22px; font-weight:700; color:#B45309;">@Model.Beresiko</div>
-            <div style="font-size:12px; color:#6B7280;">Beresiko</div>
-        </div>
-        <div class="lu-card" style="text-align:center;">
-            <div style="font-size:28px;">🔴</div>
-            <div style="font-size:22px; font-weight:700; color:#B91C1C;">@Model.Bahaya</div>
-            <div style="font-size:12px; color:#6B7280;">Bahaya</div>
-        </div>
-    </div>
-
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:24px;">
-        <div class="lu-card">
-            <h3 class="lu-card-title">Status Karyawan Keseluruhan</h3>
-            <canvas id="pieChart" height="220"></canvas>
-        </div>
-        <div class="lu-card">
-            <h3 class="lu-card-title">Tingkat Stress Tiap Divisi (%)</h3>
-            @if (!Model.Divisions.Any())
-            {
-                <p style="color:#9CA3AF;">Belum ada divisi tercatat.</p>
-            }
-            else
-            {
-                <canvas id="stressChart" height="220"></canvas>
-            }
-        </div>
-    </div>
-
-    <h3 style="font-size:16px; margin: 24px 0 12px;">Ringkasan per Divisi</h3>
-    @if (!Model.Divisions.Any())
-    {
-        <div class="dash-card-empty">
-            <p>Belum ada divisi tercatat untuk perusahaan ini.</p>
-        </div>
-    }
-    else
-    {
-        <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:8px;">
-            @foreach (var d in Model.Divisions)
-            {
-                <a asp-action="Division" asp-route-name="@d.Name" style="min-width:180px; text-decoration:none; color:inherit;">
-                    <div class="lu-card" style="border-color:#C4B5FD;">
-                        <div style="background:#7C3AED; color:#fff; padding:8px 10px; border-radius:8px; text-align:center; margin: -20px -20px 12px;">Detail</div>
-                        <div style="text-align:center; padding:24px 8px; background:#EDE9FE; color:#7C3AED; font-weight:600; border-radius:8px;">@d.Name Report</div>
-                        <div style="margin-top:10px; font-size:13px;">
-                            <strong>@d.Name</strong><br/>
-                            <span style="color:#6B7280;">@d.Count orang · Sehat: @d.SehatPct%</span>
-                        </div>
+    <div class="stat-division-grid">
+        @foreach (var d in Model.Divisions)
+        {
+            var statusCss = d.StressPct >= 50 ? "bahaya" : d.StressPct >= 25 ? "beresiko" : "sehat";
+            var statusLabel = d.StressPct >= 50 ? "Tinggi" : d.StressPct >= 25 ? "Sedang" : "Rendah";
+            var initial = string.IsNullOrEmpty(d.Name) ? "?" : d.Name.Substring(0, 1).ToUpper();
+            <div class="stat-div-card" style="cursor: pointer;" onclick="openDivModal('@d.Name', @d.Count, @d.StressPct, @d.SehatPct, @d.SehatCount, @d.BeresikoCount, @d.BahayaCount)">
+                <div class="stat-div-header">
+                    <div class="stat-div-logo">@initial</div>
+                    <div class="stat-div-meta">
+                        <span class="stat-div-name">@d.Name</span>
+                        <span class="stat-div-count">@d.Count karyawan</span>
                     </div>
-                </a>
-            }
+                    <span class="stat-div-chip stat-div-chip--@statusCss">@statusLabel</span>
+                </div>
+                <div class="stat-div-bars">
+                    <div class="stat-div-bar-row">
+                        <span class="stat-div-bar-label">Sehat</span>
+                        <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--sehat" style="width:@d.SehatPct%"></div></div>
+                        <span class="stat-div-bar-pct">@d.SehatPct%</span>
+                    </div>
+                    <div class="stat-div-bar-row">
+                        <span class="stat-div-bar-label">Stress</span>
+                        <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--stress" style="width:@d.StressPct%"></div></div>
+                        <span class="stat-div-bar-pct">@d.StressPct%</span>
+                    </div>
+                </div>
+                <div class="stat-div-footer" style="color: var(--lu-primary); font-weight: 600;">
+                    Lihat detail <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="stat-no-div">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <p>Tambahkan karyawan dengan divisi untuk melihat statistik per divisi.</p>
+    </div>
+}
+
+<!-- Division Modal -->
+<div class="psy-modal-overlay" id="divDetailModal" onclick="closeDivModal(event)">
+    <div class="psy-modal-content" onclick="event.stopPropagation()">
+        <button class="psy-modal-close" onclick="closeDivModal(event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        
+        <div class="psy-modal-header" style="background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);">
+            <h2 id="dName" style="font-size: 26px; font-weight: 800; margin: 0 0 8px 0;"></h2>
+            <div style="font-size: 15px; opacity: 0.9; font-weight: 500;">
+                <span id="dCount"></span> Karyawan Aktif
+            </div>
         </div>
-    }
+        
+        <div class="psy-modal-body">
+            <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 20px;">Distribusi Kesehatan Mental</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: center;">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                    <div style="background: #ECFDF5; border: 1px solid #D1FAE5; padding: 12px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #059669; margin-bottom: 2px;" id="dSehatCount">0</div>
+                        <div style="font-size: 11px; font-weight: 700; color: #10B981; text-transform: uppercase;">Sehat</div>
+                    </div>
+                    <div style="background: #FFFBEB; border: 1px solid #FEF3C7; padding: 12px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #D97706; margin-bottom: 2px;" id="dBeresikoCount">0</div>
+                        <div style="font-size: 11px; font-weight: 700; color: #F59E0B; text-transform: uppercase;">Beresiko</div>
+                    </div>
+                    <div style="background: #FEF2F2; border: 1px solid #FEE2E2; padding: 12px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #DC2626; margin-bottom: 2px;" id="dBahayaCount">0</div>
+                        <div style="font-size: 11px; font-weight: 700; color: #EF4444; text-transform: uppercase;">Bahaya</div>
+                    </div>
+                </div>
+                <div style="position: relative; height: 160px;">
+                    <canvas id="dDoughnutChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="stat-div-bars" style="margin: 0; margin-bottom: 24px;">
+                <div class="stat-div-bar-row" style="margin-bottom: 12px;">
+                    <span class="stat-div-bar-label" style="width: 50px;">Sehat</span>
+                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--sehat" id="dSehatBar" style="width:0%"></div></div>
+                    <span class="stat-div-bar-pct" id="dSehatPct">0%</span>
+                </div>
+                <div class="stat-div-bar-row">
+                    <span class="stat-div-bar-label" style="width: 50px;">Stress</span>
+                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--stress" id="dStressBar" style="width:0%"></div></div>
+                    <span class="stat-div-bar-pct" id="dStressPct">0%</span>
+                </div>
+            </div>
+            
+            <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 16px;">Perubahan Mood (30 Hari)</h3>
+            <div style="position: relative; height: 250px; width: 100%;">
+                <canvas id="dChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="psy-modal-footer">
+            <a href="#" id="dLink" class="btn-mitra" style="background: #1E40AF; text-decoration: none;" target="_blank">Download Laporan (PDF)</a>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        new Chart(document.getElementById('pieChart'), {
-            type: 'pie',
-            data: {
-                labels: ['Sehat', 'Beresiko', 'Bahaya'],
-                datasets: [{
-                    data: [@Model.Sehat, @Model.Beresiko, @Model.Bahaya],
-                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444']
-                }]
-            },
-            options: { responsive: true }
-        });
+    document.addEventListener("DOMContentLoaded", function () {
+
+        @if (Model.ActiveCount > 0)
+        {
+            <text>
+        var ctx = document.getElementById('pieChart');
+        if (ctx) {
+            new Chart(ctx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sehat', 'Beresiko', 'Bahaya'],
+                    datasets: [{ data: [@Model.Sehat, @Model.Beresiko, @Model.Bahaya], backgroundColor: ['#10B981','#F59E0B','#EF4444'], borderWidth: 3, borderColor: '#fff', hoverOffset: 6 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
+            });
+        }
+            </text>
+        }
 
         @if (Model.Divisions.Any())
         {
             <text>
-            new Chart(document.getElementById('stressChart'), {
+        var barCtx = document.getElementById('barChart');
+        if (barCtx) {
+            new Chart(barCtx.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: @Html.Raw(divLabels),
-                    datasets: [{
-                        label: 'Stress %',
-                        data: @Html.Raw(divStress),
-                        backgroundColor: '#A78BFA'
-                    }]
+                    datasets: [
+                        { label: 'Sehat (%)', data: @Html.Raw(divSehat), backgroundColor: '#10B981', borderRadius: 6, barPercentage: 0.55 },
+                        { label: 'Stress (%)', data: @Html.Raw(divStress), backgroundColor: '#F59E0B', borderRadius: 6, barPercentage: 0.55 }
+                    ]
                 },
                 options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } },
-                    plugins: { legend: { display: false } }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { padding: 16, usePointStyle: true } } },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#F3F4F6' } },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
+        }
             </text>
         }
+
+    });
+    var modalChartInstance = null;
+    var modalDoughnutInstance = null;
+
+    function openDivModal(name, count, stressPct, sehatPct, sehatCount, beresikoCount, bahayaCount) {
+        document.getElementById('dName').textContent = name;
+        document.getElementById('dCount').textContent = count;
+        
+        document.getElementById('dSehatCount').textContent = sehatCount;
+        document.getElementById('dBeresikoCount').textContent = beresikoCount;
+        document.getElementById('dBahayaCount').textContent = bahayaCount;
+        
+        document.getElementById('dSehatBar').style.width = sehatPct + '%';
+        document.getElementById('dSehatPct').textContent = sehatPct + '%';
+        
+        document.getElementById('dStressBar').style.width = stressPct + '%';
+        document.getElementById('dStressPct').textContent = stressPct + '%';
+        
+        // Append print=true to trigger auto-print when downloading
+        document.getElementById('dLink').href = '/Hr/Statistik/Division?name=' + encodeURIComponent(name) + '&print=true';
+        
+        var modal = document.getElementById('divDetailModal');
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('is-active');
+            document.body.style.overflow = 'hidden';
+        }, 10);
+        
+        // Initialize Doughnut Chart
+        if (modalDoughnutInstance) {
+            modalDoughnutInstance.destroy();
+        }
+        var dCtx = document.getElementById('dDoughnutChart').getContext('2d');
+        modalDoughnutInstance = new Chart(dCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sehat', 'Beresiko', 'Bahaya'],
+                datasets: [{
+                    data: [sehatCount, beresikoCount, bahayaCount],
+                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                    borderWidth: 0,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, cutout: '65%',
+                plugins: { legend: { display: false } }
+            }
+        });
+        
+        // Fetch Line Chart Data
+        fetch('/Hr/Statistik/DivisionChartData?name=' + encodeURIComponent(name))
+            .then(res => res.json())
+            .then(data => {
+                if (modalChartInstance) {
+                    modalChartInstance.destroy();
+                }
+                var ctx = document.getElementById('dChart').getContext('2d');
+                modalChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.data,
+                            borderColor: '#3B82F6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                            fill: true, tension: 0.4,
+                            pointRadius: 4, pointBackgroundColor: '#3B82F6'
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            y: { min: 0, max: 5, ticks: { stepSize: 1 }, grid: { color: '#F3F4F6' } },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            });
+    }
+    
+    function closeDivModal(e) {
+        if(e) e.preventDefault();
+        var modal = document.getElementById('divDetailModal');
+        modal.classList.remove('is-active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
     </script>
 }

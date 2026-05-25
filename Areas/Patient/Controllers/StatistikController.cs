@@ -1,4 +1,5 @@
 using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
     [Authorize(Roles = "Patient")]
+    [RequiresPatientPremium]
     public class StatistikController : Controller
     {
         private readonly ApplicationDbContext _context;

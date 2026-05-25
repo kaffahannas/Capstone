@@ -25,6 +25,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int PageSize { get; set; } = 10;
         public int TotalCount { get; set; }
         public List<HrWorksheetListItem> Items { get; set; } = new();
+        public List<HrSimplePatient> AvailablePatients { get; set; } = new();
     }
 
     public class HrWorksheetReviewViewModel
@@ -63,6 +64,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string DbStatus { get; set; } = "";       // raw: Scheduled / Completed / Cancelled
         public string DisplayStatus { get; set; } = "";  // computed: Akan Datang / On Going / Selesai / Dibatalkan
         public string? Notes { get; set; }
+        public string? MeetingLink { get; set; }
         public string PsychologistName { get; set; } = "";
     }
 
@@ -74,6 +76,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int PageSize { get; set; } = 10;
         public int TotalCount { get; set; }
         public List<HrScheduleListItem> Items { get; set; } = new();
+        public List<HrSimplePatient> AvailablePatients { get; set; } = new();
     }
 
     public class HrScheduleEditViewModel

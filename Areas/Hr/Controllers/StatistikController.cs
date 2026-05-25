@@ -1,4 +1,5 @@
 using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using LightenUp.Web.Services;
@@ -12,6 +13,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    [RequiresCompanySubscription]
     public class StatistikController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -78,7 +80,10 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                             StressPct = total == 0 ? 0 : (int)Math.Round((double)(b + d) / total * 100),
                             SehatPct = total == 0 ? 0 : (int)Math.Round((double)s / total * 100),
                             BeresikoPct = total == 0 ? 0 : (int)Math.Round((double)b / total * 100),
-                            BahayaPct = total == 0 ? 0 : (int)Math.Round((double)d / total * 100)
+                            BahayaPct = total == 0 ? 0 : (int)Math.Round((double)d / total * 100),
+                            SehatCount = s,
+                            BeresikoCount = b,
+                            BahayaCount = d
                         };
                     })
                     .OrderBy(d => d.Name)
@@ -134,6 +139,39 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             ViewBag.ActiveNav = "Statistik";
             return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DivisionChartData(string name, int window = 30)
+        {
+            if (window != 7 && window != 30 && window != 90) window = 30;
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null) return Unauthorized();
+            var companyId = hr.CompanyId.Value;
+
+            var employees = await _context.Patients
+                .Where(p => p.CompanyId == companyId && p.Department == name && p.EmploymentStatus == "active")
+                .ToListAsync();
+
+            var ids = employees.Select(p => p.PatientId).ToList();
+            var from = DateTime.Today.AddDays(-window + 1);
+
+            var moods = await _context.MoodTrackers
+                .Where(m => ids.Contains(m.PatientId) && m.MoodDate >= from)
+                .ToListAsync();
+
+            var dates = Enumerable.Range(0, window).Select(i => from.AddDays(i)).ToList();
+            var avgScores = dates.Select(d =>
+            {
+                var dayMoods = moods.Where(m => m.MoodDate.Date == d.Date).ToList();
+                if (dayMoods.Count == 0) return 0.0;
+                return Math.Round(dayMoods.Average(m => FeelingScore(m.Feeling)), 2);
+            }).ToList();
+
+            return Json(new { 
+                labels = dates.Select(d => d.ToString("dd/MM")), 
+                data = avgScores 
+            });
         }
 
         // ═══════════════════════════════════════

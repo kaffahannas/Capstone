@@ -2,71 +2,219 @@
 @{
     ViewData["Title"] = "Tinjau Worksheet";
     ViewBag.ActiveNav = "Monitoring";
+    var accent    = Model.Status switch { "Completed" => "done", "InProgress" => "active", _ => "pending" };
+    var initial   = Model.PatientName?.Length > 0 ? Model.PatientName.Substring(0, 1).ToUpper() : "?";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
 }
 
-<a asp-action="Index" style="text-decoration:none; color:#111;">← Riwayat Worksheet</a>
+<div class="hrwsrv-page">
 
-<div style="max-width: 720px; margin-top:16px;">
-
+    @* ── Toast ── *@
     @if (TempData["success"] is string ok)
     {
-        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
+        <div class="hrpf-toast hrpf-toast--ok" id="hrwsrvToast" role="alert">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            @ok
+        </div>
     }
 
-    <div class="lu-card" style="margin-bottom:16px;">
-        <div style="font-size:13px; color:#6B7280;">Data Pasien</div>
-        <h3 style="margin:6px 0;">@Model.PatientName</h3>
-        <div style="font-size:13px; color:#6B7280;">
-            Status: <span class="status-badge @(Model.Status.ToLowerInvariant())">@Model.StatusLabel</span>
-        </div>
-    </div>
+    @* ── Back link ── *@
+    <a class="hrwsrv-back" asp-action="Index">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Riwayat Worksheet
+    </a>
 
-    <div class="lu-card" style="margin-bottom:16px;">
-        <h3 class="lu-card-title">@Model.TaskName</h3>
-        <p style="color:#6B7280;">@Model.Description</p>
-        <small style="color:#6B7280;">Diajukan: @(Model.SubmittedAt?.ToString("d MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID")) ?? "Belum diajukan")</small>
-
-        <h4 style="margin: 16px 0 8px;">Periksa Tugas</h4>
-        @if (!string.IsNullOrEmpty(Model.ProofImagePath))
-        {
-            <img src="@Model.ProofImagePath" alt="Bukti kegiatan" style="max-width:100%; border-radius:8px;" />
-        }
-        else
-        {
-            <div style="padding:24px; border:1.5px dashed #E5E7EB; border-radius:8px; text-align:center; color:#9CA3AF;">
-                Pasien belum mengunggah bukti kegiatan.
+    @* ══════ HERO ══════ *@
+    <div class="hrwsrv-hero hrwsrv-hero--@accent">
+        <div class="hrwsrv-hero-bg" aria-hidden="true"></div>
+        <div class="hrwsrv-hero-inner">
+            <div class="hrwsrv-av-wrap">
+                <div class="hrwsrv-av hrwsrv-av--@accent">@initial</div>
             </div>
-        }
-
-        <h4 style="margin: 16px 0 8px;">Catatan Pasien</h4>
-        <p style="background:#FAF5FF; padding:10px 14px; border-radius:8px; min-height:40px;">
-            @(string.IsNullOrEmpty(Model.PatientNote) ? "—" : Model.PatientNote)
-        </p>
-
-        @if (!string.IsNullOrEmpty(Model.PsychologistFeedback))
-        {
-            <h4 style="margin: 16px 0 8px;">Umpan Balik Psikolog</h4>
-            <p style="background:#F0F9FF; padding:10px 14px; border-radius:8px;">@Model.PsychologistFeedback</p>
-        }
-    </div>
-
-    <form asp-action="SaveNote" method="post" class="lu-card" style="margin-bottom:16px;">
-        <h3 class="lu-card-title">Beri Catatan</h3>
-        <input type="hidden" name="WorksheetId" value="@Model.WorksheetId" />
-        <textarea name="HrNote" rows="4" class="mood-textarea" placeholder="Tambahkan catatan dari HR...">@Model.HrNote</textarea>
-        <div style="margin-top:12px; display:flex; justify-content:flex-end;">
-            <button type="submit" class="btn-pill">Simpan</button>
+            <div class="hrwsrv-hero-info">
+                <p class="hrwsrv-hero-eyebrow">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>
+                    Worksheet · Monitoring
+                </p>
+                <h1 class="hrwsrv-hero-title">@Model.TaskName</h1>
+                <div class="hrwsrv-hero-meta">
+                    <span class="hrwsrv-hero-meta-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        @Model.PatientName
+                    </span>
+                    <span class="hrwsrv-hero-sep">·</span>
+                    <span class="hrwsrv-hero-meta-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        @Model.PsychologistName
+                    </span>
+                    @if (Model.SubmittedAt.HasValue)
+                    {
+                        <span class="hrwsrv-hero-sep">·</span>
+                        <span class="hrwsrv-hero-meta-item">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            @Model.SubmittedAt.Value.ToString("d MMMM yyyy", idCulture)
+                        </span>
+                    }
+                </div>
+            </div>
+            <span class="hrwsrv-status-badge hrwsrv-status-badge--@accent">@Model.StatusLabel</span>
         </div>
-    </form>
-
-    <div style="display:grid; gap:10px;">
-        @if (!string.IsNullOrEmpty(Model.PatientEmail))
-        {
-            <a class="btn-primary" href="mailto:@Model.PatientEmail" style="text-align:center;">Hubungi Karyawan</a>
-        }
-        @if (!string.IsNullOrEmpty(Model.PsychologistEmail))
-        {
-            <a class="btn-primary" href="mailto:@Model.PsychologistEmail" style="text-align:center;">Hubungi Psikolog Terkait</a>
-        }
     </div>
+
+    @* ══════ BODY GRID ══════ *@
+    <div class="hrwsrv-grid">
+
+        @* ── Left: worksheet content ── *@
+        <div class="hrwsrv-main">
+
+            @* Detail Tugas *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--purple" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Detail Tugas</h3>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="hrwsrv-textbox">@Model.Description</div>
+                }
+                else
+                {
+                    <p class="hrwsrv-muted">Tidak ada deskripsi tugas.</p>
+                }
+            </div>
+
+            @* Bukti Kegiatan *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--blue" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Bukti Kegiatan</h3>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.ProofImagePath))
+                {
+                    <a href="@Model.ProofImagePath" target="_blank" class="hrwsrv-proof-link">
+                        <img src="@Model.ProofImagePath" alt="Bukti kegiatan" class="hrwsrv-proof-img" />
+                        <span class="hrwsrv-proof-hint">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            Lihat ukuran penuh
+                        </span>
+                    </a>
+                }
+                else
+                {
+                    <div class="hrwsrv-no-proof">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        <span>Belum ada bukti kegiatan dari karyawan.</span>
+                    </div>
+                }
+            </div>
+
+            @* Catatan Pasien *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--blue" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Catatan Karyawan</h3>
+                </div>
+                <div class="hrwsrv-textbox hrwsrv-textbox--soft">
+                    @(string.IsNullOrEmpty(Model.PatientNote) ? "Tidak ada catatan dari karyawan." : Model.PatientNote)
+                </div>
+            </div>
+
+            @* Umpan Balik Psikolog *@
+            @if (!string.IsNullOrEmpty(Model.PsychologistFeedback))
+            {
+                <div class="hrpf-card">
+                    <div class="hrpf-card-head">
+                        <div class="hrpf-card-icon hrpf-card-icon--purple" aria-hidden="true">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        </div>
+                        <h3 class="hrpf-card-title">Umpan Balik Psikolog</h3>
+                    </div>
+                    <div class="hrwsrv-textbox hrwsrv-textbox--purple">@Model.PsychologistFeedback</div>
+                </div>
+            }
+
+        </div>
+
+        @* ── Right: sidebar ── *@
+        <div class="hrwsrv-side">
+
+            @* Contact links *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--blue" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Kontak</h3>
+                </div>
+                <div class="hrwsrv-contact-list">
+                    @if (!string.IsNullOrEmpty(Model.PatientEmail))
+                    {
+                        <a href="mailto:@Model.PatientEmail" class="hrwsrv-contact-link hrwsrv-contact-link--blue">
+                            <div class="hrwsrv-contact-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <div>
+                                <div class="hrwsrv-contact-label">Email Karyawan</div>
+                                <div class="hrwsrv-contact-val">@Model.PatientEmail</div>
+                            </div>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.PsychologistEmail))
+                    {
+                        <a href="mailto:@Model.PsychologistEmail" class="hrwsrv-contact-link hrwsrv-contact-link--purple">
+                            <div class="hrwsrv-contact-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            </div>
+                            <div>
+                                <div class="hrwsrv-contact-label">Email Psikolog</div>
+                                <div class="hrwsrv-contact-val">@Model.PsychologistEmail</div>
+                            </div>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    }
+                    @if (string.IsNullOrEmpty(Model.PatientEmail) && string.IsNullOrEmpty(Model.PsychologistEmail))
+                    {
+                        <p style="font-size:13px;color:var(--lu-text-muted);margin:0;font-style:italic;">Tidak ada kontak tersedia.</p>
+                    }
+                </div>
+            </div>
+
+            @* HR Note *@
+            <form asp-action="SaveNote" method="post">
+                <div class="hrpf-card hrwsrv-note-card">
+                    <div class="hrpf-card-head">
+                        <div class="hrpf-card-icon hrpf-card-icon--amber" aria-hidden="true">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </div>
+                        <h3 class="hrpf-card-title">Catatan HR</h3>
+                    </div>
+                    <input type="hidden" name="WorksheetId" value="@Model.WorksheetId" />
+                    <textarea name="HrNote" rows="5" class="hrwsrv-textarea"
+                              placeholder="Tambahkan catatan internal HR…">@Model.HrNote</textarea>
+                    <button type="submit" class="hrwsrv-save-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        Simpan Catatan
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
 </div>
+
+@section Scripts {
+<script>
+(function () {
+    const t = document.getElementById('hrwsrvToast');
+    if (t) setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; }, 3200);
+})();
+</script>
+}

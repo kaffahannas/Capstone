@@ -1,80 +1,248 @@
 @model LightenUp.Web.Models.ViewModels.HrScheduleListViewModel
 @{
-    ViewData["Title"] = "Riwayat Jadwal Konseling";
-    ViewBag.ActiveNav = "Monitoring";
-    var periods = new[] { ("HariIni", "Hari Ini"), ("Mingguan", "Minggu"), ("Bulanan", "Bulan") };
-    int totalPages = (int)Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+    ViewData["Title"] = "Jadwal Konseling";
+    ViewBag.ActiveNav = "Jadwal";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+    var now = DateTime.Now;
+
+    int countTotal     = Model.TotalCount;
+    int countUpcoming  = Model.Items.Count(s => s.DisplayStatus == "Akan Datang");
+    int countCompleted = Model.Items.Count(s => s.DisplayStatus.Contains("Selesai"));
+
+    var grouped = Model.Items
+        .GroupBy(s => s.SessionStart.Date)
+        .OrderBy(g => g.Key)
+        .ToList();
+
+    string DayLabel(DateTime d)
+    {
+        if (d.Date == DateTime.Today)            return "Hari Ini";
+        if (d.Date == DateTime.Today.AddDays(1)) return "Besok";
+        if (d.Date == DateTime.Today.AddDays(-1)) return "Kemarin";
+        return d.ToString("dddd", idCulture);
+    }
 }
 
-<div style="max-width: 900px;">
-    @if (TempData["success"] is string ok)
-    {
-        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
-    }
+@if (TempData["error"] is string err)
+{
+    <div style="background:#FEE2E2;color:#B91C1C;padding:10px 14px;border-radius:8px;margin-bottom:16px;">@err</div>
+}
+@if (TempData["success"] is string ok)
+{
+    <div style="background:#D1FAE5;color:#047857;padding:10px 14px;border-radius:8px;margin-bottom:16px;">@ok</div>
+}
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h2 style="margin:0;">Cari Riwayat Jadwal Konseling</h2>
-        <a class="btn-pill" asp-action="Request">+ Permintaan Sesi</a>
+@section Head {
+    <style>
+        .psy-modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .psy-modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .psy-modal { background: #fff; width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; display: flex; flex-direction: column; }
+        .psy-modal-overlay.open .psy-modal { transform: scale(1) translateY(0); }
+        .psy-modal-header { padding: 20px 24px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; }
+        .psy-modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #111827; }
+        .psy-modal-close { background: transparent; border: none; font-size: 24px; line-height: 1; color: #6B7280; cursor: pointer; border-radius: 8px; padding: 4px 8px; transition: all 0.2s; }
+        .psy-modal-close:hover { background: #F3F4F6; color: #111827; }
+        .psy-modal-body { padding: 24px; }
+        .btn-outline { padding:10px 18px; border:1px solid #E5E7EB; background:transparent; border-radius:8px; font-weight:600; cursor:pointer; color:#374151; }
+        .btn-outline:hover { background:#F9FAFB; }
+        .btn-fill { padding:10px 18px; border:none; background:#7C3AED; color:#fff; border-radius:8px; font-weight:600; cursor:pointer; }
+        .btn-fill:hover { background:#6D28D9; }
+    </style>
+}
+
+@* ── Hero (same sch-hero pattern) ── *@
+<div class="sch-hero">
+    <div class="sch-hero-left">
+        <p class="sch-hero-eyebrow">HR · Monitoring Konseling</p>
+        <h1 class="sch-hero-title">Jadwal Konseling</h1>
+        <p class="sch-hero-sub">@DateTime.Today.ToString("dddd, d MMMM yyyy", idCulture) · Pantau sesi konseling karyawan</p>
+        <button onclick="openRequestModal()" class="sch-hero-btn" style="cursor:pointer;border:none;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Permintaan Sesi
+        </button>
     </div>
-
-    <form method="get">
-        <div style="position:relative; margin-bottom:12px;">
-            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#6B7280;">🔍</span>
-            <input type="search" name="search" placeholder="Cari nama pasien..." value="@Model.Search"
-                   style="width:100%; padding:10px 14px 10px 40px; border:1px solid #E5E7EB; border-radius:999px; font-family:inherit;" />
+    <div class="sch-hero-stats">
+        <div class="sch-stat-bubble">
+            <span class="sch-stat-value">@countTotal</span>
+            <span class="sch-stat-label">Total</span>
         </div>
+        <div class="sch-stat-bubble sch-stat-bubble--upcoming">
+            <span class="sch-stat-value">@countUpcoming</span>
+            <span class="sch-stat-label">Akan Datang</span>
+        </div>
+        <div class="sch-stat-bubble sch-stat-bubble--done">
+            <span class="sch-stat-value">@countCompleted</span>
+            <span class="sch-stat-label">Selesai</span>
+        </div>
+    </div>
+</div>
 
-        <p style="margin: 8px 0 4px; font-size:13px; color:#6B7280;">Cari berdasarkan Waktu</p>
-        <div class="task-chips" style="margin-bottom: 20px;">
-            @foreach (var p in periods)
-            {
-                <label class="task-chip @(Model.Period == p.Item1 ? "selected" : "")">
-                    <input type="radio" name="period" value="@p.Item1" checked="@(Model.Period == p.Item1)" style="display:none" onchange="this.form.submit()" />
-                    @p.Item2
-                </label>
-            }
-            @if (Model.Period != null)
-            {
-                <a class="task-chip" asp-action="Index" asp-route-search="@Model.Search">Clear</a>
-            }
+@* ── Filter bar ── *@
+<div class="sch-filter-bar">
+    <div class="sch-month-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span class="sch-month-label">@DateTime.Today.ToString("MMMM yyyy", idCulture)</span>
+    </div>
+    <div class="sch-filter-tabs">
+        <a class="sch-filter-tab @(Model.Period == null ? "sch-filter-tab--active" : "")" asp-action="Index" asp-route-search="@Model.Search">Semua</a>
+        <a class="sch-filter-tab @(Model.Period == "HariIni" ? "sch-filter-tab--active" : "")" asp-action="Index" asp-route-period="HariIni" asp-route-search="@Model.Search">Hari Ini</a>
+        <a class="sch-filter-tab @(Model.Period == "Mingguan" ? "sch-filter-tab--active" : "")" asp-action="Index" asp-route-period="Mingguan" asp-route-search="@Model.Search">Minggu Ini</a>
+    </div>
+    <form method="get" style="display:flex;align-items:center;gap:8px;">
+        <div class="psy-search-wrap" style="width:220px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" name="search" placeholder="Cari pasien..." value="@Model.Search" class="psy-search" />
         </div>
     </form>
+</div>
 
-    @if (!Model.Items.Any())
-    {
-        <div class="dash-card-empty"><p>Tidak ada jadwal yang cocok.</p></div>
-    }
-    else
-    {
-        int n = 0;
-        foreach (var s in Model.Items)
+@* ── Timeline ── *@
+@if (!grouped.Any())
+{
+    <div class="sch-empty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <p class="sch-empty-title">Tidak ada jadwal ditemukan</p>
+        <p class="sch-empty-sub">Tambahkan permintaan sesi untuk mendapatkan jadwal konseling.</p>
+        <button onclick="openRequestModal()" class="sch-empty-btn" style="cursor:pointer;border:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Permintaan Sesi
+        </button>
+    </div>
+}
+else
+{
+    <div class="sch-timeline">
+        @foreach (var dayGroup in grouped)
         {
-            n++;
-            <a class="task-card" asp-action="Edit" asp-route-id="@s.ScheduleId"
-               style="background: linear-gradient(135deg, #7C3AED, #5B21B6); color:#fff; border:0;">
-                <div>
-                    <h4 style="color:#fff; margin:0 0 6px;">Jadwal Konseling @n - @s.DisplayStatus</h4>
-                    <div style="font-size:13px;">
-                        @s.SessionStart.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"))<br/>
-                        @s.SessionStart.ToString("HH.mm") - @s.SessionStart.AddMinutes(s.DurationMinutes).ToString("HH.mm")
-                    </div>
+            <div class="sch-day-group">
+                <div class="sch-day-head">
+                    <span class="sch-day-label @(dayGroup.Key.Date == DateTime.Today ? "sch-day-label--today" : "")">
+                        @DayLabel(dayGroup.Key)
+                    </span>
+                    <span class="sch-day-date">@dayGroup.Key.ToString("d MMMM yyyy", idCulture)</span>
+                    <span class="sch-day-count">@dayGroup.Count() sesi</span>
                 </div>
-                <div class="right">
-                    <span style="font-size:11px; opacity:0.85; align-self:flex-end;">@s.PsychologistName</span>
-                    <span style="width:14px; height:14px; border-radius:999px; background:#fff;"></span>
-                </div>
-            </a>
-        }
+                <div class="sch-sessions">
+                    @foreach (var s in dayGroup.OrderBy(x => x.SessionStart))
+                    {
+                        var accent = s.DisplayStatus switch {
+                            "Cancelled" => "cancelled",
+                            "Completed" => "completed",
+                            _ => now >= s.SessionStart && now <= s.SessionStart.AddMinutes(s.DurationMinutes) ? "ongoing" : "upcoming"
+                        };
+                        var badgeLabel = accent switch {
+                            "cancelled" => "Dibatalkan",
+                            "completed" => "Selesai",
+                            "ongoing"   => "Sedang Berlangsung",
+                            _ => "Akan Datang"
+                        };
+                        var badgeCls = accent switch {
+                            "cancelled" => "sch-badge--cancelled",
+                            "completed" => "sch-badge--completed",
+                            "ongoing"   => "sch-badge--ongoing",
+                            _ => "sch-badge--upcoming"
+                        };
+                        var dMin  = s.DurationMinutes % 60;
+                        var dHour = s.DurationMinutes / 60;
+                        var dur   = dHour > 0 ? (dMin > 0 ? $"{dHour}j {dMin}m" : $"{dHour} jam") : $"{s.DurationMinutes} menit";
+                        var initial = s.PatientName?.Length > 0 ? s.PatientName.Substring(0, 1).ToUpper() : "?";
 
-        @if (totalPages > 1)
-        {
-            <div style="text-align:right; margin-top:12px;">
-                @for (int p = 1; p <= totalPages; p++)
-                {
-                    <a class="task-chip @(p == Model.Page ? "selected" : "")"
-                       asp-action="Index" asp-route-search="@Model.Search" asp-route-period="@Model.Period" asp-route-page="@p">@p</a>
-                }
+                        <div class="sch-session sch-session--@accent" onclick="openScheduleDetailModal(@s.ScheduleId)" style="cursor:pointer;">
+                            <div class="sch-session-time">
+                                <span class="sch-session-hour">@s.SessionStart.ToString("HH:mm")</span>
+                                <span class="sch-session-tz">WIB</span>
+                                <span class="sch-session-dur">@dur</span>
+                            </div>
+                            <div class="sch-session-sep"></div>
+                            <div class="sch-session-avatar sch-avatar--@accent">@initial</div>
+                            <div class="sch-session-info">
+                                <span class="sch-session-name">@s.PatientName</span>
+                                <div class="sch-session-meta" style="display:flex; align-items:center; gap:8px;">
+                                    <span class="sch-company-tag">@s.PsychologistName</span>
+                                    @if (!string.IsNullOrEmpty(s.MeetingLink))
+                                    {
+                                        <div style="font-size:12px; color:var(--primary-purple); display:flex; align-items:center; gap:4px; font-weight:600;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                                            Link Tersedia
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <span class="sch-badge @badgeCls">@badgeLabel</span>
+                        </div>
+                    }
+                </div>
             </div>
         }
-    }
+    </div>
+}
+
+
+@* ── Modal Permintaan Sesi ── *@
+<div id="requestModal" class="psy-modal-overlay">
+    <div class="psy-modal">
+        <div class="psy-modal-header">
+            <h3>Permintaan Jadwal Sesi</h3>
+            <button class="psy-modal-close" onclick="closeRequestModal()">&times;</button>
+        </div>
+        <div class="psy-modal-body">
+            <p style="margin:0 0 20px;color:var(--text-muted);font-size:14px;">
+                Psikolog akan meninjau dan menetapkan jadwal yang sesuai dalam 1–2 hari kerja.
+            </p>
+            <form asp-action="Request" method="post" id="requestForm">
+                <input type="hidden" name="RequestType" value="Schedule" />
+                <div class="form-group">
+                    <label class="form-label">Untuk Pasien</label>
+                    <select name="PatientId" class="form-control" required>
+                        <option value="">Pilih pasien...</option>
+                        @foreach (var p in Model.AvailablePatients)
+                        {
+                            <option value="@p.PatientId">@p.FullName @(p.Department != null ? $"({p.Department})" : "")</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Usulan Tanggal &amp; Waktu <small style="color:var(--text-muted);font-weight:400;">(opsional)</small></label>
+                    <input name="ProposedSessionDate" type="datetime-local" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Catatan / Alasan <small style="color:var(--text-muted);font-weight:400;">(opsional)</small></label>
+                    <textarea name="Notes" rows="4" class="form-control" style="margin-bottom:0;" placeholder="Jelaskan alasan permintaan sesi ini..."></textarea>
+                </div>
+                <div class="modal-footer" style="padding:0;margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
+                    <button type="button" class="btn-outline" onclick="closeRequestModal()">Batalkan</button>
+                    <button type="submit" class="btn-fill">Kirim Permintaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<div class="psy-modal-overlay" id="scheduleDetailModal">
+    <!-- content injected via ajax -->
+</div>
+
+<script>
+function openRequestModal() {
+    document.getElementById('requestModal').classList.add('open');
+}
+function closeRequestModal() {
+    document.getElementById('requestModal').classList.remove('open');
+}
+
+async function openScheduleDetailModal(id) {
+    try {
+        const res = await fetch(`/Hr/Schedules/ScheduleDetailModal/${id}`);
+        if (!res.ok) throw new Error('Failed to load');
+        const html = await res.text();
+        document.getElementById('scheduleDetailModal').innerHTML = html;
+        document.getElementById('scheduleDetailModal').classList.add('open');
+    } catch (err) {
+        console.error(err);
+        alert("Gagal memuat detail jadwal.");
+    }
+}
+window.closeScheduleDetailModal = function() {
+    document.getElementById('scheduleDetailModal').classList.remove('open');
+}
+</script>

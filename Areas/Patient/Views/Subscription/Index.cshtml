@@ -1,0 +1,161 @@
+@model LightenUp.Web.Models.ViewModels.PatientSubscriptionIndexViewModel
+@{
+    ViewData["Title"] = "Langganan";
+    ViewBag.ActiveNav = "Langganan";
+
+    var monthly = Model.Plans.FirstOrDefault(p => p.PlanId.Contains("monthly"));
+    var yearly  = Model.Plans.FirstOrDefault(p => p.PlanId.Contains("yearly"));
+    var cid     = new System.Globalization.CultureInfo("id-ID");
+}
+
+@if (TempData["error"] is string err)
+{
+    <div class="lu-alert-danger" role="alert">
+        <div class="lu-alert-danger-text">@err</div>
+    </div>
+}
+@if (TempData["success"] is string ok)
+{
+    <div class="lu-alert-success" role="status">@ok</div>
+}
+
+<!-- ─── Active-subscription status banner ─── -->
+@if (Model.HasActiveSubscription)
+{
+    <div class="sub-status-banner">
+        <div class="sub-status-icon">✨</div>
+        <div>
+            <strong>Langganan Aktif: @Model.ActivePlanName</strong>
+            @if (Model.ActiveUntil.HasValue)
+            {
+                <span>Berlaku hingga @Model.ActiveUntil.Value.ToString("d MMMM yyyy", cid)</span>
+            }
+            @if (Model.IsB2B && Model.CompanySponsors)
+            {
+                <span> · Ditanggung oleh @Model.CompanyName</span>
+            }
+        </div>
+    </div>
+}
+else if (Model.IsB2B)
+{
+    <div class="sub-b2b-warn">
+        ⚠️ Kamu terdaftar sebagai karyawan <strong>@(Model.CompanyName ?? "perusahaan")</strong>,
+        tetapi langganan perusahaan belum aktif. Hubungi HR atau berlangganan mandiri di bawah.
+    </div>
+}
+
+<!-- ─── Hero ─── -->
+<div class="sub-hero">
+    <h1 class="sub-hero-title">Tingkatkan Perjalanan Mentalmu 🌟</h1>
+    <p class="sub-hero-sub">Mulai gratis, upgrade kapan saja. Tanpa kontrak, tanpa syarat.</p>
+</div>
+
+<!-- ─── 3-column pricing grid ─── -->
+<div class="sub-grid">
+
+    <!-- ── GRATIS ── -->
+    <div class="sub-plan">
+        <div class="sub-plan-icon">🌱</div>
+        <h3 class="sub-plan-name">Gratis</h3>
+        <div class="sub-plan-price">
+            <span class="sub-price-amount">Rp 0</span>
+            <span class="sub-price-period">/selamanya</span>
+        </div>
+        <ul class="sub-features">
+            <li class="sub-feat sub-feat--ok">Mood tracking harian</li>
+            <li class="sub-feat sub-feat--ok">Jurnal pribadi</li>
+            <li class="sub-feat sub-feat--no">Statistik &amp; tren mood</li>
+            <li class="sub-feat sub-feat--no">Check-in psikologis</li>
+            <li class="sub-feat sub-feat--no">Worksheet dari psikolog</li>
+        </ul>
+        <div class="sub-plan-footer">
+            <span class="sub-plan-current">Paket dasar kamu</span>
+        </div>
+    </div>
+
+    <!-- ── BULANAN (featured) ── -->
+    @if (monthly != null)
+    {
+        var monthlyIsActive = Model.HasActiveSubscription
+            && (Model.ActivePlanName?.Contains("Bulanan") == true
+                || Model.ActivePlanName?.Contains("Monthly") == true
+                || Model.ActivePlanName?.Contains("Basic") == true);
+        <div class="sub-plan sub-plan--featured">
+            <div class="sub-plan-badge">⭐ Terpopuler</div>
+            <div class="sub-plan-icon">🚀</div>
+            <h3 class="sub-plan-name">Bulanan</h3>
+            <div class="sub-plan-price">
+                <span class="sub-price-amount">Rp @monthly.Price.ToString("N0", cid)</span>
+                <span class="sub-price-period">/bulan</span>
+            </div>
+            <ul class="sub-features">
+                <li class="sub-feat sub-feat--ok">Semua fitur Gratis</li>
+                <li class="sub-feat sub-feat--ok">Statistik &amp; tren mood lengkap</li>
+                <li class="sub-feat sub-feat--ok">Check-in psikologis harian</li>
+                <li class="sub-feat sub-feat--ok">Worksheet dari psikolog</li>
+                <li class="sub-feat sub-feat--ok">Laporan kemajuan bulanan</li>
+            </ul>
+            <div class="sub-plan-footer">
+                @if (monthlyIsActive)
+                {
+                    <span class="sub-plan-active">✓ Sedang Aktif</span>
+                }
+                else
+                {
+                    <form asp-action="Checkout" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="planId" value="@monthly.PlanId" />
+                        <button type="submit" class="sub-cta-btn">Mulai Sekarang</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- ── TAHUNAN ── -->
+    @if (yearly != null)
+    {
+        var perBulan  = yearly.Price / 12;
+        var yearlyIsActive = Model.HasActiveSubscription
+            && (Model.ActivePlanName?.Contains("Tahunan") == true
+                || Model.ActivePlanName?.Contains("Yearly") == true
+                || Model.ActivePlanName?.Contains("Annual") == true);
+        <div class="sub-plan sub-plan--yearly">
+            <div class="sub-plan-badge sub-plan-badge--green">💰 Hemat 17%</div>
+            <div class="sub-plan-icon">🏆</div>
+            <h3 class="sub-plan-name">Tahunan</h3>
+            <div class="sub-plan-price">
+                <span class="sub-price-amount">Rp @yearly.Price.ToString("N0", cid)</span>
+                <span class="sub-price-period">/tahun</span>
+            </div>
+            <p class="sub-price-equiv">≈ Rp @perBulan.ToString("N0", cid)/bulan</p>
+            <ul class="sub-features">
+                <li class="sub-feat sub-feat--ok">Semua fitur Bulanan</li>
+                <li class="sub-feat sub-feat--ok">Prioritas worksheet psikolog</li>
+                <li class="sub-feat sub-feat--ok">Laporan tahunan eksklusif</li>
+                <li class="sub-feat sub-feat--ok">Akses fitur baru lebih awal</li>
+                <li class="sub-feat sub-feat--ok">Support prioritas</li>
+            </ul>
+            <div class="sub-plan-footer">
+                @if (yearlyIsActive)
+                {
+                    <span class="sub-plan-active">✓ Sedang Aktif</span>
+                }
+                else
+                {
+                    <form asp-action="Checkout" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="planId" value="@yearly.PlanId" />
+                        <button type="submit" class="sub-cta-btn sub-cta-btn--green">Pilih Tahunan</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+
+</div><!-- /sub-grid -->
+
+<p class="sub-dev-note">
+    🛠️ Mode pengembangan: jika DuitKu belum dikonfigurasi, pembayaran disimulasikan dan langganan langsung aktif.
+</p>

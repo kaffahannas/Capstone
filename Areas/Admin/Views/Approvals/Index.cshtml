@@ -1,0 +1,99 @@
+@model LightenUp.Web.Models.ViewModels.AdminApprovalsViewModel
+@{
+    ViewData["Title"] = "Persetujuan Akun";
+    ViewBag.ActiveNav = "Approvals";
+
+    int totalAll = Model.Items.Count;
+    string Initials(string name) {
+        var parts = (name ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return string.Join("", parts.Take(2).Select(p => p[0])).ToUpper();
+    }
+}
+
+@if (TempData["success"] is string ok)
+{
+    <div class="adm-alert success">✅ @ok</div>
+}
+
+<!-- ── Tab filter ── -->
+<div class="adm-tabs">
+    <a class="adm-tab @(Model.Tab == "All" ? "active" : "")" asp-action="Index" asp-route-tab="All">
+        Semua
+        @if (totalAll > 0) { <span class="nav-badge" style="position:static; margin-left:2px;">@totalAll</span> }
+    </a>
+    <a class="adm-tab @(Model.Tab == "Psychologist" ? "active" : "")" asp-action="Index" asp-route-tab="Psychologist">
+        🩺 Psikolog
+    </a>
+    <a class="adm-tab @(Model.Tab == "HR" ? "active" : "")" asp-action="Index" asp-route-tab="HR">
+        🏢 HR
+    </a>
+</div>
+
+@if (!Model.Items.Any())
+{
+    <div class="adm-table-wrap">
+        <div class="adm-empty">
+            <div class="adm-empty-icon">✅</div>
+            <div class="adm-empty-title">Tidak ada akun menunggu persetujuan</div>
+            <div class="adm-empty-sub">Psikolog dan HR baru akan muncul di sini setelah menyelesaikan onboarding mereka.</div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="adm-table-wrap">
+        <table class="adm-table">
+            <thead>
+                <tr>
+                    <th>Pengaju</th>
+                    <th>Role</th>
+                    <th>Info</th>
+                    <th>Masuk</th>
+                    <th style="width:90px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <div class="adm-user-cell">
+                                <div class="adm-avatar-sm">@Initials(item.FullName)</div>
+                                <div>
+                                    <div style="font-weight:600; font-size:13.5px;">@item.FullName</div>
+                                    <div style="font-size:12px; color:var(--adm-muted);">@item.Email</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @if (item.Role == "Psychologist")
+                            { <span class="badge badge-role-psy">🩺 Psikolog</span> }
+                            else
+                            { <span class="badge badge-role-hr">🏢 HR</span> }
+                        </td>
+                        <td style="font-size:13px; color:var(--adm-text-secondary); max-width:220px;">
+                            @if (item.Role == "Psychologist")
+                            {
+                                <div>@(item.Specialization ?? "Spesialisasi belum diisi")</div>
+                                @if (!string.IsNullOrEmpty(item.LicenseNumber))
+                                {
+                                    <div style="font-size:12px; color:var(--adm-muted);">SIPP: @item.LicenseNumber</div>
+                                }
+                            }
+                            else if (item.Role == "HR")
+                            {
+                                <div>@(item.CompanyName ?? "Tanpa perusahaan")</div>
+                            }
+                        </td>
+                        <td style="font-size:12px; color:var(--adm-muted); white-space:nowrap;">
+                            @(item.SubmittedAt.HasValue ? item.SubmittedAt.Value.ToString("d MMM yyyy") : "—")
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-action="Detail" asp-route-id="@item.UserId">Tinjau</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

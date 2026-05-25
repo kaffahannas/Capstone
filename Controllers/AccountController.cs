@@ -4,6 +4,8 @@ using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using System.IO;
+using LightenUp.Web.Services;
 using System.Threading.Tasks;
 using System.Linq; // Tambahan untuk memanipulasi data database (FirstOrDefault)
 
@@ -15,13 +17,15 @@ namespace LightenUp.Web.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _config;
+        private readonly UserUploadService _uploadService;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IConfiguration config)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IConfiguration config, UserUploadService uploadService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
             _config = config;
+            _uploadService = uploadService;
         }
 
         // ==========================================
@@ -257,6 +261,27 @@ namespace LightenUp.Web.Controllers
                     }
 
                     await _context.SaveChangesAsync();
+
+                    try
+                    {
+                        var accountFolder = _uploadService.GetAccountFolderPath(user.Id);
+                        Directory.CreateDirectory(accountFolder);
+
+                        var meta = new
+                        {
+                            user.Id,
+                            user.FullName,
+                            user.Email,
+                            user.RoleType,
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        var metaPath = Path.Combine(accountFolder, "meta.json");
+                        await System.IO.File.WriteAllTextAsync(metaPath, JsonSerializer.Serialize(meta, new JsonSerializerOptions { WriteIndented = true }));
+                    }
+                    catch
+                    {
+                        // Non-fatal: if folder creation fails, continue registration flow.
+                    }
 
                     return RedirectToAction("RegistrationSuccess");
                 }

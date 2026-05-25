@@ -19,7 +19,17 @@ namespace LightenUp.Web.Models.ViewModels
         [StringLength(500)]
         public string? Notes { get; set; }
 
+        [Url(ErrorMessage = "Link tidak valid. Pastikan diawali dengan http:// atau https://")]
+        [StringLength(500)]
+        public string? MeetingLink { get; set; }
+
         public List<PsyPatientOption> AvailablePatients { get; set; } = new();
+
+        /// <summary>Filter tab to restore after submit (Scheduling page).</summary>
+        public string ReturnFilter { get; set; } = "Semua";
+
+        /// <summary>When set, success/error returns to PatientScheduleHistory for this patient.</summary>
+        public int? ReturnPatientId { get; set; }
     }
 
     public class PsyAddTaskViewModel
@@ -40,6 +50,9 @@ namespace LightenUp.Web.Models.ViewModels
         public TimeSpan DeadlineTime { get; set; } = new TimeSpan(23, 59, 0);
 
         public List<PsyPatientOption> AvailablePatients { get; set; } = new();
+
+        /// <summary>When set, success/error returns to PatientWorksheetHistory for this patient.</summary>
+        public int? ReturnPatientId { get; set; }
     }
 
     public class PsyPatientOption
@@ -56,6 +69,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string Email { get; set; } = "";
         public string? Phone { get; set; }
         public string? ProfilePicture { get; set; }
+        public string? Bio { get; set; }
         public string? Specialization { get; set; }
         public string? LastDegree { get; set; }
         public string? University { get; set; }
@@ -74,10 +88,29 @@ namespace LightenUp.Web.Models.ViewModels
         public int Employees { get; set; }
         public int ActiveCases { get; set; }
 
+        // B2B setting
+        public bool AcceptsB2B { get; set; }
+
         // Notification preferences
         public bool RemindNewReports { get; set; } = true;
         public bool RemindFollowUp { get; set; } = true;
         public bool AllowHrPatientNotif { get; set; } = false;
         public string Frequency { get; set; } = "Daily";
+    }
+
+    public class EditProfileViewModel
+    {
+        [Required]
+        public string FullName { get; set; } = "";
+        public string? Phone { get; set; }
+        public IFormFile? ProfilePictureFile { get; set; }
+        public string? Bio { get; set; }
+        public string? Specialization { get; set; }
+        public string? LastDegree { get; set; }
+        public string? University { get; set; }
+        public string? PracticeLocation { get; set; }
+        public string? OfficeAddress { get; set; }
+        public string? SippNumber { get; set; }
+        public int? ExperienceYears { get; set; }
     }
 }

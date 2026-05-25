@@ -2,155 +2,838 @@
 @{
     ViewData["Title"] = "Beranda";
     ViewBag.ActiveNav = "Beranda";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+    var today     = DateTime.Now.ToString("d MMMM yyyy", idCulture);
+    var hour      = DateTime.Now.Hour;
+    var greet     = hour < 12 ? "Selamat pagi" : hour < 15 ? "Selamat siang" : hour < 19 ? "Selamat sore" : "Selamat malam";
+
+    // Distribution percentages
+    double sehatPct    = Model.ActiveCount > 0 ? Math.Round(100.0 * Model.SehatCount    / Model.ActiveCount, 1) : 0;
+    double beresikoPct = Model.ActiveCount > 0 ? Math.Round(100.0 * Model.BeresikoCount / Model.ActiveCount, 1) : 0;
+    double bahayaPct   = Model.ActiveCount > 0 ? Math.Round(100.0 * Model.BahayaCount   / Model.ActiveCount, 1) : 0;
 }
 
-<div style="max-width: 760px;">
+<div class="hrd-page">
 
-    @* ─── Active count + 3 status cards ─── *@
-    <h3 style="font-size:14px; color:#6B7280; margin: 4px 0;">Client aktif</h3>
-    <div style="font-size: 28px; font-weight: 600; margin-bottom: 16px;">
-        <span style="font-size:22px;">👥</span> @Model.ActiveCount orang
-    </div>
+    @* ── Hero ── *@
+    <div class="hrd-hero">
+        <div class="hrd-hero-bg" aria-hidden="true"></div>
+        <div class="hrd-hero-inner">
 
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom:20px;">
-        <div class="lu-card" style="text-align:center;">
-            <div style="font-size:32px;">✅</div>
-            <div style="font-size:24px; font-weight:700; color:#047857;">@Model.SehatCount</div>
-            <div style="font-size:13px; color:#6B7280;">Sehat</div>
-        </div>
-        <div class="lu-card" style="text-align:center;">
-            <div style="font-size:32px;">⚠️</div>
-            <div style="font-size:24px; font-weight:700; color:#B45309;">@Model.BeresikoCount</div>
-            <div style="font-size:13px; color:#6B7280;">Beresiko</div>
-        </div>
-        <div class="lu-card" style="text-align:center;">
-            <div style="font-size:32px;">🔴</div>
-            <div style="font-size:24px; font-weight:700; color:#B91C1C;">@Model.BahayaCount</div>
-            <div style="font-size:13px; color:#6B7280;">Bahaya</div>
-        </div>
-    </div>
-
-    @* ─── Bahaya banner ─── *@
-    @if (Model.ShowBahayaBanner)
-    {
-        <div style="background:#FEE2E2; border:1px solid #FCA5A5; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-            <div style="color:#B91C1C;">
-                <span style="font-size:18px; margin-right:8px;">⚠️</span>
-                <strong>Ada @Model.BahayaCount karyawan dalam kondisi bahaya!</strong>
+            <div class="hrd-hero-left">
+                <p class="hrd-hero-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    HR Dashboard · @today
+                </p>
+                <h1 class="hrd-hero-title">@greet, @Model.HrName! 👋</h1>
+                <p class="hrd-hero-sub">
+                    @if (!string.IsNullOrEmpty(Model.CompanyName))
+                    {
+                        <strong>@Model.CompanyName</strong>
+                        <span style="opacity:.7;margin:0 6px;">·</span>
+                    }
+                    <span>Pantau kesehatan mental karyawan Anda</span>
+                </p>
             </div>
-            <a class="btn-pill" asp-controller="Employees" asp-action="Index" asp-route-status="Bahaya" style="background:#fff; color:#B91C1C;">
-                Segera Laporkan Ke Psikolog
+
+            <div class="hrd-stats">
+                <div class="hrd-stat">
+                    <span class="hrd-stat-val">@Model.ActiveCount</span>
+                    <span class="hrd-stat-lbl">Total Klien</span>
+                </div>
+                <div class="hrd-stat hrd-stat--sehat">
+                    <span class="hrd-stat-ico">✅</span>
+                    <span class="hrd-stat-val">@Model.SehatCount</span>
+                    <span class="hrd-stat-lbl">Sehat</span>
+                </div>
+                <div class="hrd-stat hrd-stat--beresiko">
+                    <span class="hrd-stat-ico">⚠️</span>
+                    <span class="hrd-stat-val">@Model.BeresikoCount</span>
+                    <span class="hrd-stat-lbl">Beresiko</span>
+                </div>
+                <div class="hrd-stat hrd-stat--bahaya">
+                    <span class="hrd-stat-ico">🔴</span>
+                    <span class="hrd-stat-val">@Model.BahayaCount</span>
+                    <span class="hrd-stat-lbl">Bahaya</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @* ── Alert: no subscription ── *@
+    @if (!Model.HasActiveSubscription)
+    {
+        <div class="hrd-alert hrd-alert--warning" role="alert">
+            <span class="hrd-alert-icon" aria-hidden="true">⚠️</span>
+            <div class="hrd-alert-text">
+                <strong>Langganan perusahaan belum aktif.</strong>
+                Fitur klien, statistik, dan monitoring terkunci.
+            </div>
+            <a href="@Url.Action("Index", "Subscription", new { area = "Hr" })" class="hrd-alert-link">
+                Beli Paket →
             </a>
         </div>
     }
 
-    @* ─── Search + filters ─── *@
-    <form method="get" asp-controller="Employees" asp-action="Index" id="searchForm">
-        <div style="position:relative; margin-bottom:12px;">
-            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#6B7280;">🔍</span>
-            <input type="search" name="search" placeholder="Cari Client...." autocomplete="off"
-                   id="searchInput"
-                   style="width:100%; padding:12px 14px 12px 40px; border:1px solid #E5E7EB; border-radius:12px; font-family:inherit; font-size:14px;" />
-
-            @* Dropdown for live-filter suggestions *@
-            <div id="searchResults" style="display:none; position:absolute; top:48px; left:0; right:0; background:#fff; border:1px solid #E5E7EB; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.05); z-index:20; max-height:280px; overflow-y:auto;"></div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:20px;">
-            <select name="division" class="onb-select">
-                <option value="">Semua Divisi</option>
-                @foreach (var d in Model.Divisions)
-                {
-                    <option value="@d">@d</option>
-                }
-            </select>
-            <select name="status" class="onb-select">
-                <option value="">Semua Status</option>
-                <option value="Sehat">Sehat</option>
-                <option value="Beresiko">Beresiko</option>
-                <option value="Bahaya">Bahaya</option>
-            </select>
-        </div>
-    </form>
-
-    @* ─── Client summary card ─── *@
-    <div class="lu-card" style="text-align:center; margin-bottom:20px;">
-        <p style="margin: 0 0 12px;">Anda mempunyai <strong>@Model.ActiveCount client aktif</strong></p>
-        <a class="btn-primary" asp-controller="Employees" asp-action="Add">+ Tambah client baru</a>
-        @if (!string.IsNullOrEmpty(Model.CompanyReferralCode))
-        {
-            <div style="font-size:12px; color:#6B7280; margin-top:8px;">
-                Kode referral perusahaan: <strong style="color:#7C3AED; letter-spacing:1px;">@Model.CompanyReferralCode</strong>
+    @* ── Alert: bahaya banner ── *@
+    @if (Model.ShowBahayaBanner)
+    {
+        <div class="hrd-alert hrd-alert--danger" role="alert">
+            <span class="hrd-alert-icon" aria-hidden="true">🚨</span>
+            <div class="hrd-alert-text">
+                <strong>@Model.BahayaCount karyawan dalam kondisi bahaya!</strong>
+                Segera laporkan ke psikolog untuk penanganan cepat.
             </div>
-        }
-    </div>
-
-    @* ─── Monitor buttons ─── *@
-    <div style="display:grid; gap:10px; margin-bottom:20px;">
-        <a class="btn-primary" asp-controller="Schedules" asp-action="Index" style="text-align:center;">Monitor Jadwal Client</a>
-        <a class="btn-primary" asp-controller="Worksheets" asp-action="Index" style="text-align:center;">Monitor Worksheet Client</a>
-    </div>
-
-    @* ─── Psy buttons ─── *@
-    <div style="display:grid; gap:10px;">
-        <a class="btn-primary" asp-controller="Psychologists" asp-action="Index" style="text-align:center; padding:14px;">
-            <span style="margin-right:8px;">👤</span> Cari Psikolog
-        </a>
-        @if (!string.IsNullOrEmpty(Model.PrimaryPsychologistEmail))
-        {
-            <a class="btn-primary" href="mailto:@Model.PrimaryPsychologistEmail" style="text-align:center; padding:14px;">
-                <span style="margin-right:8px;">✉️</span> Kontak Psikolog
+            <a href="@Url.Action("Index", "Employees", new { area = "Hr", status = "Bahaya" })" class="hrd-alert-link hrd-alert-link--danger">
+                Lihat Sekarang →
             </a>
-        }
-        else
-        {
-            <button type="button" class="btn-primary" disabled style="text-align:center; padding:14px; opacity:0.5; cursor:not-allowed;">
-                <span style="margin-right:8px;">✉️</span> Kontak Psikolog (belum ada)
+        </div>
+    }
+
+    @* ── 4 Metric Cards ── *@
+    <div class="hrd-metrics">
+
+        <div class="hrd-metric hrd-metric--blue">
+            <div class="hrd-metric-head">
+                <div class="hrd-metric-ico" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <span class="hrd-metric-badge">Hari Ini</span>
+            </div>
+            <div class="hrd-metric-val">@Model.TodaySessionCount</div>
+            <div class="hrd-metric-lbl">Sesi Terjadwal</div>
+        </div>
+
+        <div class="hrd-metric hrd-metric--purple">
+            <div class="hrd-metric-head">
+                <div class="hrd-metric-ico" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <span class="hrd-metric-badge">Aktif</span>
+            </div>
+            <div class="hrd-metric-val">@Model.ActiveWorksheetCount</div>
+            <div class="hrd-metric-lbl">Worksheet Berjalan</div>
+        </div>
+
+        <div class="hrd-metric hrd-metric--amber">
+            <div class="hrd-metric-head">
+                <div class="hrd-metric-ico" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <span class="hrd-metric-badge">Menunggu</span>
+            </div>
+            <div class="hrd-metric-val">@Model.PendingRequestCount</div>
+            <div class="hrd-metric-lbl">Permintaan Pending</div>
+        </div>
+
+        <div class="hrd-metric hrd-metric--teal">
+            <div class="hrd-metric-head">
+                <div class="hrd-metric-ico" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+                </div>
+                <span class="hrd-metric-badge">Minggu Ini</span>
+            </div>
+            <div class="hrd-metric-val">@Model.WeekSessionCount</div>
+            <div class="hrd-metric-lbl">Sesi Minggu Ini</div>
+        </div>
+
+    </div>
+
+    @* ── Main grid ── *@
+    <div class="hrd-grid">
+
+        @* ── Left: Client card + Activity feed ── *@
+        <div style="display:flex;flex-direction:column;min-width:0;gap:16px;">
+
+            @* Client card *@
+            <div class="hrd-client-card">
+                <div class="hrd-client-card-head">
+                    <div class="hrd-client-card-titlerow">
+                        <h2 class="hrd-client-card-title">Daftar Klien Aktif</h2>
+                        @if (Model.ActiveCount > 0)
+                        {
+                            <a href="@Url.Action("Index", "Employees", new { area = "Hr" })" class="hrd-view-all-link">
+                                Lihat semua →
+                            </a>
+                        }
+                    </div>
+
+                    <form method="get" asp-area="Hr" asp-controller="Employees" asp-action="Index" id="hrdSearchForm">
+                        <div class="hrd-search-wrap">
+                            <span class="hrd-search-icon" aria-hidden="true">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </span>
+                            <input type="search" name="search" id="hrdSearchInput"
+                                   class="hrd-search-input" placeholder="Cari nama karyawan..."
+                                   autocomplete="off" />
+                            <div id="hrdSearchResults" class="hrd-search-results" role="listbox" aria-label="Hasil pencarian"></div>
+                        </div>
+
+                        <div class="hrd-filter-row">
+                            <select name="division" class="hrd-select" id="hrdDivisionFilter" aria-label="Filter divisi">
+                                <option value="">Semua Divisi</option>
+                                @foreach (var d in Model.Divisions)
+                                {
+                                    <option value="@d">@d</option>
+                                }
+                            </select>
+                            <select name="status" class="hrd-select" id="hrdStatusFilter" aria-label="Filter status">
+                                <option value="">Semua Status</option>
+                                <option value="Sehat">Sehat</option>
+                                <option value="Beresiko">Beresiko</option>
+                                <option value="Bahaya">Bahaya</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                @if (Model.ActiveCount == 0)
+                {
+                    <div class="hrd-client-empty">
+                        <div class="hrd-client-empty-icon" aria-hidden="true">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <p class="hrd-client-empty-title">Belum ada klien aktif</p>
+                        <p class="hrd-client-empty-sub">Bagikan kode referral perusahaan agar karyawan dapat mendaftar sendiri.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="hrd-client-list" id="hrdClientList">
+                        @foreach (var c in Model.ClientsPreview)
+                        {
+                            var initials  = string.Join("", (c.FullName ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpper(p[0])));
+                            var statusCss = (c.Status ?? "") switch {
+                                "Sehat"    => "sehat",
+                                "Beresiko" => "beresiko",
+                                "Bahaya"   => "bahaya",
+                                _          => "unknown"
+                            };
+                            <a href="@Url.Action("Detail", "Employees", new { area = "Hr", id = c.PatientId })"
+                               class="hrd-client-row"
+                               data-name="@((c.FullName ?? "").ToLower())"
+                               data-dept="@((c.Department ?? "").ToLower())"
+                               data-status="@(c.Status ?? "")">
+                                <div class="hrd-client-avatar" aria-hidden="true">@initials</div>
+                                <div class="hrd-client-info">
+                                    <div class="hrd-client-name">@c.FullName</div>
+                                    <div class="hrd-client-dept">@(string.IsNullOrEmpty(c.Department) ? "—" : c.Department)</div>
+                                </div>
+                                <span class="hrd-status hrd-status--@statusCss">
+                                    <span class="hrd-status-dot" aria-hidden="true"></span>
+                                    @(c.Status ?? "—")
+                                </span>
+                                <svg class="hrd-client-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </a>
+                        }
+                    </div>
+                    @if (Model.ActiveCount > Model.ClientsPreview.Count)
+                    {
+                        <div class="hrd-client-more">
+                            <a href="@Url.Action("Index", "Employees", new { area = "Hr" })" class="hrd-client-more-link">
+                                Lihat @(Model.ActiveCount - Model.ClientsPreview.Count) klien lainnya →
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+
+            @* Activity Feed *@
+            <div class="hrd-activity-card">
+                <div class="hrd-activity-head">
+                    <div class="hrd-activity-head-ico" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <span class="hrd-activity-title">Aktivitas Terbaru</span>
+                    <span class="hrd-activity-subtitle">7 hari terakhir</span>
+                </div>
+
+                @if (Model.RecentActivities.Count == 0)
+                {
+                    <div class="hrd-activity-empty">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Belum ada aktivitas dalam 7 hari terakhir
+                    </div>
+                }
+                else
+                {
+                    <div class="hrd-activity-list">
+                        @foreach (var act in Model.RecentActivities)
+                        {
+                            var dotClass = act.Type == "Worksheet" ? "hrd-activity-dot--Worksheet" : "hrd-activity-dot--Session";
+                            var timeAgo  = (DateTime.Now - act.OccurredAt).TotalHours < 24
+                                           ? $"{(int)(DateTime.Now - act.OccurredAt).TotalHours} jam lalu"
+                                           : act.OccurredAt.ToString("d MMM", idCulture);
+                            <div class="hrd-activity-item">
+                                <div class="hrd-activity-dot @dotClass" aria-hidden="true"></div>
+                                <div class="hrd-activity-body">
+                                    <div class="hrd-activity-name">@act.PatientName</div>
+                                    <div class="hrd-activity-desc">@act.Description</div>
+                                </div>
+                                <div class="hrd-activity-time">@timeAgo</div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        @* ── Right: sidebar cards ── *@
+        <div class="hrd-side">
+
+            @* Status Distribution *@
+            <div class="hrd-dist-card">
+                <div class="hrd-dist-head">
+                    <div class="hrd-dist-head-ico" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    <span class="hrd-dist-title">Distribusi Status Kesehatan</span>
+                </div>
+                <div class="hrd-dist-body">
+                    <div class="hrd-dist-row">
+                        <div class="hrd-dist-row-head">
+                            <span class="hrd-dist-lbl">
+                                <span class="hrd-dist-lbl-dot hrd-dist-lbl-dot--sehat" aria-hidden="true"></span>
+                                Sehat
+                            </span>
+                            <span class="hrd-dist-val">@Model.SehatCount <small style="font-weight:400;color:var(--lu-text-muted);">(@sehatPct%)</small></span>
+                        </div>
+                        <div class="hrd-dist-track">
+                            <div class="hrd-dist-fill hrd-dist-fill--sehat" style="width:@sehatPct%"></div>
+                        </div>
+                    </div>
+                    <div class="hrd-dist-row">
+                        <div class="hrd-dist-row-head">
+                            <span class="hrd-dist-lbl">
+                                <span class="hrd-dist-lbl-dot hrd-dist-lbl-dot--beresiko" aria-hidden="true"></span>
+                                Beresiko
+                            </span>
+                            <span class="hrd-dist-val">@Model.BeresikoCount <small style="font-weight:400;color:var(--lu-text-muted);">(@beresikoPct%)</small></span>
+                        </div>
+                        <div class="hrd-dist-track">
+                            <div class="hrd-dist-fill hrd-dist-fill--beresiko" style="width:@beresikoPct%"></div>
+                        </div>
+                    </div>
+                    <div class="hrd-dist-row">
+                        <div class="hrd-dist-row-head">
+                            <span class="hrd-dist-lbl">
+                                <span class="hrd-dist-lbl-dot hrd-dist-lbl-dot--bahaya" aria-hidden="true"></span>
+                                Bahaya
+                            </span>
+                            <span class="hrd-dist-val">@Model.BahayaCount <small style="font-weight:400;color:var(--lu-text-muted);">(@bahayaPct%)</small></span>
+                        </div>
+                        <div class="hrd-dist-track">
+                            <div class="hrd-dist-fill hrd-dist-fill--bahaya" style="width:@bahayaPct%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hrd-dist-footer">
+                    <span class="hrd-dist-total">@Model.ActiveCount karyawan aktif total</span>
+                    <a href="@Url.Action("Index", "Statistik", new { area = "Hr" })" class="hrd-dist-link">Statistik lengkap →</a>
+                </div>
+            </div>
+
+            @* Monitoring & Tindakan card *@
+            <div class="hrd-action-card">
+                <div class="hrd-action-card-head">
+                    <div class="hrd-action-card-icon hrd-action-card-icon--blue" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+                    </div>
+                    <h3 class="hrd-action-card-title">Monitoring & Tindakan</h3>
+                </div>
+                <div class="hrd-action-btns">
+                    <a href="@Url.Action("Index", "Schedules", new { area = "Hr" })" class="hrd-action-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Monitor Jadwal Klien
+                    </a>
+                    <a href="@Url.Action("Index", "Worksheets", new { area = "Hr" })" class="hrd-action-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+                        Monitor Worksheet Klien
+                    </a>
+                    <a href="@Url.Action("Index", "Reports", new { area = "Hr" })" class="hrd-action-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        Laporan ke Psikolog
+                    </a>
+                    <a href="@Url.Action("Index", "Employees", new { area = "Hr" })" class="hrd-action-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Kelola Karyawan
+                    </a>
+                </div>
+            </div>
+
+            @* Psikolog card — inline search *@
+            <div class="hrd-action-card hrd-psy-card">
+                <div class="hrd-action-card-head">
+                    <div class="hrd-action-card-icon hrd-action-card-icon--purple" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <h3 class="hrd-action-card-title">Cari Psikolog</h3>
+                    <button type="button" class="hrd-psy-all-link" style="background:none;border:none;cursor:pointer;padding:0;" onclick="openBrdModal('psyModal')">Semua →</button>
+                </div>
+                <div class="hrd-psy-search-wrap">
+                    <svg class="hrd-psy-search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="psySearchInput" class="hrd-psy-search-input"
+                           placeholder="Nama atau spesialisasi..." autocomplete="off" />
+                </div>
+                <div class="hrd-psy-results" id="psyResults">
+                    @if (Model.PartneredPsychologists.Any())
+                    {
+                        foreach (var psy in Model.PartneredPsychologists)
+                        {
+                            <a href="mailto:@psy.Email" class="hrd-psy-result-item hrd-psy-result-item--partner">
+                                <div class="hrd-psy-result-av" aria-hidden="true">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                </div>
+                                <div class="hrd-psy-result-info">
+                                    <span class="hrd-psy-result-name">@psy.Name</span>
+                                    <span class="hrd-psy-result-spec">@(string.IsNullOrEmpty(psy.Specialization) ? psy.Email : psy.Specialization)</span>
+                                </div>
+                                <span class="hrd-psy-partner-badge">Hubungi</span>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <p class="hrd-psy-hint">Ketik nama atau spesialisasi untuk mencari psikolog...</p>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@Html.AntiForgeryToken()
+
+@* ── Toast ── *@
+<div class="hrpf-toast hrpf-toast--ok" id="brdToast"
+     style="opacity:0;pointer-events:none;transition:opacity .25s;position:fixed;bottom:28px;right:28px;z-index:9999;
+            background:#fff;border:1.5px solid var(--lu-border);border-radius:12px;padding:12px 18px;
+            box-shadow:0 6px 24px rgba(0,0,0,.12);display:flex;align-items:center;gap:10px;
+            font-size:13.5px;font-weight:600;color:var(--lu-text);max-width:340px;">
+    <span id="brdToastIco" style="font-size:16px;flex-shrink:0;">✅</span>
+    <span id="brdToastMsg"></span>
+</div>
+
+@* ═══════════════════════════════════════════
+   MODAL 1 — Buat Laporan ke Psikolog
+   ═══════════════════════════════════════════ *@
+<div class="hrpf-modal-overlay" id="reportModal" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+    <div class="hrpf-modal" style="max-width:480px;">
+        <div class="hrpf-modal-head">
+            <div class="hrpf-modal-head-icon" style="background:#f5f3ff;color:#7c3aed;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div>
+                <div id="reportModalTitle" class="hrpf-modal-title">Buat Laporan ke Psikolog</div>
+                <div class="hrpf-modal-sub">Laporan dikirim ke psikolog aktif karyawan</div>
+            </div>
+            <button class="hrpf-modal-close" type="button" onclick="closeBrdModal('reportModal')" aria-label="Tutup">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
-        }
+        </div>
+
+        <form id="reportForm" style="padding:18px 20px;display:flex;flex-direction:column;gap:14px;">
+
+            <div class="hrpf-form-group">
+                <label class="hrpf-form-label" for="reportPatientId">Pilih Karyawan <span style="color:#ef4444;">*</span></label>
+                <select id="reportPatientId" name="patientId" class="hrpf-form-input" required>
+                    <option value="">— Pilih karyawan —</option>
+                    @foreach (var c in Model.ClientsPreview)
+                    {
+                        <option value="@c.PatientId">@c.FullName @(string.IsNullOrEmpty(c.Department) ? "" : $"· {c.Department}")</option>
+                    }
+                </select>
+                @if (Model.ActiveCount > Model.ClientsPreview.Count)
+                {
+                    <p style="font-size:11.5px;color:var(--lu-text-muted);margin:5px 0 0;">
+                        Menampilkan 20 karyawan pertama.
+                        <a href="@Url.Action("Index", "Employees", new { area = "Hr" })" style="color:var(--lu-primary);">Lihat semua →</a>
+                    </p>
+                }
+            </div>
+
+            <div class="hrpf-form-group">
+                <label class="hrpf-form-label" for="reportNotes">Catatan untuk Psikolog <span style="color:var(--lu-text-muted);font-weight:400;">(opsional)</span></label>
+                <textarea id="reportNotes" name="notes" class="hrpf-form-input" rows="4"
+                          placeholder="Tuliskan kondisi atau kekhawatiran Anda mengenai karyawan ini..."></textarea>
+            </div>
+
+            <div id="reportError" class="hrpf-form-error" style="display:none;"></div>
+
+            <input type="hidden" id="reportSendFlag" value="false" />
+        </form>
+
+        <div class="hrpf-modal-foot">
+            <button type="button" class="hrpf-modal-cancel" onclick="closeBrdModal('reportModal')">Batal</button>
+            <button type="button" class="hrpf-modal-save--ghost" id="reportDraftBtn"
+                    onclick="reportSendFlag.value='false';submitReport();">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Simpan Draft
+            </button>
+            <button type="button" class="hrpf-modal-save" id="reportSendBtn"
+                    onclick="reportSendFlag.value='true';submitReport();">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Kirim ke Psikolog
+            </button>
+        </div>
+    </div>
+</div>
+
+@* ═══════════════════════════════════════════
+   MODAL 2 — Direktori Psikolog
+   ═══════════════════════════════════════════ *@
+<div class="hrpf-modal-overlay" id="psyModal" role="dialog" aria-modal="true" aria-labelledby="psyModalTitle">
+    <div class="hrpf-modal" style="max-width:520px;">
+        <div class="hrpf-modal-head">
+            <div class="hrpf-modal-head-icon" style="background:#f5f3ff;color:#7c3aed;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+                <div id="psyModalTitle" class="hrpf-modal-title">Direktori Psikolog</div>
+                <div class="hrpf-modal-sub">Cari & hubungi psikolog B2B</div>
+            </div>
+            <button class="hrpf-modal-close" type="button" onclick="closeBrdModal('psyModal')" aria-label="Tutup">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div style="padding:14px 18px 0;border-bottom:1.5px solid var(--lu-bg);">
+            <div class="hrd-psy-search-wrap" style="margin-bottom:14px;">
+                <svg class="hrd-psy-search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="psyModalSearch" class="hrd-psy-search-input"
+                       placeholder="Nama atau spesialisasi..." autocomplete="off" />
+            </div>
+        </div>
+
+        <div id="psyModalResults" class="hrd-psy-results"
+             style="max-height:340px;overflow-y:auto;padding:6px 0;">
+            @if (!string.IsNullOrEmpty(Model.PrimaryPsychologistEmail))
+            {
+                <a href="mailto:@Model.PrimaryPsychologistEmail" class="hrd-psy-result-item hrd-psy-result-item--partner">
+                    <div class="hrd-psy-result-av" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="hrd-psy-result-info">
+                        <span class="hrd-psy-result-name">Psikolog Partner</span>
+                        <span class="hrd-psy-result-spec">@Model.PrimaryPsychologistEmail</span>
+                    </div>
+                    <span class="hrd-psy-partner-badge">Partner</span>
+                </a>
+            }
+            else
+            {
+                <p class="hrd-psy-hint" style="padding:18px;">Ketik nama atau spesialisasi untuk mencari psikolog...</p>
+            }
+        </div>
+
+        <div class="hrpf-modal-foot">
+            <button type="button" class="hrpf-modal-cancel" onclick="closeBrdModal('psyModal')">Tutup</button>
+            <a href="@Url.Action("Index", "Psychologists", new { area = "Hr" })" class="hrpf-modal-save" style="text-decoration:none;display:flex;align-items:center;gap:7px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Halaman Psikolog Lengkap
+            </a>
+        </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        // Preloaded client list for live search
-        const clients = @Html.Raw(Json.Serialize(Model.ClientsPreview));
-        const input = document.getElementById('searchInput');
-        const results = document.getElementById('searchResults');
+<script>
+(function () {
+    // ════════════════════════════════════════════
+    //  SHARED MODAL HELPERS
+    // ════════════════════════════════════════════
+    window.openBrdModal = function (id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        // auto-focus first input
+        const first = el.querySelector('input,select,textarea');
+        if (first) setTimeout(() => first.focus(), 120);
+        // trigger bar animation if distribution modal (not used but safe)
+    };
+    window.closeBrdModal = function (id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('is-open');
+        document.body.style.overflow = '';
+    };
 
+    // Close on overlay click or Escape
+    document.querySelectorAll('.hrpf-modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) closeBrdModal(overlay.id);
+        });
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.hrpf-modal-overlay.is-open').forEach(o => closeBrdModal(o.id));
+        }
+    });
+
+    // ════════════════════════════════════════════
+    //  TOAST
+    // ════════════════════════════════════════════
+    function showBrdToast(msg, ok) {
+        const toast = document.getElementById('brdToast');
+        const ico   = document.getElementById('brdToastIco');
+        const txt   = document.getElementById('brdToastMsg');
+        ico.textContent = ok ? '✅' : '❌';
+        txt.textContent = msg;
+        toast.style.borderColor = ok ? 'var(--lu-border)' : '#fca5a5';
+        toast.style.opacity = '1';
+        toast.style.pointerEvents = 'auto';
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.pointerEvents = 'none';
+        }, 3400);
+    }
+
+    // ════════════════════════════════════════════
+    //  REPORT MODAL
+    // ════════════════════════════════════════════
+    const csrf = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+    const reportSendFlag = document.getElementById('reportSendFlag');
+
+    window.submitReport = async function () {
+        const patientId = document.getElementById('reportPatientId').value;
+        const notes     = document.getElementById('reportNotes').value;
+        const send      = reportSendFlag?.value ?? 'false';
+        const errBox    = document.getElementById('reportError');
+        const draftBtn  = document.getElementById('reportDraftBtn');
+        const sendBtn   = document.getElementById('reportSendBtn');
+
+        errBox.style.display = 'none';
+
+        if (!patientId) {
+            errBox.textContent = 'Pilih karyawan terlebih dahulu.';
+            errBox.style.display = 'block';
+            return;
+        }
+
+        draftBtn.disabled = sendBtn.disabled = true;
+        draftBtn.textContent = sendBtn.textContent = 'Menyimpan...';
+
+        const fd = new FormData();
+        fd.append('patientId', patientId);
+        fd.append('notes', notes);
+        fd.append('send', send);
+
+        try {
+            const res  = await fetch('/Hr/Reports/CreateModal', {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': csrf },
+                body: fd
+            });
+            const data = await res.json();
+
+            if (data.ok) {
+                closeBrdModal('reportModal');
+                // reset form
+                document.getElementById('reportPatientId').value = '';
+                document.getElementById('reportNotes').value = '';
+                showBrdToast(data.message, true);
+            } else {
+                const msg = Array.isArray(data.errors) ? data.errors.join(' ') : (data.message || 'Terjadi kesalahan.');
+                errBox.textContent = msg;
+                errBox.style.display = 'block';
+            }
+        } catch {
+            errBox.textContent = 'Gagal terhubung ke server. Coba lagi.';
+            errBox.style.display = 'block';
+        } finally {
+            draftBtn.disabled = sendBtn.disabled = false;
+            draftBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Draft`;
+            sendBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim ke Psikolog`;
+        }
+    };
+
+    // ════════════════════════════════════════════
+    //  PSIKOLOG MODAL SEARCH
+    // ════════════════════════════════════════════
+    (function () {
+        const psyModalInput   = document.getElementById('psyModalSearch');
+        const psyModalResults = document.getElementById('psyModalResults');
+        if (!psyModalInput || !psyModalResults) return;
+
+        let psyModalTimer = null;
+        const seedHtmlModal = psyModalResults.innerHTML;
+
+        psyModalInput.addEventListener('input', function () {
+            clearTimeout(psyModalTimer);
+            const q = psyModalInput.value.trim();
+            if (q.length < 2) { psyModalResults.innerHTML = seedHtmlModal; return; }
+
+            psyModalTimer = setTimeout(async () => {
+                psyModalResults.innerHTML = '<p class="hrd-psy-hint" style="padding:14px 18px;">Mencari...</p>';
+                try {
+                    const res  = await fetch('/Hr/Home/SearchPsychologists?q=' + encodeURIComponent(q));
+                    const data = await res.json();
+                    if (data.length === 0) {
+                        psyModalResults.innerHTML = '<p class="hrd-psy-hint" style="padding:14px 18px;">Psikolog tidak ditemukan.</p>';
+                        return;
+                    }
+                    psyModalResults.innerHTML = data.map(p => {
+                        const initials   = (p.name || '?').split(' ').slice(0, 2).map(x => x[0].toUpperCase()).join('');
+                        const actionHtml = p.partnered
+                            ? `<span class="hrd-psy-partner-badge">Partner</span>`
+                            : (p.email
+                                ? `<a href="mailto:${p.email}" class="hrd-psy-contact-link" title="Hubungi via email">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                   </a>`
+                                : '');
+                        return `<div class="hrd-psy-result-item">
+                            <div class="hrd-psy-result-av hrd-psy-result-av--text" aria-hidden="true">${initials}</div>
+                            <div class="hrd-psy-result-info">
+                                <span class="hrd-psy-result-name">${p.name}</span>
+                                <span class="hrd-psy-result-spec">${p.specialization || 'Umum'} · ${p.years || 0} thn pengalaman</span>
+                            </div>
+                            ${actionHtml}
+                        </div>`;
+                    }).join('');
+                } catch {
+                    psyModalResults.innerHTML = '<p class="hrd-psy-hint" style="padding:14px 18px;">Gagal memuat. Coba lagi.</p>';
+                }
+            }, 280);
+        });
+
+        // Clear search when modal is opened
+        document.getElementById('psyModal')?.addEventListener('transitionend', () => {
+            if (!document.getElementById('psyModal').classList.contains('is-open')) {
+                psyModalInput.value = '';
+                psyModalResults.innerHTML = seedHtmlModal;
+            }
+        });
+    })();
+
+    // ════════════════════════════════════════════
+    //  INLINE PSIKOLOG CARD SEARCH (sidebar widget)
+    // ════════════════════════════════════════════
+    (function () {
+        const psyInput   = document.getElementById('psySearchInput');
+        const psyResults = document.getElementById('psyResults');
+        if (!psyInput || !psyResults) return;
+
+        let psyTimer   = null;
+        const seedHtml = psyResults.innerHTML;
+
+        psyInput.addEventListener('input', function () {
+            clearTimeout(psyTimer);
+            const q = psyInput.value.trim();
+            if (q.length < 2) { psyResults.innerHTML = seedHtml; return; }
+
+            psyTimer = setTimeout(async () => {
+                psyResults.innerHTML = '<p class="hrd-psy-hint hrd-psy-hint--loading">Mencari...</p>';
+                try {
+                    const res  = await fetch('/Hr/Home/SearchPsychologists?q=' + encodeURIComponent(q));
+                    const data = await res.json();
+                    if (data.length === 0) {
+                        psyResults.innerHTML = '<p class="hrd-psy-hint">Psikolog tidak ditemukan.</p>';
+                        return;
+                    }
+                    psyResults.innerHTML = data.map(p => {
+                        const initials   = (p.name || '?').split(' ').slice(0, 2).map(x => x[0].toUpperCase()).join('');
+                        const actionHtml = p.partnered
+                            ? `<span class="hrd-psy-partner-badge">Partner</span>`
+                            : `<a href="mailto:${p.email || ''}" class="hrd-psy-contact-link" title="Hubungi">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                               </a>`;
+                        return `<div class="hrd-psy-result-item">
+                            <div class="hrd-psy-result-av hrd-psy-result-av--text" aria-hidden="true">${initials}</div>
+                            <div class="hrd-psy-result-info">
+                                <span class="hrd-psy-result-name">${p.name}</span>
+                                <span class="hrd-psy-result-spec">${p.specialization || 'Umum'} · ${p.years || 0} thn</span>
+                            </div>
+                            ${actionHtml}
+                        </div>`;
+                    }).join('');
+                } catch {
+                    psyResults.innerHTML = '<p class="hrd-psy-hint">Gagal memuat. Coba lagi.</p>';
+                }
+            }, 280);
+        });
+    })();
+
+    // ════════════════════════════════════════════
+    //  LIVE CLIENT SEARCH (main card)
+    // ════════════════════════════════════════════
+    const clients = @Html.Raw(Json.Serialize(Model.ClientsPreview));
+    const input   = document.getElementById('hrdSearchInput');
+    const results = document.getElementById('hrdSearchResults');
+
+    if (input) {
         input.addEventListener('input', () => {
             const q = input.value.trim().toLowerCase();
-            if (q.length < 2) { results.style.display = 'none'; return; }
-
+            if (q.length < 2) {
+                results.classList.remove('is-open');
+                results.innerHTML = '';
+                filterClientRows('', '', '');
+                return;
+            }
             const matches = clients
                 .filter(c => c.fullName.toLowerCase().includes(q) || (c.department || '').toLowerCase().includes(q))
-                .slice(0, 5);
-
+                .slice(0, 6);
             if (matches.length === 0) {
-                results.innerHTML = '<div style="padding:12px; color:#6B7280;">Tidak ada hasil.</div>';
+                results.innerHTML = '<div class="hrd-search-result-empty">Tidak ada hasil ditemukan.</div>';
             } else {
-                results.innerHTML = matches.map(c => `
-                    <a href="/Hr/Employees/Detail/${c.patientId}"
-                       style="display:flex; padding:10px 14px; text-decoration:none; color:#111; border-bottom:1px solid #F3F4F6; align-items:center; gap:10px;">
-                        <span style="flex:1;">
-                            <strong style="display:block;">${c.fullName}</strong>
-                            <small style="color:#6B7280;">${c.department || '—'}</small>
+                results.innerHTML = matches.map(c => {
+                    const statusCss = { Sehat: 'sehat', Beresiko: 'beresiko', Bahaya: 'bahaya' }[c.status] || 'unknown';
+                    const initials  = (c.fullName || '?').split(' ').slice(0, 2).map(p => p[0].toUpperCase()).join('');
+                    return `<a href="/Hr/Employees/Detail/${c.patientId}" class="hrd-search-result-item" role="option">
+                        <div class="hrd-client-avatar" style="width:30px;height:30px;font-size:11px;flex-shrink:0;">${initials}</div>
+                        <span style="flex:1;min-width:0;">
+                            <strong style="display:block;font-size:13px;">${c.fullName}</strong>
+                            <small style="color:var(--lu-text-muted);font-size:11.5px;">${c.department || '—'}</small>
                         </span>
-                        <span style="font-size:11px; padding:2px 8px; border-radius:999px; background:#EDE9FE; color:#7C3AED;">${c.status}</span>
-                    </a>
-                `).join('');
+                        <span class="hrd-status hrd-status--${statusCss}">
+                            <span class="hrd-status-dot"></span>${c.status || '—'}
+                        </span>
+                    </a>`;
+                }).join('');
             }
-            results.style.display = '';
+            results.classList.add('is-open');
         });
 
-        // Close dropdown on outside click
         document.addEventListener('click', e => {
-            if (!e.target.closest('#searchForm')) results.style.display = 'none';
+            if (!e.target.closest('#hrdSearchForm')) results.classList.remove('is-open');
         });
-
-        // Submit search on Enter
         input.addEventListener('keydown', e => {
-            if (e.key === 'Enter') document.getElementById('searchForm').submit();
+            if (e.key === 'Enter') document.getElementById('hrdSearchForm').submit();
         });
-    </script>
+    }
+
+    // ─── Client row filter ───
+    const divSel    = document.getElementById('hrdDivisionFilter');
+    const statusSel = document.getElementById('hrdStatusFilter');
+
+    function filterClientRows(q, div, status) {
+        document.querySelectorAll('.hrd-client-row').forEach(row => {
+            const matchQ  = !q      || (row.dataset.name || '').includes(q) || (row.dataset.dept || '').includes(q);
+            const matchD  = !div    || (row.dataset.dept || '') === div.toLowerCase();
+            const matchSt = !status || (row.dataset.status || '') === status;
+            row.style.display = (matchQ && matchD && matchSt) ? '' : 'none';
+        });
+    }
+
+    if (divSel) divSel.addEventListener('change', () =>
+        filterClientRows(input?.value.trim().toLowerCase() || '', divSel.value, statusSel?.value || ''));
+    if (statusSel) statusSel.addEventListener('change', () =>
+        filterClientRows(input?.value.trim().toLowerCase() || '', divSel?.value || '', statusSel.value));
+
+    // ─── Animate distribution bars on load ───
+    requestAnimationFrame(() => {
+        document.querySelectorAll('.hrd-dist-fill').forEach(el => {
+            const target = el.style.width;
+            el.style.width = '0';
+            requestAnimationFrame(() => { el.style.width = target; });
+        });
+    });
+
+})();
+</script>
 }

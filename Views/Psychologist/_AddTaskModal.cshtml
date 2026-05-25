@@ -1,0 +1,108 @@
+@model LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel
+@{
+    var openOnLoad = ViewBag.OpenAddTaskModal == true;
+}
+
+<div class="prf-modal-overlay" id="addTaskModalOverlay" role="dialog" aria-modal="true" aria-labelledby="addTaskModalTitle">
+    <div class="prf-modal" style="max-width: 520px;">
+        <div class="prf-modal-header">
+            <h2 id="addTaskModalTitle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-3px;margin-right:8px;color:#4338CA" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+                Tambah Tugas
+            </h2>
+            <button type="button" class="prf-modal-close" onclick="closeAddTaskModal()" aria-label="Tutup">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <form asp-action="AddTask" method="post" autocomplete="off">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReturnPatientId" />
+
+            <div class="prf-modal-body">
+                <p style="margin:0 0 4px;font-size:13px;color:var(--text-muted);">Berikan tugas/aktivitas baru untuk salah satu pasien aktif Anda.</p>
+
+                <div asp-validation-summary="ModelOnly" style="color:#B91C1C;font-size:13px;margin:0;"></div>
+
+                <div class="prf-form-group">
+                    <label asp-for="PatientId">Pasien</label>
+                    <select asp-for="PatientId">
+                        <option value="0">-- Pilih Pasien --</option>
+                        @foreach (var p in Model.AvailablePatients)
+                        {
+                            <option value="@p.PatientId">@p.FullName @(p.CompanyName != null ? "(" + p.CompanyName + ")" : "")</option>
+                        }
+                    </select>
+                    <span asp-validation-for="PatientId" style="color:#B91C1C;font-size:12px;"></span>
+                </div>
+
+                <div class="prf-form-group">
+                    <label asp-for="TaskName">Nama Tugas</label>
+                    <input asp-for="TaskName" placeholder="Mis. Meditasi 30 Menit" />
+                    <span asp-validation-for="TaskName" style="color:#B91C1C;font-size:12px;"></span>
+                </div>
+
+                <div class="prf-form-group">
+                    <label asp-for="Description">Deskripsi (opsional)</label>
+                    <textarea asp-for="Description" rows="3" placeholder="Jelaskan tugas yang harus dikerjakan..."></textarea>
+                </div>
+
+                <div class="prf-form-row">
+                    <div class="prf-form-group">
+                        <label asp-for="DeadlineDate">Tanggal Deadline</label>
+                        <input asp-for="DeadlineDate" type="date" />
+                        <span asp-validation-for="DeadlineDate" style="color:#B91C1C;font-size:12px;"></span>
+                    </div>
+                    <div class="prf-form-group">
+                        <label asp-for="DeadlineTime">Jam Deadline</label>
+                        <input asp-for="DeadlineTime" type="time" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="prf-modal-footer">
+                <button type="button" class="prf-modal-btn prf-modal-btn--cancel" onclick="closeAddTaskModal()">Batalkan</button>
+                <button type="submit" class="prf-modal-btn prf-modal-btn--save">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;margin-right:6px" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    function openAddTaskModal() {
+        var overlay = document.getElementById('addTaskModalOverlay');
+        if (!overlay) return;
+        overlay.classList.add('prf-modal--open');
+        document.body.style.overflow = 'hidden';
+        var first = overlay.querySelector('select, input:not([type=hidden])');
+        if (first) setTimeout(function () { first.focus(); }, 60);
+    }
+    function closeAddTaskModal() {
+        var overlay = document.getElementById('addTaskModalOverlay');
+        if (!overlay) return;
+        overlay.classList.remove('prf-modal--open');
+        document.body.style.overflow = '';
+    }
+    window.openAddTaskModal = openAddTaskModal;
+    window.closeAddTaskModal = closeAddTaskModal;
+
+    var overlay = document.getElementById('addTaskModalOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeAddTaskModal();
+        });
+    }
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAddTaskModal();
+    });
+
+    @if (openOnLoad)
+    {
+        <text>document.addEventListener('DOMContentLoaded', openAddTaskModal);</text>
+    }
+})();
+</script>

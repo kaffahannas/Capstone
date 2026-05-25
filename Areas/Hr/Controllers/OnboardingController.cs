@@ -2,29 +2,28 @@ using LightenUp.Web.Data;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Areas.Hr.Controllers
 {
-    // 3-step HR onboarding wizard.
     [Area("Hr")]
     [Authorize(Roles = "HR")]
     public class OnboardingController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IWebHostEnvironment _env;
+        private readonly UserUploadService _uploads;
 
         public OnboardingController(ApplicationDbContext context,
                                     UserManager<ApplicationUser> userManager,
-                                    IWebHostEnvironment env)
+                                    UserUploadService uploads)
         {
             _context = context;
             _userManager = userManager;
-            _env = env;
+            _uploads = uploads;
         }
 
         private async Task<HrStaff?> GetHrAsync()
@@ -50,9 +49,6 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return nameof(Success);
         }
 
-        // ═════════════════════════════════════════════
-        //  Welcome
-        // ═════════════════════════════════════════════
         [HttpGet]
         public async Task<IActionResult> Welcome()
         {
@@ -77,9 +73,6 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return RedirectToAction(NextStepFor(hr, user));
         }
 
-        // ═════════════════════════════════════════════
-        //  Step 1 — Photo
-        // ═════════════════════════════════════════════
         [HttpGet]
         public async Task<IActionResult> Photo()
         {
@@ -89,40 +82,44 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr.OnboardingCompletedAt != null) return RedirectToAction("Index", "Home");
 
             ViewBag.Progress = new HrOnboardingProgress { Current = 1 };
-            return View(new HrOnboardingPhotoViewModel());
+            ViewBag.ExistingPhotoUrl = user.ProfilePicture;
+            return View(new HrOnboardingPhotoViewModel { HasExistingPhoto = !string.IsNullOrEmpty(user.ProfilePicture) });
         }
 
         [HttpPost]
         [RequestSizeLimit(5_000_000)]
         public async Task<IActionResult> Photo(HrOnboardingPhotoViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Progress = new HrOnboardingProgress { Current = 1 };
-                return View(model);
-            }
-
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
 
+            var hasExisting = !string.IsNullOrEmpty(user.ProfilePicture);
+            if ((model.Photo == null || model.Photo.Length == 0) && !hasExisting)
+                ModelState.AddModelError(nameof(model.Photo), "Silakan unggah foto diri.");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Progress = new HrOnboardingProgress { Current = 1 };
+                ViewBag.ExistingPhotoUrl = user.ProfilePicture;
+                model.HasExistingPhoto = hasExisting;
+                return View(model);
+            }
+
             if (model.Photo != null && model.Photo.Length > 0)
             {
-                var ext = Path.GetExtension(model.Photo.FileName).ToLowerInvariant();
-                var folder = Path.Combine(_env.WebRootPath, "uploads", "profiles");
-                Directory.CreateDirectory(folder);
-                var fileName = $"hr_{Guid.NewGuid():N}{ext}";
-                var full = Path.Combine(folder, fileName);
-                using (var s = new FileStream(full, FileMode.Create)) await model.Photo.CopyToAsync(s);
-                user.ProfilePicture = $"/uploads/profiles/{fileName}";
-                await _userManager.UpdateAsync(user);
+                var path = await _uploads.ReplaceAsync(
+                    user.Id, UserUploadService.Categories.Profile, model.Photo,
+                    user.ProfilePicture, allowedExtensions: UserUploadService.ProfileExtensions);
+                if (path != null)
+                {
+                    user.ProfilePicture = path;
+                    await _userManager.UpdateAsync(user);
+                }
             }
 
             return RedirectToAction(nameof(Academic));
         }
 
-        // ═════════════════════════════════════════════
-        //  Step 2 — Academic
-        // ═════════════════════════════════════════════
         [HttpGet]
         public async Task<IActionResult> Academic()
         {
@@ -131,10 +128,12 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr.OnboardingCompletedAt != null) return RedirectToAction("Index", "Home");
 
             ViewBag.Progress = new HrOnboardingProgress { Current = 2 };
+            ViewBag.ExistingDocumentUrl = hr.AcademicDocumentUrl;
             return View(new HrOnboardingAcademicViewModel
             {
                 LastDegree = hr.LastDegree ?? "",
-                University = hr.University ?? ""
+                University = hr.University ?? "",
+                HasExistingDocument = !string.IsNullOrEmpty(hr.AcademicDocumentUrl)
             });
         }
 
@@ -142,24 +141,32 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         [RequestSizeLimit(10_000_000)]
         public async Task<IActionResult> Academic(HrOnboardingAcademicViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Progress = new HrOnboardingProgress { Current = 2 };
-                return View(model);
-            }
-
             var hr = await GetHrAsync();
             if (hr == null) return RedirectToAction("Login", "Account", new { area = "" });
 
+            var hasExisting = !string.IsNullOrEmpty(hr.AcademicDocumentUrl);
+            if ((model.AcademicDocument == null || model.AcademicDocument.Length == 0) && !hasExisting)
+                ModelState.AddModelError(nameof(model.AcademicDocument), "Silakan unggah dokumen pendukung.");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Progress = new HrOnboardingProgress { Current = 2 };
+                ViewBag.ExistingDocumentUrl = hr.AcademicDocumentUrl;
+                model.HasExistingDocument = hasExisting;
+                return View(model);
+            }
+
             if (model.AcademicDocument != null && model.AcademicDocument.Length > 0)
             {
-                var ext = Path.GetExtension(model.AcademicDocument.FileName).ToLowerInvariant();
-                var folder = Path.Combine(_env.WebRootPath, "uploads", "documents");
-                Directory.CreateDirectory(folder);
-                var fileName = $"hr_academic_{Guid.NewGuid():N}{ext}";
-                var full = Path.Combine(folder, fileName);
-                using (var s = new FileStream(full, FileMode.Create)) await model.AcademicDocument.CopyToAsync(s);
-                hr.AcademicDocumentUrl = $"/uploads/documents/{fileName}";
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    var path = await _uploads.ReplaceAsync(
+                        user.Id, UserUploadService.Categories.Documents, model.AcademicDocument,
+                        hr.AcademicDocumentUrl, namePrefix: "academic",
+                        allowedExtensions: UserUploadService.DocumentExtensions);
+                    if (path != null) hr.AcademicDocumentUrl = path;
+                }
             }
 
             hr.LastDegree = model.LastDegree;
@@ -169,9 +176,6 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return RedirectToAction(nameof(Company));
         }
 
-        // ═════════════════════════════════════════════
-        //  Step 3 — Company (create new OR join existing)
-        // ═════════════════════════════════════════════
         [HttpGet]
         public async Task<IActionResult> Company()
         {
@@ -180,10 +184,11 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr.OnboardingCompletedAt != null) return RedirectToAction("Index", "Home");
 
             ViewBag.Progress = new HrOnboardingProgress { Current = 3 };
+            ViewBag.ExistingSupportDocumentUrl = hr.SupportDocumentUrl;
             return View(new HrOnboardingCompanyViewModel
             {
-                Mode = "Create",
-                Department = hr.Department ?? ""
+                Department = hr.Department ?? "",
+                HasExistingSupportDocument = !string.IsNullOrEmpty(hr.SupportDocumentUrl)
             });
         }
 
@@ -193,95 +198,58 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         {
             ViewBag.Progress = new HrOnboardingProgress { Current = 3 };
 
-            // Per-mode validation
-            if (model.Mode == "Create")
-            {
-                if (string.IsNullOrWhiteSpace(model.CompanyName))
-                    ModelState.AddModelError(nameof(model.CompanyName), "Nama perusahaan wajib diisi.");
-                if (string.IsNullOrWhiteSpace(model.CompanyAddress))
-                    ModelState.AddModelError(nameof(model.CompanyAddress), "Lokasi perusahaan wajib diisi.");
-            }
-            else if (model.Mode == "Join")
-            {
-                if (string.IsNullOrWhiteSpace(model.ReferralCode))
-                    ModelState.AddModelError(nameof(model.ReferralCode), "Kode referral wajib diisi.");
-            }
-            else
-            {
-                ModelState.AddModelError(nameof(model.Mode), "Pilih opsi yang valid.");
-            }
-
-            if (!ModelState.IsValid) return View(model);
+            if (string.IsNullOrWhiteSpace(model.CompanyName))
+                ModelState.AddModelError(nameof(model.CompanyName), "Nama perusahaan wajib diisi.");
+            if (string.IsNullOrWhiteSpace(model.CompanyAddress))
+                ModelState.AddModelError(nameof(model.CompanyAddress), "Lokasi perusahaan wajib diisi.");
 
             var hr = await GetHrAsync();
             if (hr == null) return RedirectToAction("Login", "Account", new { area = "" });
 
-            if (model.Mode == "Create")
+            ViewBag.ExistingSupportDocumentUrl = hr.SupportDocumentUrl;
+            var hasSupport = !string.IsNullOrEmpty(hr.SupportDocumentUrl);
+
+            if (!ModelState.IsValid)
             {
-                // Generate a referral code (6 uppercase alphanumeric chars), retry if collision.
-                string code;
-                do { code = GenerateReferralCode(); }
-                while (await _context.Companies.AnyAsync(c => c.ReferralCode == code));
-
-                var company = new Company
-                {
-                    Name = model.CompanyName!.Trim(),
-                    Address = model.CompanyAddress?.Trim(),
-                    RegistrationNumber = model.RegistrationNumber?.Trim(),
-                    ReferralCode = code,
-                    CreatedAt = DateTime.Now
-                };
-
-                if (model.SupportDocument != null && model.SupportDocument.Length > 0)
-                {
-                    var ext = Path.GetExtension(model.SupportDocument.FileName).ToLowerInvariant();
-                    var folder = Path.Combine(_env.WebRootPath, "uploads", "documents");
-                    Directory.CreateDirectory(folder);
-                    var fileName = $"hr_company_{Guid.NewGuid():N}{ext}";
-                    var full = Path.Combine(folder, fileName);
-                    using (var s = new FileStream(full, FileMode.Create)) await model.SupportDocument.CopyToAsync(s);
-                    hr.SupportDocumentUrl = $"/uploads/documents/{fileName}";
-                }
-
-                _context.Companies.Add(company);
-                await _context.SaveChangesAsync();
-
-                hr.CompanyId = company.CompanyId;
-            }
-            else // Join
-            {
-                var target = await _context.Companies
-                    .FirstOrDefaultAsync(c => c.ReferralCode == model.ReferralCode!.Trim());
-                if (target == null)
-                {
-                    ModelState.AddModelError(nameof(model.ReferralCode), "Kode referral tidak ditemukan.");
-                    return View(model);
-                }
-                hr.CompanyId = target.CompanyId;
+                model.HasExistingSupportDocument = hasSupport;
+                return View(model);
             }
 
+            var company = new Company
+            {
+                Name = model.CompanyName!.Trim(),
+                Address = model.CompanyAddress?.Trim(),
+                RegistrationNumber = model.RegistrationNumber?.Trim(),
+                CreatedAt = DateTime.Now
+            };
+
+            if (model.SupportDocument != null && model.SupportDocument.Length > 0)
+            {
+                var hrUser = await _userManager.GetUserAsync(User);
+                if (hrUser != null)
+                {
+                    var path = await _uploads.ReplaceAsync(
+                        hrUser.Id, UserUploadService.Categories.Documents, model.SupportDocument,
+                        hr.SupportDocumentUrl, namePrefix: "company",
+                        allowedExtensions: UserUploadService.DocumentExtensions);
+                    if (path != null) hr.SupportDocumentUrl = path;
+                }
+            }
+
+            _context.Companies.Add(company);
+            await _context.SaveChangesAsync();
+
+            hr.CompanyId = company.CompanyId;
             hr.Department = model.Department.Trim();
             hr.OnboardingCompletedAt = DateTime.UtcNow;
 
-            // Create default notification preferences
             _context.HrNotificationPreferences.Add(new HrNotificationPreference { HrId = hr.HrId });
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Success));
         }
 
-        // ═════════════════════════════════════════════
-        //  Success
-        // ═════════════════════════════════════════════
         [HttpGet]
         public IActionResult Success() => View();
-
-        // Helper — 6-char alphanumeric uppercase (avoid 0/O/I/1 ambiguity)
-        private static string GenerateReferralCode()
-        {
-            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-            var rnd = Random.Shared;
-            return new string(Enumerable.Range(0, 6).Select(_ => chars[rnd.Next(chars.Length)]).ToArray());
-        }
     }
 }

@@ -1,4 +1,5 @@
 using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    [RequiresCompanySubscription]
     public class WorksheetsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -37,6 +39,13 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             var hr = await GetHrAsync();
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
             var companyId = hr.CompanyId.Value;
+
+            ViewBag.ModalPatients = await _context.Patients
+                .Include(p => p.User)
+                .Where(p => p.CompanyId == companyId && p.EmploymentStatus == "active")
+                .OrderBy(p => p.User!.FullName)
+                .Select(p => new HrSimplePatient { PatientId = p.PatientId, FullName = p.User!.FullName, Department = p.Department })
+                .ToListAsync();
 
             var q = _context.Worksheets
                 .Include(w => w.Patient).ThenInclude(p => p!.User)
@@ -148,6 +157,47 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         }
 
         // ═════════════════════════════════════════════
+        //  RequestModal  (AJAX — used by Index modal)
+        // ═════════════════════════════════════════════
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestModal(HrRequestViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { ok = false, errors });
+            }
+
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null)
+                return Json(new { ok = false, errors = new[] { "Sesi tidak valid. Silakan login ulang." } });
+
+            var psychologistId = await _context.Assignments
+                .Where(a => a.PatientId == model.PatientId && a.Status == "Active")
+                .OrderByDescending(a => a.AssignedAt)
+                .Select(a => (int?)a.PsychologistId)
+                .FirstOrDefaultAsync();
+
+            var user = await _userManager.GetUserAsync(User);
+            _context.PsychologistRequests.Add(new PsychologistRequest
+            {
+                RequestedByHrUserId = user!.Id,
+                PatientId = model.PatientId,
+                PsychologistId = psychologistId,
+                RequestType = "Worksheet",
+                Notes = model.Notes,
+                ProposedTaskName = model.ProposedTaskName,
+                ProposedDeadline = model.ProposedDeadline,
+                Status = "Pending",
+                CreatedAt = DateTime.Now
+            });
+            await _context.SaveChangesAsync();
+
+            return Json(new { ok = true });
+        }
+
+        // ═════════════════════════════════════════════
         //  Request (HR asks psychologist to assign a new worksheet)
         // ═════════════════════════════════════════════
         [HttpGet]
@@ -191,14 +241,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.AvailablePatients = await _context.Patients
-                    .Include(p => p.User)
-                    .Where(p => p.CompanyId == hr.CompanyId && p.EmploymentStatus == "active")
-                    .OrderBy(p => p.User!.FullName)
-                    .Select(p => new HrSimplePatient { PatientId = p.PatientId, FullName = p.User!.FullName, Department = p.Department })
-                    .ToListAsync();
-                ViewBag.ActiveNav = "Monitoring";
-                return View(model);
+                TempData["error"] = "Pastikan Anda telah mengisi formulir dengan benar.";
+                return RedirectToAction(nameof(Index));
             }
 
             var user = await _userManager.GetUserAsync(User);

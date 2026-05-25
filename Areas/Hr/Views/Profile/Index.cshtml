@@ -2,56 +2,733 @@
 @{
     ViewData["Title"] = "Profil Saya";
     ViewBag.ActiveNav = "Profil";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+    var initials  = string.Join("", (Model.FullName ?? "?")
+                        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                        .Take(2).Select(p => char.ToUpper(p[0])));
+    var joinedAt  = Model.OnboardingCompletedAt?.ToString("d MMMM yyyy", idCulture) ?? "—";
 }
 
-<div style="max-width: 720px;">
+<div class="hrpf-page">
 
+    @* ── Success toast (TempData) ── *@
     @if (TempData["success"] is string ok)
     {
-        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:16px;">@ok</div>
+        <div class="hrpf-toast hrpf-toast--ok" id="hrpfToast" role="alert">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            @ok
+        </div>
     }
 
-    <div class="profile-header">
-        <span class="profile-avatar-wrap">
-            <img class="profile-avatar"
-                 src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : Model.ProfilePicture)"
-                 alt="Foto profil" />
-            <a asp-action="Edit" class="cam" title="Edit foto">📷</a>
-        </span>
-        <div class="profile-name">HR @Model.CompanyName.ToUpper()</div>
-        <span class="status-badge @(Model.IsActive ? "sehat" : "")">
-            @(Model.IsActive ? "● Aktif" : "● Tidak Aktif")
-        </span>
-    </div>
+    @* ══════════════ HERO ══════════════ *@
+    <div class="hrpf-hero">
+        <div class="hrpf-hero-bg" aria-hidden="true"></div>
+        <div class="hrpf-hero-inner">
 
-    <div class="lu-card" style="margin-bottom:24px;">
-        <div style="display:grid; grid-template-columns: 140px 1fr; gap:8px 16px; font-size:14px;">
-            <div style="color:#6B7280;">Full Name</div><div><strong>@Model.FullName</strong></div>
-            <div style="color:#6B7280;">Email</div><div>@Model.Email</div>
-            <div style="color:#6B7280;">Phone Number</div><div>@(Model.Phone ?? "—")</div>
-            <div style="color:#6B7280;">Employee ID</div><div>@(Model.EmployeeId ?? "—")</div>
-            <div style="color:#6B7280;">Divisi</div><div>@(Model.Department ?? "—")</div>
-            <div style="color:#6B7280;">Perusahaan</div><div>@Model.CompanyName</div>
-            @if (!string.IsNullOrEmpty(Model.ReferralCode))
-            {
-                <div style="color:#6B7280;">Kode Referral</div>
-                <div><strong style="color:#7C3AED; letter-spacing:1px;">@Model.ReferralCode</strong></div>
-            }
+            @* Avatar *@
+            <div class="hrpf-av-wrap">
+                <div class="hrpf-av-ring" aria-hidden="true"></div>
+                @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+                {
+                    <img src="@Model.ProfilePicture" alt="Foto profil" class="hrpf-av-img" />
+                }
+                else
+                {
+                    <div class="hrpf-av-fallback">@initials</div>
+                }
+            </div>
+
+            @* Identity *@
+            <div class="hrpf-hero-id">
+                <p class="hrpf-hero-eyebrow">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                    HR · @Model.CompanyName
+                </p>
+                <h1 class="hrpf-hero-name" id="hrpfDisplayName">@Model.FullName</h1>
+                <p class="hrpf-hero-dept" id="hrpfDisplayDeptHero">@(Model.Department ?? "Human Resources")</p>
+                <div class="hrpf-hero-row">
+                    <span class="hrpf-status @(Model.IsActive ? "hrpf-status--active" : "hrpf-status--inactive")">
+                        <span class="hrpf-status-dot" aria-hidden="true"></span>
+                        @(Model.IsActive ? "Akun Aktif" : "Tidak Aktif")
+                    </span>
+                    @if (Model.IsApprovedByAdmin)
+                    {
+                        <span class="hrpf-badge-verified">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            Disetujui Admin
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="hrpf-badge-pending">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            Menunggu Persetujuan
+                        </span>
+                    }
+                    <button type="button" class="hrpf-edit-btn hrpf-open-modal">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Edit Profil
+                    </button>
+                </div>
+            </div>
+
+            @* Stats *@
+            <div class="hrpf-hero-stats">
+                <div class="hrpf-stat">
+                    <span class="hrpf-stat-val">@Model.ActiveEmployeeCount</span>
+                    <span class="hrpf-stat-lbl">Karyawan Aktif</span>
+                </div>
+                <div class="hrpf-stat">
+                    <span class="hrpf-stat-val">@Model.DivisionCount</span>
+                    <span class="hrpf-stat-lbl">Divisi</span>
+                </div>
+                <div class="hrpf-stat hrpf-stat--sub-@(Model.HasActiveSubscription ? "active" : "inactive")">
+                    <span class="hrpf-stat-val hrpf-stat-val--sm">@(Model.HasActiveSubscription ? "Aktif" : "Tidak Aktif")</span>
+                    <span class="hrpf-stat-lbl">Langganan</span>
+                </div>
+            </div>
+
         </div>
     </div>
 
+    @* ══════════════ BODY GRID ══════════════ *@
+    <div class="hrpf-grid">
 
-    <h3 style="font-size:14px; margin: 8px 0;">Support</h3>
-    <div class="support-buttons">
-        <a class="support-btn purple" asp-controller="Employees" asp-action="Index">Pengaturan Karyawan</a>
-        <a class="support-btn blue" asp-controller="Reports" asp-action="Index">Laporan Psikolog</a>
-        <a class="support-btn green" asp-controller="Employees" asp-action="Index">Kontak Karyawan</a>
+        @* ── Left: main info ── *@
+        <div class="hrpf-main">
+
+            @* ── Informasi Kontak ── *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--blue" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Informasi Kontak</h3>
+                    <button type="button" class="hrpf-card-edit-link hrpf-open-modal" title="Edit">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Edit
+                    </button>
+                </div>
+                <div class="hrpf-fields hrpf-fields--2col">
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Email
+                        </span>
+                        <a href="mailto:@Model.Email" class="hrpf-field-val hrpf-field-link" style="word-break:break-all;">@Model.Email</a>
+                    </div>
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.58 4.38 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Telepon
+                        </span>
+                        @if (!string.IsNullOrEmpty(Model.Phone))
+                        {
+                            <a href="tel:@Model.Phone" class="hrpf-field-val hrpf-field-link" id="hrpfDisplayPhone">@Model.Phone</a>
+                        }
+                        else
+                        {
+                            <span class="hrpf-field-val hrpf-field-val--muted" id="hrpfDisplayPhone">Belum diatur</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @* ── Kepegawaian ── *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--purple" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Kepegawaian</h3>
+                    <button type="button" class="hrpf-card-edit-link hrpf-open-modal" title="Edit">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Edit
+                    </button>
+                </div>
+                <div class="hrpf-fields hrpf-fields--2col">
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">Perusahaan</span>
+                        <span class="hrpf-field-val">@Model.CompanyName</span>
+                    </div>
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">Divisi / Departemen</span>
+                        <span class="hrpf-field-val @(string.IsNullOrEmpty(Model.Department) ? "hrpf-field-val--muted" : "")" id="hrpfDisplayDeptCard">
+                            @(string.IsNullOrEmpty(Model.Department) ? "—" : Model.Department)
+                        </span>
+                    </div>
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">Employee ID</span>
+                        <span class="hrpf-field-val @(string.IsNullOrEmpty(Model.EmployeeId) ? "hrpf-field-val--muted" : "")" id="hrpfDisplayEmpId">
+                            @(string.IsNullOrEmpty(Model.EmployeeId) ? "—" : Model.EmployeeId)
+                        </span>
+                    </div>
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">Bergabung Sejak</span>
+                        <span class="hrpf-field-val">@joinedAt</span>
+                    </div>
+                </div>
+            </div>
+
+            @* ── Langganan ── *@
+            <div class="hrpf-card hrpf-card--sub-@(Model.HasActiveSubscription ? "active" : "inactive")">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--@(Model.HasActiveSubscription ? "green" : "amber")" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Langganan</h3>
+                    @if (!Model.HasActiveSubscription)
+                    {
+                        <a href="@Url.Action("Index", "Subscription", new { area = "Hr" })" class="hrpf-card-edit-link" style="background:#FFFBEB;color:#D97706;">
+                            Beli Paket
+                        </a>
+                    }
+                </div>
+                @if (Model.HasActiveSubscription)
+                {
+                    <div class="hrpf-sub-active">
+                        <div class="hrpf-sub-badge">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            Aktif
+                        </div>
+                        <div class="hrpf-fields hrpf-fields--2col">
+                            <div class="hrpf-field">
+                                <span class="hrpf-field-label">Paket</span>
+                                <span class="hrpf-field-val">@Model.ActivePlanName</span>
+                            </div>
+                            @if (Model.ActiveUntil.HasValue)
+                            {
+                                <div class="hrpf-field">
+                                    <span class="hrpf-field-label">Berlaku Hingga</span>
+                                    <span class="hrpf-field-val @(Model.ActiveUntil.Value < DateTime.Now.AddDays(30) ? "hrpf-field-val--warn" : "")">
+                                        @Model.ActiveUntil.Value.ToString("d MMMM yyyy", idCulture)
+                                        @if (Model.ActiveUntil.Value < DateTime.Now.AddDays(30))
+                                        {
+                                            <span class="hrpf-expiring-badge">Segera Habis</span>
+                                        }
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <a href="@Url.Action("Index", "Subscription", new { area = "Hr" })" class="hrpf-sub-manage-link">
+                            Kelola Langganan →
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="hrpf-sub-inactive">
+                        <p class="hrpf-sub-inactive-text">Langganan belum aktif. Aktifkan untuk membuka semua fitur monitoring karyawan.</p>
+                        <a href="@Url.Action("Index", "Subscription", new { area = "Hr" })" class="hrpf-sub-buy-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Lihat Paket
+                        </a>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        @* ── Right: sidebar ── *@
+        <div class="hrpf-side">
+
+            @* ── Perusahaan ── *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--purple" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Perusahaan</h3>
+                </div>
+                <div class="hrpf-fields">
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">Nama Perusahaan</span>
+                        <span class="hrpf-field-val">@Model.CompanyName</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.CompanyAddress))
+                    {
+                        <div class="hrpf-field">
+                            <span class="hrpf-field-label">Alamat</span>
+                            <span class="hrpf-field-val" style="line-height:1.5;">@Model.CompanyAddress</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.CompanyRegistrationNumber))
+                    {
+                        <div class="hrpf-field">
+                            <span class="hrpf-field-label">No. Registrasi</span>
+                            <span class="hrpf-field-val" style="font-family:monospace;font-size:13px;">@Model.CompanyRegistrationNumber</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.CompanyContactEmail))
+                    {
+                        <div class="hrpf-field">
+                            <span class="hrpf-field-label">Email Perusahaan</span>
+                            <a href="mailto:@Model.CompanyContactEmail" class="hrpf-field-val hrpf-field-link" style="font-size:13px;word-break:break-all;">@Model.CompanyContactEmail</a>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.CompanyContactNumber))
+                    {
+                        <div class="hrpf-field">
+                            <span class="hrpf-field-label">Telepon Perusahaan</span>
+                            <a href="tel:@Model.CompanyContactNumber" class="hrpf-field-val hrpf-field-link">@Model.CompanyContactNumber</a>
+                        </div>
+                    }
+                </div>
+                @if (!string.IsNullOrEmpty(Model.CompanyReferralCode))
+                {
+                    <div class="hrpf-referral-row">
+                        <div class="hrpf-referral-label">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                            Kode Referral
+                        </div>
+                        <div class="hrpf-referral-code-row">
+                            <span class="hrpf-referral-code" id="hrpfRefCode">@Model.CompanyReferralCode</span>
+                            <button type="button" class="hrpf-referral-copy" id="hrpfCopyRef" aria-label="Salin kode referral">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @* ── Keamanan Akun ── *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--green" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Keamanan Akun</h3>
+                </div>
+                <div class="hrpf-fields">
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">Status</span>
+                        <span class="hrpf-field-val">
+                            <span class="hrpf-inline-badge hrpf-inline-badge--@(Model.IsActive ? "green" : "red")">
+                                @(Model.IsActive ? "Aktif" : "Tidak Aktif")
+                            </span>
+                        </span>
+                    </div>
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">Persetujuan Admin</span>
+                        <span class="hrpf-field-val">
+                            <span class="hrpf-inline-badge hrpf-inline-badge--@(Model.IsApprovedByAdmin ? "green" : "amber")">
+                                @(Model.IsApprovedByAdmin ? "Disetujui" : "Menunggu")
+                            </span>
+                        </span>
+                    </div>
+                    <div class="hrpf-field">
+                        <span class="hrpf-field-label">Email Login</span>
+                        <span class="hrpf-field-val" style="font-size:12.5px;word-break:break-all;">@Model.Email</span>
+                    </div>
+                </div>
+                <button type="button" id="hrpfOpenPwd" class="hrpf-account-action" style="margin-top:14px;width:100%;text-align:left;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Ganti Password
+                </button>
+            </div>
+
+        </div>
     </div>
 
-    <div style="display:flex; gap:12px; margin-top:24px;">
-        <a class="btn-secondary" asp-action="Edit" style="flex:1; text-align:center;">Edit Profile</a>
-        <form asp-controller="Account" asp-action="Logout" asp-area="" method="post" style="flex:1;">
-            <button type="submit" style="width:100%; padding:12px; background:#EF4444; color:#fff; border:none; border-radius:999px; font-weight:500; cursor:pointer;">Log Out</button>
-        </form>
+    @* ══════════════ CHANGE PASSWORD MODAL ══════════════ *@
+    <div class="hrpf-modal-overlay" id="hrpfPwdModal" role="dialog" aria-modal="true" aria-labelledby="hrpfPwdTitle">
+        <div class="hrpf-modal">
+            <div class="hrpf-modal-head">
+                <div class="hrpf-modal-head-icon" style="background:#ECFDF5;color:#059669" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h2 class="hrpf-modal-title" id="hrpfPwdTitle">Ganti Password</h2>
+                <button type="button" class="hrpf-modal-close" id="hrpfPwdClose" aria-label="Tutup">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <form id="hrpfPwdForm" action="@Url.Action("ChangePassword", "Profile", new { area = "Hr" })" method="post" novalidate>
+                @Html.AntiForgeryToken()
+                <div class="hrpf-modal-body">
+                    <div id="hrpfPwdError" class="hrpf-form-error" role="alert" style="display:none;"></div>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="pwdCurrent">Password Saat Ini</label>
+                        <div style="position:relative;">
+                            <input type="password" id="pwdCurrent" name="currentPassword"
+                                   class="hrpf-modal-input" style="padding-right:38px;"
+                                   autocomplete="current-password" placeholder="••••••••" />
+                            <button type="button" class="hrpf-pwd-eye" data-target="pwdCurrent" aria-label="Tampilkan/sembunyikan password">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="pwdNew">Password Baru</label>
+                        <div style="position:relative;">
+                            <input type="password" id="pwdNew" name="newPassword"
+                                   class="hrpf-modal-input" style="padding-right:38px;"
+                                   autocomplete="new-password" placeholder="Min. 6 karakter" />
+                            <button type="button" class="hrpf-pwd-eye" data-target="pwdNew" aria-label="Tampilkan/sembunyikan password">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <div id="hrpfPwdStrength" style="margin-top:6px;height:4px;border-radius:4px;background:#E5E7EB;overflow:hidden;">
+                            <div id="hrpfPwdStrengthBar" style="height:100%;width:0;border-radius:4px;transition:width .25s,background .25s;"></div>
+                        </div>
+                        <span id="hrpfPwdStrengthLabel" style="font-size:11px;color:var(--lu-text-muted);margin-top:3px;display:block;"></span>
+                    </div>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="pwdConfirm">Konfirmasi Password Baru</label>
+                        <div style="position:relative;">
+                            <input type="password" id="pwdConfirm" name="confirmPassword"
+                                   class="hrpf-modal-input" style="padding-right:38px;"
+                                   autocomplete="new-password" placeholder="Ulangi password baru" />
+                            <button type="button" class="hrpf-pwd-eye" data-target="pwdConfirm" aria-label="Tampilkan/sembunyikan password">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <span id="hrpfPwdMatchLabel" style="font-size:11px;margin-top:3px;display:none;"></span>
+                    </div>
+                </div>
+                <div class="hrpf-modal-foot">
+                    <button type="button" class="hrpf-modal-cancel" id="hrpfPwdCancel">Batalkan</button>
+                    <button type="submit" class="hrpf-modal-save" id="hrpfPwdSave">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        Simpan Password
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    @* ══════════════ EDIT MODAL ══════════════ *@
+    <div class="hrpf-modal-overlay" id="hrpfModalOverlay" role="dialog" aria-modal="true" aria-labelledby="hrpfModalTitle">
+        <div class="hrpf-modal">
+
+            <div class="hrpf-modal-head">
+                <div class="hrpf-modal-head-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </div>
+                <h2 class="hrpf-modal-title" id="hrpfModalTitle">Edit Profil</h2>
+                <button type="button" class="hrpf-modal-close" id="hrpfModalClose" aria-label="Tutup">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <form id="hrpfEditForm" enctype="multipart/form-data" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="hrpf-modal-body">
+                    <div id="hrpfFormError" class="hrpf-form-error" role="alert" style="display:none;"></div>
+
+                    @* ── Info Pribadi ── *@
+                    <p class="hrpf-modal-section-title">Info Pribadi</p>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="mFullName">
+                            Nama Lengkap <span style="color:#EF4444" aria-hidden="true">*</span>
+                        </label>
+                        <input type="text" id="mFullName" name="FullName" class="hrpf-modal-input"
+                               value="@Model.FullName" required maxlength="100" autocomplete="name" />
+                    </div>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="mPhone">Nomor Telepon</label>
+                        <input type="tel" id="mPhone" name="Phone" class="hrpf-modal-input"
+                               value="@(Model.Phone ?? "")" maxlength="32"
+                               placeholder="+62 xxx-xxxx-xxxx" autocomplete="tel" />
+                    </div>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="mProfilePicture">Foto Profil</label>
+                        <input type="file" id="mProfilePicture" name="ProfilePicture"
+                               class="hrpf-modal-input hrpf-modal-input-file" accept="image/*" />
+                        <span class="hrpf-modal-field-hint">JPG, PNG, WEBP · Maks 10 MB</span>
+                    </div>
+
+                    @* ── Kepegawaian ── *@
+                    <p class="hrpf-modal-section-title" style="margin-top:22px;">
+                        Kepegawaian
+                        <small style="text-transform:none;font-weight:500;letter-spacing:0;color:var(--lu-text-muted);margin-left:6px;">— @Model.CompanyName</small>
+                    </p>
+
+                    <div class="hrpf-modal-grid">
+                        <div class="hrpf-modal-field" style="margin:0;">
+                            <label class="hrpf-modal-label" for="mEmployeeId">Employee ID</label>
+                            <input type="text" id="mEmployeeId" name="EmployeeId" class="hrpf-modal-input"
+                                   value="@(Model.EmployeeId ?? "")" maxlength="64" placeholder="Mis. HR001" />
+                        </div>
+                        <div class="hrpf-modal-field" style="margin:0;">
+                            <label class="hrpf-modal-label" for="mDepartment">Divisi / Departemen</label>
+                            <input type="text" id="mDepartment" name="Department" class="hrpf-modal-input"
+                                   value="@(Model.Department ?? "")" maxlength="64" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="hrpf-modal-foot">
+                    <button type="button" class="hrpf-modal-cancel" id="hrpfModalCancel">Batalkan</button>
+                    <button type="submit" class="hrpf-modal-save" id="hrpfModalSave">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
 </div>
+
+@section Scripts {
+<script>
+(function () {
+    const overlay     = document.getElementById('hrpfModalOverlay');
+    const modalClose  = document.getElementById('hrpfModalClose');
+    const modalCancel = document.getElementById('hrpfModalCancel');
+    const form        = document.getElementById('hrpfEditForm');
+    const saveBtn     = document.getElementById('hrpfModalSave');
+    const errorBox    = document.getElementById('hrpfFormError');
+
+    // ══════════════════════════════════════════
+    //  CHANGE PASSWORD MODAL
+    // ══════════════════════════════════════════
+    const pwdModal    = document.getElementById('hrpfPwdModal');
+    const pwdForm     = document.getElementById('hrpfPwdForm');
+    const pwdSaveBtn  = document.getElementById('hrpfPwdSave');
+    const pwdErrBox   = document.getElementById('hrpfPwdError');
+    const pwdBar      = document.getElementById('hrpfPwdStrengthBar');
+    const pwdBarLabel = document.getElementById('hrpfPwdStrengthLabel');
+    const pwdMatch    = document.getElementById('hrpfPwdMatchLabel');
+
+    function openPwdModal()  { pwdModal.classList.add('is-open');    document.body.style.overflow = 'hidden'; }
+    function closePwdModal() {
+        pwdModal.classList.remove('is-open');
+        document.body.style.overflow = '';
+        pwdForm.reset();
+        pwdErrBox.style.display = 'none';
+        if (pwdBar)      { pwdBar.style.width = '0'; pwdBar.style.background = ''; }
+        if (pwdBarLabel) pwdBarLabel.textContent = '';
+        if (pwdMatch)    { pwdMatch.style.display = 'none'; }
+    }
+
+    document.getElementById('hrpfOpenPwd').addEventListener('click', openPwdModal);
+    document.getElementById('hrpfPwdClose').addEventListener('click', closePwdModal);
+    document.getElementById('hrpfPwdCancel').addEventListener('click', closePwdModal);
+    pwdModal.addEventListener('click', e => { if (e.target === pwdModal) closePwdModal(); });
+
+    // ── Eye toggle ────────────────────────────
+    pwdModal.querySelectorAll('.hrpf-pwd-eye').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const inp = document.getElementById(btn.dataset.target);
+            if (!inp) return;
+            const showing = inp.type === 'text';
+            inp.type = showing ? 'password' : 'text';
+            btn.innerHTML = showing
+                ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+                : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+        });
+    });
+
+    // ── Strength meter ────────────────────────
+    const pwdNewInp = document.getElementById('pwdNew');
+    if (pwdNewInp && pwdBar) {
+        pwdNewInp.addEventListener('input', () => {
+            const v = pwdNewInp.value;
+            let score = 0;
+            if (v.length >= 6)  score++;
+            if (v.length >= 10) score++;
+            if (/[A-Z]/.test(v)) score++;
+            if (/[0-9]/.test(v)) score++;
+            if (/[^A-Za-z0-9]/.test(v)) score++;
+            const pct = (score / 5) * 100;
+            pwdBar.style.width = pct + '%';
+            const levels = [
+                { color: '#EF4444', label: 'Sangat lemah' },
+                { color: '#F97316', label: 'Lemah' },
+                { color: '#EAB308', label: 'Sedang' },
+                { color: '#22C55E', label: 'Kuat' },
+                { color: '#10B981', label: 'Sangat kuat' },
+            ];
+            const lvl = levels[Math.max(0, score - 1)] || levels[0];
+            if (v.length === 0) { pwdBar.style.width = '0'; pwdBarLabel.textContent = ''; return; }
+            pwdBar.style.background = lvl.color;
+            pwdBarLabel.textContent = lvl.label;
+            pwdBarLabel.style.color = lvl.color;
+        });
+    }
+
+    // ── Confirm match hint ────────────────────
+    const pwdConfInp = document.getElementById('pwdConfirm');
+    if (pwdConfInp && pwdMatch) {
+        pwdConfInp.addEventListener('input', () => {
+            const same = pwdNewInp.value === pwdConfInp.value;
+            if (!pwdConfInp.value) { pwdMatch.style.display = 'none'; return; }
+            pwdMatch.style.display = 'block';
+            pwdMatch.textContent   = same ? '✓ Password cocok' : '✗ Password tidak cocok';
+            pwdMatch.style.color   = same ? '#059669' : '#DC2626';
+            pwdMatch.style.fontWeight = '600';
+        });
+    }
+
+    // ── AJAX submit ───────────────────────────
+    pwdForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        pwdErrBox.style.display = 'none';
+
+        // Client-side quick checks
+        const cur  = document.getElementById('pwdCurrent').value.trim();
+        const nw   = pwdNewInp.value;
+        const conf = pwdConfInp.value;
+        if (!cur)  { showPwdError('Password saat ini wajib diisi.'); return; }
+        if (!nw)   { showPwdError('Password baru wajib diisi.'); return; }
+        if (nw.length < 6) { showPwdError('Password baru minimal 6 karakter.'); return; }
+        if (nw !== conf)   { showPwdError('Konfirmasi password tidak cocok.'); return; }
+
+        pwdSaveBtn.disabled = true;
+        pwdSaveBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hrpf-spin"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Menyimpan…`;
+
+        const fd = new FormData(pwdForm);
+        const token = pwdForm.querySelector('[name=__RequestVerificationToken]').value;
+        try {
+            const res  = await fetch(pwdForm.action, {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token },
+                body: fd
+            });
+            const data = await res.json();
+            if (data.ok) {
+                closePwdModal();
+                showToast(data.message || 'Password berhasil diubah.');
+            } else {
+                showPwdError((data.errors || ['Terjadi kesalahan.']).join(' '));
+            }
+        } catch {
+            showPwdError('Gagal terhubung ke server. Coba lagi.');
+        } finally {
+            pwdSaveBtn.disabled = false;
+            pwdSaveBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Simpan Password`;
+        }
+    });
+
+    function showPwdError(msg) {
+        pwdErrBox.textContent = msg;
+        pwdErrBox.style.display = 'block';
+        pwdErrBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ══════════════════════════════════════════
+    //  EDIT PROFILE MODAL (original code)
+    // ══════════════════════════════════════════
+    // ── Open / close ─────────────────────────────
+    function openModal()  { overlay.classList.add('is-open');    document.body.style.overflow = 'hidden'; }
+    function closeModal() { overlay.classList.remove('is-open'); document.body.style.overflow = ''; }
+
+    document.querySelectorAll('.hrpf-open-modal').forEach(b => b.addEventListener('click', openModal));
+    modalClose.addEventListener('click', closeModal);
+    modalCancel.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeModal();
+    });
+
+    // ── AJAX submit ──────────────────────────────
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        if (!document.getElementById('mFullName').value.trim()) {
+            showError('Nama lengkap wajib diisi.');
+            return;
+        }
+
+        const hasPicture = document.getElementById('mProfilePicture').files.length > 0;
+
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hrpf-spin"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Menyimpan...`;
+        errorBox.style.display = 'none';
+
+        try {
+            const res  = await fetch('/Hr/Profile/EditModal', { method: 'POST', body: new FormData(form) });
+            const data = await res.json();
+
+            if (data.ok) {
+                closeModal();
+                if (hasPicture) { window.location.reload(); return; }
+
+                // Live-update DOM
+                setText('hrpfDisplayName',     data.fullName);
+                setText('hrpfDisplayDeptHero', data.department || 'Human Resources');
+                setField('hrpfDisplayDeptCard', data.department || '—', !data.department);
+                setField('hrpfDisplayEmpId',    data.employeeId || '—', !data.employeeId);
+
+                const phoneEl = document.getElementById('hrpfDisplayPhone');
+                if (phoneEl) {
+                    if (data.phone) {
+                        phoneEl.textContent = data.phone;
+                        phoneEl.classList.remove('hrpf-field-val--muted');
+                    } else {
+                        phoneEl.textContent = 'Belum diatur';
+                        phoneEl.classList.add('hrpf-field-val--muted');
+                    }
+                }
+
+                showToast('Profil berhasil diperbarui ✓');
+            } else {
+                showError((data.errors || ['Terjadi kesalahan.']).join(' '));
+            }
+        } catch {
+            showError('Gagal terhubung ke server. Coba lagi.');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Simpan Perubahan`;
+        }
+    });
+
+    function setText(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    }
+    function setField(id, val, muted) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = val;
+        el.classList.toggle('hrpf-field-val--muted', muted);
+    }
+    function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = 'block';
+        errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function showToast(msg) {
+        const t = document.createElement('div');
+        t.className = 'hrpf-toast hrpf-toast--ok';
+        t.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${msg}`;
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 350); }, 3000);
+    }
+
+    // ── Referral copy ────────────────────────────
+    const copyBtn = document.getElementById('hrpfCopyRef');
+    const refCode = document.getElementById('hrpfRefCode');
+    if (copyBtn && refCode) {
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(refCode.textContent.trim()).then(() => {
+                copyBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+                copyBtn.style.background = 'var(--lu-primary)';
+                copyBtn.style.color = '#fff';
+                setTimeout(() => {
+                    copyBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+                    copyBtn.style.background = '';
+                    copyBtn.style.color = '';
+                }, 2000);
+            });
+        });
+    }
+
+    // ── Auto-dismiss TempData toast ──────────────
+    const existing = document.getElementById('hrpfToast');
+    if (existing) setTimeout(() => {
+        existing.style.transition = 'opacity .4s'; existing.style.opacity = '0';
+    }, 3200);
+})();
+</script>
+}

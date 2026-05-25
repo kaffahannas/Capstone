@@ -20,6 +20,9 @@ namespace LightenUp.Web.Models.ViewModels
         public int SehatPct { get; set; }
         public int BeresikoPct { get; set; }
         public int BahayaPct { get; set; }
+        public int SehatCount { get; set; }
+        public int BeresikoCount { get; set; }
+        public int BahayaCount { get; set; }
     }
 
     public class HrDivisionReportViewModel

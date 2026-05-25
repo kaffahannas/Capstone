@@ -1,0 +1,308 @@
+@model LightenUp.Web.Models.ViewModels.HrSubscriptionIndexViewModel
+@{
+    ViewData["Title"] = "Langganan Perusahaan";
+    ViewBag.ActiveNav = "Langganan";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    int daysLeft = 0;
+    if (Model.HasActiveSubscription && Model.ActiveUntil.HasValue)
+        daysLeft = Math.Max(0, (Model.ActiveUntil.Value - DateTime.Today).Days);
+    bool expiringSoon = daysLeft > 0 && daysLeft <= 30;
+}
+
+<div class="hrln-page">
+
+    @* ══════ HERO ══════ *@
+    <div class="hrln-hero">
+        <div class="hrln-hero-bg" aria-hidden="true"></div>
+        <div class="hrln-hero-inner">
+            <div class="hrln-hero-text">
+                <p class="hrln-hero-eyebrow">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                    HR · @Model.CompanyName
+                </p>
+                <h1 class="hrln-hero-title">Langganan &amp; Paket</h1>
+                <p class="hrln-hero-sub">Kelola paket layanan kesehatan mental untuk seluruh karyawan Anda.</p>
+            </div>
+            @if (Model.HasActiveSubscription)
+            {
+                <div class="hrln-hero-status @(expiringSoon ? "hrln-hero-status--warn" : "hrln-hero-status--ok")">
+                    <div class="hrln-hero-status-icon" aria-hidden="true">
+                        @if (expiringSoon)
+                        {
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        }
+                        else
+                        {
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        }
+                    </div>
+                    <div>
+                        <div class="hrln-hero-status-plan">@Model.ActivePlanName</div>
+                        <div class="hrln-hero-status-days">@daysLeft hari tersisa</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* ══════ ALERTS ══════ *@
+    @if (Model.SubscriptionRequired)
+    {
+        <div class="hrln-alert hrln-alert--red">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>
+                <strong>Aktivasi Paket Diperlukan</strong>
+                <p>Fitur HR Console terkunci sampai Anda memilih dan mengaktifkan paket. Kode referral karyawan dibuat otomatis setelah pembayaran berhasil.</p>
+            </div>
+        </div>
+    }
+    @if (TempData["error"] is string err)
+    {
+        <div class="hrln-alert hrln-alert--red">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            @err
+        </div>
+    }
+    @if (TempData["success"] is string ok)
+    {
+        <div class="hrln-alert hrln-alert--green">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            @ok
+        </div>
+    }
+
+    @* ══════ BODY ══════ *@
+    <div class="hrln-body">
+
+        @if (Model.HasActiveSubscription)
+        {
+            @* ── Active Subscription Banner ── *@
+            <div class="hrln-active-card @(expiringSoon ? "hrln-active-card--warn" : "")">
+                <div class="hrln-active-icon" aria-hidden="true">
+                    @if (expiringSoon)
+                    {
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    }
+                    else
+                    {
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    }
+                </div>
+                <div class="hrln-active-info">
+                    <div class="hrln-active-status-label">
+                        @if (expiringSoon)
+                        {
+                            <span class="hrln-active-status-badge hrln-active-status-badge--warn">Segera Habis</span>
+                        }
+                        else
+                        {
+                            <span class="hrln-active-status-badge">Langganan Aktif</span>
+                        }
+                    </div>
+                    <div class="hrln-active-plan-name">@Model.ActivePlanName</div>
+                    <div class="hrln-active-expiry">
+                        Berlaku hingga @Model.ActiveUntil?.ToString("d MMMM yyyy", idCulture)
+                    </div>
+                </div>
+                <div class="hrln-active-days-ring @(expiringSoon ? "hrln-active-days-ring--warn" : "")">
+                    <span class="hrln-active-days-num">@daysLeft</span>
+                    <span class="hrln-active-days-lbl">hari</span>
+                </div>
+            </div>
+
+            @* ── Divisions & Referral ── *@
+            <div class="hrln-section">
+                <div class="hrln-section-head">
+                    <div class="hrln-section-icon hrln-section-icon--indigo" aria-hidden="true">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="hrln-section-title">Divisi &amp; Kode Referral</h2>
+                        <p class="hrln-section-sub">Buat divisi untuk mendapatkan kode referral unik. Bagikan kepada karyawan agar mereka otomatis masuk ke divisi yang benar saat mendaftar.</p>
+                    </div>
+                </div>
+
+                <form asp-action="CreateDivision" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="hrln-add-row">
+                        <div class="hrln-add-input-wrap">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+                            <input type="text" name="name" class="hrln-add-input" placeholder="Nama Divisi (misal: Pemasaran)" required maxlength="80" autocomplete="off" />
+                        </div>
+                        <button type="submit" class="hrln-add-btn">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Tambah Divisi
+                        </button>
+                    </div>
+                </form>
+
+                @if (Model.Divisions.Any())
+                {
+                    <div class="hrln-div-grid">
+                        @foreach (var div in Model.Divisions)
+                        {
+                            <div class="hrln-div-card">
+                                <div class="hrln-div-header">
+                                    <div class="hrln-div-avatar" aria-hidden="true">
+                                        @(div.Name.Length > 0 ? char.ToUpper(div.Name[0]).ToString() : "D")
+                                    </div>
+                                    <div class="hrln-div-meta">
+                                        <h4 class="hrln-div-name">@div.Name</h4>
+                                        <span class="hrln-div-count">
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                            @div.EmployeeCount karyawan
+                                        </span>
+                                    </div>
+                                    <form asp-action="DeleteDivision" method="post" onsubmit="return confirm('Hapus divisi @div.Name?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@div.DivisionId" />
+                                        <button type="submit" class="hrln-div-del" title="Hapus divisi" aria-label="Hapus @div.Name">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="hrln-div-code-wrap">
+                                    <span class="hrln-div-code-label">Kode Referral</span>
+                                    <div class="hrln-div-code-row">
+                                        <span class="hrln-div-code" id="divCode-@div.DivisionId">@div.ReferralCode</span>
+                                        <button type="button" class="hrln-div-copy" data-code="@div.ReferralCode" aria-label="Salin kode @div.ReferralCode">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="hrln-empty">
+                        <div class="hrln-empty-icon" aria-hidden="true">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <p class="hrln-empty-text">Belum ada divisi. Tambahkan divisi pertama Anda untuk mendapatkan kode referral.</p>
+                    </div>
+                }
+            </div>
+        }
+
+        @* ══════ PRICING PLANS ══════ *@
+        <div class="hrln-plans-wrap">
+            <div class="hrln-plans-header">
+                <h2 class="hrln-plans-title">
+                    @(Model.HasActiveSubscription ? "Perpanjang atau Ubah Paket" : "Pilih Paket Layanan")
+                </h2>
+                <p class="hrln-plans-sub">
+                    @if (Model.HasActiveSubscription)
+                    {
+                        <text>Ubah atau perpanjang langganan kapan saja sesuai kebutuhan perusahaan.</text>
+                    }
+                    else
+                    {
+                        <text>Aktifkan langganan untuk membuka fitur HR Console secara penuh.</text>
+                    }
+                </p>
+            </div>
+
+            <div class="hrln-plans-grid">
+                @foreach (var plan in Model.Plans)
+                {
+                    var isYearly = plan.DurationMonths >= 12;
+                    <div class="hrln-plan @(isYearly ? "hrln-plan--popular" : "")">
+                        @if (isYearly)
+                        {
+                            <div class="hrln-plan-popular-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Paling Hemat
+                            </div>
+                        }
+
+                        <div class="hrln-plan-icon hrln-plan-icon--@(isYearly ? "yellow" : "blue")" aria-hidden="true">
+                            @if (isYearly)
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            }
+                            else
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                            }
+                        </div>
+
+                        <h3 class="hrln-plan-name">@plan.Name</h3>
+
+                        <div class="hrln-plan-pricing">
+                            <span class="hrln-plan-currency">Rp</span>
+                            <span class="hrln-plan-price">@plan.Price.ToString("N0")</span>
+                        </div>
+                        <div class="hrln-plan-duration">per @plan.DurationMonths bulan</div>
+
+                        @if (isYearly)
+                        {
+                            <div class="hrln-plan-save">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                Hemat ~17% dibanding bulanan
+                            </div>
+                        }
+
+                        <p class="hrln-plan-desc">@plan.Description</p>
+
+                        <ul class="hrln-plan-features">
+                            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> HR Console penuh</li>
+                            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Kode referral per divisi</li>
+                            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Monitoring karyawan</li>
+                            @if (isYearly)
+                            {
+                                <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Prioritas dukungan</li>
+                            }
+                        </ul>
+
+                        <form asp-action="Checkout" method="post" style="margin-top:auto;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="planId" value="@plan.PlanId" />
+                            <button type="submit" class="hrln-plan-btn @(isYearly ? "hrln-plan-btn--popular" : "hrln-plan-btn--default")">
+                                @if (Model.HasActiveSubscription)
+                                {
+                                    <text>Pilih Paket Ini</text>
+                                }
+                                else
+                                {
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                    <text>Bayar Sekarang</text>
+                                }
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    // Copy referral codes
+    document.querySelectorAll('.hrln-div-copy').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const code = this.dataset.code;
+            if (!code) return;
+            navigator.clipboard.writeText(code).then(() => {
+                this.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+                this.style.background = 'var(--lu-primary)';
+                this.style.color = '#fff';
+                this.style.borderColor = 'var(--lu-primary)';
+                const btn = this;
+                setTimeout(() => {
+                    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            });
+        });
+    });
+})();
+</script>
+}

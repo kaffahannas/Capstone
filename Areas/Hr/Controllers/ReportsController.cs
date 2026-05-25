@@ -1,4 +1,5 @@
 using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using LightenUp.Web.Services;
@@ -12,6 +13,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    [RequiresCompanySubscription]
     public class ReportsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -52,6 +54,11 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 .Include(r => r.Patient).ThenInclude(p => p!.User)
                 .Include(r => r.Psychologist).ThenInclude(p => p!.User)
                 .Where(r => r.ReportedByHrUserId == user!.Id);
+
+            ViewBag.AllCount = await q.CountAsync();
+            ViewBag.DraftCount = await q.CountAsync(r => r.Status == "Draft");
+            ViewBag.SentCount = await q.CountAsync(r => r.Status == "Sent");
+
             if (tab == "Draft") q = q.Where(r => r.Status == "Draft");
             else if (tab == "Sent") q = q.Where(r => r.Status == "Sent");
 
@@ -65,7 +72,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 EmailSentAt = r.EmailSentAt
             }).ToListAsync();
 
-            ViewBag.ActiveNav = "Klien";
+            ViewBag.ActiveNav = "Laporan";
             return View(new HrReportListViewModel { Tab = tab, Items = items });
         }
 
@@ -94,7 +101,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             }
 
             var vm = await BuildCreateViewModel(patient, assignment.Psychologist, hr, notes: null);
-            ViewBag.ActiveNav = "Klien";
+            ViewBag.ActiveNav = "Laporan";
             return View(vm);
         }
 
@@ -113,8 +120,27 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             var vm = await BuildCreateViewModel(report.Patient!, report.Psychologist!, hr, report.Notes);
             vm.ReportId = report.Id;
-            ViewBag.ActiveNav = "Klien";
+            ViewBag.ActiveNav = "Laporan";
             return View("Create", vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditModal(int id)
+        {
+            var hr = await GetHrAsync();
+            if (hr == null) return Unauthorized();
+            var user = await _userManager.GetUserAsync(User);
+
+            var report = await _context.Reports
+                .Include(r => r.Patient).ThenInclude(p => p!.User)
+                .Include(r => r.Psychologist).ThenInclude(p => p!.User)
+                .FirstOrDefaultAsync(r => r.Id == id && r.ReportedByHrUserId == user!.Id);
+            if (report == null) return NotFound();
+
+            var vm = await BuildCreateViewModel(report.Patient!, report.Psychologist!, hr, report.Notes);
+            vm.ReportId = report.Id;
+            ViewBag.Status = report.Status;
+            return PartialView("_EditModal", vm);
         }
 
         // ═════════════════════════════════════════
@@ -204,6 +230,83 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index), new { tab = send ? "Sent" : "Draft" });
+        }
+
+        // ═════════════════════════════════════════
+        //  CreateModal  (AJAX — used by Employee Detail modal)
+        // ═════════════════════════════════════════
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateModal(
+            [FromForm] int patientId,
+            [FromForm] string? notes,
+            [FromForm] string? send)
+        {
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null)
+                return Json(new { ok = false, errors = new[] { "Sesi tidak valid. Silakan login ulang." } });
+
+            var patient = await _context.Patients.Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.PatientId == patientId && p.CompanyId == hr.CompanyId);
+            if (patient == null)
+                return Json(new { ok = false, errors = new[] { "Karyawan tidak ditemukan." } });
+
+            var assignment = await _context.Assignments
+                .Include(a => a.Psychologist).ThenInclude(p => p!.User)
+                .Where(a => a.PatientId == patientId && a.Status == "Active")
+                .OrderByDescending(a => a.AssignedAt)
+                .FirstOrDefaultAsync();
+
+            if (assignment?.Psychologist == null)
+                return Json(new { ok = false, errors = new[] { "Karyawan belum memiliki psikolog aktif. Tetapkan psikolog terlebih dahulu." } });
+
+            var user = await _userManager.GetUserAsync(User);
+            var vm = await BuildCreateViewModel(patient, assignment.Psychologist, hr, notes);
+
+            var report = new Report
+            {
+                ReportedByHrUserId = user!.Id,
+                PatientId = patient.PatientId,
+                PsychologistId = assignment.Psychologist.PsychologistId,
+                CreatedAt = DateTime.Now,
+                Notes = string.IsNullOrWhiteSpace(notes) ? null : notes,
+                EmailSubject = vm.PreviewEmailSubject,
+                EmailBody = vm.PreviewEmailBody
+            };
+
+            bool doSend = send == "true";
+            if (doSend)
+            {
+                var psyEmail = assignment.Psychologist.User?.Email;
+                if (string.IsNullOrEmpty(psyEmail))
+                    return Json(new { ok = false, errors = new[] { "Psikolog belum memiliki email terdaftar." } });
+
+                try
+                {
+                    await _emailSender.SendAsync(psyEmail, vm.PreviewEmailSubject, vm.PreviewEmailBody);
+                    report.Status = "Sent";
+                    report.EmailSentAt = DateTime.Now;
+                }
+                catch (Exception ex)
+                {
+                    report.Status = "Draft";
+                    _context.Reports.Add(report);
+                    await _context.SaveChangesAsync();
+                    return Json(new { ok = false, errors = new[] { $"Pengiriman email gagal: {ex.Message}. Laporan disimpan sebagai draft." } });
+                }
+            }
+            else
+            {
+                report.Status = "Draft";
+            }
+
+            _context.Reports.Add(report);
+            await _context.SaveChangesAsync();
+
+            var msg = doSend
+                ? $"Laporan terkirim ke {assignment.Psychologist.User?.FullName ?? "psikolog"}."
+                : "Laporan disimpan sebagai draft.";
+            return Json(new { ok = true, message = msg });
         }
 
         // ═════════════════════════════════════════

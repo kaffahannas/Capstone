@@ -1,0 +1,184 @@
+@model LightenUp.Web.Models.ViewModels.AdminApprovalDetailViewModel
+@{
+    ViewData["Title"] = "Tinjau " + (Model.Role == "Psychologist" ? "Psikolog" : "HR");
+    ViewBag.ActiveNav = "Approvals";
+    var cid = new System.Globalization.CultureInfo("id-ID");
+    string Initials(string name) {
+        var parts = (name ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return string.Join("", parts.Take(2).Select(p => p[0])).ToUpper();
+    }
+    bool hasAcademic = !string.IsNullOrEmpty(Model.AcademicDocumentUrl);
+    bool hasStr      = !string.IsNullOrEmpty(Model.StrDocumentUrl);
+    bool hasSupport  = !string.IsNullOrEmpty(Model.SupportDocumentUrl);
+    bool hasDocs     = hasAcademic || hasStr || hasSupport;
+}
+
+<a class="back-link" asp-action="Index">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Kembali ke Daftar
+</a>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+
+    <!-- Applicant info -->
+    <div class="adm-card">
+        <div class="adm-card-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Informasi Pengaju
+        </div>
+
+        <!-- Avatar + name -->
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--adm-border);">
+            @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+            {
+                <img src="@Model.ProfilePicture" alt="Foto @Model.FullName"
+                     style="width:68px; height:68px; border-radius:999px; object-fit:cover; background:var(--adm-primary-soft); flex-shrink:0;" />
+            }
+            else
+            {
+                <div style="width:68px; height:68px; border-radius:999px; background:var(--adm-primary-soft); color:var(--adm-primary); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:800; flex-shrink:0;">@Initials(Model.FullName)</div>
+            }
+            <div>
+                <div style="font-size:18px; font-weight:700; letter-spacing:-0.3px; margin-bottom:3px;">@Model.FullName</div>
+                <div style="font-size:13px; color:var(--adm-muted); margin-bottom:8px;">@Model.Email</div>
+                @if (Model.Role == "Psychologist")
+                { <span class="badge badge-role-psy">🩺 Psikolog</span> }
+                else
+                { <span class="badge badge-role-hr">🏢 HR Manager</span> }
+            </div>
+        </div>
+
+        <!-- Detail rows -->
+        <div style="display:flex; flex-direction:column; gap:0;">
+            @{
+                var rows = new List<(string Label, string? Value)>();
+                rows.Add(("Telepon", Model.Phone));
+                if (Model.Role == "Psychologist") {
+                    rows.Add(("Gelar Terakhir", Model.LastDegree));
+                    rows.Add(("Universitas", Model.University));
+                    rows.Add(("Spesialisasi", Model.Specialization));
+                    rows.Add(("Nomor SIPP", Model.LicenseNumber));
+                    rows.Add(("Nomor SIAP", Model.SiapNumber));
+                    rows.Add(("Lokasi Praktik", Model.PracticeLocation));
+                    rows.Add(("Pengalaman", Model.ExperienceYears.HasValue ? Model.ExperienceYears + " tahun" : null));
+                } else if (Model.Role == "HR") {
+                    rows.Add(("Perusahaan", Model.CompanyName));
+                    rows.Add(("Alamat Perusahaan", Model.CompanyAddress));
+                    rows.Add(("No. Registrasi", Model.CompanyRegistrationNumber));
+                    rows.Add(("Divisi", Model.Department));
+                    rows.Add(("Gelar Terakhir", Model.LastDegree));
+                    rows.Add(("Universitas", Model.University));
+                }
+            }
+            @foreach (var row in rows.Where(r => !string.IsNullOrWhiteSpace(r.Value)))
+            {
+                <div style="display:flex; padding:9px 0; border-bottom:1px solid var(--adm-border-soft); gap:12px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--adm-muted); text-transform:uppercase; letter-spacing:0.5px; min-width:130px; padding-top:1px;">@row.Label</span>
+                    <span style="font-size:13px; color:var(--adm-text); font-weight:500; flex:1;">@row.Value</span>
+                </div>
+            }
+            <div style="display:flex; padding:9px 0; gap:12px;">
+                <span style="font-size:11px; font-weight:700; color:var(--adm-muted); text-transform:uppercase; letter-spacing:0.5px; min-width:130px; padding-top:1px;">Diajukan</span>
+                <span style="font-size:13px; color:var(--adm-text); font-weight:500;">@Model.SubmittedAt.ToString("d MMMM yyyy", cid)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documents -->
+    <div class="adm-card">
+        <div class="adm-card-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Dokumen Pendukung
+        </div>
+
+        @if (!hasDocs)
+        {
+            <div class="adm-empty" style="padding:32px;">
+                <div class="adm-empty-icon" style="font-size:36px;">📂</div>
+                <div class="adm-empty-sub">Tidak ada dokumen yang diunggah oleh pengaju.</div>
+            </div>
+        }
+        else
+        {
+            @if (hasAcademic)
+            {
+                <a class="adm-doc-item" href="@Model.AcademicDocumentUrl" target="_blank" rel="noopener">
+                    <div class="adm-doc-icon">🎓</div>
+                    <div>
+                        <div style="font-weight:600; font-size:13px;">Dokumen Akademik</div>
+                        <div style="font-size:11px; color:var(--adm-muted);">Ijazah / Transkrip</div>
+                    </div>
+                    <svg style="margin-left:auto; color:var(--adm-muted); flex-shrink:0;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+            }
+            @if (hasStr)
+            {
+                <a class="adm-doc-item" href="@Model.StrDocumentUrl" target="_blank" rel="noopener">
+                    <div class="adm-doc-icon">📜</div>
+                    <div>
+                        <div style="font-weight:600; font-size:13px;">STR / SIPP</div>
+                        <div style="font-size:11px; color:var(--adm-muted);">Surat Tanda Registrasi</div>
+                    </div>
+                    <svg style="margin-left:auto; color:var(--adm-muted); flex-shrink:0;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+            }
+            @if (hasSupport)
+            {
+                <a class="adm-doc-item" href="@Model.SupportDocumentUrl" target="_blank" rel="noopener">
+                    <div class="adm-doc-icon">🏢</div>
+                    <div>
+                        <div style="font-weight:600; font-size:13px;">Dokumen Perusahaan</div>
+                        <div style="font-size:11px; color:var(--adm-muted);">SIUP / Akte / Surat Izin</div>
+                    </div>
+                    <svg style="margin-left:auto; color:var(--adm-muted); flex-shrink:0;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+            }
+        }
+    </div>
+</div>
+
+<!-- ── Decision ── -->
+<div class="adm-card">
+    <div class="adm-card-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Keputusan
+    </div>
+
+    <form method="post">
+        <input type="hidden" name="UserId" value="@Model.UserId" />
+
+        <div class="adm-form-row" style="max-width:600px;">
+            <label>Catatan untuk pengaju <small style="color:var(--adm-muted); font-weight:400;">(opsional, akan dikirim via email)</small></label>
+            <textarea name="Note" placeholder="Tuliskan alasan penolakan atau pesan sambutan..."></textarea>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:600px;">
+            <div class="adm-reject-section">
+                <div style="font-size:13px; font-weight:700; color:#991B1B; margin-bottom:8px;">🚫 Tolak Permohonan</div>
+                <p style="font-size:12px; color:#B91C1C; margin:0 0 12px; line-height:1.6;">
+                    Akun akan dinonaktifkan dan pengaju akan mendapat notifikasi email.
+                </p>
+                <button type="submit"
+                        formaction="@Url.Action("Reject")"
+                        class="btn btn-danger btn-sm"
+                        style="width:100%;"
+                        onclick="return confirm('Tolak permohonan akun ini?');">
+                    Tolak
+                </button>
+            </div>
+            <div class="adm-approve-section">
+                <div style="font-size:13px; font-weight:700; color:#065F46; margin-bottom:8px;">✅ Setujui Permohonan</div>
+                <p style="font-size:12px; color:#047857; margin:0 0 12px; line-height:1.6;">
+                    Akun akan diaktifkan dan pengaju dapat segera login.
+                </p>
+                <button type="submit"
+                        formaction="@Url.Action("Approve")"
+                        class="btn btn-success btn-sm"
+                        style="width:100%;"
+                        onclick="return confirm('Setujui permohonan akun ini?');">
+                    Setujui
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

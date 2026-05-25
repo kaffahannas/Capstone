@@ -5,21 +5,33 @@ namespace LightenUp.Web.Models.ViewModels
 {
     public class HrProfileViewModel
     {
+        // ── Personal ──────────────────────────────
         public string FullName { get; set; } = "";
         public string Email { get; set; } = "";
         public string? Phone { get; set; }
-        public string? EmployeeId { get; set; }
-        public string? Department { get; set; }
-        public string CompanyName { get; set; } = "";
-        public string? ReferralCode { get; set; }
         public string? ProfilePicture { get; set; }
         public bool IsActive { get; set; }
+        public bool IsApprovedByAdmin { get; set; }
+        public DateTime? OnboardingCompletedAt { get; set; }
 
-        // Notification preferences
-        public bool RemindEmployeeCheck { get; set; } = true;
-        public bool RemindCounselingSession { get; set; } = true;
-        public bool AllowEmployeePsyNotif { get; set; } = false;
-        public string Frequency { get; set; } = "Daily";
+        // ── Employment ────────────────────────────
+        public string? EmployeeId { get; set; }
+        public string? Department { get; set; }
+
+        // ── Company ───────────────────────────────
+        public string CompanyName { get; set; } = "";
+        public string? CompanyAddress { get; set; }
+        public string? CompanyRegistrationNumber { get; set; }
+        public string? CompanyReferralCode { get; set; }
+        public string? CompanyContactEmail { get; set; }
+        public string? CompanyContactNumber { get; set; }
+        public int DivisionCount { get; set; }
+        public int ActiveEmployeeCount { get; set; }
+
+        // ── Subscription ──────────────────────────
+        public bool HasActiveSubscription { get; set; }
+        public string? ActivePlanName { get; set; }
+        public DateTime? ActiveUntil { get; set; }
     }
 
     public class HrProfileEditViewModel
@@ -38,14 +50,6 @@ namespace LightenUp.Web.Models.ViewModels
 
         [StringLength(64)]
         public string? Department { get; set; }
-
-        // Notification preferences
-        public bool RemindEmployeeCheck { get; set; } = true;
-        public bool RemindCounselingSession { get; set; } = true;
-        public bool AllowEmployeePsyNotif { get; set; } = false;
-
-        [Required]
-        public string Frequency { get; set; } = "Daily";
 
         // Display only
         public string CompanyName { get; set; } = "";

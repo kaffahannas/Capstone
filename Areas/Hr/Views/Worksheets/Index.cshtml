@@ -1,94 +1,282 @@
 @model LightenUp.Web.Models.ViewModels.HrWorksheetListViewModel
-@using LightenUp.Web.Models.ViewModels
 @{
     ViewData["Title"] = "Riwayat Worksheet";
     ViewBag.ActiveNav = "Monitoring";
-    var statuses = new[] { ("Assigned", "Belum Dikerjakan"), ("InProgress", "Sedang Dikerjakan"), ("Completed", "Selesai") };
-    var periods = new[] { ("HariIni", "Hari Ini"), ("Mingguan", "Minggu"), ("Bulanan", "Bulan"), ("Tahunan", "Tahun") };
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
     int totalPages = (int)Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+    int countOpen      = Model.Items.Count(w => w.Status == "Assigned" || w.Status == "InProgress");
+    int countCompleted = Model.Items.Count(w => w.Status == "Completed");
+    var modalPatients  = ViewBag.ModalPatients as List<LightenUp.Web.Models.ViewModels.HrSimplePatient> ?? new();
 }
 
-<div style="max-width: 900px;">
+<div class="hrws-page">
+
+    @* ── Toast ── *@
     @if (TempData["success"] is string ok)
     {
-        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
+        <div class="hrpf-toast hrpf-toast--ok" id="hrwsToast" role="alert">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            @ok
+        </div>
     }
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h2 style="margin:0;">Cari Riwayat Worksheet</h2>
-        <a class="btn-pill" asp-action="Request">+ Permintaan Worksheet</a>
+    @* ══════ HERO ══════ *@
+    <div class="hrws-hero">
+        <div class="hrws-hero-bg" aria-hidden="true"></div>
+        <div class="hrws-hero-inner">
+            <div class="hrws-hero-text">
+                <p class="hrws-hero-eyebrow">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>
+                    HR · Monitoring Worksheet
+                </p>
+                <h1 class="hrws-hero-title">Riwayat Worksheet</h1>
+                <p class="hrws-hero-sub">Monitor tugas yang ditetapkan psikolog untuk karyawan</p>
+                <button type="button" class="hrws-hero-btn" id="hrwsOpenModal">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Permintaan Worksheet
+                </button>
+            </div>
+            <div class="hrws-hero-stats">
+                <div class="hrws-stat">
+                    <span class="hrws-stat-val">@Model.TotalCount</span>
+                    <span class="hrws-stat-lbl">Total</span>
+                </div>
+                <div class="hrws-stat hrws-stat--active">
+                    <span class="hrws-stat-val">@countOpen</span>
+                    <span class="hrws-stat-lbl">Aktif</span>
+                </div>
+                <div class="hrws-stat hrws-stat--done">
+                    <span class="hrws-stat-val">@countCompleted</span>
+                    <span class="hrws-stat-lbl">Selesai</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <form method="get">
-        <div style="position:relative; margin-bottom:12px;">
-            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#6B7280;">🔍</span>
-            <input type="search" name="search" placeholder="Cari nama pasien atau tugas..." value="@Model.Search"
-                   style="width:100%; padding:10px 14px 10px 40px; border:1px solid #E5E7EB; border-radius:999px; font-family:inherit;" />
+    @* ══════ FILTER BAR ══════ *@
+    <div class="hrws-filter-bar">
+        <div class="hrws-filter-tabs">
+            <a class="hrws-tab @(Model.Period == null && !Model.Statuses.Any() ? "hrws-tab--active" : "")"
+               asp-action="Index" asp-route-search="@Model.Search">Semua</a>
+            <a class="hrws-tab @(Model.Period == "HariIni" ? "hrws-tab--active" : "")"
+               asp-action="Index" asp-route-period="HariIni" asp-route-search="@Model.Search">Hari Ini</a>
+            <a class="hrws-tab @(Model.Period == "Mingguan" ? "hrws-tab--active" : "")"
+               asp-action="Index" asp-route-period="Mingguan" asp-route-search="@Model.Search">Minggu Ini</a>
+            <a class="hrws-tab @(Model.Statuses.Contains("Completed") ? "hrws-tab--active" : "")"
+               asp-action="Index" asp-route-status="Completed" asp-route-search="@Model.Search">Selesai</a>
         </div>
+        <form method="get" class="hrws-search-form">
+            <div class="hrws-search-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="search" name="search" placeholder="Cari tugas / pasien…" value="@Model.Search" class="hrws-search" />
+            </div>
+        </form>
+    </div>
 
-        <p style="margin: 8px 0 4px; font-size:13px; color:#6B7280;">Pilih Rentang Waktu</p>
-        <div class="task-chips" style="margin-bottom: 12px;">
-            @foreach (var p in periods)
-            {
-                <label class="task-chip @(Model.Period == p.Item1 ? "selected" : "")">
-                    <input type="radio" name="period" value="@p.Item1" checked="@(Model.Period == p.Item1)" style="display:none" onchange="this.form.submit()" />
-                    @p.Item2
-                </label>
-            }
-            @if (Model.Period != null)
-            {
-                <a class="task-chip" asp-action="Index" asp-route-search="@Model.Search">Clear</a>
-            }
-        </div>
-
-        <p style="margin: 8px 0 4px; font-size:13px; color:#6B7280;">Pilih Status Worksheet</p>
-        <div class="task-chips" style="margin-bottom: 20px;">
-            @foreach (var s in statuses)
-            {
-                var sel = Model.Statuses.Contains(s.Item1);
-                <label class="task-chip @(sel ? "selected" : "")">
-                    <input type="checkbox" name="status" value="@s.Item1" checked="@sel" style="display:none" onchange="this.form.submit()" />
-                    @s.Item2
-                </label>
-            }
-        </div>
-    </form>
-
+    @* ══════ LIST ══════ *@
     @if (!Model.Items.Any())
     {
-        <div class="dash-card-empty"><p>Tidak ada worksheet yang cocok.</p></div>
+        <div class="hrws-empty">
+            <div class="hrws-empty-icon" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+            </div>
+            <p class="hrws-empty-title">Tidak ada worksheet ditemukan</p>
+            <p class="hrws-empty-sub">Buat permintaan agar psikolog dapat menetapkan tugas untuk karyawan.</p>
+            <button type="button" class="hrws-empty-btn" id="hrwsOpenModalEmpty">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Permintaan Worksheet
+            </button>
+        </div>
     }
     else
     {
-        foreach (var w in Model.Items)
-        {
-            <a class="task-card @WorksheetStatus.CssClass(w.Status)" asp-action="Review" asp-route-id="@w.WorksheetId"
-               style="background: linear-gradient(135deg, #7C3AED, #5B21B6); color:#fff; border:0;">
-                <div>
-                    <h4 style="color:#fff; margin:0 0 6px;">@w.TaskName</h4>
-                    <div style="font-size:12px; opacity:0.9;">
-                        @w.PatientName · @w.DateLabel
+        <div class="hrws-list">
+            @foreach (var w in Model.Items)
+            {
+                var accent    = w.Status switch { "Completed" => "done", "InProgress" => "active", _ => "pending" };
+                var initial   = w.PatientName?.Length > 0 ? w.PatientName.Substring(0, 1).ToUpper() : "?";
+
+                <a class="hrws-row hrws-row--@accent" asp-action="Review" asp-route-id="@w.WorksheetId">
+                    <div class="hrws-row-date">@w.DateLabel</div>
+                    <div class="hrws-row-av hrws-av--@accent">@initial</div>
+                    <div class="hrws-row-body">
+                        <span class="hrws-row-title">@w.TaskName</span>
+                        <div class="hrws-row-meta">
+                            <span class="hrws-row-patient">@w.PatientName</span>
+                            @if (!string.IsNullOrEmpty(w.PsychologistName) && w.PsychologistName != "—")
+                            {
+                                <span class="hrws-row-dot">·</span>
+                                <span class="hrws-row-psy">@w.PsychologistName</span>
+                            }
+                        </div>
                     </div>
-                    <div style="font-size:12px; margin-top:8px;">
-                        Status: <strong style="text-decoration:underline;">@w.StatusLabel</strong>
-                    </div>
-                </div>
-                <div class="right">
-                    <span style="font-size:11px; opacity:0.85; align-self:flex-end;">@w.PsychologistName</span>
-                    <span style="width:14px; height:14px; border-radius:999px; background:#fff;"></span>
-                </div>
-            </a>
-        }
+                    <span class="hrws-badge hrws-badge--@accent">@w.StatusLabel</span>
+                    <svg class="hrws-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+            }
+        </div>
 
         @if (totalPages > 1)
         {
-            <div style="text-align:right; margin-top:12px;">
+            <div class="hrws-pager">
                 @for (int p = 1; p <= totalPages; p++)
                 {
-                    <a class="task-chip @(p == Model.Page ? "selected" : "")" asp-action="Index"
-                       asp-route-search="@Model.Search" asp-route-period="@Model.Period" asp-route-page="@p">@p</a>
+                    <a class="hrws-page-btn @(p == Model.Page ? "hrws-page-btn--active" : "")"
+                       asp-action="Index" asp-route-search="@Model.Search"
+                       asp-route-period="@Model.Period" asp-route-page="@p">@p</a>
                 }
             </div>
         }
     }
+
+    @* ══════ REQUEST MODAL ══════ *@
+    <div class="hrpf-modal-overlay" id="hrwsModalOverlay" role="dialog" aria-modal="true" aria-labelledby="hrwsModalTitle">
+        <div class="hrpf-modal">
+
+            <div class="hrpf-modal-head">
+                <div class="hrpf-modal-head-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>
+                </div>
+                <h2 class="hrpf-modal-title" id="hrwsModalTitle">Permintaan Worksheet</h2>
+                <button type="button" class="hrpf-modal-close" id="hrwsModalClose" aria-label="Tutup">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <form id="hrwsRequestForm" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="RequestType" value="Worksheet" />
+
+                <div class="hrpf-modal-body">
+                    <div id="hrwsFormError" class="hrpf-form-error" role="alert" style="display:none;"></div>
+
+                    <p class="hrpf-modal-section-title">Pilih Karyawan</p>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="mrPatientId">
+                            Karyawan <span style="color:#EF4444" aria-hidden="true">*</span>
+                        </label>
+                        @if (modalPatients.Any())
+                        {
+                            <select id="mrPatientId" name="PatientId" class="hrpf-modal-input" required>
+                                <option value="">Pilih karyawan…</option>
+                                @foreach (var p in modalPatients)
+                                {
+                                    <option value="@p.PatientId">@p.FullName@(p.Department != null ? $" ({p.Department})" : "")</option>
+                                }
+                            </select>
+                        }
+                        else
+                        {
+                            <div style="padding:10px 12px;background:#FEF3C7;border-radius:10px;font-size:13px;color:#92400E;">
+                                Tidak ada karyawan aktif yang terdaftar.
+                            </div>
+                        }
+                    </div>
+
+                    <p class="hrpf-modal-section-title" style="margin-top:22px;">Detail Tugas <small style="text-transform:none;font-weight:400;letter-spacing:0;color:var(--lu-text-muted);font-size:11px;margin-left:4px;">— opsional</small></p>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="mrTaskName">Nama Worksheet yang Diusulkan</label>
+                        <input type="text" id="mrTaskName" name="ProposedTaskName" class="hrpf-modal-input"
+                               maxlength="200" placeholder="Mis. Latihan pernapasan 10 menit…" />
+                    </div>
+
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="mrDeadline">Usulan Deadline</label>
+                        <input type="date" id="mrDeadline" name="ProposedDeadline" class="hrpf-modal-input" />
+                    </div>
+
+                    <div class="hrpf-modal-field" style="margin-bottom:0;">
+                        <label class="hrpf-modal-label" for="mrNotes">Catatan / Alasan</label>
+                        <textarea id="mrNotes" name="Notes" class="hrpf-modal-input" rows="3"
+                                  maxlength="1000" style="resize:vertical;"
+                                  placeholder="Jelaskan alasan permintaan worksheet ini…"></textarea>
+                    </div>
+                </div>
+
+                <div class="hrpf-modal-foot">
+                    <button type="button" class="hrpf-modal-cancel" id="hrwsModalCancel">Batalkan</button>
+                    <button type="submit" class="hrpf-modal-save" id="hrwsModalSave">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        Kirim Permintaan
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
 </div>
+
+@section Scripts {
+<script>
+(function () {
+    const overlay    = document.getElementById('hrwsModalOverlay');
+    const closeBtn   = document.getElementById('hrwsModalClose');
+    const cancelBtn  = document.getElementById('hrwsModalCancel');
+    const saveBtn    = document.getElementById('hrwsModalSave');
+    const form       = document.getElementById('hrwsRequestForm');
+    const errorBox   = document.getElementById('hrwsFormError');
+
+    function openModal()  { overlay.classList.add('is-open');    document.body.style.overflow = 'hidden'; }
+    function closeModal() { overlay.classList.remove('is-open'); document.body.style.overflow = ''; }
+
+    document.getElementById('hrwsOpenModal')?.addEventListener('click', openModal);
+    document.getElementById('hrwsOpenModalEmpty')?.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeModal(); });
+
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const patientSelect = document.getElementById('mrPatientId');
+        if (patientSelect && !patientSelect.value) {
+            showError('Pilih karyawan terlebih dahulu.');
+            return;
+        }
+
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hrpf-spin"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Mengirim…`;
+        errorBox.style.display = 'none';
+
+        try {
+            const res  = await fetch('/Hr/Worksheets/RequestModal', { method: 'POST', body: new FormData(form) });
+            const data = await res.json();
+
+            if (data.ok) {
+                closeModal();
+                form.reset();
+                showToast('Permintaan worksheet berhasil dikirim ke psikolog ✓');
+            } else {
+                showError((data.errors || ['Terjadi kesalahan.']).join(' '));
+            }
+        } catch {
+            showError('Gagal terhubung ke server. Coba lagi.');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Kirim Permintaan`;
+        }
+    });
+
+    function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = 'block';
+        errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function showToast(msg) {
+        const t = document.createElement('div');
+        t.className = 'hrpf-toast hrpf-toast--ok';
+        t.style.cssText = 'position:fixed;top:20px;right:20px;z-index:900;';
+        t.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${msg}`;
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 350); }, 3200);
+    }
+
+    // Auto-dismiss server toast
+    const st = document.getElementById('hrwsToast');
+    if (st) setTimeout(() => { st.style.transition = 'opacity .4s'; st.style.opacity = '0'; }, 3200);
+})();
+</script>
+}

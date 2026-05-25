@@ -2,108 +2,239 @@
 @{
     ViewData["Title"] = "Permintaan HR";
     Layout = "_LayoutDashboard";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    var countWorksheet = Model.Items.Count(i => i.RequestType == "Worksheet");
+    var countSchedule  = Model.Items.Count(i => i.RequestType == "Schedule");
+    var total          = Model.Items.Count;
+
+    string TabLabel(string t) => t switch {
+        "Pending"  => "Menunggu",
+        "Approved" => "Disetujui",
+        "Rejected" => "Ditolak",
+        _          => "Semua"
+    };
 }
 
-<style>
-    .req-card {
-        background: #fff;
-        border: 1px solid #E5E7EB;
-        border-radius: 12px;
-        padding: 16px 20px;
-        margin-bottom: 12px;
-    }
-    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .tab { padding: 6px 16px; border-radius: 999px; border: 1px solid #E5E7EB; text-decoration: none; color: #111; font-size: 13px; }
-    .tab.active { background: #7C3AED; color: #fff; border-color: #7C3AED; }
-    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; }
-    .badge.Pending { background: #FEF3C7; color: #B45309; }
-    .badge.Approved { background: #D1FAE5; color: #047857; }
-    .badge.Rejected { background: #FEE2E2; color: #B91C1C; }
-</style>
+<div class="req-page">
 
-<div style="padding: 32px;">
-    @if (TempData["success"] is string ok)
-    {
-        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
-    }
-    @if (TempData["error"] is string err)
-    {
-        <div style="background:#FEE2E2; color:#B91C1C; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@err</div>
-    }
-
-    <h1 style="margin: 0 0 16px;">Permintaan dari HR</h1>
-
-    <div class="tabs">
-        <a class="tab @(Model.Tab == "Pending" ? "active" : "")" asp-action="Index" asp-route-tab="Pending">Menunggu</a>
-        <a class="tab @(Model.Tab == "Approved" ? "active" : "")" asp-action="Index" asp-route-tab="Approved">Disetujui</a>
-        <a class="tab @(Model.Tab == "Rejected" ? "active" : "")" asp-action="Index" asp-route-tab="Rejected">Ditolak</a>
-        <a class="tab @(Model.Tab == "All" ? "active" : "")" asp-action="Index" asp-route-tab="All">Semua</a>
+@* ── Hero ── *@
+<div class="req-hero">
+    <div class="req-hero-left">
+        <p class="req-hero-eyebrow">Psikolog · Inbox</p>
+        <h1 class="req-hero-title">Permintaan dari HR</h1>
+        <p class="req-hero-sub">Tinjau dan tanggapi usulan worksheet atau jadwal sesi dari tim HR perusahaan mitra.</p>
     </div>
-
-    @if (!Model.Items.Any())
-    {
-        <div style="padding: 40px; text-align: center; border: 1px dashed #E5E7EB; border-radius: 12px; color: #6B7280;">
-            <p>Tidak ada permintaan.</p>
+    <div class="req-hero-stats">
+        <div class="req-hero-stat req-hero-stat--total">
+            <span class="req-hero-stat-val">@total</span>
+            <span class="req-hero-stat-lbl">@TabLabel(Model.Tab)</span>
         </div>
-    }
-    else
+        <div class="req-hero-stat req-hero-stat--ws">
+            <span class="req-hero-stat-val">@countWorksheet</span>
+            <span class="req-hero-stat-lbl">Worksheet</span>
+        </div>
+        <div class="req-hero-stat req-hero-stat--sch">
+            <span class="req-hero-stat-val">@countSchedule</span>
+            <span class="req-hero-stat-lbl">Jadwal</span>
+        </div>
+    </div>
+</div>
+
+@* ── Alerts ── *@
+@if (TempData["success"] is string ok)
+{
+    <div class="lu-alert-success" role="status">@ok</div>
+}
+@if (TempData["error"] is string err)
+{
+    <div class="lu-alert-error" role="alert">@err</div>
+}
+
+@* ── Filter toolbar ── *@
+<div class="req-toolbar">
+    <div class="req-tabs">
+        <a class="req-tab @(Model.Tab == "Pending"  ? "req-tab--pending req-tab--active"  : "")" asp-action="Index" asp-route-tab="Pending">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Menunggu
+        </a>
+        <a class="req-tab @(Model.Tab == "Approved" ? "req-tab--approved req-tab--active" : "")" asp-action="Index" asp-route-tab="Approved">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Disetujui
+        </a>
+        <a class="req-tab @(Model.Tab == "Rejected" ? "req-tab--rejected req-tab--active" : "")" asp-action="Index" asp-route-tab="Rejected">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Ditolak
+        </a>
+        <a class="req-tab @(Model.Tab == "All"      ? "req-tab--all req-tab--active"      : "")" asp-action="Index" asp-route-tab="All">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Semua
+        </a>
+    </div>
+    <span class="req-count-badge">@total permintaan</span>
+</div>
+
+@* ── Request list ── *@
+<div class="req-list">
+
+@if (!Model.Items.Any())
+{
+    <div class="req-empty">
+        <div class="req-empty-icon">
+            @if (Model.Tab == "Pending")
+            {
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            }
+            else if (Model.Tab == "Approved")
+            {
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            }
+            else
+            {
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            }
+        </div>
+        <p class="req-empty-title">Tidak ada permintaan @TabLabel(Model.Tab).ToLower()</p>
+        <p class="req-empty-sub">Permintaan baru dari HR akan muncul di sini.</p>
+    </div>
+}
+else
+{
+    @foreach (var r in Model.Items)
     {
-        foreach (var r in Model.Items)
-        {
-            <div class="req-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                        <strong>@r.RequestType</strong> · @r.PatientName
-                        <small style="color:#6B7280; margin-left:8px;">@r.CompanyName · oleh @r.HrName</small>
+        var initial    = r.PatientName.Length > 0 ? r.PatientName.Substring(0, 1).ToUpper() : "?";
+        var hrInitial  = r.HrName.Length > 0 ? r.HrName.Substring(0, 1).ToUpper() : "?";
+        var isWorksheet = r.RequestType == "Worksheet";
+        var isPending   = r.Status == "Pending";
+        var statusClass = r.Status switch { "Approved" => "approved", "Rejected" => "rejected", _ => "pending" };
+        var statusLabel = r.Status switch { "Approved" => "Disetujui", "Rejected" => "Ditolak", _ => "Menunggu" };
+
+        <div class="req-card req-card--@statusClass">
+            <div class="req-card-accent"></div>
+
+            <div class="req-card-body">
+
+                @* Top row: type chip + id + status *@
+                <div class="req-card-top">
+                    <div class="req-card-top-left">
+                        <span class="req-type-chip req-type-chip--@(isWorksheet ? "ws" : "sch")">
+                            @if (isWorksheet)
+                            {
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                @:Worksheet
+                            }
+                            else
+                            {
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                @:Jadwal Sesi
+                            }
+                        </span>
+                        <span class="req-card-id">#@r.Id</span>
+                        <span class="req-card-time">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            @r.CreatedAt.ToString("d MMM yyyy, HH:mm", idCulture)
+                        </span>
                     </div>
-                    <span class="badge @r.Status">@r.Status</span>
+                    <span class="req-status-badge req-status--@statusClass">
+                        <span class="req-status-dot" aria-hidden="true"></span>
+                        @statusLabel
+                    </span>
                 </div>
 
-                <div style="font-size: 13px; color: #374151; margin-bottom: 8px;">
-                    @if (r.RequestType == "Worksheet")
+                @* Patient + HR info *@
+                <div class="req-card-parties">
+                    <div class="req-party">
+                        <div class="req-party-av req-party-av--patient">@initial</div>
+                        <div class="req-party-info">
+                            <span class="req-party-name">@r.PatientName</span>
+                            <span class="req-party-meta">Pasien · @r.CompanyName</span>
+                        </div>
+                    </div>
+                    <div class="req-party-sep">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                    <div class="req-party">
+                        <div class="req-party-av req-party-av--hr">@hrInitial</div>
+                        <div class="req-party-info">
+                            <span class="req-party-name">@r.HrName</span>
+                            <span class="req-party-meta">HR · @r.CompanyName</span>
+                        </div>
+                    </div>
+                </div>
+
+                @* Proposed details *@
+                <div class="req-details">
+                    @if (isWorksheet)
                     {
-                        <div><strong>Usulan tugas:</strong> @(r.ProposedTaskName ?? "—")</div>
-                        <div><strong>Usulan deadline:</strong> @(r.ProposedDeadline?.ToString("d MMM yyyy", new System.Globalization.CultureInfo("id-ID")) ?? "—")</div>
+                        <div class="req-detail-row">
+                            <span class="req-detail-label">Nama Tugas</span>
+                            <span class="req-detail-val">@(r.ProposedTaskName ?? "—")</span>
+                        </div>
+                        <div class="req-detail-row">
+                            <span class="req-detail-label">Tenggat</span>
+                            <span class="req-detail-val">
+                                @(r.ProposedDeadline.HasValue
+                                    ? r.ProposedDeadline.Value.ToString("d MMMM yyyy", idCulture)
+                                    : "—")
+                            </span>
+                        </div>
                     }
-                    else if (r.RequestType == "Schedule")
+                    else
                     {
-                        <div><strong>Usulan tanggal:</strong> @(r.ProposedSessionDate?.ToString("d MMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID")) ?? "—")</div>
+                        <div class="req-detail-row">
+                            <span class="req-detail-label">Usulan Jadwal</span>
+                            <span class="req-detail-val">
+                                @(r.ProposedSessionDate.HasValue
+                                    ? r.ProposedSessionDate.Value.ToString("d MMMM yyyy, HH:mm", idCulture) + " WIB"
+                                    : "—")
+                            </span>
+                        </div>
                     }
                     @if (!string.IsNullOrEmpty(r.Notes))
                     {
-                        <div style="margin-top: 8px;"><strong>Catatan HR:</strong> @r.Notes</div>
+                        <div class="req-detail-row req-detail-row--notes">
+                            <span class="req-detail-label">Catatan HR</span>
+                            <span class="req-detail-val req-detail-val--note">"@r.Notes"</span>
+                        </div>
                     }
                 </div>
 
-                @if (r.Status == "Pending")
+                @* Action area *@
+                @if (isPending)
                 {
-                    <form asp-action="Respond" method="post">
+                    <form asp-action="Respond" method="post" class="req-action-form">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="Id" value="@r.Id" />
-                        <textarea name="Note" rows="2" placeholder="Catatan untuk HR (opsional)..."
-                                  style="width:100%; padding:8px 10px; border:1px solid #E5E7EB; border-radius:6px; font-family:inherit; font-size:13px; margin-bottom: 8px;"></textarea>
-                        <div style="display: flex; gap: 8px;">
-                            <button type="submit" name="Action" value="Reject"
-                                    style="padding: 8px 16px; background: #fff; color: #B91C1C; border: 1px solid #FCA5A5; border-radius: 6px; cursor: pointer;">
+                        <textarea name="Note" rows="2" placeholder="Catatan untuk HR (opsional)…" class="req-note-input"></textarea>
+                        <div class="req-action-btns">
+                            <button type="submit" name="Action" value="Reject" class="req-btn req-btn--reject">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                                 Tolak
                             </button>
-                            <button type="submit" name="Action" value="Approve"
-                                    style="padding: 8px 16px; background: #7C3AED; color: #fff; border: none; border-radius: 6px; cursor: pointer;">
-                                Setujui (buat @r.RequestType)
+                            <button type="submit" name="Action" value="Approve" class="req-btn req-btn--approve">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                Setujui & Buat @r.RequestType
                             </button>
                         </div>
                     </form>
                 }
                 else
                 {
-                    <div style="font-size:12px; color:#6B7280;">
-                        Ditanggapi @r.CreatedAt.ToString("d MMM yyyy HH:mm")
+                    <div class="req-responded">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Ditanggapi pada @r.CreatedAt.ToString("d MMM yyyy, HH:mm", idCulture)
                         @if (!string.IsNullOrEmpty(r.RespondedNote))
                         {
-                            <div>"@r.RespondedNote"</div>
+                            <span class="req-responded-note">"@r.RespondedNote"</span>
                         }
                     </div>
                 }
+
             </div>
-        }
+        </div>
     }
-</div>
+}
+
+</div>@* /req-list *@
+
+</div>@* /req-page *@

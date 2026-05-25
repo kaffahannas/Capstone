@@ -1,0 +1,128 @@
+@model LightenUp.Web.Models.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewBag.ActiveNav = "Dashboard";
+}
+
+<!-- ── KPI Grid ── -->
+<div class="adm-stat-grid">
+    <div class="adm-stat-card accent-purple">
+        <div class="adm-stat-icon">👥</div>
+        <div class="adm-stat-label">Total Pengguna</div>
+        <div class="adm-stat-value">@Model.TotalUsers</div>
+        <div class="adm-stat-sub">Semua role terdaftar</div>
+    </div>
+
+    <div class="adm-stat-card accent-green">
+        <div class="adm-stat-icon">🧘</div>
+        <div class="adm-stat-label">Pasien</div>
+        <div class="adm-stat-value">@Model.TotalPatients</div>
+        <div class="adm-stat-sub">Pengguna aktif layanan</div>
+    </div>
+
+    <div class="adm-stat-card accent-blue">
+        <div class="adm-stat-icon">🩺</div>
+        <div class="adm-stat-label">Psikolog</div>
+        <div class="adm-stat-value">@Model.TotalPsychologists</div>
+        @if (Model.PendingPsychologists > 0)
+        {
+            <div class="adm-stat-sub" style="color: var(--adm-warning); font-weight:600;">
+                ⏳ @Model.PendingPsychologists menunggu persetujuan
+            </div>
+        }
+        else
+        {
+            <div class="adm-stat-sub">Semua terverifikasi</div>
+        }
+    </div>
+
+    <div class="adm-stat-card accent-orange">
+        <div class="adm-stat-icon">🏢</div>
+        <div class="adm-stat-label">HR Manager</div>
+        <div class="adm-stat-value">@Model.TotalHrs</div>
+        @if (Model.PendingHrs > 0)
+        {
+            <div class="adm-stat-sub" style="color: var(--adm-warning); font-weight:600;">
+                ⏳ @Model.PendingHrs menunggu persetujuan
+            </div>
+        }
+        else
+        {
+            <div class="adm-stat-sub">Semua terverifikasi</div>
+        }
+    </div>
+
+    <div class="adm-stat-card accent-teal">
+        <div class="adm-stat-icon">🏗️</div>
+        <div class="adm-stat-label">Perusahaan</div>
+        <div class="adm-stat-value">@Model.TotalCompanies</div>
+        <div class="adm-stat-sub">Mitra terdaftar</div>
+    </div>
+
+    <div class="adm-stat-card accent-red">
+        <div class="adm-stat-icon">🛡️</div>
+        <div class="adm-stat-label">Admin</div>
+        <div class="adm-stat-value">@Model.TotalAdmins</div>
+        <div class="adm-stat-sub">Akun administrator</div>
+    </div>
+</div>
+
+<!-- ── Pending Alert ── -->
+@if (Model.PendingTotal > 0)
+{
+    <div class="adm-card" style="margin-bottom:24px; border-color:#FCD34D; background:linear-gradient(135deg,#FFFBEB,#FEF3C7);">
+        <div class="adm-card-inner" style="flex-wrap:nowrap; gap:20px;">
+            <div style="display:flex; align-items:center; gap:14px; flex:1;">
+                <div style="width:48px; height:48px; background:rgba(217,119,6,0.15); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;">⚠️</div>
+                <div>
+                    <div style="font-size:16px; font-weight:700; color:#92400E; margin-bottom:2px;">@Model.PendingTotal Akun Menunggu Persetujuan</div>
+                    <div style="font-size:13px; color:#B45309;">
+                        @Model.PendingPsychologists Psikolog &nbsp;·&nbsp; @Model.PendingHrs HR Manager
+                    </div>
+                </div>
+            </div>
+            <a class="btn btn-primary" asp-area="Admin" asp-controller="Approvals" asp-action="Index"
+               style="white-space:nowrap; flex-shrink:0;">
+                Tinjau Sekarang →
+            </a>
+        </div>
+    </div>
+}
+
+<!-- ── Quick Actions ── -->
+<div class="adm-card">
+    <div class="adm-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Akses Cepat
+    </div>
+    <div class="adm-quick-grid">
+        <a class="adm-quick-item" asp-area="Admin" asp-controller="Approvals" asp-action="Index">
+            <div class="adm-quick-icon" style="background:#FEF3C7;">📋</div>
+            <div class="adm-quick-label">Persetujuan</div>
+            <div class="adm-quick-sub">
+                @if (Model.PendingTotal > 0)
+                { <span style="color:var(--adm-warning); font-weight:700;">@Model.PendingTotal menunggu</span> }
+                else
+                { <text>Semua bersih</text> }
+            </div>
+        </a>
+
+        <a class="adm-quick-item" asp-area="Admin" asp-controller="Users" asp-action="Index">
+            <div class="adm-quick-icon" style="background:#EDE9FE;">👤</div>
+            <div class="adm-quick-label">Pengguna</div>
+            <div class="adm-quick-sub">@Model.TotalUsers terdaftar</div>
+        </a>
+
+        <a class="adm-quick-item" asp-area="Admin" asp-controller="Companies" asp-action="Index">
+            <div class="adm-quick-icon" style="background:#DBEAFE;">🏢</div>
+            <div class="adm-quick-label">Perusahaan</div>
+            <div class="adm-quick-sub">@Model.TotalCompanies mitra</div>
+        </a>
+
+        <a class="adm-quick-item" asp-area="Admin" asp-controller="Invite" asp-action="Index">
+            <div class="adm-quick-icon" style="background:#D1FAE5;">➕</div>
+            <div class="adm-quick-label">Tambah Admin</div>
+            <div class="adm-quick-sub">Undang administrator</div>
+        </a>
+    </div>
+</div>

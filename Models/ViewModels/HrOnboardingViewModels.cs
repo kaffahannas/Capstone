@@ -27,8 +27,8 @@ namespace LightenUp.Web.Models.ViewModels
     // Step 1: Photo
     public class HrOnboardingPhotoViewModel
     {
-        [Required(ErrorMessage = "Silakan unggah foto diri.")]
         public IFormFile? Photo { get; set; }
+        public bool HasExistingPhoto { get; set; }
     }
 
     // Step 2: Academic
@@ -40,26 +40,19 @@ namespace LightenUp.Web.Models.ViewModels
         [Required(ErrorMessage = "Universitas asal wajib diisi.")]
         public string University { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Silakan unggah dokumen pendukung.")]
         public IFormFile? AcademicDocument { get; set; }
+        public bool HasExistingDocument { get; set; }
     }
 
-    // Step 3: Company — either create new or join existing
+    // Step 3: Register company (referral code is created after subscription payment)
     public class HrOnboardingCompanyViewModel
     {
-        [Required(ErrorMessage = "Pilih salah satu opsi.")]
-        public string Mode { get; set; } = "Create";  // "Create" or "Join"
-
-        // For Create
         public string? CompanyName { get; set; }
         public string? CompanyAddress { get; set; }
         public string? RegistrationNumber { get; set; }
         public IFormFile? SupportDocument { get; set; }
+        public bool HasExistingSupportDocument { get; set; }
 
-        // For Join
-        public string? ReferralCode { get; set; }
-
-        // For both
         [Required(ErrorMessage = "Divisi wajib diisi.")]
         public string Department { get; set; } = string.Empty;
     }

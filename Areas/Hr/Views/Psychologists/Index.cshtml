@@ -1,37 +1,391 @@
 @model LightenUp.Web.Models.ViewModels.HrPsychologistDirectoryViewModel
 @{
     ViewData["Title"] = "Direktori Psikolog";
-    ViewBag.ActiveNav = "Klien";
+    ViewBag.ActiveNav = "Psikolog";
 }
 
-<div style="max-width: 900px;">
-    <h2 style="margin-bottom: 16px;">Direktori Psikolog</h2>
-    <p style="color:#6B7280;">Psikolog terverifikasi yang bersedia untuk kerja sama B2B.</p>
-
-    @if (!Model.Psychologists.Any())
-    {
-        <div class="dash-card-empty"><p>Belum ada psikolog yang tersedia untuk dipilih.</p></div>
+<style>
+    .psy-dir-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 28px;
+        padding: 24px 32px 40px 32px;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 10;
     }
-    else
-    {
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:16px;">
+    
+    .psy-dir-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(229, 231, 235, 0.5);
+        border-radius: 24px;
+        padding: 32px 24px;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        position: relative;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+    
+    .psy-dir-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--lu-primary), #A78BFA);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .psy-dir-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(124, 58, 237, 0.12);
+        border-color: rgba(124, 58, 237, 0.2);
+    }
+    
+    .psy-dir-card:hover::before {
+        opacity: 1;
+    }
+
+    .psy-dir-avatar-wrap {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 20px auto;
+        position: relative;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+        transition: all 0.3s;
+    }
+    
+    .psy-dir-card:hover .psy-dir-avatar-wrap {
+        background: linear-gradient(135deg, var(--lu-primary) 0%, #A78BFA 100%);
+    }
+
+    .psy-dir-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #fff;
+        border: 2px solid #fff;
+    }
+
+    .psy-dir-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #D1FAE5;
+        color: #065F46;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 999px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        box-shadow: 0 4px 12px rgba(52, 211, 153, 0.2);
+    }
+
+    .psy-dir-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .psy-dir-spec {
+        font-size: 14px;
+        color: var(--lu-primary);
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: inline-block;
+        padding: 4px 12px;
+        background: rgba(124, 58, 237, 0.08);
+        border-radius: 999px;
+    }
+
+    .psy-dir-exp {
+        font-size: 13.5px;
+        color: #6B7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    
+    /* Modal Styling */
+    .psy-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.7);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .psy-modal-overlay.is-active {
+        display: flex;
+        opacity: 1;
+    }
+    
+    .psy-modal-content {
+        background: #fff;
+        border-radius: 24px;
+        width: 100%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        transform: scale(0.95);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    
+    .psy-modal-overlay.is-active .psy-modal-content {
+        transform: scale(1);
+    }
+    
+    .psy-modal-header {
+        background: linear-gradient(135deg, var(--lu-primary) 0%, #6D28D9 100%);
+        padding: 40px 32px;
+        color: #fff;
+        text-align: center;
+        position: relative;
+    }
+    
+    .psy-modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .psy-modal-close:hover {
+        background: rgba(255,255,255,0.3);
+    }
+    
+    .psy-modal-body {
+        padding: 32px;
+    }
+    
+    .psy-modal-section {
+        margin-bottom: 24px;
+    }
+    
+    .psy-modal-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #9CA3AF;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .psy-modal-value {
+        font-size: 15px;
+        color: #374151;
+        line-height: 1.6;
+    }
+    
+    .psy-modal-footer {
+        padding: 24px 32px;
+        background: #F9FAFB;
+        border-top: 1px solid #F3F4F6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        border-bottom-left-radius: 24px;
+        border-bottom-right-radius: 24px;
+    }
+    
+    .btn-mitra {
+        background: var(--lu-primary);
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+    }
+    
+    .btn-mitra:hover {
+        background: #6D28D9;
+    }
+</style>
+
+<div class="hrpsy-page">
+    <div class="hrd-hero hrpsy-hero">
+        <div class="hrd-hero-bg" aria-hidden="true"></div>
+        <div class="hrd-hero-inner">
+            <div class="hrd-hero-left">
+                <p class="hrd-hero-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Mitra Kesehatan
+                </p>
+                <h1 class="hrd-hero-title">Direktori Psikolog</h1>
+                <p class="hrd-hero-sub">Jelajahi profil psikolog terverifikasi dan jadikan mereka mitra perusahaan Anda untuk program konseling.</p>
+            </div>
+            
+            <div class="hrd-stats">
+                <div class="hrd-stat">
+                    <span class="hrd-stat-ico">🩺</span>
+                    <span class="hrd-stat-val">@Model.Psychologists.Count()</span>
+                    <span class="hrd-stat-lbl">Tersedia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="psy-dir-grid">
+        @if (!Model.Psychologists.Any())
+        {
+            <div class="hrpsy-empty" style="background:#fff; border:1px dashed #D1D5DB; border-radius:24px; padding:64px 32px; text-align:center; grid-column: 1 / -1;">
+                <div class="hrpsy-empty-icon" aria-hidden="true" style="width:64px; height:64px; border-radius:999px; background:#F3F4F6; color:#9CA3AF; display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <p class="hrpsy-empty-title" style="font-size:18px; font-weight:700; color:#111827; margin:0 0 8px 0;">Belum ada psikolog</p>
+                <p class="hrpsy-empty-sub" style="font-size:15px; color:#6B7280; margin:0;">Saat ini belum ada psikolog yang tersedia untuk dipilih.</p>
+            </div>
+        }
+        else
+        {
             @foreach (var p in Model.Psychologists)
             {
-                <a class="lu-card" asp-action="Profile" asp-route-id="@p.PsychologistId" style="text-decoration:none; color:inherit; text-align:center;">
-                    <img src="@(string.IsNullOrEmpty(p.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : p.ProfilePicture)"
-                         style="width:80px; height:80px; border-radius:999px; object-fit:cover; background:#EDE9FE; margin-bottom:10px;" />
-                    <div style="font-weight:600;">@p.FullName</div>
-                    <small style="color:#6B7280; display:block; margin-top:4px;">@(p.Specialization ?? "Psikolog")</small>
-                    @if (p.ExperienceYears.HasValue)
-                    {
-                        <small style="color:#6B7280; display:block;">@p.ExperienceYears thn pengalaman</small>
-                    }
+                var fallbackImg = "/lib/bootstrap-icons/icons/person-circle.svg";
+                var imgSrc = string.IsNullOrEmpty(p.ProfilePicture) ? fallbackImg : p.ProfilePicture;
+                
+                <div class="psy-dir-card" 
+                     onclick="openDetailModal('@p.PsychologistId', '@Uri.EscapeDataString(p.FullName)', '@Uri.EscapeDataString(p.Specialization ?? "Psikolog Umum")', '@Uri.EscapeDataString(imgSrc)', '@(p.ExperienceYears ?? 0)', '@Uri.EscapeDataString(p.University ?? "-")', '@Uri.EscapeDataString(p.LastDegree ?? "-")', '@Uri.EscapeDataString(p.PracticeLocation ?? "-")', '@Uri.EscapeDataString(p.Bio ?? "Belum ada bio.")', @(p.AlreadyPartnered ? "true" : "false"))">
+                    
                     @if (p.AlreadyPartnered)
                     {
-                        <span class="status-badge sehat" style="margin-top:8px; display:inline-block;">Mitra</span>
+                        <span class="psy-dir-badge">Mitra</span>
                     }
-                </a>
+                    
+                    <div class="psy-dir-avatar-wrap">
+                        <img src="@imgSrc" alt="@p.FullName" class="psy-dir-avatar" onerror="this.src='@fallbackImg'" />
+                    </div>
+                    
+                    <h3 class="psy-dir-name">@p.FullName</h3>
+                    <div class="psy-dir-spec">@(p.Specialization ?? "Psikolog Umum")</div>
+                    
+                    <div class="psy-dir-exp">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        @(p.ExperienceYears ?? 0) tahun pengalaman
+                    </div>
+                </div>
             }
-        </div>
-    }
+        }
+    </div>
 </div>
+
+<!-- Modal -->
+<div class="psy-modal-overlay" id="psyDetailModal" onclick="closeDetailModal(event)">
+    <div class="psy-modal-content" onclick="event.stopPropagation()">
+        <button class="psy-modal-close" onclick="closeDetailModal(event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        
+        <div class="psy-modal-header">
+            <img id="mAvatar" src="" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); margin-bottom: 16px; object-fit: cover;" />
+            <h2 id="mName" style="font-size: 24px; font-weight: 800; margin: 0 0 4px 0;"></h2>
+            <div id="mSpec" style="font-size: 15px; opacity: 0.9; font-weight: 500;"></div>
+        </div>
+        
+        <div class="psy-modal-body">
+            <div class="psy-modal-section">
+                <span class="psy-modal-label">Tentang Psikolog</span>
+                <div class="psy-modal-value" id="mBio"></div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <div>
+                    <span class="psy-modal-label">Pendidikan Terakhir</span>
+                    <div class="psy-modal-value"><strong id="mDegree"></strong><br/><span id="mUni"></span></div>
+                </div>
+                <div>
+                    <span class="psy-modal-label">Pengalaman</span>
+                    <div class="psy-modal-value" id="mExp"></div>
+                </div>
+            </div>
+            
+            <div class="psy-modal-section" style="margin-bottom: 0;">
+                <span class="psy-modal-label">Lokasi Praktik</span>
+                <div class="psy-modal-value" id="mLoc"></div>
+            </div>
+        </div>
+        
+        <div class="psy-modal-footer">
+            <form id="mForm" method="post" action="@Url.Action("Pick", "Psychologists", new { area = "Hr" })">
+                <input type="hidden" name="id" id="mId" value="" />
+                <button type="submit" class="btn-mitra" id="mBtnSubmit">Jadikan Mitra</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDetailModal(id, name, spec, img, exp, uni, degree, loc, bio, isPartner) {
+        document.getElementById('mId').value = id;
+        document.getElementById('mName').textContent = decodeURIComponent(name);
+        document.getElementById('mSpec').textContent = decodeURIComponent(spec);
+        document.getElementById('mAvatar').src = decodeURIComponent(img);
+        document.getElementById('mExp').textContent = exp + ' tahun klinis';
+        document.getElementById('mUni').textContent = decodeURIComponent(uni);
+        document.getElementById('mDegree').textContent = decodeURIComponent(degree);
+        document.getElementById('mLoc').textContent = decodeURIComponent(loc);
+        document.getElementById('mBio').textContent = decodeURIComponent(bio);
+        
+        var btn = document.getElementById('mBtnSubmit');
+        if (isPartner) {
+            btn.textContent = 'Sudah Menjadi Mitra';
+            btn.style.background = '#10B981'; // Green
+            btn.style.cursor = 'default';
+            btn.disabled = true;
+        } else {
+            btn.textContent = 'Jadikan Mitra';
+            btn.style.background = 'var(--lu-primary)';
+            btn.style.cursor = 'pointer';
+            btn.disabled = false;
+        }
+        
+        var modal = document.getElementById('psyDetailModal');
+        modal.style.display = 'flex';
+        // Small delay to allow display block to apply before setting opacity for transition
+        setTimeout(() => {
+            modal.classList.add('is-active');
+            document.body.style.overflow = 'hidden';
+        }, 10);
+    }
+    
+    function closeDetailModal(e) {
+        if(e) e.preventDefault();
+        var modal = document.getElementById('psyDetailModal');
+        modal.classList.remove('is-active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+</script>

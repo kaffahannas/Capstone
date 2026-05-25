@@ -2,7 +2,7 @@
 @using LightenUp.Web.Models.ViewModels
 @{
     ViewData["Title"] = "Tugas Kamu";
-    ViewBag.ActiveNav = "Beranda";
+    ViewBag.ActiveNav = "Tugas";
 
     var statusChips = new[]
     {
@@ -19,39 +19,58 @@
     };
 }
 
-<div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
-    <span style="font-size:22px;">✏️</span>
-    <h2 style="margin:0; font-size:20px;">Tugas Kamu</h2>
+<div style="display: flex; flex-direction: column; height: calc(100vh - 120px);">
+
+<div class="tasks-hero" style="flex-shrink: 0; background: linear-gradient(135deg, var(--lu-primary) 0%, #A78BFA 100%); color: white; padding: 32px; border-radius: 20px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2); position: relative; overflow: hidden;">
+    <div style="position: absolute; right: -20px; top: -40px; opacity: 0.1; font-size: 150px; user-select: none;">📝</div>
+    <div style="position: relative; z-index: 1;">
+        <h1 style="margin: 0 0 8px; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+            <span style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 8px; font-size: 24px; line-height: 1;">✏️</span>
+            Tugas Kamu
+        </h1>
+        <p style="margin: 0; font-size: 15px; opacity: 0.9;">Selesaikan tugas-tugas dari Psikolog untuk memantau perkembanganmu.</p>
+    </div>
 </div>
 
-<form method="get" id="filterForm">
-    <div class="tasks-toolbar">
-        <label class="task-search">
-            <span class="icon">🔍</span>
-            <input type="search" name="search" placeholder="Cari Tugas..." value="@Model.Search" />
-        </label>
-    </div>
+<div class="tasks-container" style="flex: 1; min-height: 0; background: #ffffff; border-radius: 24px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
+    <form method="get" id="filterForm" style="display: block; margin-bottom: 20px;">
+        <div class="tasks-toolbar" style="margin-bottom: 16px; display: block;">
+            <label class="task-search" style="display: flex; align-items: center; background: #F9FAFB; padding: 0; border-radius: 999px; border: 1.5px solid var(--lu-border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); cursor: text; transition: all 0.2s ease; width: 100%; max-width: 400px; overflow: hidden;">
+                <span class="icon" style="font-size: 18px; color: var(--lu-text-muted); margin-left: 16px;">🔍</span>
+                <input type="search" name="search" placeholder="Cari Tugas..." value="@Model.Search" style="border: none; background: transparent; flex: 1; outline: none; padding: 10px 16px; font-size: 14px; color: var(--lu-text);" />
+            </label>
+        </div>
 
-    <p class="onb-subtitle" style="margin-top:0;">Pilih kategori dibawah ini, Anda dapat memilih lebih dari satu</p>
-    <div class="task-chips">
-        @foreach (var c in statusChips)
-        {
-            var selected = Model.Statuses.Contains(c.Item1);
-            <label class="task-chip @(selected ? "selected" : "")">
-                <input type="checkbox" name="status" value="@c.Item1" checked="@selected" style="display:none" onchange="document.getElementById('filterForm').submit()" />
-                @c.Item2
-            </label>
-        }
-        @foreach (var c in periodChips)
-        {
-            var selected = Model.Periods.Contains(c.Item1);
-            <label class="task-chip @(selected ? "selected" : "")">
-                <input type="checkbox" name="period" value="@c.Item1" checked="@selected" style="display:none" onchange="document.getElementById('filterForm').submit()" />
-                @c.Item2
-            </label>
-        }
-    </div>
-</form>
+        <div style="display: flex; flex-wrap: wrap; gap: 32px; margin-bottom: 20px;">
+            <div>
+                <p class="onb-subtitle" style="margin: 0 0 8px; font-size: 12px; font-weight: 600; color: var(--lu-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Status Tugas</p>
+                <div class="task-chips" style="margin-bottom: 0;">
+                    @foreach (var c in statusChips)
+                    {
+                        var selected = Model.Statuses.Contains(c.Item1);
+                        <label class="task-chip @(selected ? "selected" : "")">
+                            <input type="checkbox" name="status" value="@c.Item1" checked="@selected" style="display:none" onchange="document.getElementById('filterForm').submit()" />
+                            @c.Item2
+                        </label>
+                    }
+                </div>
+            </div>
+            
+            <div>
+                <p class="onb-subtitle" style="margin: 0 0 8px; font-size: 12px; font-weight: 600; color: var(--lu-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Tenggat Waktu</p>
+                <div class="task-chips" style="margin-bottom: 0;">
+                    @foreach (var c in periodChips)
+                    {
+                        var selected = Model.Periods.Contains(c.Item1);
+                        <label class="task-chip @(selected ? "selected" : "")">
+                            <input type="checkbox" name="period" value="@c.Item1" checked="@selected" style="display:none" onchange="document.getElementById('filterForm').submit()" />
+                            @c.Item2
+                        </label>
+                    }
+                </div>
+            </div>
+        </div>
+    </form>
 
 @if (!Model.Items.Any())
 {
@@ -61,23 +80,27 @@
 }
 else
 {
-    foreach (var t in Model.Items)
-    {
-        <a class="task-card @WorksheetStatus.CssClass(t.Status)" asp-action="Detail" asp-route-id="@t.WorksheetId">
-            <div>
-                <h4>@t.TaskName</h4>
-                <p class="desc">@t.Description</p>
-                <div class="meta">
-                    <span>Status: <strong>@t.StatusLabel</strong></span>
-                    <span style="margin-left:auto;">@t.PsychologistName</span>
+    <div class="custom-scroll" style="flex: 1; overflow-y: auto; padding-right: 12px; margin-right: -4px; padding-bottom: 20px;">
+        @foreach (var t in Model.Items)
+        {
+            <a class="task-card @WorksheetStatus.CssClass(t.Status)" asp-action="Detail" asp-route-id="@t.WorksheetId">
+                <div>
+                    <h4>@t.TaskName</h4>
+                    <p class="desc">@t.Description</p>
+                    <div class="meta">
+                        <span>Status: <strong>@t.StatusLabel</strong></span>
+                        <span style="margin-left: 8px;">• @t.PsychologistName</span>
+                    </div>
                 </div>
-            </div>
-            <div class="right">
-                <span class="date-tag">@t.DateLabel</span>
-                <span class="badge-dot"></span>
-            </div>
-        </a>
-    }
+                <div class="right">
+                    <span class="date-tag">@t.DateLabel</span>
+                    <span class="badge-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
+        }
+    </div>
 
     @if (Model.HasMore)
     {
@@ -92,19 +115,8 @@ else
             </a>
         </div>
     }
-}
+    }
+</div>
+</div>
 
-@section Scripts {
-    <script>
-        // Toggle .selected class on chip click
-        document.querySelectorAll('.task-chip').forEach(chip => {
-            chip.addEventListener('click', e => {
-                if (e.target.tagName === 'INPUT') return;
-                const cb = chip.querySelector('input');
-                cb.checked = !cb.checked;
-                chip.classList.toggle('selected', cb.checked);
-                document.getElementById('filterForm').submit();
-            });
-        });
-    </script>
-}
+

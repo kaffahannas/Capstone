@@ -21,30 +21,34 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index(string view = "Mingguan")
+        public async Task<IActionResult> Index(string view = "Mingguan", int offset = 0)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
 
-            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            var patient = await _context.Patients
+                .Include(p => p.Schedules)
+                    .ThenInclude(s => s.Psychologist)
+                        .ThenInclude(psy => psy!.User)
+                .FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (patient == null || patient.OnboardingCompletedAt == null)
             {
                 return RedirectToAction("Welcome", "Onboarding");
             }
 
-            // ─── Calendar window based on selected view (Harian / Mingguan / Bulanan) ───
+            // ─── Calendar window based on selected view + offset ───
             var today = DateTime.Today;
             DateTime windowStart, windowEnd;
             int dayCount;
             if (view == "Harian")
             {
-                windowStart = today;
-                windowEnd = today.AddDays(1);
+                windowStart = today.AddDays(offset);
+                windowEnd = windowStart.AddDays(1);
                 dayCount = 1;
             }
             else if (view == "Bulanan")
             {
-                windowStart = new DateTime(today.Year, today.Month, 1);
+                windowStart = new DateTime(today.Year, today.Month, 1).AddMonths(offset);
                 windowEnd = windowStart.AddMonths(1);
                 dayCount = (windowEnd - windowStart).Days;
             }
@@ -52,14 +56,28 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             {
                 view = "Mingguan";
                 int daysFromMonday = ((int)today.DayOfWeek + 6) % 7;
-                windowStart = today.AddDays(-daysFromMonday);
+                windowStart = today.AddDays(-daysFromMonday).AddDays(offset * 7);
                 windowEnd = windowStart.AddDays(7);
                 dayCount = 7;
             }
+            ViewBag.CalendarView = view;
+            ViewBag.CalendarOffset = offset;
 
             var moodsInWindow = await _context.MoodTrackers
                 .Where(m => m.PatientId == patient.PatientId && m.MoodDate >= windowStart && m.MoodDate < windowEnd)
                 .ToListAsync();
+
+            // Deadlines in window
+            var deadlinesInWindow = await _context.Worksheets
+                .Where(w => w.PatientId == patient.PatientId && w.Deadline >= windowStart && w.Deadline < windowEnd)
+                .Select(w => w.Deadline.Date)
+                .ToListAsync();
+
+            // Konseling sessions in window
+            var konselingInWindow = (patient.Schedules ?? new List<Schedule>())
+                .Where(s => s.SessionStart >= windowStart && s.SessionStart < windowEnd)
+                .Select(s => s.SessionStart.Date)
+                .ToList();
 
             var week = Enumerable.Range(0, dayCount).Select(i =>
             {
@@ -69,16 +87,23 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 {
                     Date = d,
                     IsToday = d.Date == today,
-                    FeelingForDay = mood?.Feeling
+                    FeelingForDay = mood?.Feeling,
+                    HasDeadline = deadlinesInWindow.Contains(d.Date),
+                    HasKonseling = konselingInWindow.Contains(d.Date)
                 };
             }).ToList();
 
-            var todayMood = moodsInWindow.FirstOrDefault(m => m.MoodDate.Date == today);
-            ViewBag.CalendarView = view;
+            // Today's mood is always fetched independently of the calendar window
+            var todayMood = await _context.MoodTrackers
+                .Where(m => m.PatientId == patient.PatientId && m.MoodDate.Date == today)
+                .OrderByDescending(m => m.MoodDate)
+                .FirstOrDefaultAsync();
+            var monthLabel = windowStart.ToString("MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
+            ViewBag.CalendarMonthLabel = char.ToUpper(monthLabel[0]) + monthLabel.Substring(1);
 
-            // Latest journal entry (any date)
+            // Latest journal entry (for today only)
             var latestJournal = await _context.Journals
-                .Where(j => j.PatientId == patient.PatientId)
+                .Where(j => j.PatientId == patient.PatientId && j.JournalDate.Date == today)
                 .OrderByDescending(j => j.JournalDate)
                 .FirstOrDefaultAsync();
 
@@ -109,6 +134,26 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 })
                 .ToListAsync();
 
+            // Upcoming counseling sessions (top 3)
+            var upcomingSessions = (patient.Schedules ?? new List<Schedule>())
+                .Where(s => s.SessionStart >= today)
+                .OrderBy(s => s.SessionStart)
+                .Take(3)
+                .Select(s => new JadwalItemViewModel
+                {
+                    ScheduleId = s.ScheduleId,
+                    PsychologistName = s.Psychologist?.User?.FullName ?? "Psikolog",
+                    SessionStart = s.SessionStart,
+                    DurationMinutes = s.DurationMinutes,
+                    Status = s.Status,
+                    MeetingLink = s.MeetingLink
+                })
+                .ToList();
+
+            // Total upcoming session count for hero KPI
+            var upcomingSessionCount = (patient.Schedules ?? new List<Schedule>())
+                .Count(s => s.SessionStart >= today);
+
             var monthName = today.ToString("MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
 
             var vm = new PatientDashboardViewModel
@@ -118,6 +163,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 TodayFeeling = todayMood?.Feeling,
                 LatestJournalId = latestJournal?.JournalId,
                 LatestJournalTitle = latestJournal?.Title,
+                LatestJournalContent = latestJournal?.Content,
                 LatestJournalSnippet = latestJournal == null
                     ? null
                     : (latestJournal.Content.Length > 140
@@ -125,7 +171,9 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                         : latestJournal.Content),
                 HasTodayCheckIn = hasCheckIn,
                 OpenTaskCount = openTaskCount,
-                OpenWorksheets = openWorksheets
+                OpenWorksheets = openWorksheets,
+                UpcomingSessions = upcomingSessions,
+                UpcomingSessionCount = upcomingSessionCount
             };
 
             ViewBag.ActiveNav = "Beranda";

@@ -1,58 +1,168 @@
 @using LightenUp.Web.Models
+@using LightenUp.Web.Models.ViewModels
 @{
     Layout = "_LayoutDashboard";
-    ViewData["Title"] = "Riwayat Jadwal Pasien";
+    ViewData["Title"] = "Riwayat Jadwal – " + ViewBag.PatientName;
 
-    var sessions = ViewBag.Sessions as List<Schedule> ?? new List<Schedule>();
+    var sessions  = ViewBag.Sessions as List<Schedule> ?? new List<Schedule>();
     var patientId = (int)(ViewBag.PatientId ?? 0);
     var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    var total     = sessions.Count;
+    var completed = sessions.Count(s => s.Status == "Completed"
+                                     || (s.Status != "Cancelled" && s.SessionStart <= DateTime.Now));
+    var upcoming  = sessions.Count(s => s.Status != "Cancelled" && s.SessionStart > DateTime.Now);
+    var cancelled = sessions.Count(s => s.Status == "Cancelled");
+
+    (string Label, string Css) MapStatus(Schedule s)
+    {
+        if (s.Status == "Cancelled") return ("Dibatalkan", "batal");
+        if (s.Status == "Completed" || s.SessionStart <= DateTime.Now) return ("Selesai", "selesai");
+        return ("Akan Datang", "upcoming");
+    }
 }
 
-<a href="javascript:history.back()" class="back-link">← Kembali</a>
+<a href="javascript:history.back()" class="pd-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Kembali ke Detail Pasien
+</a>
 
-<div class="dashboard-header" style="margin-bottom: 20px;">
-    <div>
-        <h1 class="text-header">Riwayat Jadwal: @ViewBag.PatientName</h1>
-        <p class="text-subtitle">Pantau seluruh riwayat konseling untuk pasien ini.</p>
-    </div>
-</div>
+@if (TempData["success"] is string successMsg)
+{
+    <div style="background:#D1FAE5;color:#047857;padding:10px 14px;border-radius:8px;margin-bottom:16px;">@successMsg</div>
+}
 
-<div class="patient-list-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <a href="@Url.Action("AddSchedule", "Psychologist", new { patientId })" style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: var(--primary-purple); color: white; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration:none;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Tambah Jadwal Pasien
-        </a>
-    </div>
+<div class="psh-page">
 
-    @if (!sessions.Any())
-    {
-        <div style="padding: 40px; text-align: center; color: #9CA3AF; border: 1px dashed var(--border-color); border-radius: 12px;">
-            Belum ada jadwal untuk pasien ini.
-        </div>
-    }
-    else
-    {
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-            @{ int idx = 0; }
-            @foreach (var s in sessions)
-            {
-                idx++;
-                var displayStatus = s.Status == "Cancelled" ? "Dibatalkan"
-                                  : s.Status == "Completed" ? "Selesai"
-                                  : (DateTime.Now < s.SessionStart ? "Akan Datang" : "Selesai");
-                <div class="history-card">
-                    <div>
-                        <h3>Konseling @idx - @displayStatus</h3>
-                        <p>@s.SessionStart.ToString("d MMMM yyyy", idCulture)</p>
-                        <p>@s.SessionStart.ToString("HH.mm") - @s.SessionStart.AddMinutes(s.DurationMinutes).ToString("HH.mm")</p>
-                        @if (!string.IsNullOrEmpty(s.Notes))
-                        {
-                            <p style="font-size:12px; opacity:0.85;">@s.Notes</p>
-                        }
-                    </div>
+    @* ── Hero ── *@
+    <div class="psh-hero">
+        <div class="psh-hero-bg" aria-hidden="true"></div>
+        <div class="psh-hero-inner">
+
+            <div class="psh-hero-left">
+                <p class="psh-hero-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Riwayat Konseling
+                </p>
+                <h1 class="psh-hero-name">@ViewBag.PatientName</h1>
+                <p class="psh-hero-sub">Seluruh sesi konseling psikolog tercatat di sini</p>
+            </div>
+
+            <div class="psh-hero-stats">
+                <div class="psh-stat">
+                    <span class="psh-stat-val">@total</span>
+                    <span class="psh-stat-lbl">Total Sesi</span>
                 </div>
-            }
+                <div class="psh-stat psh-stat--selesai">
+                    <span class="psh-stat-val">@completed</span>
+                    <span class="psh-stat-lbl">Selesai</span>
+                </div>
+                <div class="psh-stat psh-stat--upcoming">
+                    <span class="psh-stat-val">@upcoming</span>
+                    <span class="psh-stat-lbl">Akan Datang</span>
+                </div>
+                @if (cancelled > 0)
+                {
+                    <div class="psh-stat psh-stat--batal">
+                        <span class="psh-stat-val">@cancelled</span>
+                        <span class="psh-stat-lbl">Dibatalkan</span>
+                    </div>
+                }
+            </div>
+
+            <button type="button" class="psh-add-btn" onclick="openAddScheduleModal()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Jadwal
+            </button>
+
         </div>
-    }
+    </div>
+
+    @* ── Session list ── *@
+    <div class="psh-list">
+        @if (!sessions.Any())
+        {
+            <div class="psh-empty">
+                <div class="psh-empty-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <p class="psh-empty-title">Belum ada sesi konseling</p>
+                <p class="psh-empty-sub">Tambahkan jadwal konseling pertama untuk pasien ini.</p>
+                <button type="button" class="psh-add-btn psh-add-btn--solid" onclick="openAddScheduleModal()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Tambah Jadwal
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="psh-timeline">
+                @{ int idx = sessions.Count; }
+                @foreach (var s in sessions)
+                {
+                    var (lbl, css) = MapStatus(s);
+                    var endTime    = s.SessionStart.AddMinutes(s.DurationMinutes);
+                    var isLast     = (idx == 1);
+
+                    <div class="psh-item">
+
+                        @* Left: number bubble + connector line stacked vertically *@
+                        <div class="psh-item-left">
+                            <div class="psh-item-num psh-num--@css">@idx</div>
+                            @if (!isLast)
+                            {
+                                <div class="psh-item-line"></div>
+                            }
+                        </div>
+
+                        @* Card *@
+                        <div class="psh-card psh-card--@css">
+                            @* Coloured date panel *@
+                            <div class="psh-card-left">
+                                <div class="psh-card-date-block">
+                                    <span class="psh-card-day">@s.SessionStart.ToString("dd")</span>
+                                    <span class="psh-card-month">@s.SessionStart.ToString("MMM", idCulture).ToUpper()</span>
+                                    <span class="psh-card-year">@s.SessionStart.Year</span>
+                                </div>
+                            </div>
+                            <div class="psh-card-divider"></div>
+                            @* Main content *@
+                            <div class="psh-card-body">
+                                <div class="psh-card-top">
+                                    <h3 class="psh-card-title">Sesi Konseling #@idx</h3>
+                                    <span class="psh-badge psh-badge--@css">
+                                        <span class="psh-badge-dot" aria-hidden="true"></span>
+                                        @lbl
+                                    </span>
+                                </div>
+                                <div class="psh-card-meta">
+                                    <span class="psh-meta-item">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        @s.SessionStart.ToString("HH:mm") – @endTime.ToString("HH:mm")
+                                    </span>
+                                    <span class="psh-meta-sep" aria-hidden="true">·</span>
+                                    <span class="psh-meta-item">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+                                        @s.DurationMinutes menit
+                                    </span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(s.Notes))
+                                {
+                                    <div class="psh-card-notes">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+                                        @s.Notes
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                    idx--;
+                }
+            </div>
+        }
+    </div>
+
 </div>
+
+@await Html.PartialAsync("_AddScheduleModal", ViewBag.AddScheduleForm as PsyAddScheduleViewModel ?? new PsyAddScheduleViewModel())

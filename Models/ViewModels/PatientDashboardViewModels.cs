@@ -1,4 +1,5 @@
 using LightenUp.Web.Models;
+using LightenUp.Web.Models.ViewModels;
 
 namespace LightenUp.Web.Models.ViewModels
 {
@@ -8,6 +9,8 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime Date { get; set; }
         public bool IsToday { get; set; }
         public string? FeelingForDay { get; set; }  // null if no mood logged
+        public bool HasDeadline { get; set; }       // task deadline on this day
+        public bool HasKonseling { get; set; }      // counseling session on this day
         public string DayOfWeekShort => Date.DayOfWeek switch
         {
             DayOfWeek.Monday => "Sen",
@@ -31,12 +34,17 @@ namespace LightenUp.Web.Models.ViewModels
         // Journal card — show latest entry's title + content snippet (any date)
         public int? LatestJournalId { get; set; }
         public string? LatestJournalTitle { get; set; }
+        public string? LatestJournalContent { get; set; }
         public string? LatestJournalSnippet { get; set; }
         public bool HasTodayCheckIn { get; set; }
 
         // Tasks card
         public int OpenTaskCount { get; set; }
         public List<PatientWorksheetPreview> OpenWorksheets { get; set; } = new();
+
+        // Jadwal card
+        public List<JadwalItemViewModel> UpcomingSessions { get; set; } = new();
+        public int UpcomingSessionCount { get; set; }  // KPI for hero banner
     }
 
     public class PatientWorksheetPreview

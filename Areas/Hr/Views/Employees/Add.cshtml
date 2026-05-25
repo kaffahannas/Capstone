@@ -1,52 +1,57 @@
 @model LightenUp.Web.Models.ViewModels.HrAddClientViewModel
 @{
-    ViewData["Title"] = "Tambah Client";
+    ViewData["Title"] = "Tambah Klien";
     ViewBag.ActiveNav = "Klien";
     var referralCode = ViewBag.ReferralCode as string;
 }
 
-<a asp-action="Index" style="text-decoration:none; color:#111;">← Klien Aktif</a>
+@* ── Back link ── *@
+<a class="pd-back" asp-controller="Employees" asp-action="Index">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Klien Aktif
+</a>
 
-<div style="max-width: 560px; margin: 16px auto 0;">
-    <h2 style="margin-bottom: 8px;">Tambah Client</h2>
-    <p style="color:#6B7280; font-size:14px;">
-        Catat karyawan yang akan terdaftar. Mereka mendaftar sendiri di situs LightenUp dengan kode referral perusahaan
+<div style="max-width:640px;">
+    <h2 style="margin:0 0 4px;font-size:22px;font-weight:800;color:var(--text-dark);">Tambah Klien Baru</h2>
+    <p style="margin:0 0 20px;color:var(--text-muted);font-size:14px;">
+        Catat karyawan yang akan mendaftar ke LightenUp dengan kode referral perusahaan.
         @if (!string.IsNullOrEmpty(referralCode))
         {
-            <strong style="color:#7C3AED; letter-spacing:1px;">@referralCode</strong>
+            <br/><strong style="color:var(--primary-purple);">Kode Referral: @referralCode</strong>
         }
-        . Saat mereka mendaftar, sistem otomatis mengaitkan data ini.
     </p>
 
-    <form asp-action="Add" method="post" class="lu-card" style="margin-top:16px;">
-        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:12px;"></div>
+    <form asp-action="Add" method="post">
+        <div class="detail-card">
+            <div asp-validation-summary="ModelOnly" style="background:#FEE2E2;color:#B91C1C;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:13px;"></div>
 
-        <div style="margin-bottom:14px;">
-            <label asp-for="Department" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Tambahkan Divisi</label>
-            <input asp-for="Department" class="onb-input" placeholder="Nama divisi baru" />
-            <span asp-validation-for="Department" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="Department" class="form-label">Divisi</label>
+                <input asp-for="Department" class="form-control" placeholder="Mis. Marketing, Engineering..." />
+                <span asp-validation-for="Department" style="color:#DC2626;font-size:12px;"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FullName" class="form-label">Nama Karyawan</label>
+                <input asp-for="FullName" class="form-control" placeholder="Nama lengkap karyawan" />
+                <span asp-validation-for="FullName" style="color:#DC2626;font-size:12px;"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email" class="form-label">Email Kontak</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="nama@perusahaan.com" />
+                <span asp-validation-for="Email" style="color:#DC2626;font-size:12px;"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EmployeeId" class="form-label">Employee ID <small style="color:var(--text-muted);font-weight:400;">(opsional)</small></label>
+                <input asp-for="EmployeeId" class="form-control" placeholder="EMP-2024-..." />
+            </div>
         </div>
 
-        <div style="margin-bottom:14px;">
-            <label asp-for="FullName" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Tambahkan Karyawan</label>
-            <input asp-for="FullName" class="onb-input" placeholder="Nama karyawan baru" />
-            <span asp-validation-for="FullName" class="text-danger"></span>
-        </div>
-
-        <div style="margin-bottom:14px;">
-            <label asp-for="Email" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Tambahkan Kontak</label>
-            <input asp-for="Email" type="email" class="onb-input" placeholder="employee@company.com" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-
-        <div style="margin-bottom:14px;">
-            <label asp-for="EmployeeId" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Employee ID (opsional)</label>
-            <input asp-for="EmployeeId" class="onb-input" placeholder="EMP-2024-..." />
-        </div>
-
-        <div style="display:flex; gap:12px; margin-top:8px;">
-            <a asp-action="Index" class="btn-secondary" style="flex:1; text-align:center;">Batalkan</a>
-            <button type="submit" class="btn-primary" style="flex:1;">Simpan Pengaturan</button>
+        <div class="modal-footer" style="padding:0;margin-top:16px;">
+            <a asp-action="Index" class="btn-outline">Batalkan</a>
+            <button type="submit" class="btn-fill">Simpan Klien</button>
         </div>
     </form>
 </div>

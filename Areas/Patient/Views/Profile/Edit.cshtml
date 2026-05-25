@@ -2,128 +2,212 @@
 @{
     ViewData["Title"] = "Edit Profil";
     ViewBag.ActiveNav = "Profil";
+    var photoSrc = string.IsNullOrEmpty(Model.CurrentProfilePicture)
+        ? "/lib/bootstrap-icons/icons/person-circle.svg"
+        : Model.CurrentProfilePicture;
 }
 
-<div style="max-width: 720px;">
-    <a asp-action="Index" style="text-decoration:none; color:#111;">← Profil Saya</a>
+<div class="pf-edit-page">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data" class="pf-edit-form">
 
-    <h2 style="margin: 16px 0 24px;">Edit Profile</h2>
-
-    <form asp-action="Edit" method="post" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:12px;"></div>
-
-        <!-- ───── Personal ───── -->
-        <div class="lu-card" style="margin-bottom: 16px;">
-            <h3 class="lu-card-title">Informasi Pribadi</h3>
-
-            <div style="margin-bottom:12px;">
-                <label asp-for="ProfilePicture" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Foto Profil</label>
-                <input asp-for="ProfilePicture" type="file" accept="image/*" />
-            </div>
-
-            <div style="margin-bottom:12px;">
-                <label asp-for="FullName" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nama Lengkap</label>
-                <input asp-for="FullName" class="onb-input" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <!-- ─── Page header bar ─── -->
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <a asp-action="Index" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; border:1.5px solid var(--lu-border); background:#fff; text-decoration:none; color:var(--lu-text); font-size:16px; transition:all 0.2s;">←</a>
                 <div>
-                    <label asp-for="Phone" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nomor Telepon</label>
-                    <input asp-for="Phone" class="onb-input" />
-                </div>
-                <div>
-                    <label asp-for="DateOfBirth" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Tanggal Lahir</label>
-                    <input asp-for="DateOfBirth" type="date" class="onb-input" />
+                    <h1 style="margin:0; font-size:20px; font-weight:800;">Edit Profil</h1>
+                    <p style="margin:0; font-size:13px; color:var(--lu-text-muted);">Perbarui informasi pribadi dan kontak darurat</p>
                 </div>
             </div>
-
-            <div style="margin-top:12px;">
-                <label asp-for="Gender" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Gender</label>
-                <select asp-for="Gender" class="onb-select">
-                    <option value="">Pilih</option>
-                    <option value="Male">Laki-Laki</option>
-                    <option value="Female">Perempuan</option>
-                </select>
+            <div style="display:flex; gap:10px;">
+                <a asp-action="Index" class="pf-btn pf-btn--outline">Batal</a>
+                <button type="submit" class="pf-btn pf-btn--primary">💾 Simpan Perubahan</button>
             </div>
         </div>
 
-        <!-- ───── Work Info ───── -->
-        <div class="lu-card" style="margin-bottom: 16px;">
-            <h3 class="lu-card-title">Informasi Pekerjaan</h3>
+        <div asp-validation-summary="ModelOnly" class="pf-edit-errors"></div>
 
-            @if (Model.IsAlreadyB2B)
-            {
-                <p style="font-size:13px; color:#6B7280;">Perusahaan: <strong>@Model.CurrentCompanyName</strong></p>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                    <div>
-                        <label asp-for="Department" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Divisi</label>
-                        <input asp-for="Department" class="onb-input" />
+        <!-- ─── Main 2-column grid ─── -->
+        <div style="display:grid; grid-template-columns:220px 1fr; gap:16px; align-items:start;">
+
+            <!-- LEFT: Photo + quick info -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+
+                <!-- Photo card -->
+                <div class="lu-card" style="padding:20px; text-align:center;">
+                    <div class="pf-edit-photo-preview-wrap" style="margin:0 auto 14px;">
+                        <img id="pfPhotoPreview" class="pf-edit-photo-preview" src="@photoSrc" alt="Foto profil" />
+                        <label class="pf-edit-photo-change" title="Ganti foto">
+                            📷
+                            <input asp-for="ProfilePicture" type="file" accept="image/*" id="pfPhotoInput" class="pf-edit-upload-input" />
+                        </label>
                     </div>
-                    <div>
-                        <label asp-for="EmployeeId" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Employee ID</label>
-                        <input asp-for="EmployeeId" class="onb-input" />
+                    <p style="margin:0; font-size:12px; color:var(--lu-text-muted); line-height:1.4;">Klik ikon 📷 untuk mengganti foto profil</p>
+                    <p style="margin:6px 0 0; font-size:11px; color:var(--lu-text-muted);">Max 10 MB · JPG, PNG, WEBP</p>
+                </div>
+
+                <!-- Status card -->
+                @if (Model.IsAlreadyB2B)
+                {
+                    <div class="lu-card" style="padding:16px;">
+                        <p style="margin:0 0 8px; font-size:12px; color:var(--lu-text-muted); font-weight:600;">Status Akun</p>
+                        <div style="display:flex; align-items:center; gap:8px; background:#F5F3FF; border:1px solid rgba(124,58,237,0.15); border-radius:10px; padding:10px 12px;">
+                            <span style="font-size:18px;">🏢</span>
+                            <div>
+                                <div style="font-size:12px; color:var(--lu-text-muted);">Terhubung ke</div>
+                                <div style="font-weight:700; font-size:14px; color:#7C3AED;">@Model.CurrentCompanyName</div>
+                            </div>
+                        </div>
+                        <p style="margin:10px 0 0; font-size:11px; color:var(--lu-text-muted);">Divisi ditetapkan melalui kode referral dan tidak dapat diubah manual.</p>
                     </div>
+                }
+                else
+                {
+                    <div class="lu-card" style="padding:16px;">
+                        <p style="margin:0 0 8px; font-size:12px; color:var(--lu-text-muted); font-weight:600;">Bergabung ke Perusahaan</p>
+                        <div class="pf-field" style="margin:0;">
+                            <label asp-for="ReferralCode" class="pf-label">Kode Referral <span class="pf-label-opt">(opsional)</span></label>
+                            <input asp-for="ReferralCode" class="pf-input" placeholder="Kode dari HR perusahaan" />
+                            <span asp-validation-for="ReferralCode" class="pf-field-error"></span>
+                        </div>
+                        <p style="margin:8px 0 0; font-size:11px; color:var(--lu-text-muted);">Masukkan kode dari HRD untuk mengaktifkan akun karyawan.</p>
+                    </div>
+                }
+
+                <!-- Tips card -->
+                <div class="lu-card" style="padding:16px; background:linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%); border:1px solid rgba(124,58,237,0.12);">
+                    <p style="margin:0 0 8px; font-size:12px; font-weight:700; color:#7C3AED;">💡 Tips Profil Lengkap</p>
+                    <ul style="margin:0; padding:0 0 0 16px; font-size:11px; color:var(--lu-text-muted); line-height:1.8;">
+                        <li>Isi kontak darurat agar tim bisa membantu saat dibutuhkan</li>
+                        <li>Tanggal lahir membantu personalisasi program</li>
+                        <li>Nomor telepon aktif untuk notifikasi jadwal</li>
+                    </ul>
                 </div>
-            }
-            else
-            {
-                <label asp-for="ReferralCode" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Kode Referral Perusahaan (opsional)</label>
-                <input asp-for="ReferralCode" class="onb-input" placeholder="Masukkan kode referral untuk bergabung" />
-                <span asp-validation-for="ReferralCode" class="text-danger"></span>
-            }
+
+            </div>
+
+            <!-- RIGHT: Form panels -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+
+                <!-- Data diri panel -->
+                <section class="lu-card pf-edit-panel pf-edit-panel--personal">
+                    <header class="pf-edit-panel-head">
+                        <span class="pf-edit-panel-ico" aria-hidden="true">👤</span>
+                        <h2 class="pf-edit-panel-title">Data Diri &amp; Pekerjaan</h2>
+                    </header>
+                    <div class="pf-edit-panel-body">
+                        <!-- Row 1: Nama (full width) -->
+                        <div class="pf-field" style="margin-bottom:14px;">
+                            <label asp-for="FullName" class="pf-label">Nama Lengkap</label>
+                            <input asp-for="FullName" class="pf-input" placeholder="Nama lengkap sesuai identitas" />
+                            <span asp-validation-for="FullName" class="pf-field-error"></span>
+                        </div>
+                        <!-- Row 2: Telepon + Tanggal Lahir -->
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+                            <div class="pf-field" style="margin:0;">
+                                <label asp-for="Phone" class="pf-label">Nomor Telepon</label>
+                                <input asp-for="Phone" class="pf-input" placeholder="+62 8xx xxxx xxxx" />
+                            </div>
+                            <div class="pf-field" style="margin:0;">
+                                <label asp-for="DateOfBirth" class="pf-label">Tanggal Lahir</label>
+                                <input asp-for="DateOfBirth" type="date" class="pf-input" />
+                            </div>
+                        </div>
+                        <!-- Row 3: Jenis Kelamin (+ Employee ID if B2B) -->
+                        @if (Model.IsAlreadyB2B)
+                        {
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                                <div class="pf-field" style="margin:0;">
+                                    <label asp-for="Gender" class="pf-label">Jenis Kelamin</label>
+                                    <select asp-for="Gender" class="pf-select">
+                                        <option value="">Pilih</option>
+                                        <option value="Male">Laki-Laki</option>
+                                        <option value="Female">Perempuan</option>
+                                    </select>
+                                </div>
+                                <div class="pf-field" style="margin:0;">
+                                    <label asp-for="EmployeeId" class="pf-label">ID Karyawan</label>
+                                    <input asp-for="EmployeeId" class="pf-input" placeholder="Nomor karyawan" />
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pf-field" style="margin:0;">
+                                <label asp-for="Gender" class="pf-label">Jenis Kelamin</label>
+                                <select asp-for="Gender" class="pf-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Male">Laki-Laki</option>
+                                    <option value="Female">Perempuan</option>
+                                </select>
+                            </div>
+                        }
+                        <p class="pf-edit-panel-note pf-edit-panel-note--info" style="margin-top:14px; margin-bottom:0;">
+                            Data ini digunakan untuk personalisasi layanan dan program kesehatan mental Anda.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Kontak darurat panel -->
+                <section class="lu-card pf-edit-panel pf-edit-panel--emergency">
+                    <header class="pf-edit-panel-head">
+                        <span class="pf-edit-panel-ico" aria-hidden="true">🆘</span>
+                        <h2 class="pf-edit-panel-title">Kontak Darurat</h2>
+                    </header>
+                    <div class="pf-edit-panel-body">
+                        <!-- Row 1: Nama + Hubungan -->
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+                            <div class="pf-field" style="margin:0;">
+                                <label asp-for="EmergencyContactName" class="pf-label">Nama Kontak</label>
+                                <input asp-for="EmergencyContactName" class="pf-input" placeholder="Nama lengkap" />
+                            </div>
+                            <div class="pf-field" style="margin:0;">
+                                <label asp-for="EmergencyContactRelation" class="pf-label">Hubungan</label>
+                                <input asp-for="EmergencyContactRelation" class="pf-input" placeholder="Pasangan, Saudara, Ortu…" />
+                            </div>
+                        </div>
+                        <!-- Row 2: Telepon + Email -->
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                            <div class="pf-field" style="margin:0;">
+                                <label asp-for="EmergencyContactPhone" class="pf-label">Nomor Telepon</label>
+                                <input asp-for="EmergencyContactPhone" class="pf-input" placeholder="+62 8xx xxxx xxxx" />
+                            </div>
+                            <div class="pf-field" style="margin:0;">
+                                <label asp-for="EmergencyContactEmail" class="pf-label">Email</label>
+                                <input asp-for="EmergencyContactEmail" type="email" class="pf-input" placeholder="email@contoh.com" />
+                                <span asp-validation-for="EmergencyContactEmail" class="pf-field-error"></span>
+                            </div>
+                        </div>
+                        <p class="pf-edit-panel-note" style="margin-top:14px; margin-bottom:0;">
+                            Orang yang dapat dihubungi saat Anda membutuhkan bantuan mendesak.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Save button row -->
+                <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:4px;">
+                    <a asp-action="Index" class="pf-btn pf-btn--outline">Batal</a>
+                    <button type="submit" class="pf-btn pf-btn--primary">💾 Simpan Perubahan</button>
+                </div>
+
+            </div>
         </div>
 
-        <!-- ───── Emergency Contact ───── -->
-        <div class="lu-card" style="margin-bottom: 16px;">
-            <h3 class="lu-card-title">Kontak Darurat (Orang Terdekat)</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
-                <div>
-                    <label asp-for="EmergencyContactName" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nama</label>
-                    <input asp-for="EmergencyContactName" class="onb-input" />
-                </div>
-                <div>
-                    <label asp-for="EmergencyContactRelation" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Hubungan</label>
-                    <input asp-for="EmergencyContactRelation" class="onb-input" placeholder="Pasangan, Saudara, ..." />
-                </div>
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                <div>
-                    <label asp-for="EmergencyContactPhone" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Telepon</label>
-                    <input asp-for="EmergencyContactPhone" class="onb-input" />
-                </div>
-                <div>
-                    <label asp-for="EmergencyContactEmail" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Email</label>
-                    <input asp-for="EmergencyContactEmail" type="email" class="onb-input" />
-                    <span asp-validation-for="EmergencyContactEmail" class="text-danger"></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- ───── Notification preferences ───── -->
-        <div class="lu-card prefs-card" style="margin-bottom: 16px;">
-            <h3 class="lu-card-title">Preferensi dan Notifikasi</h3>
-            <div class="prefs-row">
-                <span class="label">Pengingat Untuk Check Mood</span>
-                <label class="toggle"><input type="checkbox" asp-for="RemindMoodCheck" /><span class="slider"></span></label>
-            </div>
-            <div class="prefs-row">
-                <span class="label">Pengingat Sesi Konseling</span>
-                <label class="toggle"><input type="checkbox" asp-for="RemindCounselingSession" /><span class="slider"></span></label>
-            </div>
-            <div class="prefs-row">
-                <span class="label">Notifikasi dari HR dan Psikolog</span>
-                <label class="toggle"><input type="checkbox" asp-for="AllowHrPsychologistNotif" /><span class="slider"></span></label>
-            </div>
-            <div class="prefs-row">
-                <span class="label">Pilih Waktu Notifikasi Pengingat</span>
-                <input asp-for="ReminderTime" type="time" style="border:1px solid #E5E7EB; border-radius:8px; padding:6px 10px;" />
-            </div>
-        </div>
-
-        <div style="display:flex; gap:12px;">
-            <a asp-action="Index" class="btn-secondary" style="flex:1; text-align:center;">Batal</a>
-            <button type="submit" class="btn-primary" style="flex:1;">Simpan Perubahan</button>
-        </div>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            var input = document.getElementById('pfPhotoInput');
+            var preview = document.getElementById('pfPhotoPreview');
+            if (!input || !preview) return;
+            input.addEventListener('change', function () {
+                var file = input.files && input.files[0];
+                if (!file) return;
+                preview.src = URL.createObjectURL(file);
+            });
+        })();
+    </script>
+}

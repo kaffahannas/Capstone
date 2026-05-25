@@ -3,127 +3,644 @@
     ViewData["Title"] = Model.FullName;
     ViewBag.ActiveNav = "Klien";
 
-    var labelsJson = Json.Serialize(Model.ChartDates.Select(d => d.ToString("dd/MM")));
-    var dataJson = Json.Serialize(Model.ChartScores);
+    var labelsJson   = Json.Serialize(Model.ChartDates.Select(d => d.ToString("dd/MM")));
+    var dataJson     = Json.Serialize(Model.ChartScores);
+    var hasMoodData  = Model.ChartScores.Any(s => s > 0);
+
+    var statusLower  = (Model.Status ?? "sehat").ToLower();
+    var initial      = string.Join("", (Model.FullName ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpper(p[0])));
+    var idCulture    = new System.Globalization.CultureInfo("id-ID");
+    var openWs       = Model.OpenWorksheetCount;
+    var sehatPct     = Model.SehatPct;
+    var beresikoPct  = Model.BeresikoPct;
+    var bahayaPct    = Model.BahayaPct;
 }
 
 @section Head {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 }
 
-<a asp-action="Index" style="text-decoration:none; color:#111;">← Klien Aktif</a>
+@* ── AJAX toast ── *@
+<div class="hrpf-toast hrpf-toast--ok" id="hrdtToast"
+     style="opacity:0;pointer-events:none;transition:opacity .4s;" role="alert" aria-live="polite"></div>
 
-<div style="max-width: 720px; margin-top:16px;">
+@* ── Back link ── *@
+<a href="@Url.Action("Index", "Employees", new { area = "Hr" })" class="pd-back hrdt-back">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Kembali ke Daftar Klien
+</a>
 
-    <!-- Header card -->
-    <div class="lu-card" style="display:flex; gap:16px; align-items:center; margin-bottom:16px;">
-        <img src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : Model.ProfilePicture)"
-             style="width:64px; height:64px; border-radius:999px; object-fit:cover; background:#EDE9FE;" />
-        <div style="flex:1;">
-            <h2 style="margin:0;">@Model.FullName</h2>
-            <div style="color:#6B7280; font-size:13px;">
-                @Model.Gender · @Model.Age @if (!string.IsNullOrEmpty(Model.Address)) { <span>· @Model.Address</span>} @if (!string.IsNullOrEmpty(Model.Phone)) { <span>· @Model.Phone</span> }
-            </div>
-        </div>
-    </div>
+<div class="pd-page">
 
-    <!-- Status + Catatan -->
-    <div class="lu-card" style="margin-bottom:16px;">
-        <h3 class="lu-card-title">Status</h3>
-        <span class="status-badge @Model.Status.ToLowerInvariant()">@Model.Status</span>
+    @* ── Hero ── *@
+    <div class="hrd-hero hrd-hero--@statusLower hrdt-hero">
+        <div class="hrd-hero-bg" aria-hidden="true"></div>
+        <div class="hrdt-hero-inner">
 
-        <h3 class="lu-card-title" style="margin-top:16px;">Catatan</h3>
-        <form asp-action="EditSymptoms" method="post">
-            <input type="hidden" name="PatientId" value="@Model.PatientId" />
-            <textarea name="Symptoms" rows="3" class="mood-textarea" placeholder="Catatan / gejala...">@Model.Symptoms</textarea>
-            <div style="margin-top:8px; display:flex; justify-content:flex-end;">
-                <button type="submit" class="btn-pill ghost">Simpan Catatan</button>
-            </div>
-        </form>
-    </div>
+            @* Avatar *@
+            <div class="hrdt-hero-av" aria-hidden="true">@initial</div>
 
-    <!-- Today's journal -->
-    <div class="lu-card" style="margin-bottom:16px;">
-        <h3 class="lu-card-title">Jurnal Hari Ini</h3>
-        @if (string.IsNullOrEmpty(Model.TodayJournalSnippet))
-        {
-            <p style="color:#9CA3AF;">Belum ada jurnal hari ini.</p>
-        }
-        else
-        {
-            <p style="background:#FAF5FF; padding:10px 14px; border-radius:8px;">"@Model.TodayJournalSnippet"</p>
-        }
-    </div>
-
-    <!-- Mood chart -->
-    <div class="lu-card" style="margin-bottom:16px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <h3 class="lu-card-title" style="margin:0;">Mood Tracker</h3>
-            <div style="display:flex; gap:6px;">
-                <a class="task-chip @(Model.ChartWindow == "Week" ? "selected" : "")" asp-action="Detail" asp-route-id="@Model.PatientId" asp-route-window="Week">Week</a>
-                <a class="task-chip @(Model.ChartWindow == "Month" ? "selected" : "")" asp-action="Detail" asp-route-id="@Model.PatientId" asp-route-window="Month">Month</a>
-            </div>
-        </div>
-        <canvas id="moodChart" height="100"></canvas>
-        <div style="display:flex; justify-content:space-around; margin-top:12px; font-size:13px;">
-            <span style="color:#047857;"><strong>@Model.SehatPct%</strong> Sehat</span>
-            <span style="color:#B45309;"><strong>@Model.BeresikoPct%</strong> Beresiko</span>
-            <span style="color:#B91C1C;"><strong>@Model.BahayaPct%</strong> Bahaya</span>
-        </div>
-    </div>
-
-    <!-- Report button -->
-    <a class="btn-primary" asp-controller="Reports" asp-action="Create" asp-route-patientId="@Model.PatientId"
-       style="display:block; text-align:center; padding:14px; margin-bottom:16px;">
-        Laporkan ke Psikolog
-    </a>
-
-    <!-- Sessions + Worksheets preview -->
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div class="lu-card">
-            <h4 style="margin:0 0 8px;">Jadwal</h4>
-            @if (Model.NextSessionStart.HasValue)
-            {
-                <div style="font-size:13px;">
-                    @Model.NextSessionStart.Value.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"))<br/>
-                    <span style="color:#6B7280;">@Model.NextSessionStart.Value.ToString("HH:mm")</span>
+            @* Name + meta *@
+            <div class="hrdt-hero-info">
+                <p class="hrdt-hero-eyebrow">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    Karyawan · Data Klien HR
+                </p>
+                <h1 class="hrdt-hero-name">@Model.FullName</h1>
+                <div class="hrdt-hero-meta">
+                    @if (!string.IsNullOrEmpty(Model.Gender))
+                    {
+                        <span>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            @Model.Gender
+                        </span>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Age) && Model.Age != "—")
+                    {
+                        <span>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            @Model.Age
+                        </span>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Phone))
+                    {
+                        <span>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            @Model.Phone
+                        </span>
+                    }
                 </div>
-            }
-            else { <span style="color:#9CA3AF;">Belum ada jadwal</span> }
-            <a class="btn-pill ghost" asp-controller="Schedules" asp-action="Index" style="margin-top:10px; display:inline-block;">Lihat Riwayat</a>
-        </div>
-        <div class="lu-card">
-            <h4 style="margin:0 0 8px;">Worksheet</h4>
-            @if (Model.OpenWorksheetCount > 0)
-            {
-                <div style="font-size:13px;">Ada <strong>@Model.OpenWorksheetCount worksheet</strong> aktif</div>
-            }
-            else { <span style="color:#9CA3AF;">Belum ada worksheet aktif</span> }
-            <a class="btn-pill ghost" asp-controller="Worksheets" asp-action="Index" style="margin-top:10px; display:inline-block;">Lihat Riwayat</a>
+            </div>
+
+            @* Stats *@
+            <div class="hrd-stats hrdt-hero-stats">
+                <div class="hrd-stat hrdt-stat--status hrdt-stat--@statusLower">
+                    <span class="hrdt-stat-status-dot" aria-hidden="true"></span>
+                    <span class="hrdt-stat-status-val">@Model.Status</span>
+                    <span class="hrd-stat-lbl">Status Mental</span>
+                </div>
+                <div class="hrd-stat">
+                    <span class="hrd-stat-ico">📋</span>
+                    <span class="hrd-stat-val">@openWs</span>
+                    <span class="hrd-stat-lbl">Worksheet Aktif</span>
+                </div>
+                <div class="hrd-stat hrdt-stat--mood">
+                    <span class="hrd-stat-ico">😊</span>
+                    <span class="hrd-stat-val">@sehatPct%</span>
+                    <span class="hrd-stat-lbl">Mood Sehat</span>
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+
+    @* ── 2-col grid ── *@
+    <div class="pd-grid">
+
+        @* ─── LEFT SIDEBAR ─── *@
+        <div class="pd-sidebar">
+
+            @* Info Karyawan *@
+            <div class="pd-card hrdt-info-card">
+                <div class="pd-card-accent" style="background:var(--primary-purple)"></div>
+                <div class="pd-card-head">
+                    <div class="pd-card-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <h3 class="pd-card-title">Info Karyawan</h3>
+                </div>
+                <div class="pd-card-body">
+                    <div class="hrdt-field">
+                        <span class="hrdt-field-label">Jenis Kelamin</span>
+                        <span class="hrdt-field-val">@(Model.Gender ?? "—")</span>
+                    </div>
+                    <div class="hrdt-field">
+                        <span class="hrdt-field-label">Usia</span>
+                        <span class="hrdt-field-val">@Model.Age</span>
+                    </div>
+                    <div class="hrdt-field">
+                        <span class="hrdt-field-label">Telepon</span>
+                        <span class="hrdt-field-val">@(Model.Phone ?? "—")</span>
+                    </div>
+                    <div class="hrdt-field">
+                        <span class="hrdt-field-label">Alamat</span>
+                        <span class="hrdt-field-val">@(Model.Address ?? "—")</span>
+                    </div>
+                </div>
+            </div>
+
+            @* Sesi Berikutnya *@
+            <div class="pd-card hrdt-session-card">
+                <div class="pd-card-head">
+                    <div class="pd-card-icon" style="background:#FEF3C7;color:#D97706">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <h3 class="pd-card-title">Sesi Berikutnya</h3>
+                </div>
+                <div class="pd-card-body">
+                    @if (Model.NextSessionStart.HasValue)
+                    {
+                        <div class="hrdt-session-box">
+                            <div class="hrdt-session-date">
+                                <span class="hrdt-session-dd">@Model.NextSessionStart.Value.ToString("dd")</span>
+                                <div>
+                                    <span class="hrdt-session-mon">@Model.NextSessionStart.Value.ToString("MMM yyyy", idCulture).ToUpper()</span>
+                                    <span class="hrdt-session-time">
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        @Model.NextSessionStart.Value.ToString("HH:mm") WIB
+                                    </span>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.NextSessionNote))
+                            {
+                                <p class="hrdt-session-note">@Model.NextSessionNote</p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="hrdt-no-session">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            <span>Tidak ada sesi terjadwal</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* Worksheet *@
+            <div class="pd-card hrdt-ws-card">
+                <div class="pd-card-head">
+                    <div class="pd-card-icon" style="background:#ECFDF5;color:#059669">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+                    </div>
+                    <h3 class="pd-card-title">Worksheet</h3>
+                </div>
+                <div class="pd-card-body" style="align-items:center;flex-direction:row;gap:10px;flex-wrap:wrap;">
+                    @if (openWs > 0)
+                    {
+                        <span class="hrdt-ws-num">@openWs</span>
+                        <span style="font-size:13px;color:var(--text-muted)">worksheet aktif</span>
+                    }
+                    else
+                    {
+                        <span style="font-size:13px;color:var(--text-muted);font-style:italic">Tidak ada worksheet aktif</span>
+                    }
+                </div>
+            </div>
+
+            @* Aksi Cepat *@
+            <div class="pd-card">
+                <div class="pd-card-head">
+                    <div class="pd-card-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+                    </div>
+                    <h3 class="pd-card-title">Aksi Cepat</h3>
+                </div>
+                <div class="pd-card-body" style="gap:8px">
+                    <button type="button" onclick="openHrdtModal('reportModal')" class="hrdt-action-btn hrdt-action-btn--purple">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Laporkan ke Psikolog
+                    </button>
+                    <button type="button" onclick="openHrdtModal('scheduleModal')" class="hrdt-action-btn hrdt-action-btn--blue">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Minta Jadwal Sesi
+                    </button>
+                    <button type="button" onclick="openHrdtModal('worksheetModal')" class="hrdt-action-btn hrdt-action-btn--green">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>
+                        Minta Worksheet
+                    </button>
+                </div>
+            </div>
+
+        </div>@* /pd-sidebar *@
+
+        @* ─── RIGHT MAIN AREA ─── *@
+        <div class="pd-main">
+
+            @* Jurnal Hari Ini *@
+            <div class="pd-card pd-card--plain hrdt-journal-card">
+                <div class="pd-card-head">
+                    <div class="pd-card-icon" style="background:#EFF6FF;color:#3B82F6">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </div>
+                    <h3 class="pd-card-title">Jurnal Hari Ini</h3>
+                    <span class="hrdt-card-date">@DateTime.Today.ToString("d MMMM yyyy", idCulture)</span>
+                </div>
+                <div class="pd-card-body">
+                    @if (string.IsNullOrEmpty(Model.TodayJournalSnippet))
+                    {
+                        <div class="hrdt-journal-empty">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Belum ada jurnal hari ini dari karyawan.</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="hrdt-section-label">Dari Karyawan</p>
+                        <div class="hrdt-journal-box">
+                            <div class="hrdt-journal-quote" aria-hidden="true">"</div>
+                            <p class="hrdt-journal-text">@Model.TodayJournalSnippet</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* Catatan / Gejala HR *@
+            <div class="pd-card pd-card--plain hrdt-notes-card">
+                <div class="pd-card-head">
+                    <div class="pd-card-icon" style="background:#F5F3FF;color:#7C3AED">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </div>
+                    <h3 class="pd-card-title">Catatan HR</h3>
+                    @if (!string.IsNullOrEmpty(Model.Symptoms))
+                    {
+                        <span class="hrdt-notes-exists-chip">Ada catatan</span>
+                    }
+                </div>
+                <div class="pd-card-body" style="gap:0;padding-top:0">
+                    <form asp-action="EditSymptoms" method="post" class="hrdt-notes-form">
+                        <input type="hidden" name="PatientId" value="@Model.PatientId" />
+                        <textarea name="Symptoms" id="hrNotesArea" class="hrdt-notes-textarea"
+                                  placeholder="Tulis catatan atau gejala yang perlu diperhatikan oleh psikolog...">@Model.Symptoms</textarea>
+                        <div class="hrdt-notes-footer">
+                            <span class="hrdt-notes-hint">Catatan ini hanya terlihat oleh HR dan Psikolog.</span>
+                            <button type="submit" class="hrdt-save-btn">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @* Mood Tracker *@
+            <div class="pd-card pd-card--plain pd-mood-card hrdt-mood-card">
+                <div class="pd-card-head">
+                    <div class="pd-card-icon" style="background:#F5F3FF;color:#7C3AED">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <h3 class="pd-card-title">Mood Tracker</h3>
+                    <div class="pd-period-btns">
+                        <a class="pd-period-btn @(Model.ChartWindow == "Week"  ? "active" : "")"
+                           asp-action="Detail" asp-route-id="@Model.PatientId" asp-route-window="Week">7H</a>
+                        <a class="pd-period-btn @(Model.ChartWindow == "Month" ? "active" : "")"
+                           asp-action="Detail" asp-route-id="@Model.PatientId" asp-route-window="Month">30H</a>
+                    </div>
+                </div>
+                <div class="pd-card-body">
+                    <div class="pd-chart-wrap" id="moodChartWrap" style="@(!hasMoodData ? "display:none" : "")">
+                        <canvas id="moodChart"></canvas>
+                    </div>
+                    <div class="pd-mood-legend" id="moodLegend" style="@(!hasMoodData ? "display:none" : "")">
+                        <div class="pd-mood-leg-item pd-mood-leg--sehat">
+                            <span class="pd-mood-leg-val">@sehatPct%</span>
+                            <span class="pd-mood-leg-lbl">Sehat</span>
+                        </div>
+                        <div class="pd-mood-leg-divider"></div>
+                        <div class="pd-mood-leg-item pd-mood-leg--beresiko">
+                            <span class="pd-mood-leg-val">@beresikoPct%</span>
+                            <span class="pd-mood-leg-lbl">Beresiko</span>
+                        </div>
+                        <div class="pd-mood-leg-divider"></div>
+                        <div class="pd-mood-leg-item pd-mood-leg--bahaya">
+                            <span class="pd-mood-leg-val">@bahayaPct%</span>
+                            <span class="pd-mood-leg-lbl">Bahaya</span>
+                        </div>
+                    </div>
+                    <div class="pd-empty-mood" id="moodEmpty" style="@(hasMoodData ? "display:none" : "")">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        <p>Belum ada data mood pada periode ini.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>@* /pd-main *@
+
+    </div>@* /pd-grid *@
+
+    @* ══════ MODAL: Laporkan ke Psikolog ══════ *@
+    <div class="hrpf-modal-overlay" id="reportModal" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+        <div class="hrpf-modal">
+            <div class="hrpf-modal-head">
+                <div class="hrpf-modal-head-icon" style="background:#F5F3FF;color:#7C3AED">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <h2 class="hrpf-modal-title" id="reportModalTitle">Laporkan ke Psikolog</h2>
+                <button class="hrpf-modal-close" type="button" onclick="closeHrdtModal('reportModal')" aria-label="Tutup">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="hrpf-modal-body">
+                <p style="font-size:12.5px;color:var(--lu-text-muted);margin:0 0 14px;line-height:1.6;">
+                    Catatan akan dikirim ke psikolog aktif karyawan ini.
+                    Pilih <strong>Simpan Draft</strong> untuk menyimpan tanpa mengirim email.
+                </p>
+                <form id="reportForm" action="@Url.Action("CreateModal", "Reports", new { area = "Hr" })" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="patientId" value="@Model.PatientId" />
+                    <input type="hidden" name="send" id="reportSendFlag" value="false" />
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="reportNotesInput">Catatan untuk Psikolog</label>
+                        <textarea name="notes" id="reportNotesInput" rows="5" class="hrpf-modal-input"
+                                  placeholder="Jelaskan kondisi karyawan, kekhawatiran Anda, atau hal-hal penting yang perlu diperhatikan psikolog…"></textarea>
+                    </div>
+                    <div id="reportModalErr" style="display:none;color:#B91C1C;font-size:12.5px;padding:6px 10px;background:#FEE2E2;border-radius:8px;margin-top:4px;"></div>
+                </form>
+            </div>
+            <div class="hrpf-modal-foot">
+                <button type="button" class="hrpf-modal-cancel" onclick="closeHrdtModal('reportModal')">Batal</button>
+                <button type="button" id="reportDraftBtn" class="hrpf-modal-save--ghost">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                    Simpan Draft
+                </button>
+                <button type="button" id="reportSendBtn" class="hrpf-modal-save">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Kirim ke Psikolog
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @* ══════ MODAL: Minta Jadwal Sesi ══════ *@
+    <div class="hrpf-modal-overlay" id="scheduleModal" role="dialog" aria-modal="true" aria-labelledby="scheduleModalTitle">
+        <div class="hrpf-modal">
+            <div class="hrpf-modal-head">
+                <div class="hrpf-modal-head-icon" style="background:#EFF6FF;color:#3B82F6">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <h2 class="hrpf-modal-title" id="scheduleModalTitle">Minta Jadwal Sesi</h2>
+                <button class="hrpf-modal-close" type="button" onclick="closeHrdtModal('scheduleModal')" aria-label="Tutup">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="hrpf-modal-body">
+                <p style="font-size:12.5px;color:var(--lu-text-muted);margin:0 0 14px;line-height:1.6;">
+                    Permintaan akan diteruskan ke psikolog aktif karyawan ini untuk ditindaklanjuti.
+                </p>
+                <form id="scheduleForm" action="@Url.Action("RequestModal", "Schedules", new { area = "Hr" })" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="patientId" value="@Model.PatientId" />
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="scheduleDate">Tanggal &amp; Waktu yang Diusulkan (opsional)</label>
+                        <input type="datetime-local" name="proposedSessionDate" id="scheduleDate" class="hrpf-modal-input" />
+                    </div>
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="scheduleNotes">Catatan (opsional)</label>
+                        <textarea name="notes" id="scheduleNotes" rows="3" class="hrpf-modal-input"
+                                  placeholder="Topik sesi, kebutuhan khusus, preferensi waktu, dll…"></textarea>
+                    </div>
+                    <div id="scheduleModalErr" style="display:none;color:#B91C1C;font-size:12.5px;padding:6px 10px;background:#FEE2E2;border-radius:8px;margin-top:4px;"></div>
+                </form>
+            </div>
+            <div class="hrpf-modal-foot">
+                <button type="button" class="hrpf-modal-cancel" onclick="closeHrdtModal('scheduleModal')">Batal</button>
+                <button type="button" id="scheduleSubmitBtn" class="hrpf-modal-save">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Kirim Permintaan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @* ══════ MODAL: Minta Worksheet ══════ *@
+    <div class="hrpf-modal-overlay" id="worksheetModal" role="dialog" aria-modal="true" aria-labelledby="worksheetModalTitle">
+        <div class="hrpf-modal">
+            <div class="hrpf-modal-head">
+                <div class="hrpf-modal-head-icon" style="background:#ECFDF5;color:#059669">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>
+                </div>
+                <h2 class="hrpf-modal-title" id="worksheetModalTitle">Minta Worksheet</h2>
+                <button class="hrpf-modal-close" type="button" onclick="closeHrdtModal('worksheetModal')" aria-label="Tutup">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="hrpf-modal-body">
+                <p style="font-size:12.5px;color:var(--lu-text-muted);margin:0 0 14px;line-height:1.6;">
+                    Permintaan akan diteruskan ke psikolog aktif untuk diberikan sebagai tugas kepada karyawan.
+                </p>
+                <form id="worksheetForm" action="@Url.Action("RequestModal", "Worksheets", new { area = "Hr" })" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="PatientId" value="@Model.PatientId" />
+                    <input type="hidden" name="RequestType" value="Worksheet" />
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="wsTaskName">Judul Tugas (opsional)</label>
+                        <input type="text" name="ProposedTaskName" id="wsTaskName" class="hrpf-modal-input"
+                               placeholder="Mis. Latihan pernapasan 10 menit/hari" maxlength="200" />
+                    </div>
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="wsDeadline">Tenggat Waktu (opsional)</label>
+                        <input type="date" name="ProposedDeadline" id="wsDeadline" class="hrpf-modal-input" />
+                    </div>
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="wsNotes">Catatan (opsional)</label>
+                        <textarea name="Notes" id="wsNotes" rows="3" class="hrpf-modal-input"
+                                  placeholder="Konteks atau instruksi tambahan untuk psikolog…"></textarea>
+                    </div>
+                    <div id="worksheetModalErr" style="display:none;color:#B91C1C;font-size:12.5px;padding:6px 10px;background:#FEE2E2;border-radius:8px;margin-top:4px;"></div>
+                </form>
+            </div>
+            <div class="hrpf-modal-foot">
+                <button type="button" class="hrpf-modal-cancel" onclick="closeHrdtModal('worksheetModal')">Batal</button>
+                <button type="button" id="worksheetSubmitBtn" class="hrpf-modal-save">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Kirim Permintaan
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>@* /pd-page *@
 
 @section Scripts {
-    <script>
-        new Chart(document.getElementById('moodChart'), {
-            type: 'line',
-            data: {
-                labels: @Html.Raw(labelsJson),
-                datasets: [{
-                    data: @Html.Raw(dataJson),
-                    borderColor: '#7C3AED',
-                    backgroundColor: 'rgba(124, 58, 237, 0.12)',
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: { y: { min: 0, max: 5, ticks: { stepSize: 1 } } },
-                plugins: { legend: { display: false } }
+<script>
+(function () {
+
+    /* ── Modal open / close ── */
+    function openHrdtModal(id) {
+        document.getElementById(id).classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeHrdtModal(id) {
+        document.getElementById(id).classList.remove('is-open');
+        document.body.style.overflow = '';
+        // Clear errors
+        const err = document.getElementById(id.replace('Modal', 'ModalErr'));
+        if (err) { err.style.display = 'none'; err.textContent = ''; }
+    }
+    window.openHrdtModal  = openHrdtModal;
+    window.closeHrdtModal = closeHrdtModal;
+
+    // Close on overlay click
+    document.querySelectorAll('.hrpf-modal-overlay').forEach(ov => {
+        ov.addEventListener('click', e => { if (e.target === ov) closeHrdtModal(ov.id); });
+    });
+    // Close on Escape
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.hrpf-modal-overlay.is-open')
+                .forEach(ov => closeHrdtModal(ov.id));
+        }
+    });
+
+    /* ── Toast ── */
+    let toastTimer;
+    function showHrdtToast(msg, ok) {
+        const t = document.getElementById('hrdtToast');
+        t.textContent = msg;
+        t.className = 'hrpf-toast hrpf-toast--' + (ok ? 'ok' : 'err');
+        t.style.transition = 'none';
+        t.style.opacity = '1';
+        t.style.pointerEvents = 'none';
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            t.style.transition = 'opacity .4s';
+            t.style.opacity = '0';
+        }, 3400);
+    }
+
+    /* ── Generic AJAX form submit ── */
+    async function ajaxSubmit(formId, modalId, errId, setLoading) {
+        const form = document.getElementById(formId);
+        const errDiv = document.getElementById(errId);
+        const fd = new FormData(form);
+        const token = form.querySelector('[name=__RequestVerificationToken]').value;
+
+        setLoading(true);
+        errDiv.style.display = 'none';
+        try {
+            const res = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token },
+                body: fd
+            });
+            const data = await res.json();
+            if (data.ok) {
+                form.reset();
+                closeHrdtModal(modalId);
+                showHrdtToast(data.message || 'Berhasil!', true);
+            } else {
+                const msgs = (data.errors || ['Terjadi kesalahan.']).join(' ');
+                errDiv.textContent = msgs;
+                errDiv.style.display = 'block';
             }
-        });
-    </script>
+        } catch (_) {
+            errDiv.textContent = 'Terjadi kesalahan jaringan. Coba lagi.';
+            errDiv.style.display = 'block';
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    /* ── Report modal ── */
+    const reportDraft = document.getElementById('reportDraftBtn');
+    const reportSend  = document.getElementById('reportSendBtn');
+    const reportFlag  = document.getElementById('reportSendFlag');
+    function reportSetLoading(on) {
+        reportDraft.disabled = on;
+        reportSend.disabled  = on;
+        reportSend.textContent = on ? 'Mengirim…' : '';
+        if (!on) {
+            reportSend.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim ke Psikolog';
+        }
+    }
+    reportDraft.addEventListener('click', () => {
+        reportFlag.value = 'false';
+        ajaxSubmit('reportForm', 'reportModal', 'reportModalErr', reportSetLoading);
+    });
+    reportSend.addEventListener('click', () => {
+        reportFlag.value = 'true';
+        ajaxSubmit('reportForm', 'reportModal', 'reportModalErr', reportSetLoading);
+    });
+
+    /* ── Schedule modal ── */
+    const scheduleBtn = document.getElementById('scheduleSubmitBtn');
+    function scheduleSetLoading(on) {
+        scheduleBtn.disabled = on;
+        scheduleBtn.textContent = on ? 'Mengirim…' : '';
+        if (!on) {
+            scheduleBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Permintaan';
+        }
+    }
+    scheduleBtn.addEventListener('click', () => {
+        ajaxSubmit('scheduleForm', 'scheduleModal', 'scheduleModalErr', scheduleSetLoading);
+    });
+
+    /* ── Worksheet modal ── */
+    const worksheetBtn = document.getElementById('worksheetSubmitBtn');
+    function worksheetSetLoading(on) {
+        worksheetBtn.disabled = on;
+        worksheetBtn.textContent = on ? 'Mengirim…' : '';
+        if (!on) {
+            worksheetBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Permintaan';
+        }
+    }
+    worksheetBtn.addEventListener('click', () => {
+        ajaxSubmit('worksheetForm', 'worksheetModal', 'worksheetModalErr', worksheetSetLoading);
+    });
+
+    /* ═══════════════════════
+       Mood chart + notes auto-resize (original code below)
+       ═══════════════════════ */
+    const MOOD_EMOJI = { 0: '', 1: '😢', 2: '😔', 3: '😐', 4: '😊', 5: '😄' };
+    const labels = @Html.Raw(labelsJson);
+    const scores = @Html.Raw(dataJson);
+
+    const ctx = document.getElementById('moodChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                data: scores,
+                borderColor: '#7C3AED',
+                backgroundColor: 'rgba(124,58,237,0.07)',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#7C3AED',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                fill: true,
+                tension: 0.4,
+                spanGaps: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: c => {
+                            const v = c.parsed.y;
+                            if (v == null) return 'Tidak ada data';
+                            return (MOOD_EMOJI[Math.round(v)] || '') + ' Mood ' + v;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    min: 0, max: 5,
+                    ticks: {
+                        stepSize: 1,
+                        callback: v => MOOD_EMOJI[v] !== undefined ? MOOD_EMOJI[v] : '',
+                        font: { size: 16 }
+                    },
+                    grid: { color: '#F3F4F6' }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Auto-resize textarea
+    const ta = document.getElementById('hrNotesArea');
+    if (ta) {
+        const resize = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
+        ta.addEventListener('input', resize);
+        resize();
+    }
+})();
+</script>
 }

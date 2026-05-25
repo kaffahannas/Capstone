@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\uploads\profiles\" />
+    <Folder Include="wwwroot\uploads\accounts\" />
   </ItemGroup>
 
 </Project>

@@ -1,114 +1,361 @@
-@model LightenUp.Web.Models.ViewModels.PatientProfileViewModel
+﻿@model LightenUp.Web.Models.ViewModels.PatientProfileViewModel
 @{
     ViewData["Title"] = "Profil Saya";
     ViewBag.ActiveNav = "Profil";
 
     string mailto(string? email) => string.IsNullOrEmpty(email) ? "#" : $"mailto:{email}";
-    string tel(string? phone) => string.IsNullOrEmpty(phone) ? "#" : $"tel:{phone}";
+    string tel(string? phone)    => string.IsNullOrEmpty(phone)  ? "#" : $"tel:{phone}";
+    string dash(string? v) => string.IsNullOrWhiteSpace(v) ? "—" : v!;
+    var cid = new System.Globalization.CultureInfo("id-ID");
+
+    var statusCss  = Model.MentalHealthStatus switch { "Sehat" => "sehat", "Beresiko" => "beresiko", _ => "bahaya" };
+    var statusIcon = Model.MentalHealthStatus switch { "Sehat" => "✅", "Beresiko" => "⚠️", _ => "🚨" };
+    var moodPct    = Model.TotalMoodPercent ?? 0;
+    var genderLabel = Model.Gender switch { "Male" => "Laki-Laki", "Female" => "Perempuan", _ => dash(Model.Gender) };
+    var dobLabel = Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("d MMMM yyyy", cid) : "—";
+    var ageLabel = Model.DateOfBirth.HasValue
+        ? $"{(int)((DateTime.Today - Model.DateOfBirth.Value.Date).TotalDays / 365.25)} tahun"
+        : null;
+    var profileItems = new (string Label, bool Done)[] {
+        ("Nomor Telepon",  !string.IsNullOrEmpty(Model.Phone)),
+        ("Kontak Darurat", !string.IsNullOrEmpty(Model.EmergencyContactName)),
+        ("Tanggal Lahir",  Model.DateOfBirth.HasValue),
+        ("Jenis Kelamin",  !string.IsNullOrEmpty(Model.Gender)),
+    };
+    var doneCount = profileItems.Count(x => x.Done);
+    var pct = (int)Math.Round(doneCount * 100.0 / profileItems.Length);
+    var tipIcon = Model.MentalHealthStatus switch { "Sehat" => "🌟", "Beresiko" => "💛", _ => "🆘" };
+    var tipMsg = Model.MentalHealthStatus switch {
+        "Sehat"    => "Mood kamu terjaga dengan baik. Lanjutkan kebiasaan positifmu!",
+        "Beresiko" => "Skor mood perlu diperhatikan. Coba journaling atau meditasi singkat.",
+        _          => "Kondisi mentalmu butuh perhatian segera. Hubungi psikolog kamu."
+    };
 }
 
-<div style="max-width: 720px;">
+<div class="pf-page">
 
     @if (TempData["success"] is string ok)
     {
-        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:16px;">@ok</div>
+        <div class="lu-alert-success pf-alert" role="status">@ok</div>
     }
 
-    <!-- ───── Header ───── -->
-    <div class="profile-header">
-        <span class="profile-avatar-wrap">
-            <img class="profile-avatar"
-                 src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : Model.ProfilePicture)"
-                 alt="Foto profil" />
-            <a asp-action="Edit" class="cam" title="Edit foto">📷</a>
-        </span>
-        <div class="profile-name">@Model.FullName</div>
-        <span class="status-badge @Model.MentalHealthStatus.ToLowerInvariant()">
-            @if (Model.MentalHealthStatus == "Sehat") { <span>● Sehat</span> }
-            else if (Model.MentalHealthStatus == "Beresiko") { <span>⚠ Beresiko</span> }
-            else { <span>● Bahaya</span> }
-        </span>
-    </div>
+    <div class="pf-layout">
 
-    <!-- ───── 2x2 info grid ───── -->
-    <div class="info-grid">
-        <div class="info-card">
-            <h4 class="info-card-title">🏢 Work Info</h4>
-            <div class="info-card-body">
-                @if (Model.IsB2B)
+        <!-- ─── LEFT SIDEBAR ─── -->
+        <aside class="pf-aside" aria-label="Profil pengguna">
+
+            <!-- Avatar card -->
+            <div class="pf-profile-card">
+                <div class="pf-profile-card-inner">
+                    <div class="pf-avatar-wrap">
+                        <img class="pf-avatar"
+                             src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : Model.ProfilePicture)"
+                             alt="Foto profil @Model.FullName" />
+                    </div>
+                    <h1 class="pf-name">@Model.FullName</h1>
+                    <span class="pf-status pf-status--@statusCss">@statusIcon @Model.MentalHealthStatus</span>
+                    @if (!string.IsNullOrEmpty(Model.CompanyName))
+                    {
+                        <span style="font-size:12px; color:rgba(255,255,255,0.7); margin-top:4px; display:block;">🏢 @Model.CompanyName</span>
+                    }
+                </div>
+            </div>
+
+            <!-- Kelengkapan profil -->
+            <div class="lu-card" style="padding:16px; margin-bottom:16px;">
+                <p style="font-size:13px; font-weight:700; margin:0 0 8px; display:flex; justify-content:space-between;">
+                    <span>📋 Kelengkapan Profil</span>
+                    <span style="color:var(--lu-primary);">@pct%</span>
+                </p>
+                <div style="background:var(--lu-border); border-radius:99px; height:6px; margin-bottom:10px;">
+                    <div style="background:var(--lu-primary); border-radius:99px; height:6px; width:@pct%; transition:width 0.4s;"></div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    @foreach (var item in profileItems)
+                    {
+                        <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:@(item.Done ? "var(--lu-text)" : "var(--lu-text-muted)");">
+                            <span style="width:16px; height:16px; border-radius:50%; background:@(item.Done ? "#10B981" : "var(--lu-border)"); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                @if (item.Done) { <span style="color:white; font-size:9px;">✓</span> }
+                            </span>
+                            @item.Label
+                        </div>
+                    }
+                </div>
+                @if (pct < 100)
                 {
-                    <div><strong>@(Model.Department ?? "Divisi belum diatur")</strong></div>
-                    <div>ID: @(Model.EmployeeId ?? "-")</div>
-                    <div style="font-size:11px; margin-top:4px;">@Model.CompanyName</div>
-                }
-                else
-                {
-                    <div><strong>Tipe Akun: Pengguna Publik</strong></div>
-                    <div>Belum tergabung dalam perusahaan.</div>
+                    <a asp-action="Edit" style="display:block; margin-top:12px; text-align:center; font-size:12px; font-weight:600; color:var(--lu-primary); text-decoration:none;">✏️ Lengkapi Sekarang →</a>
                 }
             </div>
-        </div>
 
-        <div class="info-card">
-            <h4 class="info-card-title">✉️ Contact Info</h4>
-            <div class="info-card-body">
-                <div><strong>@Model.Email</strong></div>
-                <div>@(string.IsNullOrEmpty(Model.Phone) ? "Telepon belum diatur" : Model.Phone)</div>
+            <!-- Quick contacts -->
+            <section class="pf-help lu-card" aria-label="Bantuan darurat" style="padding:16px;">
+                <p style="font-size:13px; font-weight:700; margin:0 0 10px;">🆘 Butuh Bantuan?</p>
+                <div class="pf-help-links" style="gap:8px;">
+                    <a class="pf-help-link pf-help-link--purple @(string.IsNullOrEmpty(Model.EmergencyContactEmail) && string.IsNullOrEmpty(Model.EmergencyContactPhone) ? "is-disabled" : "")"
+                       href="@(!string.IsNullOrEmpty(Model.EmergencyContactEmail) ? mailto(Model.EmergencyContactEmail) : tel(Model.EmergencyContactPhone))">
+                        <span aria-hidden="true">🤝</span>
+                        <span>
+                            @if (!string.IsNullOrEmpty(Model.EmergencyContactName))
+                            { @Model.EmergencyContactName }
+                            else
+                            { <text>Orang Terdekat</text> }
+                        </span>
+                    </a>
+                    @if (!string.IsNullOrEmpty(Model.CompanyHrEmail))
+                    {
+                        <a class="pf-help-link pf-help-link--blue" href="@mailto(Model.CompanyHrEmail)">
+                            <span aria-hidden="true">🏢</span> <span>Kontak HRD</span>
+                        </a>
+                    }
+                    <a class="pf-help-link pf-help-link--green @(string.IsNullOrEmpty(Model.PsychologistEmail) ? "is-disabled" : "")"
+                       href="@mailto(Model.PsychologistEmail)">
+                        <span aria-hidden="true">💼</span>
+                        <span>
+                            @if (!string.IsNullOrEmpty(Model.PsychologistName))
+                            { @Model.PsychologistName }
+                            else
+                            { <text>Psikolog</text> }
+                        </span>
+                    </a>
+                </div>
+            </section>
+        </aside>
+
+        <!-- ─── MAIN CONTENT ─── -->
+        <div class="pf-profile-main">
+
+            <!-- ── Row 1: 4 KPI chips ── -->
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px;">
+                <!-- Mood Score -->
+                <div class="lu-card" style="padding:16px; text-align:center;">
+                    <div style="font-size:28px; font-weight:800; color:var(--lu-primary); line-height:1;">
+                        @(Model.TotalMoodPercent.HasValue ? $"{Model.TotalMoodPercent}%" : "—")
+                    </div>
+                    <div style="font-size:11px; color:var(--lu-text-muted); margin-top:4px;">Skor Mood</div>
+                    <div style="background:var(--lu-border); border-radius:99px; height:4px; margin-top:8px;">
+                        <div style="background:@(statusCss == "sehat" ? "#10B981" : statusCss == "beresiko" ? "#F59E0B" : "#EF4444"); border-radius:99px; height:4px; width:@moodPct%;"></div>
+                    </div>
+                </div>
+                <!-- Streak -->
+                <div class="lu-card" style="padding:16px; text-align:center;">
+                    <div style="font-size:28px; font-weight:800; color:#F59E0B; line-height:1;">@Model.MoodStreakDays 🔥</div>
+                    <div style="font-size:11px; color:var(--lu-text-muted); margin-top:4px;">Hari Beruntun</div>
+                    <div style="font-size:10px; color:var(--lu-text-muted); margin-top:4px;">check-in mood</div>
+                </div>
+                <!-- Sessions Done -->
+                <div class="lu-card" style="padding:16px; text-align:center;">
+                    <div style="font-size:28px; font-weight:800; color:#7C3AED; line-height:1;">@Model.TotalSessionsDone</div>
+                    <div style="font-size:11px; color:var(--lu-text-muted); margin-top:4px;">Sesi Selesai</div>
+                    @if (Model.NextSessionAt.HasValue)
+                    {
+                        <div style="font-size:10px; color:#7C3AED; margin-top:4px; font-weight:600;">
+                            Berikutnya: @Model.NextSessionAt.Value.ToString("d MMM · HH:mm", cid)
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="font-size:10px; color:var(--lu-text-muted); margin-top:4px;">konseling</div>
+                    }
+                </div>
+                <!-- Tasks Done -->
+                <div class="lu-card" style="padding:16px; text-align:center;">
+                    <div style="font-size:28px; font-weight:800; color:#10B981; line-height:1;">@Model.TotalTasksDone</div>
+                    <div style="font-size:11px; color:var(--lu-text-muted); margin-top:4px;">Tugas Selesai</div>
+                    <div style="font-size:10px; color:var(--lu-text-muted); margin-top:4px;">dari psikolog</div>
+                </div>
             </div>
-        </div>
 
-        <div class="info-card">
-            <h4 class="info-card-title">💚 Kesehatan Mental</h4>
-            <div class="info-card-body">
-                <div>Total Mood: <strong>@(Model.TotalMoodPercent.HasValue ? $"{Model.TotalMoodPercent}%" : "Belum ada data")</strong></div>
-                <div>Terakhir Check: <strong>@Model.LastCheckLabel</strong></div>
+            <!-- ── Row 2: Status mental + Tip ── -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+                <!-- Mental health status card -->
+                <div class="lu-card" style="padding:20px; display:flex; gap:16px; align-items:center;">
+                    <div style="font-size:40px; line-height:1;">🧠</div>
+                    <div style="flex:1;">
+                        <div style="font-size:12px; color:var(--lu-text-muted); margin-bottom:2px;">Status Kesehatan Mental</div>
+                        <div style="font-size:20px; font-weight:800; color:@(statusCss == "sehat" ? "#10B981" : statusCss == "beresiko" ? "#F59E0B" : "#EF4444");">
+                            @statusIcon @Model.MentalHealthStatus
+                        </div>
+                        <div style="font-size:12px; color:var(--lu-text-muted); margin-top:6px;">Check-in terakhir: <strong>@Model.LastCheckLabel</strong></div>
+                        @if (Model.NextSessionAt.HasValue)
+                        {
+                            <div style="margin-top:8px; display:inline-block; background:#F5F3FF; color:#7C3AED; font-size:11px; font-weight:600; padding:4px 10px; border-radius:99px;">
+                                🗓 Konseling @Model.NextSessionAt.Value.ToString("d MMM yyyy · HH:mm", cid)
+                            </div>
+                        }
+                        else if (Model.LastSessionAt.HasValue)
+                        {
+                            <div style="font-size:11px; color:var(--lu-text-muted); margin-top:6px;">
+                                Sesi terakhir: @Model.LastSessionAt.Value.ToString("d MMM yyyy", cid)
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!-- Tip card -->
+                <div class="pf-tip-card pf-tip-card--@statusCss" style="display:flex; gap:14px; align-items:flex-start;">
+                    <div style="font-size:32px; line-height:1;">@tipIcon</div>
+                    <div>
+                        <p class="pf-tip-title" style="margin-bottom:6px;">
+                            @(Model.MentalHealthStatus switch { "Sehat" => "Pertahankan!", "Beresiko" => "Butuh perhatian lebih", _ => "Segera cari dukungan" })
+                        </p>
+                        <p class="pf-tip-msg">@tipMsg</p>
+                        @if (Model.MentalHealthStatus != "Sehat")
+                        {
+                            <a asp-controller="Jadwal" asp-action="Index" style="display:inline-block; margin-top:10px; font-size:12px; font-weight:600; color:var(--lu-primary); text-decoration:none;">
+                                📅 Lihat Jadwal Konseling →
+                            </a>
+                        }
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="info-card">
-            <h4 class="info-card-title">🗓 Sesi Konseling</h4>
-            <div class="info-card-body">
-                @if (Model.MentalHealthStatus == "Bahaya")
-                {
-                    <div>Terakhir: <strong>@(Model.LastSessionAt?.ToString("d MMM yyyy", new System.Globalization.CultureInfo("id-ID")) ?? "—")</strong></div>
-                    <div>Selanjutnya: <strong>@(Model.NextSessionAt?.ToString("d MMM yyyy", new System.Globalization.CultureInfo("id-ID")) ?? "Belum dijadwalkan")</strong></div>
-                }
-                else if (Model.RecommendSession)
-                {
-                    <div style="color:#B45309;"><strong>Anda Disarankan Melakukan Sesi Konseling!</strong></div>
-                }
-                else
-                {
-                    <div>Belum ada</div>
-                }
+            <!-- ── Row 3: Data diri + Kontak darurat ── -->
+            <section class="lu-card pf-detail-card" aria-label="Informasi profil" style="margin-bottom:16px;">
+                <header class="pf-detail-head">
+                    <div class="pf-detail-title-wrap">
+                        <span class="pf-detail-ico" aria-hidden="true">📋</span>
+                        <h2 class="pf-detail-title">Informasi Profil</h2>
+                    </div>
+                    <a asp-action="Edit" class="pf-detail-edit">Ubah Semua</a>
+                </header>
+
+                <div class="pf-detail-split">
+                    <!-- Data diri -->
+                    <div class="pf-detail-section">
+                        <h3 class="pf-detail-subtitle"><span aria-hidden="true">👤</span> Data Diri &amp; Pekerjaan</h3>
+                        <dl class="pf-info-grid pf-info-grid--dense">
+                            <div class="pf-info-item">
+                                <dt>Email</dt>
+                                <dd><a href="mailto:@Model.Email" class="pf-info-link">@dash(Model.Email)</a></dd>
+                            </div>
+                            <div class="pf-info-item">
+                                <dt>Telepon</dt>
+                                <dd>
+                                    @if (!string.IsNullOrEmpty(Model.Phone))
+                                    { <a href="tel:@Model.Phone" class="pf-info-link">@Model.Phone</a> }
+                                    else
+                                    { <span style="color:var(--lu-text-muted);">—</span> }
+                                </dd>
+                            </div>
+                            <div class="pf-info-item">
+                                <dt>Tanggal Lahir</dt>
+                                <dd>
+                                    @dobLabel
+                                    @if (ageLabel != null)
+                                    { <span class="pf-info-sub">(@ageLabel)</span> }
+                                </dd>
+                            </div>
+                            <div class="pf-info-item">
+                                <dt>Jenis Kelamin</dt>
+                                <dd>@genderLabel</dd>
+                            </div>
+                            @if (Model.IsB2B)
+                            {
+                                <div class="pf-info-item pf-info-item--full">
+                                    <dt>Perusahaan</dt>
+                                    <dd><span class="pf-info-badge">🏢 @dash(Model.CompanyName)</span></dd>
+                                </div>
+                                <div class="pf-info-item">
+                                    <dt>Divisi</dt>
+                                    <dd>@dash(Model.Department)</dd>
+                                </div>
+                                <div class="pf-info-item">
+                                    <dt>ID Karyawan</dt>
+                                    <dd>@dash(Model.EmployeeId)</dd>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="pf-info-item pf-info-item--full">
+                                    <dt>Tipe Akun</dt>
+                                    <dd><span class="pf-info-badge pf-info-badge--muted">🌐 Pengguna Publik</span></dd>
+                                </div>
+                            }
+                        </dl>
+                    </div>
+
+                    <!-- Kontak darurat -->
+                    <div class="pf-detail-section pf-detail-section--emergency">
+                        <h3 class="pf-detail-subtitle"><span aria-hidden="true">🆘</span> Kontak Darurat</h3>
+                        <dl class="pf-info-grid pf-info-grid--dense">
+                            <div class="pf-info-item">
+                                <dt>Nama</dt>
+                                <dd>@dash(Model.EmergencyContactName)</dd>
+                            </div>
+                            <div class="pf-info-item">
+                                <dt>Hubungan</dt>
+                                <dd>@dash(Model.EmergencyContactRelation)</dd>
+                            </div>
+                            <div class="pf-info-item">
+                                <dt>Telepon</dt>
+                                <dd>
+                                    @if (!string.IsNullOrEmpty(Model.EmergencyContactPhone))
+                                    { <a href="tel:@Model.EmergencyContactPhone" class="pf-info-link">@Model.EmergencyContactPhone</a> }
+                                    else
+                                    { <text>—</text> }
+                                </dd>
+                            </div>
+                            <div class="pf-info-item">
+                                <dt>Email</dt>
+                                <dd>
+                                    @if (!string.IsNullOrEmpty(Model.EmergencyContactEmail))
+                                    { <a href="mailto:@Model.EmergencyContactEmail" class="pf-info-link">@Model.EmergencyContactEmail</a> }
+                                    else
+                                    { <text>—</text> }
+                                </dd>
+                            </div>
+                        </dl>
+                        @if (!string.IsNullOrEmpty(Model.PsychologistName) || !string.IsNullOrEmpty(Model.PsychologistEmail))
+                        {
+                            <div style="margin-top:12px; padding:10px 12px; background:#F5F3FF; border-radius:10px; border:1px solid rgba(124,58,237,0.12);">
+                                <div style="font-size:11px; color:var(--lu-text-muted); margin-bottom:2px;">Psikolog Anda</div>
+                                <div style="font-weight:600; font-size:14px;">@dash(Model.PsychologistName)</div>
+                                @if (!string.IsNullOrEmpty(Model.PsychologistEmail))
+                                {
+                                    <a href="mailto:@Model.PsychologistEmail" class="pf-info-link" style="font-size:12px;">@Model.PsychologistEmail</a>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Row 4: Akses Cepat (horizontal 4 cards) ── -->
+            <section class="lu-card" style="padding:18px 20px;" aria-label="Akses cepat">
+                <h3 style="margin:0 0 14px; font-size:13px; font-weight:700; color:var(--lu-text-muted); text-transform:uppercase; letter-spacing:0.05em;">⚡ Akses Cepat</h3>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+
+                    <a asp-controller="Mood" asp-action="Feeling"
+                       style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 12px; background:linear-gradient(135deg,#F5F3FF,#EDE9FE); border-radius:12px; text-decoration:none; border:1px solid rgba(124,58,237,0.12); transition:all 0.2s; text-align:center;">
+                        <span style="font-size:28px; line-height:1;">😊</span>
+                        <div style="font-size:13px; font-weight:700; color:var(--lu-text);">Lacak Mood</div>
+                        <div style="font-size:11px; color:var(--lu-text-muted);">Catat perasaanmu</div>
+                    </a>
+
+                    <a asp-controller="Journal" asp-action="CheckIn"
+                       style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 12px; background:linear-gradient(135deg,#F0FDF4,#DCFCE7); border-radius:12px; text-decoration:none; border:1px solid rgba(16,185,129,0.12); transition:all 0.2s; text-align:center;">
+                        <span style="font-size:28px; line-height:1;">📔</span>
+                        <div style="font-size:13px; font-weight:700; color:var(--lu-text);">Daily Check-In</div>
+                        <div style="font-size:11px; color:var(--lu-text-muted);">Refleksi harian</div>
+                    </a>
+
+                    <a asp-controller="Jadwal" asp-action="Index"
+                       style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 12px; background:linear-gradient(135deg,#EFF6FF,#DBEAFE); border-radius:12px; text-decoration:none; border:1px solid rgba(59,130,246,0.12); transition:all 0.2s; text-align:center;">
+                        <span style="font-size:28px; line-height:1;">📅</span>
+                        <div style="font-size:13px; font-weight:700; color:var(--lu-text);">Jadwal Konseling</div>
+                        <div style="font-size:11px; color:var(--lu-text-muted);">Lihat sesi mendatang</div>
+                    </a>
+
+                    <a asp-action="Edit"
+                       style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 12px; background:linear-gradient(135deg,#FFF7ED,#FFEDD5); border-radius:12px; text-decoration:none; border:1px solid rgba(249,115,22,0.12); transition:all 0.2s; text-align:center;">
+                        <span style="font-size:28px; line-height:1;">✏️</span>
+                        <div style="font-size:13px; font-weight:700; color:var(--lu-text);">Edit Profil</div>
+                        <div style="font-size:11px; color:var(--lu-text-muted);">Perbarui data & kontak</div>
+                    </a>
+                    </div>
+                </section>
+
             </div>
-        </div>
-    </div>
 
-
-    <!-- ───── Support ───── -->
-    <h3 style="font-size: 14px; margin: 16px 0 8px;">Support</h3>
-    <div class="support-buttons">
-        <a class="support-btn purple @(string.IsNullOrEmpty(Model.EmergencyContactEmail) && string.IsNullOrEmpty(Model.EmergencyContactPhone) ? "disabled" : "")"
-           href="@(!string.IsNullOrEmpty(Model.EmergencyContactEmail) ? mailto(Model.EmergencyContactEmail) : tel(Model.EmergencyContactPhone))">
-            Kontak Orang Terdekat
-        </a>
-        <a class="support-btn blue @(string.IsNullOrEmpty(Model.CompanyHrEmail) ? "disabled" : "")"
-           href="@mailto(Model.CompanyHrEmail)">
-            Kontak HRD
-        </a>
-        <a class="support-btn green @(string.IsNullOrEmpty(Model.PsychologistEmail) ? "disabled" : "")"
-           href="@mailto(Model.PsychologistEmail)">
-            Kontak Psychologist
-        </a>
-    </div>
-
-    <!-- ───── Actions ───── -->
-    <div style="display:flex; gap:12px; margin-top:24px;">
-        <a class="btn-secondary" asp-action="Edit" style="flex:1; text-align:center;">Edit Profile</a>
-        <form asp-controller="Account" asp-action="Logout" asp-area="" method="post" style="flex:1;">
-            <button type="submit" style="width:100%; padding:12px; background:#EF4444; color:#fff; border:none; border-radius:999px; font-weight:500; cursor:pointer;">Log Out</button>
-        </form>
-    </div>
-
-</div>
+        </div><!-- /pf-profile-main -->
+    </div><!-- /pf-layout -->
+</div><!-- /pf-page -->

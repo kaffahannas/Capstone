@@ -1,0 +1,9 @@
+@{
+    ViewData["Title"] = "Pembayaran gagal";
+    ViewBag.ActiveNav = "Langganan";
+}
+<div class="lu-card" style="text-align: center; padding: 40px;">
+    <h2>Pembayaran belum selesai</h2>
+    <p>Transaksi @ViewBag.OrderId tidak berhasil atau masih menunggu konfirmasi.</p>
+    <a asp-action="Index" class="btn btn-primary" style="margin-top: 16px;">Coba lagi</a>
+</div>

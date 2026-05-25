@@ -17,46 +17,93 @@
     </style>
 }
 
-<div style="max-width: 760px;">
-    <a class="no-print" asp-action="Index" style="text-decoration:none; color:#111;">← Statistik</a>
+<div class="hr-page-wrap hr-page-wrap--wide">
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin: 16px 0;">
-        <h2 style="margin:0;">Lihat Laporan Divisi @Model.DivisionName</h2>
-        <div class="no-print" style="display:flex; gap:6px;">
+    @* ── Back ── *@
+    <a class="hr-page-back no-print" asp-action="Index">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+        Statistik
+    </a>
+
+    @* ── Header ── *@
+    <div class="hr-page-header">
+        <div class="hr-page-title-group">
+            <h1 class="hr-page-title">Divisi @Model.DivisionName</h1>
+            <p class="hr-page-sub">Laporan detail kesehatan mental per divisi</p>
+        </div>
+        <div class="hr-page-actions no-print">
             @foreach (var w in new[] { 7, 30, 90 })
             {
-                <a class="task-chip @(Model.Window == w ? "selected" : "")"
+                <a class="hr-page-btn @(Model.Window == w ? "active" : "")"
                    asp-action="Division" asp-route-name="@Model.DivisionName" asp-route-window="@w">@w hari</a>
             }
+            <button type="button" class="btn-primary" onclick="window.print()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Simpan PDF
+            </button>
         </div>
     </div>
 
-    <div class="lu-card" style="margin-bottom:20px;">
-        <h3 class="lu-card-title">Perubahan Mood dari Waktu ke Waktu</h3>
-        @if (Model.AvgScores.Sum() == 0)
-        {
-            <p style="color:#9CA3AF;">Belum ada data mood untuk divisi ini.</p>
-        }
-        else
-        {
-            <canvas id="moodChart" height="100"></canvas>
-        }
-    </div>
-
-    <div class="lu-card" style="margin-bottom:20px;">
-        <h3 class="lu-card-title">Status Karyawan</h3>
-        <canvas id="statusChart" height="220"></canvas>
-        <div style="display:flex; justify-content:center; gap:16px; margin-top:12px; font-size:13px;">
-            <span style="color:#10B981;">● Sehat (@Model.Sehat)</span>
-            <span style="color:#F59E0B;">● Beresiko (@Model.Beresiko)</span>
-            <span style="color:#EF4444;">● Bahaya (@Model.Bahaya)</span>
+    @* ── KPI mini ── *@
+    <div class="hr-stat-strip">
+        <div class="hr-stat-pill">
+            <div class="hr-stat-pill-ico hr-stat-pill-ico--green">✅</div>
+            <div>
+                <div class="hr-stat-pill-val" style="color:#059669;">@Model.Sehat</div>
+                <div class="hr-stat-pill-lbl">Sehat</div>
+            </div>
+        </div>
+        <div class="hr-stat-pill">
+            <div class="hr-stat-pill-ico hr-stat-pill-ico--amber">⚠️</div>
+            <div>
+                <div class="hr-stat-pill-val" style="color:#D97706;">@Model.Beresiko</div>
+                <div class="hr-stat-pill-lbl">Beresiko</div>
+            </div>
+        </div>
+        <div class="hr-stat-pill">
+            <div class="hr-stat-pill-ico hr-stat-pill-ico--red">🔴</div>
+            <div>
+                <div class="hr-stat-pill-val" style="color:#DC2626;">@Model.Bahaya</div>
+                <div class="hr-stat-pill-lbl">Bahaya</div>
+            </div>
         </div>
     </div>
 
-    <div class="no-print" style="display:flex; gap:12px;">
-        <a asp-action="Index" class="btn-secondary" style="flex:1; text-align:center;">Batalkan</a>
-        <button type="button" class="btn-primary" style="flex:1;" onclick="window.print()">Simpan (PDF/Image)</button>
+    <div class="hrst-charts-row">
+        @* ── Mood chart ── *@
+        <div class="hrst-chart-card">
+            <h2 class="hrst-chart-card-title">Perubahan Mood dari Waktu ke Waktu</h2>
+            @if (Model.AvgScores.Sum() == 0)
+            {
+                <div class="hr-empty" style="padding:32px 16px;">
+                    <p class="hr-empty-title" style="font-size:14px;">Belum ada data mood</p>
+                    <p class="hr-empty-sub" style="font-size:12.5px;">Belum ada data mood untuk divisi ini pada periode ini.</p>
+                </div>
+            }
+            else
+            {
+                <canvas id="moodChart" height="220"></canvas>
+            }
+        </div>
+
+        @* ── Status doughnut ── *@
+        <div class="hrst-chart-card">
+            <h2 class="hrst-chart-card-title">Distribusi Status Karyawan</h2>
+            <canvas id="statusChart" height="220"></canvas>
+            <div style="display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:13px;flex-wrap:wrap;">
+                <span style="color:#10B981;font-weight:600;">● Sehat (@Model.Sehat)</span>
+                <span style="color:#F59E0B;font-weight:600;">● Beresiko (@Model.Beresiko)</span>
+                <span style="color:#EF4444;font-weight:600;">● Bahaya (@Model.Bahaya)</span>
+            </div>
+        </div>
     </div>
+
+    @* ── Actions ── *@
+    <div style="display:flex;gap:12px;" class="no-print">
+        <a asp-action="Index" class="btn-secondary" style="flex:1;text-align:center;">← Kembali ke Statistik</a>
+        <button type="button" class="btn-primary" style="flex:1;" onclick="window.print()">🖨️ Simpan (PDF/Image)</button>
+    </div>
+
 </div>
 
 @section Scripts {
@@ -71,15 +118,21 @@
                     datasets: [{
                         data: @Html.Raw(data),
                         borderColor: '#7C3AED',
-                        backgroundColor: 'rgba(124, 58, 237, 0.15)',
+                        backgroundColor: 'rgba(124, 58, 237, 0.12)',
                         fill: true,
-                        tension: 0.35,
-                        pointRadius: 3
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#7C3AED',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
                     }]
                 },
                 options: {
                     responsive: true,
-                    scales: { y: { min: 0, max: 5, ticks: { stepSize: 1 } } },
+                    scales: {
+                        y: { min: 0, max: 5, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    },
                     plugins: { legend: { display: false } }
                 }
             });
@@ -92,10 +145,23 @@
                 labels: ['Sehat', 'Beresiko', 'Bahaya'],
                 datasets: [{
                     data: [@Model.Sehat, @Model.Beresiko, @Model.Bahaya],
-                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444']
+                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                    borderWidth: 0,
+                    hoverOffset: 8
                 }]
             },
-            options: { responsive: true, plugins: { legend: { display: false } } }
+            options: {
+                responsive: true,
+                cutout: '60%',
+                plugins: { legend: { display: false } }
+            }
         });
+
+        // Auto print if requested
+        if (window.location.search.includes('print=true')) {
+            setTimeout(function() {
+                window.print();
+            }, 1000); // short delay to ensure charts are rendered
+        }
     </script>
 }

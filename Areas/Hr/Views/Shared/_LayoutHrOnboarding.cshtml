@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@pageTitle - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/onboarding.css" asp-append-version="true" />
 </head>
 <body>
@@ -38,5 +39,28 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.querySelectorAll('.onb-upload-input').forEach(input => {
+            input.addEventListener('change', () => {
+                const previewId = input.dataset.preview;
+                const preview = previewId ? document.getElementById(previewId) : null;
+                if (!preview || !input.files?.length) return;
+                const file = input.files[0];
+                preview.hidden = false;
+                if (file.type === 'application/pdf') {
+                    preview.innerHTML = '<p class="onb-file-link">📄 ' + file.name + ' (siap diunggah)</p>';
+                } else if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.className = 'onb-upload-thumb';
+                    img.alt = 'Pratinjau';
+                    img.src = URL.createObjectURL(file);
+                    preview.innerHTML = '';
+                    preview.appendChild(img);
+                } else {
+                    preview.innerHTML = '<p class="onb-upload-hint">' + file.name + '</p>';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 using LightenUp.Web.Data;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,13 @@ namespace LightenUp.Web.Areas.Patient.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SubscriptionAccessService _access;
 
-        public OnboardingController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public OnboardingController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SubscriptionAccessService access)
         {
             _context = context;
             _userManager = userManager;
+            _access = access;
         }
 
         // ───── helper: load current patient (creates the row if for some reason it's missing) ─────
@@ -399,25 +402,30 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             if (!string.IsNullOrWhiteSpace(model.ReferralCode))
             {
                 var code = model.ReferralCode.Trim();
-                var company = await _context.Companies.FirstOrDefaultAsync(c => c.ReferralCode == code);
-                if (company == null)
+                var division = await _context.CompanyDivisions.FirstOrDefaultAsync(d => d.ReferralCode == code);
+                if (division == null)
                 {
                     ModelState.AddModelError("ReferralCode", "Kode referral tidak ditemukan. Anda dapat mengisinya nanti di profil.");
                     ViewBag.Progress = new OnboardingProgress { Current = 9 };
                     return View(model);
                 }
 
-                // Seat-count check: flat fee for N seats — block if company is at capacity.
-                // CompanySubscription table doesn't exist yet (Duitku phase); for now, accept all.
-                // TODO: enforce SeatCount when CompanySubscription lands.
-                patient.CompanyId = company.CompanyId;
+                if (!await _access.CanUseReferralCodeAsync(division.CompanyId))
+                {
+                    ModelState.AddModelError("ReferralCode", "Langganan perusahaan belum aktif atau sudah berakhir. Hubungi HR perusahaan Anda.");
+                    ViewBag.Progress = new OnboardingProgress { Current = 9 };
+                    return View(model);
+                }
 
-                // Auto-claim a PendingEmployee row (HR pre-registered this email) and copy Dept/EmployeeId.
+                patient.CompanyId = division.CompanyId;
+                patient.Department = division.Name;
+
+                // Auto-claim a PendingEmployee row (HR pre-registered this email) and copy EmployeeId.
                 var user = await _userManager.GetUserAsync(User);
                 if (user != null && !string.IsNullOrEmpty(user.Email))
                 {
                     var pending = await _context.PendingEmployees
-                        .FirstOrDefaultAsync(pe => pe.CompanyId == company.CompanyId
+                        .FirstOrDefaultAsync(pe => pe.CompanyId == division.CompanyId
                             && pe.Email == user.Email
                             && pe.ClaimedByPatientId == null);
                     if (pending != null)

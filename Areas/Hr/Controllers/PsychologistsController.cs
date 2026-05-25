@@ -1,4 +1,5 @@
 using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    [RequiresCompanySubscription]
     public class PsychologistsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -58,11 +60,15 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                     ProfilePicture = p.User?.ProfilePicture,
                     ExperienceYears = p.ExperienceYears,
                     Email = p.User?.Email,
+                    Bio = p.Bio,
+                    University = p.University,
+                    LastDegree = p.LastDegree,
+                    PracticeLocation = p.PracticeLocation,
                     AlreadyPartnered = partneredIds.Contains(p.PsychologistId)
                 }).ToList()
             };
 
-            ViewBag.ActiveNav = "Klien";
+            ViewBag.ActiveNav = "Psikolog";
             return View(vm);
         }
 
@@ -79,7 +85,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             var partnered = hr.Company?.PartneredPsychologists.Any(c => c.PsychologistId == id) ?? false;
 
-            ViewBag.ActiveNav = "Klien";
+            ViewBag.ActiveNav = "Psikolog";
             return View(new HrPsychologistProfileViewModel
             {
                 PsychologistId = p.PsychologistId,
@@ -121,7 +127,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 TempData["success"] = "Psikolog sudah menjadi mitra perusahaan.";
             }
 
-            return RedirectToAction(nameof(Profile), new { id });
+            return RedirectToAction(nameof(Index));
         }
     }
 }

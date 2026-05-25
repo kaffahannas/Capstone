@@ -1,49 +1,203 @@
 @model LightenUp.Web.Models.ViewModels.HrReportListViewModel
 @{
-    ViewData["Title"] = "Laporan";
-    ViewBag.ActiveNav = "Klien";
+    ViewData["Title"] = "Laporan ke Psikolog";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+    var allCount   = ViewBag.AllCount ?? 0;
+    var draftCount = ViewBag.DraftCount ?? 0;
+    var sentCount  = ViewBag.SentCount ?? 0;
 }
 
-<div style="max-width: 900px;">
-    @if (TempData["success"] is string ok)
-    {
-        <div style="background:#D1FAE5; color:#047857; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@ok</div>
-    }
-    @if (TempData["error"] is string err)
-    {
-        <div style="background:#FEE2E2; color:#B91C1C; padding:10px 14px; border-radius:8px; margin-bottom:12px;">@err</div>
-    }
+@section Head {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+}
 
-    <h2 style="margin-bottom: 16px;">Laporan ke Psikolog</h2>
+@* ── Toasts ── *@
+@if (TempData["success"] is string ok)
+{
+    <div class="hrpt-toast hrpt-toast--ok" id="hrptToast" role="alert">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        @ok
+    </div>
+}
+@if (TempData["error"] is string err)
+{
+    <div class="hrpt-toast hrpt-toast--err" id="hrptToast" role="alert">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        @err
+    </div>
+}
 
-    <div class="task-chips" style="margin-bottom: 16px;">
-        <a class="task-chip @(Model.Tab == "All" ? "selected" : "")" asp-action="Index" asp-route-tab="All">Semua</a>
-        <a class="task-chip @(Model.Tab == "Draft" ? "selected" : "")" asp-action="Index" asp-route-tab="Draft">Draft</a>
-        <a class="task-chip @(Model.Tab == "Sent" ? "selected" : "")" asp-action="Index" asp-route-tab="Sent">Sudah Terkirim</a>
+@* ══════ HERO ══════ *@
+<div class="hrws-hero">
+    <div class="hrws-hero-bg" aria-hidden="true" style="background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);"></div>
+    <div class="hrws-hero-inner">
+        <div class="hrws-hero-text">
+            <p class="hrws-hero-eyebrow">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                HR · Komunikasi
+            </p>
+            <h1 class="hrws-hero-title">Laporan ke Psikolog</h1>
+            <p class="hrws-hero-sub">Riwayat laporan kondisi karyawan yang dikirim ke psikolog</p>
+        </div>
+        <div class="hrws-hero-stats">
+            <div class="hrws-stat">
+                <span class="hrws-stat-val">@allCount</span>
+                <span class="hrws-stat-lbl">Total</span>
+            </div>
+            <div class="hrws-stat hrws-stat--done" style="color:#10B981; background:rgba(16,185,129,0.1);">
+                <span class="hrws-stat-val">@sentCount</span>
+                <span class="hrws-stat-lbl">Terkirim</span>
+            </div>
+            <div class="hrws-stat hrws-stat--active" style="color:#F59E0B; background:rgba(245,158,11,0.1);">
+                <span class="hrws-stat-val">@draftCount</span>
+                <span class="hrws-stat-lbl">Draft</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* ══════ BODY ══════ *@
+<div class="hrpt-list-body">
+
+    @* Tab bar *@
+    <div class="hrpt-tab-bar">
+        <a class="hrpt-tab @(Model.Tab == "All" ? "hrpt-tab--active" : "")"
+           asp-action="Index" asp-route-tab="All">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Semua
+            <span class="hrpt-tab-count">@allCount</span>
+        </a>
+        <a class="hrpt-tab @(Model.Tab == "Draft" ? "hrpt-tab--active" : "")"
+           asp-action="Index" asp-route-tab="Draft">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Draft
+            <span class="hrpt-tab-count">@draftCount</span>
+        </a>
+        <a class="hrpt-tab @(Model.Tab == "Sent" ? "hrpt-tab--active" : "")"
+           asp-action="Index" asp-route-tab="Sent">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Terkirim
+            <span class="hrpt-tab-count">@sentCount</span>
+        </a>
     </div>
 
+    @* Report list *@
     @if (!Model.Items.Any())
     {
-        <div class="dash-card-empty">
-            <p>Belum ada laporan.</p>
-            <small style="color:#6B7280;">Buat laporan dari halaman detail pasien.</small>
+        <div class="hrpt-empty">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <p class="hrpt-empty-title">Belum ada laporan</p>
+            <p class="hrpt-empty-sub">Buat laporan dari halaman detail karyawan.</p>
         </div>
     }
     else
     {
-        foreach (var r in Model.Items)
-        {
-            <div class="lu-card" style="margin-bottom:12px; display:flex; align-items:center; gap:12px;">
-                <div style="flex:1;">
-                    <h4 style="margin:0;">@r.PatientName</h4>
-                    <small style="color:#6B7280;">Untuk @r.PsychologistName · @r.CreatedAt.ToString("d MMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</small>
+        <div class="hrws-list" style="margin-top:16px;">
+            @foreach (var r in Model.Items)
+            {
+                var accent = r.Status == "Sent" ? "done" : "active";
+                var av     = r.PatientName?.Length > 0 ? r.PatientName.Substring(0, 1).ToUpper() : "?";
+                var sentAt = r.EmailSentAt?.ToString("d MMM yyyy · HH:mm", idCulture)
+                             ?? r.CreatedAt.ToString("d MMM yyyy · HH:mm", idCulture);
+
+                <div class="hrws-row hrws-row--@accent" style="padding-right:20px;">
+                    <div class="hrws-row-av hrws-av--@accent">@av</div>
+                    <div class="hrws-row-body">
+                        <span class="hrws-row-title">@r.PatientName</span>
+                        <div class="hrws-row-meta">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="margin-right:4px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            @r.PsychologistName
+                            <span class="hrws-row-dot">·</span>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="margin-right:4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            @sentAt
+                        </div>
+                    </div>
+                    <span class="hrws-badge hrws-badge--@accent">
+                        @if (r.Status == "Sent")
+                        {
+                            <span>Terkirim</span>
+                        }
+                        else
+                        {
+                            <span>Draft</span>
+                        }
+                    </span>
+                    <div style="margin-left:16px;">
+                        @if (r.Status == "Draft")
+                        {
+                            <button type="button" onclick="openEditModal(@r.ReportId)" style="border:none; background:rgba(245,158,11,0.1); color:#D97706; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                Edit Draft
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" onclick="openEditModal(@r.ReportId)" style="border:none; background:rgba(16,185,129,0.1); color:#10B981; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.2s;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Detail
+                            </button>
+                        }
+                    </div>
                 </div>
-                <span class="status-badge @(r.Status == "Sent" ? "sehat" : "beresiko")">@r.Status</span>
-                @if (r.Status == "Draft")
-                {
-                    <a class="btn-pill" asp-action="Edit" asp-route-id="@r.ReportId">Edit</a>
-                }
-            </div>
-        }
+            }
+        </div>
     }
+
 </div>
+
+@* Modal Container *@
+<div class="hrpf-modal-overlay" id="editModalOverlay" role="dialog" aria-modal="true">
+    <div id="editModalContainer" style="display:flex; justify-content:center; align-items:center; min-height:100vh; padding:20px;">
+        @* AJAX content goes here *@
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    const t = document.getElementById('hrptToast');
+    if (t) setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; }, 3200);
+})();
+
+const editModalOverlay = document.getElementById('editModalOverlay');
+const editModalContainer = document.getElementById('editModalContainer');
+
+async function openEditModal(id) {
+    // Show loading state
+    editModalContainer.innerHTML = `<div style="background:var(--lu-surface); padding:40px; border-radius:16px; text-align:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--lu-primary)" stroke-width="2" class="hrpf-spin" style="margin:0 auto 16px;"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><div style="color:var(--lu-text-muted);font-size:14px;">Memuat data...</div></div>`;
+    editModalOverlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    
+    try {
+        const res = await fetch(`/Hr/Reports/EditModal/${id}`);
+        if (!res.ok) throw new Error('Failed to load');
+        const html = await res.text();
+        editModalContainer.innerHTML = html;
+        
+        // Execute injected scripts (like Chart.js initialization)
+        const scripts = editModalContainer.querySelectorAll('script');
+        scripts.forEach(script => {
+            const newScript = document.createElement('script');
+            newScript.text = script.text;
+            document.body.appendChild(newScript).parentNode.removeChild(newScript);
+        });
+    } catch (err) {
+        editModalContainer.innerHTML = `<div style="background:var(--lu-surface); padding:24px; border-radius:12px; color:#EF4444;">Gagal memuat detail laporan.</div>`;
+    }
+}
+
+window.closeEditModal = function() {
+    editModalOverlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+    // Optional: clear HTML after transition
+    setTimeout(() => { editModalContainer.innerHTML = ''; }, 300);
+};
+
+// Close modal on outside click
+editModalOverlay.addEventListener('click', (e) => {
+    if (e.target === editModalOverlay || e.target === editModalContainer) {
+        closeEditModal();
+    }
+});
+</script>
+}

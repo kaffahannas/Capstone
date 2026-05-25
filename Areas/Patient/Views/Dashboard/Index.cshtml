@@ -3,151 +3,316 @@
 @{
     ViewData["Title"] = "Beranda";
     ViewBag.ActiveNav = "Beranda";
+    var calView = ViewBag.CalendarView as string ?? "Mingguan";
+    var calOffset = ViewBag.CalendarOffset is int co ? co : 0;
+    var calMonthLabel = ViewBag.CalendarMonthLabel as string ?? Model.MonthYearLabel;
+    var cid = new System.Globalization.CultureInfo("id-ID");
 }
 
-<!-- ───── Calendar widget (Harian / Mingguan / Bulanan) ───── -->
-@{
-    var calView = ViewBag.CalendarView as string ?? "Mingguan";
-}
-<div class="lu-card cal-widget">
-    <div class="cal-header">
-        <select class="cal-view-select" onchange="window.location.href='?view=' + this.value">
-            <option value="Harian" selected="@(calView == "Harian")">Tampilan: Harian</option>
-            <option value="Mingguan" selected="@(calView == "Mingguan")">Tampilan: Mingguan</option>
-            <option value="Bulanan" selected="@(calView == "Bulanan")">Tampilan: Bulanan</option>
-        </select>
-        <div class="cal-nav">
-            <span>@Model.MonthYearLabel</span>
+<!-- ─── Hero banner ─── -->
+<div class="db-hero">
+    <div class="db-hero-text">
+        <span class="db-hero-date">@DateTime.Today.ToString("dddd, d MMMM yyyy", cid)</span>
+        <p class="db-hero-tagline">
+            @if (string.IsNullOrEmpty(Model.TodayFeeling))
+            {
+                <span>Apa yang kamu rasakan hari ini? 🌟</span>
+            }
+            else
+            {
+                <span>Senang kamu sudah check-in hari ini @MoodPalette.Emoji(Model.TodayFeeling)</span>
+            }
+        </p>
+    </div>
+    <div class="db-hero-chips">
+        <div class="db-chip">
+            <span aria-hidden="true">🎯</span>
+            <div class="db-chip-info">
+                <strong>@Model.OpenTaskCount</strong>
+                <span>tugas aktif</span>
+            </div>
         </div>
-        <span style="width: 60px;"></span>
+        <div class="db-chip">
+            <span aria-hidden="true">📔</span>
+            <div class="db-chip-info">
+                <strong>@(Model.HasTodayCheckIn ? "Sudah" : "Belum")</strong>
+                <span>check-in</span>
+            </div>
+        </div>
+        <div class="db-chip">
+            <span aria-hidden="true">📅</span>
+            <div class="db-chip-info">
+                <strong>@Model.UpcomingSessionCount</strong>
+                <span>jadwal konseling</span>
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.TodayFeeling))
+        {
+            <div class="db-chip">
+                <span aria-hidden="true">@MoodPalette.Emoji(Model.TodayFeeling)</span>
+                <div class="db-chip-info">
+                    <strong>@MoodPalette.Label(Model.TodayFeeling)</strong>
+                    <span>mood kamu</span>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- ─── Calendar widget ─── -->
+<div class="lu-card db-cal">
+    <div class="db-cal-head">
+        <select class="db-cal-select" onchange="window.location.href='?view='+this.value+'&offset=0'" aria-label="Pilih tampilan kalender">
+            <!option value="Harian"   @(calView == "Harian"   ? "selected" : "")>Harian</!option>
+            <!option value="Mingguan" @(calView == "Mingguan" ? "selected" : "")>Mingguan</!option>
+            <!option value="Bulanan"  @(calView == "Bulanan"  ? "selected" : "")>Bulanan</!option>
+        </select>
+        <span class="db-cal-month">@calMonthLabel</span>
+        <div style="display:flex; gap:4px;">
+            <a href="?view=@calView&offset=@(calOffset-1)" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; border:1.5px solid var(--lu-border); background:#fff; text-decoration:none; color:var(--lu-text); font-size:14px; transition:all 0.2s;" title="Sebelumnya">&#8249;</a>
+            <a href="?view=@calView&offset=0" style="display:flex; align-items:center; justify-content:center; padding:0 10px; height:30px; border-radius:8px; border:1.5px solid var(--lu-border); background:#fff; text-decoration:none; color:var(--lu-text-muted); font-size:12px; font-weight:500; transition:all 0.2s;">Hari ini</a>
+            <a href="?view=@calView&offset=@(calOffset+1)" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; border:1.5px solid var(--lu-border); background:#fff; text-decoration:none; color:var(--lu-text); font-size:14px; transition:all 0.2s;" title="Berikutnya">&#8250;</a>
+        </div>
     </div>
 
     @if (calView == "Harian")
     {
         var todayCell = Model.Week.First();
-        <div style="text-align:center; padding: 20px 0;">
-            <div style="font-size:13px; color:#6B7280; margin-bottom:4px;">@todayCell.DayOfWeekShort</div>
-            <div style="font-size:48px; font-weight:600; color:var(--lu-primary); margin-bottom:12px;">@todayCell.Date.Day</div>
+        <div class="db-cal-daily">
+            <div class="db-cal-daily-dow">@todayCell.DayOfWeekShort</div>
+            <div class="db-cal-daily-num">@todayCell.Date.Day</div>
             @if (!string.IsNullOrEmpty(todayCell.FeelingForDay))
             {
-                <div class="dot @MoodPalette.CssClass(todayCell.FeelingForDay)" style="width:28px; height:28px; margin:0 auto;"></div>
-                <div style="font-size:14px; margin-top:8px;">@MoodPalette.Emoji(todayCell.FeelingForDay) @MoodPalette.Label(todayCell.FeelingForDay)</div>
+                <div class="db-cal-daily-mood @MoodPalette.CssClass(todayCell.FeelingForDay)">
+                    <span>@MoodPalette.Emoji(todayCell.FeelingForDay)</span>
+                    <span>@MoodPalette.Label(todayCell.FeelingForDay)</span>
+                </div>
             }
             else
             {
-                <div style="color:#9CA3AF; font-size:13px;">Belum melacak mood hari ini</div>
-            }
-        </div>
-    }
-    else if (calView == "Bulanan")
-    {
-        <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
-            @foreach (var day in Model.Week)
-            {
-                <div class="cal-day @(day.IsToday ? "today" : "")" style="padding: 6px 2px;">
-                    <div class="num" style="font-size:13px;">@day.Date.Day</div>
-                    <div class="dot @MoodPalette.CssClass(day.FeelingForDay)" style="width:6px; height:6px; margin:2px auto 0;"></div>
-                </div>
+                <p class="db-cal-daily-empty">Belum ada mood tercatat hari ini</p>
             }
         </div>
     }
     else
     {
-        <div class="cal-week">
+        <div class="db-cal-week">
             @foreach (var day in Model.Week)
             {
-                <div class="cal-day @(day.IsToday ? "today" : "")">
-                    <div class="dow">@day.DayOfWeekShort</div>
-                    <div class="num">@day.Date.Day</div>
-                    <div class="dot @MoodPalette.CssClass(day.FeelingForDay)"></div>
+                <div class="db-cal-day @(day.IsToday ? "db-cal-day--today" : "")">
+                    <span class="db-cal-day-dow">@day.DayOfWeekShort</span>
+                    <span class="db-cal-day-num">@day.Date.Day</span>
+                    <div style="display:flex; gap:3px; justify-content:center; min-height:8px; margin-top:2px;">
+                        @if (!string.IsNullOrEmpty(day.FeelingForDay))
+                        {
+                            <span class="db-cal-dot db-mood-dot--@MoodPalette.CssClass(day.FeelingForDay)" title="Mood: @MoodPalette.Label(day.FeelingForDay)"></span>
+                        }
+                        @if (day.HasDeadline)
+                        {
+                            <span style="width:7px; height:7px; border-radius:50%; background:#F59E0B; display:inline-block;" title="Ada deadline tugas"></span>
+                        }
+                        @if (day.HasKonseling)
+                        {
+                            <span style="width:7px; height:7px; border-radius:50%; background:#7C3AED; display:inline-block;" title="Ada sesi konseling"></span>
+                        }
+                    </div>
                 </div>
             }
         </div>
     }
+    <div style="display:flex; gap:16px; margin-top:12px; padding-top:10px; border-top:1px solid var(--lu-border); font-size:11px; color:var(--lu-text-muted);">
+        <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:#10B981; display:inline-block;"></span> Mood</span>
+        <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:#F59E0B; display:inline-block;"></span> Deadline Tugas</span>
+        <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:#7C3AED; display:inline-block;"></span> Jadwal Konseling</span>
+    </div>
 </div>
 
+<!-- ─── Three dashboard cards ─── -->
 <div class="dash-grid">
 
-    <!-- ───── Mood card ───── -->
-    <div class="lu-card">
-        <h3 class="lu-card-title">Mood kamu hari ini</h3>
+    <!-- Mood card -->
+    <div class="lu-card db-card">
+        <div class="db-card-header">
+            <span class="db-card-icon" aria-hidden="true">😊</span>
+            <h3 class="db-card-title">Mood Hari Ini</h3>
+        </div>
+
         @if (string.IsNullOrEmpty(Model.TodayFeeling))
         {
-            <div class="dash-card-empty">
-                <p>Anda belum melacak mood</p>
-                <a class="btn-pill" asp-controller="Mood" asp-action="Feeling">+ Lacak Mood</a>
-            </div>
-        }
-        else
-        {
-            <div class="dash-card-mood-filled @MoodPalette.CssClass(Model.TodayFeeling)">
-                <span class="emoji">@MoodPalette.Emoji(Model.TodayFeeling)</span>
-                <strong>@MoodPalette.Label(Model.TodayFeeling)</strong>
-            </div>
-            <a class="btn-pill" asp-controller="Mood" asp-action="Feeling">Ubah Mood</a>
-        }
-    </div>
-
-    <!-- ───── Journal card ───── -->
-    <div class="lu-card">
-        <h3 class="lu-card-title">Jurnal kamu</h3>
-        @if (Model.LatestJournalId == null)
-        {
-            <div class="dash-card-empty">
-                <p>Anda belum memiliki jurnal</p>
-                <div style="display:flex; gap:8px; justify-content:center;">
-                    <a class="btn-pill ghost" asp-controller="Journal" asp-action="CheckIn">+ Daily Check</a>
-                    <a class="btn-pill" asp-controller="Journal" asp-action="Write">+ Tulis Jurnal</a>
+            <div class="db-empty">
+                <span class="db-empty-icon" aria-hidden="true">🌸</span>
+                <p>Belum ada mood tercatat</p>
+                <div class="db-card-actions" style="margin-top: 12px; justify-content: center;">
+                    <a class="btn-pill" asp-controller="Mood" asp-action="Feeling">+ Lacak Mood</a>
                 </div>
             </div>
         }
         else
         {
-            <a asp-controller="Journal" asp-action="Write" asp-route-id="@Model.LatestJournalId" class="journal-preview" style="text-decoration:none; color:inherit; display:block;">
-                <h4>@(Model.LatestJournalTitle ?? "Jurnal hari ini")</h4>
-                <p class="snippet">@Model.LatestJournalSnippet</p>
-            </a>
-            <div style="display:flex; gap:8px; margin-top:12px;">
-                <a class="btn-pill ghost" asp-controller="Journal" asp-action="CheckIn">@(Model.HasTodayCheckIn ? "✓ Check Hari Ini" : "+ Daily Check")</a>
-                <a class="btn-pill" asp-controller="Journal" asp-action="Write">+ Tulis</a>
+            <div class="db-mood-display @MoodPalette.CssClass(Model.TodayFeeling)">
+                <span class="db-mood-emoji">@MoodPalette.Emoji(Model.TodayFeeling)</span>
+                <strong class="db-mood-label">@MoodPalette.Label(Model.TodayFeeling)</strong>
+            </div>
+            <div class="db-card-actions" style="justify-content: center; margin-top: auto; padding-top: 12px;">
+                <a class="btn-pill" asp-controller="Mood" asp-action="Feeling" style="width:100%; justify-content:center; border-radius:12px;">
+                    Ubah Mood &amp; Check In
+                </a>
             </div>
         }
     </div>
 
-    <!-- ───── Tasks card ───── -->
-    <div class="lu-card">
-        <h3 class="lu-card-title">Tugas Kamu</h3>
-        @if (Model.OpenTaskCount == 0)
+    <!-- Journal card -->
+    <div class="lu-card db-card">
+        <div class="db-card-header">
+            <span class="db-card-icon" aria-hidden="true">📝</span>
+            <h3 class="db-card-title">Jurnal Kamu</h3>
+        </div>
+
+        @if (Model.LatestJournalId == null)
         {
-            <div class="dash-card-empty">
-                <p>Anda belum memiliki tugas baru dari psikolog.</p>
-                <a class="btn-pill" asp-controller="Tasks" asp-action="Index">+ Lihat Tugas</a>
+            <div class="db-empty">
+                <span class="db-empty-icon" aria-hidden="true">📖</span>
+                <p>Belum ada jurnal hari ini</p>
+                <div class="db-card-actions" style="justify-content: center; margin-top: 12px;">
+                    <button type="button" class="btn-pill" onclick="openJournalModal()">+ Tulis Jurnal</button>
+                </div>
             </div>
         }
         else
         {
-            <p class="task-count" style="margin-bottom:10px;"><strong>@Model.OpenTaskCount tugas</strong> menunggu kamu kerjakan</p>
-            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+            <a href="#" onclick="openJournalModal(); return false;" class="db-journal-link">
+                <div class="db-journal-preview">
+                    <h4>@(Model.LatestJournalTitle ?? "Jurnal hari ini")</h4>
+                    <p>@Model.LatestJournalSnippet</p>
+                </div>
+            </a>
+            <div class="db-card-actions">
+                <button type="button" class="btn-pill" onclick="openJournalModal()">+ Tulis / Edit</button>
+            </div>
+        }
+    </div>
+
+    <!-- Tasks card -->
+    <div class="lu-card db-card">
+        <div class="db-card-header">
+            <span class="db-card-icon" aria-hidden="true">📋</span>
+            <h3 class="db-card-title">Tugas Kamu</h3>
+            @if (Model.OpenTaskCount > 0)
+            {
+                <span class="db-task-badge">@Model.OpenTaskCount</span>
+            }
+        </div>
+
+        @if (Model.OpenTaskCount == 0)
+        {
+            <div class="db-empty">
+                <span class="db-empty-icon" aria-hidden="true">🎉</span>
+                <p>Semua tugas sudah selesai!</p>
+                <a class="btn-pill" asp-controller="Tasks" asp-action="Index">Lihat Tugas</a>
+            </div>
+        }
+        else
+        {
+            <div class="db-task-list" style="flex:1;">
                 @foreach (var w in Model.OpenWorksheets)
                 {
-                    var idLabel = w.Status == "Assigned" ? "🟠 Baru"
-                                : w.Status == "InProgress" ? "🟡 Sedang Ditinjau"
-                                : "⚪ " + w.StatusLabel;
-                    <a asp-controller="Tasks" asp-action="Detail" asp-route-id="@w.WorksheetId"
-                       style="display:block; padding:10px 12px; border:1px solid var(--lu-border); border-radius:8px; text-decoration:none; color:inherit;">
-                        <div style="display:flex; justify-content:space-between; gap:8px;">
-                            <strong style="font-size:13px;">@w.TaskName</strong>
-                            <small style="white-space:nowrap;">@idLabel</small>
+                    var sc = w.Status == "Assigned"   ? "new"
+                           : w.Status == "InProgress" ? "progress" : "other";
+                    var sl = w.Status == "Assigned"   ? "Baru"
+                           : w.Status == "InProgress" ? "Dalam Proses" : w.StatusLabel;
+                    <a asp-controller="Tasks" asp-action="Detail" asp-route-id="@w.WorksheetId" class="db-task-item">
+                        <div class="db-task-row">
+                            <span class="db-task-name">@w.TaskName</span>
+                            <span class="db-task-status db-task-status--@sc">@sl</span>
                         </div>
-                        <div style="font-size:11px; color:#6B7280; margin-top:4px;">
-                            Deadline: @w.Deadline.ToString("d MMM yyyy", new System.Globalization.CultureInfo("id-ID"))
-                            · @w.PsychologistName
+                        <div class="db-task-meta">
+                            <span>📅 @w.Deadline.ToString("d MMM", cid)</span>
+                            <span>· @w.PsychologistName</span>
                         </div>
                     </a>
                 }
             </div>
-            <a class="btn-pill" asp-controller="Tasks" asp-action="Index">Lihat Semua Tugas</a>
+            <a class="btn-pill" asp-controller="Tasks" asp-action="Index" style="margin-top:auto; padding-top:16px; width:100%; justify-content:center; border-radius:12px;">Lihat Semua Tugas</a>
         }
     </div>
+
+    <!-- Jadwal Konseling card -->
+    <div class="lu-card db-card">
+        <div class="db-card-header">
+            <span class="db-card-icon" aria-hidden="true">📅</span>
+            <h3 class="db-card-title">Jadwal Konseling</h3>
+        </div>
+
+        @if (!Model.UpcomingSessions.Any())
+        {
+            <div class="db-empty">
+                <span class="db-empty-icon" aria-hidden="true">🗓️</span>
+                <p>Belum ada jadwal mendatang</p>
+                <a class="btn-pill" asp-controller="Jadwal" asp-action="Index">Lihat Jadwal</a>
+            </div>
+        }
+        else
+        {
+            <div style="display:flex; flex-direction:column; gap:12px; flex:1;">
+                @foreach (var s in Model.UpcomingSessions)
+                {
+                    <div style="display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; background:#F5F3FF; border:1px solid rgba(124,58,237,0.1);">
+                        <div style="background:var(--lu-primary); color:white; min-width:44px; height:44px; border-radius:10px; display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:11px; font-weight:700; line-height:1.2;">
+                            <span>@s.SessionStart.ToString("MMM", cid).ToUpper()</span>
+                            <span style="font-size:18px;">@s.SessionStart.ToString("dd")</span>
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@s.PsychologistName</div>
+                            <div style="font-size:12px; color:var(--lu-text-muted); margin-top:2px;">⏰ @s.SessionStart.ToString("HH:mm") · @s.DurationMinutes mnt</div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <a class="btn-pill" asp-controller="Jadwal" asp-action="Index" style="margin-top:auto; padding-top:16px; width:100%; justify-content:center; border-radius:12px;">Lihat Semua Jadwal</a>
+        }
+    </div>
+
+<!-- ─── Journal Modal ─── -->
+<div class="hrpf-modal-overlay" id="journalModal" role="dialog" aria-modal="true" aria-labelledby="journalModalTitle">
+    <div class="hrpf-modal" style="max-width: 600px;">
+        <div class="hrpf-modal-head">
+            <div class="hrpf-modal-head-icon">📝</div>
+            <h2 class="hrpf-modal-title" id="journalModalTitle">Tulis Jurnal</h2>
+            <button type="button" class="hrpf-modal-close" onclick="closeJournalModal()" aria-label="Tutup">&times;</button>
+        </div>
+
+        <form method="post" asp-controller="Journal" asp-action="Write" autocomplete="off" style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="JournalId" value="@Model.LatestJournalId" />
+            
+            <div class="hrpf-modal-body">
+                <div class="hrpf-modal-field">
+                    <label class="hrpf-modal-label">Judul Jurnal</label>
+                    <input type="text" name="Title" class="hrpf-modal-input" value="@Model.LatestJournalTitle" placeholder="Misal: Perasaanku hari ini..." required />
+                </div>
+                <div class="hrpf-modal-field">
+                    <label class="hrpf-modal-label">Isi Jurnal</label>
+                    <textarea name="Content" class="hrpf-modal-input" rows="8" placeholder="Tuliskan apa saja yang kamu pikirkan atau rasakan hari ini..." required style="resize: vertical;">@Model.LatestJournalContent</textarea>
+                </div>
+            </div>
+            
+            <div class="hrpf-modal-foot">
+                <button type="button" class="hrpf-modal-cancel" onclick="closeJournalModal()">Batal</button>
+                <button type="submit" class="hrpf-modal-save">Simpan Jurnal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openJournalModal() {
+            document.getElementById('journalModal').classList.add('is-open');
+        }
+        function closeJournalModal() {
+            document.getElementById('journalModal').classList.remove('is-open');
+        }
+    </script>
+}
 
 </div>

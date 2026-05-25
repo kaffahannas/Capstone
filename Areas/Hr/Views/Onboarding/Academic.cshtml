@@ -1,6 +1,7 @@
 @model LightenUp.Web.Models.ViewModels.HrOnboardingAcademicViewModel
 @{
     ViewData["Title"] = "Status Akademik";
+    var existingDoc = ViewBag.ExistingDocumentUrl as string;
 }
 
 <h1 class="onb-title">Langkah 2: Status Akademik</h1>
@@ -28,19 +29,36 @@
         <span asp-validation-for="University" class="text-danger"></span>
     </div>
 
-    <div>
+    <div class="onb-upload-block">
         <label style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Dokumen pendukung</label>
-        <label style="display:block; padding:30px; border:1.5px dashed #C4B5FD; border-radius:12px; text-align:center; cursor:pointer; background:#FAF5FF;">
-            <input type="file" asp-for="AcademicDocument" accept="image/*,.pdf" style="display:none;" />
-            <div style="font-size:32px; margin-bottom:8px;">📄</div>
-            <strong style="display:block; margin-bottom:4px;">Upload file</strong>
-            <small style="color:#6B7280;">Format JPG/PDF, maksimal 5 MB</small>
+        @if (!string.IsNullOrEmpty(existingDoc))
+        {
+            <div class="onb-upload-preview" id="existingDocPreview">
+                @if (existingDoc.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    <a href="@existingDoc" target="_blank" rel="noopener" class="onb-file-link">📄 Dokumen tersimpan (PDF) — lihat</a>
+                }
+                else
+                {
+                    <img src="@existingDoc" alt="Dokumen akademik" class="onb-upload-thumb" />
+                }
+                <p class="onb-upload-hint">File sudah diunggah. Pilih file baru untuk mengganti.</p>
+            </div>
+        }
+        <label class="onb-upload-zone">
+            <input type="file" asp-for="AcademicDocument" accept="image/*,.pdf" class="onb-upload-input" data-preview="academicPreview" />
+            <div class="onb-upload-placeholder">
+                <span class="onb-upload-icon">📄</span>
+                <strong>Upload file</strong>
+                <small>Format JPG/PDF, maksimal 5 MB</small>
+            </div>
+            <div id="academicPreview" class="onb-upload-preview onb-upload-preview-new" hidden></div>
         </label>
         <span asp-validation-for="AcademicDocument" class="text-danger"></span>
     </div>
 
     <div class="onb-footer">
         <a asp-action="Photo" class="onb-btn onb-btn-secondary">Sebelumnya</a>
-        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutnya</button>
+        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutkan</button>
     </div>
 </form>

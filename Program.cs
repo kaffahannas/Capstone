@@ -18,7 +18,13 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient();
+builder.Services.Configure<LightenUp.Web.Services.DuitkuOptions>(
+    builder.Configuration.GetSection(LightenUp.Web.Services.DuitkuOptions.SectionName));
 builder.Services.AddScoped<LightenUp.Web.Services.HealthStatusService>();
+builder.Services.AddScoped<LightenUp.Web.Services.UserUploadService>();
+builder.Services.AddScoped<LightenUp.Web.Services.DuitkuService>();
+builder.Services.AddScoped<LightenUp.Web.Services.SubscriptionAccessService>();
 builder.Services.AddScoped<LightenUp.Web.Services.IEmailSender, LightenUp.Web.Services.SmtpEmailSender>();
 
 var app = builder.Build();
@@ -146,6 +152,12 @@ if (!string.IsNullOrWhiteSpace(patientHost) || !string.IsNullOrWhiteSpace(adminH
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Short admin login URL (avoids /AdminAuth/AdminAuth/Login from default area routing).
+app.MapControllerRoute(
+    name: "admin_auth_login",
+    pattern: "AdminAuth/Login",
+    defaults: new { area = "AdminAuth", controller = "AdminAuth", action = "Login" });
 
 // Area routes come first so /Patient/* and /Hr/* are matched before the default.
 app.MapControllerRoute(

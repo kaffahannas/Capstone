@@ -1,8 +1,9 @@
 using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,18 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
     [Authorize(Roles = "Patient")]
+    [RequiresPatientPremium]
     public class TasksController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IWebHostEnvironment _env;
+        private readonly UserUploadService _uploads;
 
-        public TasksController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
+        public TasksController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, UserUploadService uploads)
         {
             _context = context;
             _userManager = userManager;
-            _env = env;
+            _uploads = uploads;
         }
 
         private async Task<LightenUp.Web.Models.Patient?> GetPatientAsync()
@@ -52,19 +54,37 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             if (status != null && status.Count > 0)
                 q = q.Where(w => status.Contains(w.Status));
 
-            // Period filter (multi-select, OR within group). All operate on CreatedAt per spec.
+            // Period filter (multi-select, OR within group). Operates on Deadline.
             if (period != null && period.Count > 0)
             {
                 var today = DateTime.Today;
-                var cutoffs = new List<DateTime>();
-                if (period.Contains("HariIni")) cutoffs.Add(today);
-                if (period.Contains("Mingguan")) cutoffs.Add(today.AddDays(-7));
-                if (period.Contains("Bulanan")) cutoffs.Add(today.AddDays(-30));
-                if (period.Contains("Tahunan")) cutoffs.Add(today.AddDays(-365));
-                if (cutoffs.Count > 0)
+                var minDate = DateTime.MaxValue;
+                var maxDate = DateTime.MinValue;
+
+                if (period.Contains("HariIni")) 
                 {
-                    var earliest = cutoffs.Min();    // OR semantics → use the widest window
-                    q = q.Where(w => w.CreatedAt >= earliest);
+                    if (today < minDate) minDate = today;
+                    if (today > maxDate) maxDate = today;
+                }
+                if (period.Contains("Mingguan")) 
+                {
+                    if (today.AddDays(-7) < minDate) minDate = today.AddDays(-7);
+                    if (today.AddDays(7) > maxDate) maxDate = today.AddDays(7);
+                }
+                if (period.Contains("Bulanan")) 
+                {
+                    if (today.AddDays(-30) < minDate) minDate = today.AddDays(-30);
+                    if (today.AddDays(30) > maxDate) maxDate = today.AddDays(30);
+                }
+                if (period.Contains("Tahunan")) 
+                {
+                    if (today.AddDays(-365) < minDate) minDate = today.AddDays(-365);
+                    if (today.AddDays(365) > maxDate) maxDate = today.AddDays(365);
+                }
+                
+                if (minDate != DateTime.MaxValue && maxDate != DateTime.MinValue)
+                {
+                    q = q.Where(w => w.Deadline.Date >= minDate && w.Deadline.Date <= maxDate);
                 }
             }
 
@@ -99,7 +119,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 TotalCount = total,
                 Items = items
             };
-            ViewBag.ActiveNav = "Beranda";
+            ViewBag.ActiveNav = "Tugas";
             return View(vm);
         }
 
@@ -117,7 +137,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 .FirstOrDefaultAsync(w => w.WorksheetId == id && w.PatientId == patient.PatientId);
             if (w == null) return NotFound();
 
-            ViewBag.ActiveNav = "Beranda";
+            ViewBag.ActiveNav = "Tugas";
             return View(new TaskDetailViewModel
             {
                 WorksheetId = w.WorksheetId,
@@ -153,23 +173,16 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             // Save photo if uploaded
             if (model.Photo != null && model.Photo.Length > 0)
             {
-                var ext = Path.GetExtension(model.Photo.FileName).ToLowerInvariant();
-                var allowed = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
-                if (!allowed.Contains(ext))
+                var path = await _uploads.ReplaceAsync(
+                    patient.UserId, UserUploadService.Categories.Worksheets, model.Photo,
+                    w.ProofImagePath, namePrefix: $"ws{w.WorksheetId}",
+                    allowedExtensions: UserUploadService.ImageExtensions);
+                if (path == null)
                 {
                     TempData["error"] = "Format foto harus JPG, PNG, WEBP, atau GIF.";
                     return RedirectToAction(nameof(Detail), new { id = w.WorksheetId });
                 }
-
-                var folder = Path.Combine(_env.WebRootPath, "uploads", "worksheets", patient.PatientId.ToString());
-                Directory.CreateDirectory(folder);
-                var fileName = $"{w.WorksheetId}_{Guid.NewGuid():N}{ext}";
-                var fullPath = Path.Combine(folder, fileName);
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-                {
-                    await model.Photo.CopyToAsync(stream);
-                }
-                w.ProofImagePath = $"/uploads/worksheets/{patient.PatientId}/{fileName}";
+                w.ProofImagePath = path;
             }
 
             // Save note
@@ -199,7 +212,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 
             var exists = await _context.Worksheets.AnyAsync(w => w.WorksheetId == id && w.PatientId == patient.PatientId);
             if (!exists) return NotFound();
-            ViewBag.ActiveNav = "Beranda";
+            ViewBag.ActiveNav = "Tugas";
             return View(model: id);
         }
 

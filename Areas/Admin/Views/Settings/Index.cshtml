@@ -1,0 +1,84 @@
+@model LightenUp.Web.Models.ViewModels.AdminSettingsViewModel
+@{
+    ViewData["Title"] = "Pengaturan";
+    ViewBag.ActiveNav = "Settings";
+}
+
+@if (TempData["success"] is string ok)  { <div class="adm-alert success">✅ @ok</div> }
+@if (TempData["error"]   is string err) { <div class="adm-alert error">⚠️ @err</div> }
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:860px;">
+
+    <!-- ── Profile form ── -->
+    <form asp-action="UpdateProfile" method="post" class="adm-card">
+        <div class="adm-card-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Informasi Akun
+        </div>
+
+        <!-- Avatar display -->
+        <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--adm-bg); border-radius:var(--adm-radius-sm); margin-bottom:20px; border:1px solid var(--adm-border);">
+            <div style="width:48px; height:48px; border-radius:999px; background:linear-gradient(135deg,#7C3AED,#5B21B6); display:flex; align-items:center; justify-content:center; color:white; font-size:18px; font-weight:800; flex-shrink:0;">
+                @string.Join("", (Model.FullName ?? "A").Split(' ').Take(2).Select(w => w[0])).ToUpper()
+            </div>
+            <div>
+                <div style="font-size:14px; font-weight:700; color:var(--adm-text);">@Model.FullName</div>
+                <div style="font-size:12px; color:var(--adm-muted);">@Model.Email</div>
+            </div>
+        </div>
+
+        <div class="adm-form-row">
+            <label asp-for="FullName">Nama Lengkap</label>
+            <input asp-for="FullName" />
+        </div>
+
+        <div class="adm-form-row">
+            <label>Alamat Email</label>
+            <input type="email" value="@Model.Email" disabled />
+            <div class="adm-form-hint">Email tidak dapat diubah dari halaman ini.</div>
+        </div>
+
+        <div class="adm-form-row">
+            <label asp-for="Phone">Nomor Telepon</label>
+            <input asp-for="Phone" placeholder="Contoh: 08123456789" />
+        </div>
+
+        <div class="adm-form-actions">
+            <button type="submit" class="btn btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Simpan Profil
+            </button>
+        </div>
+    </form>
+
+    <!-- ── Change password form ── -->
+    <form asp-action="ChangePassword" method="post" class="adm-card">
+        <div class="adm-card-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Ubah Kata Sandi
+        </div>
+
+        <div class="adm-form-row">
+            <label>Kata Sandi Sekarang</label>
+            <input name="CurrentPassword" type="password" required autocomplete="current-password" />
+        </div>
+
+        <div class="adm-form-row">
+            <label>Kata Sandi Baru</label>
+            <input name="NewPassword" type="password" minlength="8" required autocomplete="new-password" />
+            <div class="adm-form-hint">Minimal 8 karakter. Gunakan kombinasi huruf, angka, dan simbol.</div>
+        </div>
+
+        <div class="adm-form-row">
+            <label>Konfirmasi Kata Sandi Baru</label>
+            <input name="ConfirmPassword" type="password" minlength="8" required autocomplete="new-password" />
+        </div>
+
+        <div class="adm-form-actions">
+            <button type="submit" class="btn btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Ubah Kata Sandi
+            </button>
+        </div>
+    </form>
+</div>

@@ -3,21 +3,42 @@
     ViewData["Title"] = "Laporkan ke Psikolog";
     ViewBag.ActiveNav = "Klien";
 
-    var labels = Json.Serialize(Model.MoodTrendDates.Select(d => d.ToString("dd/MM")));
-    var data = Json.Serialize(Model.MoodTrendScores);
+    var labels     = Json.Serialize(Model.MoodTrendDates.Select(d => d.ToString("dd/MM")));
+    var data       = Json.Serialize(Model.MoodTrendScores);
+    var statusCss  = (Model.PatientStatus ?? "sehat").ToLower();
+    var initial    = string.Join("", (Model.PatientName ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpper(p[0])));
 
-    var trendColor = Model.AssignmentTrend switch
+    var trendMod = Model.AssignmentTrend switch
     {
-        "Menurun" => "#B45309",
-        "Meningkat" => "#047857",
-        _ => "#6B7280"
+        "Meningkat" => "trend-up",
+        "Menurun"   => "trend-down",
+        _           => "trend-neutral"
     };
-    var stressColor = Model.StressLevel switch
+    var stressMod = Model.StressLevel switch
     {
-        "Tinggi" => "#B91C1C",
-        "Sedang" => "#B45309",
-        "Rendah" => "#047857",
-        _ => "#6B7280"
+        "Tinggi" => "stress-high",
+        "Sedang" => "stress-mid",
+        "Rendah" => "stress-low",
+        _        => "stress-unknown"
+    };
+    var trendIcon = Model.AssignmentTrend switch
+    {
+        "Meningkat" => "↑",
+        "Menurun"   => "↓",
+        _           => "→"
+    };
+
+    var chartColor = statusCss switch
+    {
+        "sehat"    => "#10B981",
+        "beresiko" => "#F59E0B",
+        _          => "#EF4444"
+    };
+    var chartFill = statusCss switch
+    {
+        "sehat"    => "rgba(16,185,129,0.12)",
+        "beresiko" => "rgba(245,158,11,0.12)",
+        _          => "rgba(239,68,68,0.12)"
     };
 }
 
@@ -25,83 +46,197 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 }
 
-<a asp-controller="Employees" asp-action="Detail" asp-route-id="@Model.PatientId" style="text-decoration:none; color:#111;">← Detail Pasien</a>
+<div class="hrpt-page">
 
-<div style="max-width: 560px; margin: 16px auto 0;">
-    <h2 style="margin: 0 0 4px;">Laporkan ke Psikolog</h2>
-    <p style="color:#6B7280; font-size:14px;">Kirim laporan singkat ke @Model.PsychologistName.</p>
+    @* ── Toast ── *@
+    @if (TempData["success"] is string ok)
+    {
+        <div class="hrpt-toast hrpt-toast--ok" id="hrptToast" role="alert">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            @ok
+        </div>
+    }
+    @if (TempData["error"] is string err)
+    {
+        <div class="hrpt-toast hrpt-toast--err" id="hrptToast" role="alert">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            @err
+        </div>
+    }
 
-    <div class="lu-card" style="margin-top:16px;">
-        <div style="display:flex; gap:12px; align-items:center;">
-            <div style="flex:1;">
-                <h3 style="margin: 0;">@Model.PatientName</h3>
-                <small style="color:#6B7280;">@(Model.PatientDepartment ?? "—")</small>
+    @* ── Back ── *@
+    <a href="@Url.Action("Detail", "Employees", new { area = "Hr", id = Model.PatientId })" class="hrpt-back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Detail Karyawan
+    </a>
+
+    @* ══════ HERO ══════ *@
+    <div class="hrpt-hero hrpt-hero--@statusCss">
+        <div class="hrpt-hero-bg" aria-hidden="true"></div>
+        <div class="hrpt-hero-inner">
+            <div class="hrpt-av-wrap">
+                <div class="hrpt-av hrpt-av--@statusCss">@initial</div>
             </div>
-            <span class="status-badge @Model.PatientStatus.ToLowerInvariant()">@Model.PatientStatus</span>
+            <div class="hrpt-hero-info">
+                <p class="hrpt-hero-eyebrow">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Laporan ke Psikolog
+                </p>
+                <h1 class="hrpt-hero-title">@Model.PatientName</h1>
+                <div class="hrpt-hero-meta">
+                    <span class="hrpt-hero-meta-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                        @(Model.PatientDepartment ?? "—")
+                    </span>
+                    <span class="hrpt-hero-sep">·</span>
+                    <span class="hrpt-hero-meta-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        @Model.PsychologistName
+                    </span>
+                </div>
+            </div>
+            <span class="hrpt-status-badge hrpt-status-badge--@statusCss">
+                <span style="width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.8;" aria-hidden="true"></span>
+                @Model.PatientStatus
+            </span>
         </div>
     </div>
 
-    <div class="lu-card" style="margin-top:12px;">
-        <h3 class="lu-card-title">Mood Trend</h3>
-        <small style="color:#6B7280;">Dalam 7 hari terakhir</small>
-        <canvas id="trendChart" height="80"></canvas>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px;">
-            <div style="background:#FAF5FF; padding:10px; border-radius:8px;">
-                <small style="color:#6B7280;">Nilai Penugasan</small>
-                <div style="font-weight:700; color:@trendColor;">@Model.AssignmentScore/10</div>
-                <small style="color:@trendColor;">@Model.AssignmentTrend</small>
-            </div>
-            <div style="background:#FAF5FF; padding:10px; border-radius:8px;">
-                <small style="color:#6B7280;">Tingkat Stress</small>
-                <div style="font-weight:700; color:@stressColor;">@Model.StressLevel</div>
-            </div>
+    @* ══════ METRICS ROW ══════ *@
+    <div class="hrpt-metrics">
+        <div class="hrpt-metric hrpt-metric--@trendMod">
+            <span class="hrpt-metric-label">Nilai Penugasan</span>
+            <span class="hrpt-metric-val">@Model.AssignmentScore.ToString("0.0")<span style="font-size:14px;font-weight:600;opacity:.6;">/10</span></span>
+            <span class="hrpt-metric-sub">@trendIcon @Model.AssignmentTrend</span>
+        </div>
+        <div class="hrpt-metric hrpt-metric--@stressMod">
+            <span class="hrpt-metric-label">Tingkat Stres</span>
+            <span class="hrpt-metric-val">@(string.IsNullOrEmpty(Model.StressLevel) ? "—" : Model.StressLevel)</span>
+            <span class="hrpt-metric-sub">Kondisi mental</span>
+        </div>
+        <div class="hrpt-metric">
+            <span class="hrpt-metric-label">Mood Trend</span>
+            <span class="hrpt-metric-val" style="font-size:16px;">@(string.IsNullOrEmpty(Model.MoodTrendLabel) ? "—" : Model.MoodTrendLabel)</span>
+            <span class="hrpt-metric-sub">7 hari terakhir</span>
         </div>
     </div>
 
-    <form method="post" class="lu-card" style="margin-top:12px;">
-        <input type="hidden" asp-for="ReportId" />
-        <input type="hidden" asp-for="PatientId" />
-        <input type="hidden" asp-for="PsychologistId" />
+    @* ══════ BODY GRID ══════ *@
+    <div class="hrpt-grid">
 
-        <h3 class="lu-card-title">Beri Catatan</h3>
-        <textarea asp-for="Notes" rows="4" class="mood-textarea" placeholder="Tambahkan catatan dari Anda untuk psikolog..."></textarea>
+        @* ── Left column ── *@
+        <div class="hrpt-main">
 
-        <details style="margin-top:12px;">
-            <summary style="cursor:pointer; font-size:13px; color:#6B7280;">Preview email yang akan dikirim</summary>
-            <div style="margin-top:8px; padding:10px 12px; background:#F9FAFB; border-radius:8px; font-size:12px;">
-                <strong>Subject:</strong> @Model.PreviewEmailSubject<br/><br/>
-                <pre style="white-space:pre-wrap; font-family:inherit;">@Model.PreviewEmailBody</pre>
+            @* Mood chart *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--amber" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Mood Trend</h3>
+                    <span style="margin-left:auto;font-size:12px;color:var(--lu-text-muted);font-weight:600;">7 hari terakhir</span>
+                </div>
+                <div class="hrpt-chart-wrap">
+                    <canvas id="trendChart"></canvas>
+                </div>
             </div>
-        </details>
 
-        <div style="display:flex; gap:10px; margin-top:16px;">
-            <a asp-controller="Employees" asp-action="Detail" asp-route-id="@Model.PatientId" class="btn-secondary" style="flex:1; text-align:center;">Batalkan</a>
-            <button type="submit" formaction="@Url.Action("Save")" class="btn-secondary" style="flex:1;">Simpan Draft</button>
-            <button type="submit" formaction="@Url.Action("Send")" class="btn-primary" style="flex:1;">Kirim Laporan</button>
+            @* Notes form *@
+            <form method="post">
+                <div class="hrpf-card">
+                    <div class="hrpf-card-head">
+                        <div class="hrpf-card-icon hrpf-card-icon--purple" aria-hidden="true">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </div>
+                        <h3 class="hrpf-card-title">Catatan untuk Psikolog</h3>
+                    </div>
+                    <input type="hidden" asp-for="ReportId" />
+                    <input type="hidden" asp-for="PatientId" />
+                    <input type="hidden" asp-for="PsychologistId" />
+                    <textarea asp-for="Notes" rows="7" class="hrpt-textarea"
+                              placeholder="Jelaskan kondisi karyawan, kekhawatiran Anda, atau hal-hal yang perlu diperhatikan psikolog…"></textarea>
+                    <div class="hrpt-action-row">
+                        <a href="@Url.Action("Detail", "Employees", new { area = "Hr", id = Model.PatientId })"
+                           class="hrpt-btn-cancel">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Batalkan
+                        </a>
+                        <button type="submit" formaction="@Url.Action("Save")" class="hrpt-btn-draft">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            Simpan Draft
+                        </button>
+                        <button type="submit" formaction="@Url.Action("Send")" class="hrpt-btn-send">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            Kirim ke Psikolog
+                        </button>
+                    </div>
+                </div>
+            </form>
+
         </div>
-    </form>
+
+        @* ── Right sidebar ── *@
+        <div class="hrpt-side">
+
+            @* Email preview *@
+            <div class="hrpf-card">
+                <div class="hrpf-card-head">
+                    <div class="hrpf-card-icon hrpf-card-icon--blue" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </div>
+                    <h3 class="hrpf-card-title">Preview Email</h3>
+                </div>
+                <div class="hrpt-email-subj">
+                    <span class="hrpt-email-subj-label">Subject</span>
+                    <span class="hrpt-email-subj-val">@Model.PreviewEmailSubject</span>
+                </div>
+                <div class="hrpt-email-body">
+                    <pre>@Model.PreviewEmailBody</pre>
+                </div>
+            </div>
+
+            @* Tip *@
+            <div class="hrpt-tip">
+                <strong>💡 Catatan:</strong> Email dikirim otomatis ke psikolog saat Anda menekan <em>Kirim ke Psikolog</em>. Draft hanya tersimpan di sistem dan belum dikirim.
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
-    <script>
-        new Chart(document.getElementById('trendChart'), {
-            type: 'line',
-            data: {
-                labels: @Html.Raw(labels),
-                datasets: [{
-                    data: @Html.Raw(data),
-                    borderColor: '#F59E0B',
-                    backgroundColor: 'rgba(245, 158, 11, 0.12)',
-                    tension: 0.3,
-                    fill: true,
-                    pointRadius: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: { y: { min: 0, max: 5 } },
-                plugins: { legend: { display: false } }
-            }
-        });
-    </script>
+<script>
+(function () {
+    const t = document.getElementById('hrptToast');
+    if (t) setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; }, 3200);
+})();
+
+new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+        labels: @Html.Raw(labels),
+        datasets: [{
+            data: @Html.Raw(data),
+            borderColor: '@Html.Raw(chartColor)',
+            backgroundColor: '@Html.Raw(chartFill)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 5,
+            pointBackgroundColor: '@Html.Raw(chartColor)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: { min: 0, max: 5, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
+        },
+        plugins: { legend: { display: false } }
+    }
+});
+</script>
 }

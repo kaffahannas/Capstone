@@ -1,0 +1,234 @@
+using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
+using LightenUp.Web.Models;
+using LightenUp.Web.Models.ViewModels;
+using LightenUp.Web.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace LightenUp.Web.Areas.Hr.Controllers;
+
+[Area("Hr")]
+[Authorize(Roles = "HR")]
+public class SubscriptionController : Controller
+{
+    private static readonly List<SubscriptionPlanViewModel> Plans =
+    [
+        new() { PlanId = "company-monthly", Name = "Perusahaan Bulanan", Price = 499000, DurationMonths = 1, Description = "Akses HR Console + kode referral untuk karyawan (hingga paket aktif)." },
+        new() { PlanId = "company-yearly", Name = "Perusahaan Tahunan", Price = 4990000, DurationMonths = 12, Description = "Paket tahunan perusahaan (hemat ~17%). Kode referral otomatis setelah pembayaran." }
+    ];
+
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly DuitkuService _duitku;
+    private readonly SubscriptionAccessService _access;
+
+    public SubscriptionController(
+        ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        DuitkuService duitku,
+        SubscriptionAccessService access)
+    {
+        _context = context;
+        _userManager = userManager;
+        _duitku = duitku;
+        _access = access;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var hr = await GetHrAsync();
+        if (hr == null || hr.OnboardingCompletedAt == null)
+            return RedirectToAction("Welcome", "Onboarding");
+
+        CompanySubscription? active = null;
+        if (hr.CompanyId != null)
+            active = await _access.GetActiveCompanySubscriptionAsync(hr.CompanyId.Value);
+
+        var divisions = new List<CompanyDivisionViewModel>();
+        if (hr.CompanyId != null)
+        {
+            divisions = await _context.CompanyDivisions
+                .Where(d => d.CompanyId == hr.CompanyId)
+                .Select(d => new CompanyDivisionViewModel
+                {
+                    DivisionId = d.DivisionId,
+                    Name = d.Name,
+                    ReferralCode = d.ReferralCode,
+                    EmployeeCount = _context.Patients.Count(p => p.CompanyId == hr.CompanyId && p.Department == d.Name)
+                })
+                .ToListAsync();
+        }
+
+        ViewBag.ActiveNav = "Langganan";
+        return View(new HrSubscriptionIndexViewModel
+        {
+            Plans = Plans,
+            HasActiveSubscription = active != null,
+            ActivePlanName = active?.PlanName,
+            ActiveUntil = active?.EndDate,
+            Divisions = divisions,
+            CompanyName = hr.Company?.Name ?? "",
+            SubscriptionRequired = TempData["subscriptionRequired"] != null
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateDivision(string name)
+    {
+        var hr = await GetHrAsync();
+        if (hr?.CompanyId == null || string.IsNullOrWhiteSpace(name))
+            return RedirectToAction(nameof(Index));
+
+        var newDiv = new CompanyDivision
+        {
+            CompanyId = hr.CompanyId.Value,
+            Name = name.Trim(),
+            ReferralCode = await _access.GenerateUniqueReferralCodeAsync()
+        };
+        _context.CompanyDivisions.Add(newDiv);
+        await _context.SaveChangesAsync();
+
+        TempData["success"] = "Divisi berhasil ditambahkan!";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteDivision(int id)
+    {
+        var hr = await GetHrAsync();
+        if (hr?.CompanyId == null) return RedirectToAction(nameof(Index));
+
+        var div = await _context.CompanyDivisions.FirstOrDefaultAsync(d => d.DivisionId == id && d.CompanyId == hr.CompanyId);
+        if (div != null)
+        {
+            _context.CompanyDivisions.Remove(div);
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Divisi berhasil dihapus.";
+        }
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Checkout(string planId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var hr = await GetHrAsync();
+        if (user == null || hr?.CompanyId == null) return Unauthorized();
+
+        var plan = Plans.FirstOrDefault(p => p.PlanId == planId);
+        if (plan == null)
+        {
+            TempData["error"] = "Paket tidak valid.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var subscription = new CompanySubscription
+        {
+            CompanyId = hr.CompanyId.Value,
+            PlanName = plan.Name,
+            Status = "Pending",
+            StartDate = DateTime.Today,
+            EndDate = DateTime.Today.AddMonths(plan.DurationMonths)
+        };
+        _context.CompanySubscriptions.Add(subscription);
+        await _context.SaveChangesAsync();
+
+        var orderId = $"LU-C{hr.CompanyId}-{subscription.CompanySubscriptionId}-{DateTime.UtcNow:yyyyMMddHHmmss}";
+        var payment = new PaymentTransaction
+        {
+            CompanyId = hr.CompanyId,
+            CompanySubscriptionId = subscription.CompanySubscriptionId,
+            MerchantOrderId = orderId,
+            Amount = plan.Price,
+            PlanName = plan.Name,
+            PaymentStatus = "pending"
+        };
+        _context.PaymentTransactions.Add(payment);
+        await _context.SaveChangesAsync();
+
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var callbackUrl = $"{baseUrl}/api/payment/duitku/callback";
+        var returnUrl = Url.Action(nameof(Return), "Subscription", new { area = "Hr", orderId }, Request.Scheme)!;
+
+        var result = await _duitku.CreatePaymentAsync(new DuitkuCreatePaymentRequest
+        {
+            MerchantOrderId = orderId,
+            Amount = plan.Price,
+            ProductDetails = $"LightenUp {plan.Name}",
+            CustomerEmail = user.Email ?? "",
+            CustomerName = user.FullName,
+            CallbackUrl = callbackUrl,
+            ReturnUrl = returnUrl
+        });
+
+        if (!result.Success || string.IsNullOrEmpty(result.PaymentUrl))
+        {
+            TempData["error"] = result.ErrorMessage ?? "Gagal membuat pembayaran.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        payment.DuitkuReference = result.Reference;
+        payment.PaymentUrl = result.PaymentUrl;
+        await _context.SaveChangesAsync();
+
+        return Redirect(result.PaymentUrl);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Return(string orderId, bool mock = false)
+    {
+        var payment = await _context.PaymentTransactions
+            .Include(p => p.CompanySubscription)
+            .FirstOrDefaultAsync(p => p.MerchantOrderId == orderId);
+
+        if (payment == null) return NotFound();
+
+        if (mock && payment.PaymentStatus == "pending")
+            await PaymentCompletionService.MarkPaidAsync(_context, payment);
+
+        if (payment.PaymentStatus == "paid")
+            return RedirectToAction(nameof(Success), new { orderId });
+
+        return RedirectToAction(nameof(Failed), new { orderId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Success(string orderId)
+    {
+        var payment = await _context.PaymentTransactions
+            .Include(p => p.Company)
+            .FirstOrDefaultAsync(p => p.MerchantOrderId == orderId);
+        if (payment == null) return NotFound();
+
+        var company = payment.CompanyId != null
+            ? await _context.Companies.FindAsync(payment.CompanyId)
+            : null;
+        ViewBag.PlanName = payment.PlanName;
+        ViewBag.ActiveNav = "Langganan";
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Failed(string orderId)
+    {
+        ViewBag.OrderId = orderId;
+        ViewBag.ActiveNav = "Langganan";
+        return View();
+    }
+
+    private async Task<HrStaff?> GetHrAsync()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return null;
+        return await _context.HrStaffs
+            .Include(h => h.Company)
+            .FirstOrDefaultAsync(h => h.UserId == user.Id);
+    }
+}

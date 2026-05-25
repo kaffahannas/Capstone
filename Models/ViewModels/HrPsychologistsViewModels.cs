@@ -8,6 +8,10 @@ namespace LightenUp.Web.Models.ViewModels
         public string? ProfilePicture { get; set; }
         public int? ExperienceYears { get; set; }
         public string? Email { get; set; }
+        public string? Bio { get; set; }
+        public string? University { get; set; }
+        public string? LastDegree { get; set; }
+        public string? PracticeLocation { get; set; }
         public bool AlreadyPartnered { get; set; }
     }
 

@@ -1,4 +1,4 @@
-﻿using LightenUp.Web.Models;
+using LightenUp.Web.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +22,10 @@ namespace LightenUp.Web.Data
 
         // Tabel Bisnis & Entitas Baru
         public DbSet<Company> Companies { get; set; }
+        public DbSet<CompanyDivision> CompanyDivisions { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<CompanySubscription> CompanySubscriptions { get; set; }
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<PatientPsychologistAssignment> Assignments { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Worksheet> Worksheets { get; set; }
@@ -98,10 +101,22 @@ namespace LightenUp.Web.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 4. Unique referral code per company (filtered: ignores NULLs)
+            // Note: Now ReferralCode is primarily on CompanyDivision
             builder.Entity<Company>()
                 .HasIndex(c => c.ReferralCode)
                 .IsUnique()
                 .HasFilter("[ReferralCode] IS NOT NULL");
+
+            builder.Entity<CompanyDivision>()
+                .HasIndex(d => d.ReferralCode)
+                .IsUnique()
+                .HasFilter("[ReferralCode] IS NOT NULL");
+
+            builder.Entity<CompanyDivision>()
+                .HasOne(d => d.Company)
+                .WithMany(c => c.Divisions)
+                .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // 5. EmployeeId is unique within a single company.
             //    A single null EmployeeId per (CompanyId, EmployeeId) is allowed; SQL Server
@@ -252,6 +267,42 @@ namespace LightenUp.Web.Data
                 .WithOne(p => p.NotificationPreference)
                 .HasForeignKey<PsyNotificationPreference>(n => n.PsychologistId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<PaymentTransaction>()
+                .HasIndex(p => p.MerchantOrderId)
+                .IsUnique();
+
+            builder.Entity<PaymentTransaction>()
+                .HasOne(p => p.Patient)
+                .WithMany()
+                .HasForeignKey(p => p.PatientId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            builder.Entity<PaymentTransaction>()
+                .HasOne(p => p.Subscription)
+                .WithMany(s => s.Payments)
+                .HasForeignKey(p => p.SubscriptionId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<PaymentTransaction>()
+                .HasOne(p => p.Company)
+                .WithMany()
+                .HasForeignKey(p => p.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            builder.Entity<PaymentTransaction>()
+                .HasOne(p => p.CompanySubscription)
+                .WithMany(s => s.Payments)
+                .HasForeignKey(p => p.CompanySubscriptionId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<CompanySubscription>()
+                .HasOne(s => s.Company)
+                .WithMany(c => c.Subscriptions)
+                .HasForeignKey(s => s.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
