@@ -60,26 +60,25 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             }).ToList();
 
             // ─── B: Check-in radar ───
-            var checkIns = await _context.JournalCheckIns
-                .Where(c => c.PatientId == patient.PatientId && c.CheckInDate >= from)
-                .ToListAsync();
-
+            // We now get radar scores from MoodTrackers
+            var moodScores = moods.Where(m => m.FocusScore.HasValue).ToList();
             var radar = new CheckInRadar();
-            bool hasRadar = checkIns.Count > 0;
+            bool hasRadar = moodScores.Count > 0;
             if (hasRadar)
             {
-                radar.Focus    = Math.Round(checkIns.Average(c => c.FocusScore), 1);
-                radar.Anxiety  = Math.Round(checkIns.Average(c => c.AnxietyScore), 1);
-                radar.Sleep    = Math.Round(checkIns.Average(c => c.SleepScore), 1);
-                radar.MindLoad = Math.Round(checkIns.Average(c => c.MindLoadScore), 1);
-                radar.Emotion  = Math.Round(checkIns.Average(c => c.EmotionScore), 1);
-                radar.Overall  = Math.Round(checkIns.Average(c => c.OverallScore), 1);
+                radar.Focus    = Math.Round(moodScores.Average(c => c.FocusScore!.Value), 1);
+                radar.Anxiety  = Math.Round(moodScores.Average(c => c.AnxietyScore!.Value), 1);
+                radar.Sleep    = Math.Round(moodScores.Average(c => c.SleepScore!.Value), 1);
+                radar.MindLoad = Math.Round(moodScores.Average(c => c.MindLoadScore!.Value), 1);
+                radar.Emotion  = Math.Round(moodScores.Average(c => c.EmotionScore!.Value), 1);
+                var allAverages = new[] { radar.Focus, radar.Anxiety, radar.Sleep, radar.MindLoad, radar.Emotion };
+                radar.Overall  = Math.Round(allAverages.Average(), 1);
             }
+
 
             // ─── D: Engagement (consecutive-days streak across mood OR check-in) ───
             var trackedDates = new HashSet<DateTime>(
                 moods.Select(m => m.MoodDate.Date)
-                     .Concat(checkIns.Select(c => c.CheckInDate.Date))
             );
 
             // Streak ending today (or yesterday if today not tracked yet)

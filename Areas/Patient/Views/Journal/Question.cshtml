@@ -3,15 +3,11 @@
 @{
     var q = CheckInQuestions.For(Model.Step);
     ViewData["Title"] = $"Pertanyaan {Model.Step}";
-    ViewBag.Step = "";
+    ViewBag.Step = $"{Model.Step}/6";
+    ViewBag.IsCheckIn = true;
     var current = Model.CurrentScore();
     var pct = (int)((double)Model.Step / 6 * 100);
 }
-
-<div style="font-size:13px; color:#6B7280; margin-bottom:6px;">Pertanyaan @Model.Step dari 6</div>
-<div class="onb-progress" style="margin-bottom:16px;">
-    <div class="onb-progress-bar" style="width:@(pct)%;"></div>
-</div>
 
 <div style="text-align:center; margin-bottom:24px;">
     <div style="font-size: 60px;">🧘</div>

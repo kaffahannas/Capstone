@@ -1,5 +1,16 @@
 @{
     var step = ViewBag.Step as string ?? "";
+    int current = 0, total = 6; // check-in always has 6 questions
+    if (!string.IsNullOrEmpty(step) && step.Contains('/'))
+    {
+        var parts = step.Split('/');
+        int.TryParse(parts[0], out current);
+        int.TryParse(parts[1], out total);
+    }
+    var pct = (total > 0 && current > 0) ? (int)((double)current / total * 100) : 0;
+    bool isCheckIn = ViewBag.IsCheckIn == true;
+    var wizardTitle = isCheckIn ? "Daily Check-In" : "Mood Tracker";
+    var wizardEmoji = isCheckIn ? "📔" : "😊";
 }
 <!DOCTYPE html>
 <html lang="id">
@@ -7,16 +18,38 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LightenUp</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/patient.css" asp-append-version="true" />
 </head>
 <body class="mood-wizard-body">
-    <div class="mood-shell">
-        <div class="mood-wizard-header">
-            <strong class="mood-wizard-title"><span aria-hidden="true">😊</span> Mood Tracker</strong>
-            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Index" class="mood-wizard-close" aria-label="Tutup">&times;</a>
+
+    <!-- Header -->
+    <div class="mood-wizard-header">
+        <strong class="mood-wizard-title">
+            <span aria-hidden="true">@wizardEmoji</span> @wizardTitle
+        </strong>
+        <a asp-area="Patient" asp-controller="Dashboard" asp-action="Index"
+           class="mood-wizard-close" aria-label="Tutup">×</a>
+    </div>
+
+    <!-- Progress bar -->
+    @if (current > 0 && total > 0)
+    {
+        <div style="width:100%; max-width:480px; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:12px; font-weight:600; color:#7C3AED; text-transform:uppercase; letter-spacing:0.05em;">
+                    Langkah @current dari @total
+                </span>
+                <span style="font-size:12px; color:#9CA3AF;">@pct%</span>
+            </div>
+            <div style="background:rgba(124,58,237,0.12); border-radius:99px; height:6px;">
+                <div style="background:linear-gradient(90deg,#7C3AED,#6D28D9); border-radius:99px; height:6px; width:@pct%; transition:width 0.3s;"></div>
+            </div>
         </div>
-        <div class="mood-step-label">@step</div>
+    }
+
+    <!-- Wizard card -->
+    <div class="mood-shell">
         @RenderBody()
     </div>
 

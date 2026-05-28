@@ -1,0 +1,98 @@
+@model LightenUp.Web.Models.ViewModels.MoodTrackerSessionViewModel
+@using LightenUp.Web.Models.ViewModels
+@{
+    var q = MoodQuestions.For(Model.QuestionStep);
+    // Mood wizard total steps: Feeling(1) + Triggers(2) + Note(3) + Q1-Q5(4-8) + Summary
+    // Show progress for questionnaire as step (3 + QuestionStep) of 8
+    var overallStep = 3 + Model.QuestionStep;
+    ViewBag.Step = $"{overallStep}/8";
+    ViewData["Title"] = $"Kuesioner {Model.QuestionStep}";
+    var currentScore = Model.CurrentQuestionScore();
+}
+
+<h2 class="mood-question" style="text-align:center; margin-bottom:6px;">@q.Question</h2>
+<p class="mood-helper" style="text-align:center;">@q.Hint</p>
+
+<form asp-action="Question" method="post">
+    @* Carry all data forward *@
+    <input type="hidden" asp-for="Feeling" />
+    <input type="hidden" name="triggers" value="@string.Join(",", Model.Triggers)" />
+    <input type="hidden" asp-for="Note" />
+    <input type="hidden" asp-for="QuestionStep" />
+    <input type="hidden" asp-for="FocusScore" />
+    <input type="hidden" asp-for="AnxietyScore" />
+    <input type="hidden" asp-for="SleepScore" />
+    <input type="hidden" asp-for="MindLoadScore" />
+    <input type="hidden" asp-for="EmotionScore" />
+
+    <span asp-validation-summary="ModelOnly" class="text-danger" style="display:block; text-align:center; margin-bottom:12px;"></span>
+
+    <!-- Labels -->
+    <div style="display:flex; justify-content:space-between; font-size:12px; color:#9CA3AF; margin-bottom:10px; padding:0 4px;">
+        <span>😞 Sangat Buruk</span>
+        <span>😁 Sangat Baik</span>
+    </div>
+
+    <!-- 1-5 scale buttons -->
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:28px;" id="scaleRow">
+        @for (int n = 1; n <= 5; n++)
+        {
+            var isSelected = currentScore == n;
+            var emoji = n switch { 1 => "😞", 2 => "🙁", 3 => "😐", 4 => "🙂", _ => "😁" };
+            <button type="button"
+                    class="mq-btn @(isSelected ? "mq-btn--selected" : "")"
+                    data-value="@n">
+                <span class="mq-emoji">@emoji</span>
+                <span class="mq-num">@n</span>
+            </button>
+        }
+    </div>
+
+    <!-- Nav -->
+    <div class="mood-footer">
+        @if (Model.QuestionStep > 1)
+        {
+            <a asp-action="Question"
+               asp-route-feeling="@Model.Feeling"
+               asp-route-triggers="@string.Join(",", Model.Triggers)"
+               asp-route-note="@Model.Note"
+               asp-route-questionStep="@(Model.QuestionStep - 1)"
+               asp-route-focusScore="@Model.FocusScore"
+               asp-route-anxietyScore="@Model.AnxietyScore"
+               asp-route-sleepScore="@Model.SleepScore"
+               asp-route-mindLoadScore="@Model.MindLoadScore"
+               asp-route-emotionScore="@Model.EmotionScore"
+               class="btn-secondary">← Sebelumnya</a>
+        }
+        else
+        {
+            <a asp-action="Note"
+               asp-route-feeling="@Model.Feeling"
+               asp-route-triggers="@string.Join(",", Model.Triggers)"
+               asp-route-note="@Model.Note"
+               class="btn-secondary">← Catatan</a>
+        }
+        <button type="submit" class="btn-primary" id="submitBtn">
+            @(Model.QuestionStep < 5 ? "Berikutnya →" : "Lihat Ringkasan →")
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        const fieldByStep = {
+            1: "FocusScore", 2: "AnxietyScore", 3: "SleepScore",
+            4: "MindLoadScore", 5: "EmotionScore"
+        };
+        const step = @Model.QuestionStep;
+        const fieldName = fieldByStep[step];
+
+        document.querySelectorAll('.mq-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mq-btn').forEach(b => b.classList.remove('mq-btn--selected'));
+                btn.classList.add('mq-btn--selected');
+                document.querySelector('input[name="' + fieldName + '"]').value = btn.dataset.value;
+            });
+        });
+    </script>
+}

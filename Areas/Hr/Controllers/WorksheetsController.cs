@@ -201,7 +201,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         //  Request (HR asks psychologist to assign a new worksheet)
         // ═════════════════════════════════════════════
         [HttpGet]
-        public async Task<IActionResult> Request()
+        public new async Task<IActionResult> Request()
         {
             var hr = await GetHrAsync();
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
@@ -227,7 +227,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Request(HrRequestViewModel model)
+        public new async Task<IActionResult> Request(HrRequestViewModel model)
         {
             var hr = await GetHrAsync();
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");

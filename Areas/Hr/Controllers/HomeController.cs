@@ -35,6 +35,9 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr == null || hr.OnboardingCompletedAt == null)
                 return RedirectToAction("Welcome", "Onboarding");
 
+            if (!user.IsApprovedByAdmin)
+                return RedirectToAction("PendingApproval", "Account", new { area = "" });
+
             var companyId = hr.CompanyId ?? 0;
 
             // ─── Company-scoped queries ───

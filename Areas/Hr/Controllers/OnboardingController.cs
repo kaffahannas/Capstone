@@ -246,7 +246,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             _context.HrNotificationPreferences.Add(new HrNotificationPreference { HrId = hr.HrId });
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Success));
+            return RedirectToAction("PendingApproval", "Account", new { area = "" });
         }
 
         [HttpGet]

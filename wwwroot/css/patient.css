@@ -346,10 +346,53 @@ body {
 
 .task-count { font-size: 14px; margin-bottom: 12px; }
 
-/* â”€â”€â”€â”€â”€ Mood tracker pages â”€â”€â”€â”€â”€ */
-.mood-shell {
+/* ───── Mood tracker wizard layout ───── */
+.mood-wizard-body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #EDE9FE 0%, #F5F3FF 40%, #EFF6FF 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 16px 40px;
+    font-family: 'Inter', sans-serif;
+}
+.mood-wizard-header {
+    width: 100%;
     max-width: 480px;
-    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0 16px;
+}
+.mood-wizard-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4C1D95;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mood-wizard-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(124,58,237,0.1);
+    color: #7C3AED;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    text-decoration: none;
+    line-height: 1;
+    transition: background 0.15s;
+}
+.mood-wizard-close:hover { background: rgba(124,58,237,0.2); color: #4C1D95; }
+
+/* ───── Mood tracker pages ───── */
+.mood-shell {
     background: #fff;
     border-radius: 16px;
     padding: 24px;
@@ -440,7 +483,38 @@ body {
 .mood-footer .btn-primary,
 .mood-footer .btn-secondary { flex: 1; }
 
-/* â”€â”€â”€â”€â”€ Tasks list â”€â”€â”€â”€â”€ */
+/* ───── Mood questionnaire scale buttons ───── */
+.mq-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    aspect-ratio: 1;
+    border: 2px solid #E5E7EB;
+    border-radius: 14px;
+    background: #F9FAFB;
+    cursor: pointer;
+    transition: all 0.15s;
+    padding: 8px 4px;
+}
+.mq-btn:hover {
+    border-color: #C4B5FD;
+    background: #F5F3FF;
+    transform: translateY(-2px);
+}
+.mq-btn--selected {
+    border-color: #7C3AED;
+    background: linear-gradient(135deg, #7C3AED, #6D28D9);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+    transform: translateY(-2px);
+}
+.mq-emoji { font-size: 22px; line-height: 1; }
+.mq-num   { font-size: 14px; font-weight: 700; }
+.mq-btn--selected .mq-num { color: #fff; }
+
+/* ───── Tasks list ───── */
 .tasks-toolbar {
     display: flex;
     gap: 12px;
@@ -597,12 +671,15 @@ body {
     margin-bottom: 20px;
 }
 .task-submit-panel {
-    background: var(--lu-primary-soft);
+    background: linear-gradient(135deg, #F5F3FF, #EDE9FE);
     border-radius: 16px;
     padding: 24px;
+    border: 1px solid rgba(124, 58, 237, 0.12);
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.05);
 }
 .task-submit-panel h3 { font-size: 16px; margin: 0 0 12px; color: var(--lu-primary); }
 .upload-dropzone {
+    display: block;
     border: 2px dashed var(--lu-primary);
     border-radius: 12px;
     padding: 30px;
@@ -5616,7 +5693,7 @@ body:has(.pf-page) {
     gap: 16px;
     align-items: start;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
 }
 .hrpf-main { display: flex; flex-direction: column; gap: 16px; }
 .hrpf-side { display: flex; flex-direction: column; gap: 16px; }
@@ -7126,7 +7203,7 @@ body:has(.pf-page) {
     gap: 16px;
     align-items: start;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
 }
 .hrwsrv-main { display: flex; flex-direction: column; gap: 14px; }
 .hrwsrv-side { display: flex; flex-direction: column; gap: 14px; }
@@ -7427,3 +7504,4 @@ body:has(.pf-page) {
     .hrpt-list-body { padding: 18px 16px 40px; }
     .hrpt-action-row { flex-wrap: wrap; }
 }
+

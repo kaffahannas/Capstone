@@ -1378,7 +1378,7 @@ body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
 }
 
 /* ── B2B settings strip ── */
@@ -2011,7 +2011,7 @@ body {
     gap: 16px;
     align-items: stretch;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
     padding-bottom: 16px; /* breathing room at the very bottom */
 }
 
@@ -2385,7 +2385,7 @@ body {
     flex-direction: column;
     gap: 24px;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
     padding-bottom: 20px;
 }
 
@@ -3343,7 +3343,7 @@ body {
     flex-direction: column;
     gap: 8px;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
     padding-bottom: 20px;
 }
 .ws-no-results {
@@ -3551,7 +3551,7 @@ body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
 }
 
 /* ── Hero ── */
@@ -3700,6 +3700,7 @@ body {
     flex: 1;
     min-height: 0;
     padding-bottom: 20px;
+    overflow-y: auto;
 }
 
 /* ── Empty state ── */
@@ -3742,6 +3743,7 @@ body {
     border-radius: 16px;
     overflow: hidden;
     display: flex;
+    flex-shrink: 0;
     transition: box-shadow 0.2s, transform 0.15s;
 }
 .req-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.07); transform: translateY(-1px); }
@@ -4010,7 +4012,7 @@ body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
     gap: 16px;
 }
 
@@ -4155,7 +4157,7 @@ body {
     grid-template-rows: 1fr;          /* single row fills all remaining height */
     gap: 14px;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
     align-items: stretch;             /* both columns fill row height */
 }
 .pd-sidebar {
@@ -4439,7 +4441,7 @@ body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0;
+    min-height: 0; overflow-y: auto;
     gap: 16px;
 }
 
@@ -4950,3 +4952,4 @@ body {
     .pwh-card-icon  { width: 34px; height: 34px; margin: 0 10px 0 12px; }
     .pwh-card-arrow { display: none; }
 }
+

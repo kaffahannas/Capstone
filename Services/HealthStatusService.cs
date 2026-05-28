@@ -64,8 +64,15 @@ namespace LightenUp.Web.Services
             {
                 var s = MapFeelingScore(m.Feeling);
                 if (s != null) samples7d.Add(s.Value);
+                
+                // Add the questionnaire average from the same day
+                if (m.FocusScore.HasValue)
+                {
+                    var allAverages = new[] { m.FocusScore.Value, m.AnxietyScore!.Value, m.SleepScore!.Value, m.MindLoadScore!.Value, m.EmotionScore!.Value };
+                    samples7d.Add((int)Math.Round(allAverages.Average()));
+                }
             }
-            samples7d.AddRange(checkIns7d.Select(c => c.OverallScore));
+            samples7d.AddRange(checkIns7d.Select(c => c.OverallScore)); // Keep for legacy check-ins
 
             string status = "Sehat";
             if (samples7d.Count > 0)
@@ -81,8 +88,15 @@ namespace LightenUp.Web.Services
             {
                 var s = MapFeelingScore(m.Feeling);
                 if (s != null) samples30d.Add(s.Value);
+                
+                // Add the questionnaire average from the same day
+                if (m.FocusScore.HasValue)
+                {
+                    var allAverages = new[] { m.FocusScore.Value, m.AnxietyScore!.Value, m.SleepScore!.Value, m.MindLoadScore!.Value, m.EmotionScore!.Value };
+                    samples30d.Add((int)Math.Round(allAverages.Average()));
+                }
             }
-            samples30d.AddRange(checkIns30d.Select(c => c.OverallScore));
+            samples30d.AddRange(checkIns30d.Select(c => c.OverallScore)); // Keep for legacy check-ins
 
             int? percent = null;
             if (samples30d.Count > 0)

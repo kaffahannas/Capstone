@@ -9,7 +9,16 @@
 }
 
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-    <a asp-action="Note" asp-route-feeling="@Model.Feeling" asp-route-triggers="@triggerCsv" asp-route-note="@Model.Note"
+    <a asp-action="Question"
+       asp-route-feeling="@Model.Feeling"
+       asp-route-triggers="@triggerCsv"
+       asp-route-note="@Model.Note"
+       asp-route-questionStep="5"
+       asp-route-focusScore="@Model.FocusScore"
+       asp-route-anxietyScore="@Model.AnxietyScore"
+       asp-route-sleepScore="@Model.SleepScore"
+       asp-route-mindLoadScore="@Model.MindLoadScore"
+       asp-route-emotionScore="@Model.EmotionScore"
        style="text-decoration:none; color:#111;">← Sebelumnya</a>
     <span style="font-size:13px; color:#6B7280;">@indoToday</span>
 </div>
@@ -41,6 +50,10 @@
         <input type="hidden" name="Triggers" value="@t" />
     }
     <input type="hidden" asp-for="Note" />
-
+    <input type="hidden" asp-for="FocusScore" />
+    <input type="hidden" asp-for="AnxietyScore" />
+    <input type="hidden" asp-for="SleepScore" />
+    <input type="hidden" asp-for="MindLoadScore" />
+    <input type="hidden" asp-for="EmotionScore" />
     <button type="submit" class="btn-primary" style="width:100%; padding:16px; background:#1F2937;">Simpan Mood</button>
 </form>

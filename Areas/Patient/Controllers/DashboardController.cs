@@ -107,9 +107,9 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 .OrderByDescending(j => j.JournalDate)
                 .FirstOrDefaultAsync();
 
-            // Has the patient done today's structured check-in?
-            var hasCheckIn = await _context.JournalCheckIns
-                .AnyAsync(c => c.PatientId == patient.PatientId && c.CheckInDate.Date == today);
+            // Has the patient done today's structured check-in (mood + questionnaire)?
+            var hasCheckIn = await _context.MoodTrackers
+                .AnyAsync(m => m.PatientId == patient.PatientId && m.MoodDate.Date == today && m.FocusScore.HasValue);
 
             // Open tasks (Assigned or InProgress) — count + top 5 list for preview
             var openWorksheetsQ = _context.Worksheets

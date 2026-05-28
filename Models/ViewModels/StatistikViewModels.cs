@@ -8,9 +8,9 @@ namespace LightenUp.Web.Models.ViewModels
         // Widget A — Mood trend
         public List<MoodTrendPoint> MoodTrend { get; set; } = new();
 
-        // Widget B — Check-in radar
         public CheckInRadar Radar { get; set; } = new();
         public bool HasRadarData { get; set; }
+        public bool HasCheckedInToday { get; set; }
 
         // Widget D — Engagement
         public EngagementStats Engagement { get; set; } = new();

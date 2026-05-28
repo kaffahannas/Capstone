@@ -172,7 +172,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         //  Request — propose a new session
         // ═════════════════════════════════════════════
         [HttpGet]
-        public async Task<IActionResult> Request()
+        public new async Task<IActionResult> Request()
         {
             var hr = await GetHrAsync();
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");

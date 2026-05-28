@@ -2,18 +2,36 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
-    // Shared across all 4 mood tracker steps. Hidden fields carry data forward.
+    // Shared across all mood tracker steps. Hidden fields carry data forward.
     public class MoodTrackerSessionViewModel
     {
         [Required(ErrorMessage = "Pilih perasaan kamu.")]
         public string Feeling { get; set; } = string.Empty;
-        // Overjoyed, Happy, Calm, Neutral, Disappointed, Angry
 
         public List<string> Triggers { get; set; } = new();
-        // Self, Family, School, Work, Friends, Partner, Hobby, Activity, SocialMedia, Entertainment
 
         [StringLength(500)]
         public string? Note { get; set; }
+
+        // Questionnaire scores (1-5). Accumulated via hidden fields.
+        [Range(0, 5)] public int FocusScore    { get; set; }
+        [Range(0, 5)] public int AnxietyScore  { get; set; }
+        [Range(0, 5)] public int SleepScore    { get; set; }
+        [Range(0, 5)] public int MindLoadScore { get; set; }
+        [Range(0, 5)] public int EmotionScore  { get; set; }
+
+        // Which question step we are on (1-5) during the questionnaire phase.
+        public int QuestionStep { get; set; }
+
+        public int CurrentQuestionScore() => QuestionStep switch
+        {
+            1 => FocusScore,
+            2 => AnxietyScore,
+            3 => SleepScore,
+            4 => MindLoadScore,
+            5 => EmotionScore,
+            _ => 0
+        };
     }
 
     public static class MoodOptions
@@ -48,5 +66,19 @@ namespace LightenUp.Web.Models.ViewModels
                 if (t.Value == value) return t.Label;
             return value;
         }
+    }
+
+    public static class MoodQuestions
+    {
+        public static readonly (string Field, string Question, string Hint)[] All = new[]
+        {
+            ("FocusScore",    "Seberapa mampu kamu fokus hari ini?",              "1 = Sangat sulit fokus, 5 = Sangat fokus"),
+            ("AnxietyScore",  "Seberapa tenang perasaanmu saat ini?",             "1 = Sangat cemas, 5 = Sangat tenang"),
+            ("SleepScore",    "Bagaimana kualitas tidurmu semalam?",              "1 = Sangat buruk, 5 = Sangat baik"),
+            ("MindLoadScore", "Seberapa ringan beban pikiran yang kamu rasakan?", "1 = Sangat berat, 5 = Sangat ringan"),
+            ("EmotionScore",  "Seberapa baik kamu mengelola emosimu hari ini?",  "1 = Sangat buruk, 5 = Sangat baik"),
+        };
+
+        public static (string Field, string Question, string Hint) For(int step) => All[step - 1];
     }
 }
