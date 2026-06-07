@@ -62,6 +62,11 @@ namespace LightenUp.Web.Models.ViewModels
 
         // Open worksheets count
         public int OpenWorksheetCount { get; set; }
+
+        // Active psychologist assignment (for HR cancel request)
+        public int? ActiveAssignmentId { get; set; }
+        public string? AssignedPsychologistName { get; set; }
+        public string? AssignmentStatus { get; set; }
     }
 
     public class HrEditSymptomsViewModel

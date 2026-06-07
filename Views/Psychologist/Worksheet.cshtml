@@ -164,6 +164,18 @@ window.openWorksheetDetailModal = async function(id) {
         alert("Gagal memuat detail worksheet.");
     }
 }
+window.openEditWorksheetModal = async function(id) {
+    try {
+        const res = await fetch(`/Psychologist/EditWorksheetModal/${id}`);
+        if (!res.ok) throw new Error('Failed to load');
+        const html = await res.text();
+        document.getElementById('worksheetDetailModal').innerHTML = html;
+        // keep modal active since it replaces content
+    } catch (err) {
+        console.error(err);
+        alert("Gagal memuat form edit worksheet.");
+    }
+}
 window.closeWorksheetDetailModal = function() {
     document.getElementById('worksheetDetailModal').classList.remove('active');
 }

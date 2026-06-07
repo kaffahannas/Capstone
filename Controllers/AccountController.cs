@@ -1,4 +1,4 @@
-﻿using LightenUp.Web.Data;
+using LightenUp.Web.Data;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -32,7 +32,38 @@ namespace LightenUp.Web.Controllers
         // 1. HALAMAN LOGIN
         // ==========================================
         [HttpGet]
-        public IActionResult Login() => View();
+        public async Task<IActionResult> Login()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin";
+                    if (isAdmin) return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                    bool isHr = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
+                    if (isHr) return RedirectToAction("Index", "Dashboard", new { area = "Hr" });
+                    bool isPsy = await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist";
+                    if (isPsy) return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
+                    return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
+                }
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AccessDenied()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    ViewBag.UserRole = user.RoleType;
+                }
+            }
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -73,29 +104,16 @@ namespace LightenUp.Web.Controllers
                             return View(model);
                         }
 
-                        // ─── Approval gate (Psychologist + HR need Admin approval) ───
+                        // ─── Approval gate (Psychologist only; HR is now auto-approved) ───
                         bool isPsy = await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist";
                         bool isHr = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
 
-                        if ((isPsy || isHr) && !user.IsApprovedByAdmin)
+                        if (isPsy && !user.IsApprovedByAdmin)
                         {
-                            // Check if onboarding is done yet — let them finish it first, then they wait.
-                            bool onboardingDone = false;
-                            if (isPsy)
-                            {
-                                var psy = _context.Psychologists.FirstOrDefault(p => p.UserId == user.Id);
-                                onboardingDone = psy != null && !string.IsNullOrEmpty(psy.LicenseNumber);
-                                if (!onboardingDone)
-                                    return RedirectToAction("Welcome", "Onboarding");  // psy onboarding (root controller)
-                            }
-                            else // HR
-                            {
-                                var hr = _context.HrStaffs.FirstOrDefault(h => h.UserId == user.Id);
-                                onboardingDone = hr != null && hr.OnboardingCompletedAt != null;
-                                if (!onboardingDone)
-                                    return RedirectToAction("Welcome", "Onboarding", new { area = "Hr" });
-                            }
-                            // Onboarding done but not yet approved → show pending screen
+                            var psy = _context.Psychologists.FirstOrDefault(p => p.UserId == user.Id);
+                            bool onboardingDone = psy != null && !string.IsNullOrEmpty(psy.LicenseNumber);
+                            if (!onboardingDone)
+                                return RedirectToAction("Welcome", "Onboarding");
                             return RedirectToAction("PendingApproval");
                         }
 
@@ -108,6 +126,9 @@ namespace LightenUp.Web.Controllers
                             var hr = _context.HrStaffs.FirstOrDefault(h => h.UserId == user.Id);
                             if (hr == null || hr.OnboardingCompletedAt == null)
                                 return RedirectToAction("Welcome", "Onboarding", new { area = "Hr" });
+                            // HR must subscribe before accessing dashboard.
+                            if (hr.CompanyId == null)
+                                return RedirectToAction("Index", "Subscription", new { area = "Hr" });
                             return RedirectToAction("Index", "Home", new { area = "Hr" });
                         }
 
@@ -227,7 +248,8 @@ namespace LightenUp.Web.Controllers
                     EmailConfirmed = true,
                     FullName = registerData.FullName,
                     RoleType = registerData.AccountType,
-                    IsApprovedByAdmin = (registerData.AccountType == "Patient")
+                    // HR no longer requires admin approval; they are gated by company subscription instead.
+                    IsApprovedByAdmin = (registerData.AccountType == "Patient" || registerData.AccountType == "HR")
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);

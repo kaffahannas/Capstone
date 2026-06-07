@@ -55,6 +55,26 @@ namespace LightenUp.Web.Models.ViewModels
         public int? ReturnPatientId { get; set; }
     }
 
+    public class PsyWorksheetEditViewModel
+    {
+        [Required]
+        public int WorksheetId { get; set; }
+
+        public string? PatientName { get; set; }
+
+        [Required(ErrorMessage = "Nama tugas wajib diisi.")]
+        [StringLength(200)]
+        public string TaskName { get; set; } = "";
+
+        [StringLength(1000)]
+        public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Tanggal deadline wajib diisi.")]
+        public DateTime DeadlineDate { get; set; } = DateTime.Today.AddDays(7);
+
+        public TimeSpan DeadlineTime { get; set; } = new TimeSpan(23, 59, 0);
+    }
+
     public class PsyPatientOption
     {
         public int PatientId { get; set; }

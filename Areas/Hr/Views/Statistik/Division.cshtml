@@ -11,8 +11,30 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         @@media print {
-            .app-sidebar, .app-topbar, .no-print { display: none !important; }
-            .app-main { padding: 0 !important; }
+            @@page { margin: 1cm; size: A4 portrait; }
+            body, html, .app-shell, .app-main, .app-content {
+                display: block !important;
+                height: auto !important;
+                overflow: visible !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+            }
+            .app-sidebar, .app-topbar, .no-print, .sidebar-backdrop { display: none !important; }
+            .hrst-charts-row { display: block !important; width: 100% !important; }
+            .hrst-chart-card { 
+                page-break-inside: avoid; 
+                margin-bottom: 2rem; 
+                border: none !important; 
+                box-shadow: none !important; 
+                width: 100% !important;
+            }
+            canvas { max-width: 100% !important; max-height: 250px !important; object-fit: contain; }
+            .hrst-chart-card-title { font-size: 16px !important; margin-bottom: 8px !important; }
+            .table-container { margin-top: 1rem !important; }
+            .hr-stat-pill { padding: 8px !important; }
+            .hr-page-header { margin-bottom: 12px !important; }
         }
     </style>
 }
@@ -89,7 +111,9 @@
         @* ── Status doughnut ── *@
         <div class="hrst-chart-card">
             <h2 class="hrst-chart-card-title">Distribusi Status Karyawan</h2>
-            <canvas id="statusChart" height="220"></canvas>
+            <div style="max-height: 250px; display: flex; justify-content: center;">
+                <canvas id="statusChart" height="200"></canvas>
+            </div>
             <div style="display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:13px;flex-wrap:wrap;">
                 <span style="color:#10B981;font-weight:600;">● Sehat (@Model.Sehat)</span>
                 <span style="color:#F59E0B;font-weight:600;">● Beresiko (@Model.Beresiko)</span>

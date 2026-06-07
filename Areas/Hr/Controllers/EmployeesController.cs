@@ -2,6 +2,7 @@ using LightenUp.Web.Data;
 using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,16 @@ namespace LightenUp.Web.Areas.Hr.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SubscriptionAccessService _access;
 
-        public EmployeesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public EmployeesController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            SubscriptionAccessService access)
         {
             _context = context;
             _userManager = userManager;
+            _access = access;
         }
 
         private async Task<HrStaff?> GetHrAsync()
@@ -187,6 +193,10 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             var openWorksheets = await _context.Worksheets
                 .CountAsync(w => w.PatientId == id && w.Status != "Completed");
 
+            var activeAssignment = await _context.Assignments
+                .Include(a => a.Psychologist).ThenInclude(psy => psy!.User)
+                .FirstOrDefaultAsync(a => a.PatientId == id && a.Status == "Active");
+
             ViewBag.ActiveNav = "Klien";
             return View(new HrEmployeeDetailViewModel
             {
@@ -209,8 +219,59 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 BahayaPct = (int)Math.Round((double)bahaya / total * 100),
                 NextSessionStart = nextSession?.SessionStart,
                 NextSessionNote = nextSession?.Notes,
-                OpenWorksheetCount = openWorksheets
+                OpenWorksheetCount = openWorksheets,
+                ActiveAssignmentId = activeAssignment?.AssignmentId,
+                AssignedPsychologistName = activeAssignment?.Psychologist?.User?.FullName,
+                AssignmentStatus = activeAssignment?.Status
             });
+        }
+
+        // ═════════════════════════════════════════════
+        //  PDF per-employee (print-optimised, browser → Save as PDF)
+        // ═════════════════════════════════════════════
+        [HttpGet]
+        public async Task<IActionResult> EmployeePdf(int id)
+        {
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
+            var companyId = hr.CompanyId.Value;
+
+            var p = await _context.Patients
+                .Include(x => x.User)
+                .Include(x => x.Company)
+                .FirstOrDefaultAsync(x => x.PatientId == id && x.CompanyId == companyId);
+            if (p == null) return NotFound();
+
+            // Mood last 30 days
+            var from = DateTime.Today.AddDays(-29);
+            var moods = await _context.MoodTrackers
+                .Where(m => m.PatientId == id && m.MoodDate >= from)
+                .OrderBy(m => m.MoodDate)
+                .ToListAsync();
+
+            // Sessions
+            var sessions = await _context.Schedules
+                .Include(s => s.Psychologist).ThenInclude(ps => ps!.User)
+                .Where(s => s.PatientId == id)
+                .OrderByDescending(s => s.SessionStart)
+                .Take(10)
+                .ToListAsync();
+
+            // Worksheets
+            var worksheets = await _context.Worksheets
+                .Where(w => w.PatientId == id)
+                .OrderByDescending(w => w.CreatedAt)
+                .Take(10)
+                .ToListAsync();
+
+            ViewBag.Patient = p;
+            ViewBag.Moods = moods;
+            ViewBag.Sessions = sessions;
+            ViewBag.Worksheets = worksheets;
+            ViewBag.CompanyName = hr.Company?.Name ?? "";
+            ViewBag.GeneratedAt = DateTime.Now;
+
+            return View();
         }
 
         // ═════════════════════════════════════════════
@@ -255,6 +316,22 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 return View(model);
             }
 
+            var activeSub = await _access.GetActiveCompanySubscriptionAsync(companyId);
+            if (activeSub?.EmployeeLimit > 0)
+            {
+                var currentCount = await _context.Patients.CountAsync(p =>
+                    p.CompanyId == companyId && p.EmploymentStatus == "active");
+                currentCount += await _context.PendingEmployees.CountAsync(p => p.CompanyId == companyId);
+                if (currentCount >= activeSub.EmployeeLimit)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        $"Kuota karyawan paket Anda sudah penuh ({activeSub.EmployeeLimit}). Upgrade paket langganan untuk menambah karyawan.");
+                    ViewBag.ActiveNav = "Klien";
+                    ViewBag.ReferralCode = hr.Company?.ReferralCode;
+                    return View(model);
+                }
+            }
+
             // Uniqueness check: (CompanyId, Email) — model has UNIQUE index but we want a friendly error.
             var dup = await _context.PendingEmployees
                 .FirstOrDefaultAsync(x => x.CompanyId == companyId && x.Email == model.Email.Trim());
@@ -279,6 +356,58 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             TempData["success"] = $"{model.FullName} ditambahkan. Mereka dapat mendaftar dengan kode referral perusahaan.";
             return RedirectToAction(nameof(Index));
+        }
+
+        // ─── HR membatalkan psikolog karyawan (Request → PendingCancellationByAdmin) ───
+        [HttpPost]
+        public async Task<IActionResult> RequestCancelAssignment(int assignmentId, string? reason)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null) return Forbid();
+
+            var a = await _context.Assignments
+                .Include(a => a.Patient)
+                .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId
+                                       && a.Patient!.CompanyId == hr.CompanyId.Value
+                                       && a.Status == "Active");
+            if (a == null) return NotFound();
+
+            a.Status = "PendingCancellationByAdmin";
+            a.CancellationRequestedByUserId = user?.Id;
+            a.CancellationReason = reason;
+            a.CancellationRequestedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            TempData["success"] = "Permintaan pembatalan penugasan psikolog dikirim ke Admin untuk disetujui.";
+            return RedirectToAction(nameof(Detail), new { id = a.PatientId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestEmployeeRemoval(int PatientId, string Reason)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null) return Forbid();
+
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.PatientId == PatientId && p.CompanyId == hr.CompanyId.Value);
+            if (patient == null) return NotFound();
+
+            var req = new HrEmployeeRemovalRequest
+            {
+                PatientId = patient.PatientId,
+                RequestedByHrUserId = user?.Id,
+                Reason = Reason,
+                Status = "Pending",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.HrEmployeeRemovalRequests.Add(req);
+            await _context.SaveChangesAsync();
+
+            TempData["success"] = "Permintaan pemberhentian karyawan berhasil dikirim ke Admin.";
+            return RedirectToAction(nameof(Detail), new { id = PatientId });
         }
 
         // ─── Map feeling string → numeric ───

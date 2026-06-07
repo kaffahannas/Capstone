@@ -31,10 +31,12 @@
     var _navBeranda     = _ctrl == "Psychologist" &&
                           new[]{ "Index","PatientDetail","PatientScheduleHistory","PatientWorksheetHistory" }.Contains(_action);
     var _navStatistik   = _ctrl == "Psychologist" && _action == "Statistics";
-    var _navJadwal      = _ctrl == "Psychologist" && _action == "Scheduling";
+    var _navJadwalEdit  = _ctrl == "Psychologist" && _action == "EditSchedule";
+    var _navJadwal      = _ctrl == "Psychologist" && (_action == "Scheduling" || _navJadwalEdit);
     var _navWorksheet   = _ctrl == "Psychologist" && (_action == "Worksheet" || _action == "WorksheetDetail" || _action == "AddTask");
     var _navProfil      = _ctrl == "Psychologist" && (_action == "Profile" || _action == "Settings");
     var _navPermintaan  = _ctrl == "PsyRequests";
+    var _navPendapatan  = _ctrl == "Psychologist" && _action == "Payslip";
 }
             <div class="nav-menu">
                 <a asp-area="" asp-controller="Psychologist" asp-action="Index" class="nav-item @(_navBeranda ? "active" : "")">
@@ -59,7 +61,11 @@
                 </a>
                 <a asp-area="" asp-controller="PsyRequests" asp-action="Index" class="nav-item @(_navPermintaan ? "active" : "")">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                    Permintaan HR
+                    Permintaan
+                </a>
+                <a asp-area="" asp-controller="Psychologist" asp-action="Payslip" class="nav-item @(_navPendapatan ? "active" : "")">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    Pendapatan
                 </a>
             </div>
 

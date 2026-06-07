@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Akses Ditolak";
+    Layout = "_Layout"; 
+}
+
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 20px; background-color: #f9fafb;">
+    <div style="background: white; max-width: 480px; width: 100%; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); text-align: center;">
+        
+        <div style="width: 64px; height: 64px; background-color: #FEF2F2; color: #DC2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+        </div>
+
+        <h1 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px; letter-spacing: -0.025em;">Akses Ditolak</h1>
+        
+        <p style="font-size: 15px; color: #4B5563; line-height: 1.6; margin-bottom: 24px;">
+            Maaf, Anda tidak memiliki izin untuk mengakses halaman ini. 
+            @if (ViewBag.UserRole != null)
+            {
+                <br /><br />
+                <span>Saat ini Anda sedang login sebagai <strong>@ViewBag.UserRole</strong>. Jika halaman ini memerlukan hak akses untuk peran lain, silakan logout terlebih dahulu dan login menggunakan akun yang sesuai.</span>
+            }
+        </p>
+
+        <form asp-action="Logout" asp-controller="Account" asp-area="" method="post">
+            <button type="submit" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; background-color: #4F46E5; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
+                Logout & Ganti Akun
+            </button>
+        </form>
+
+        <div style="margin-top: 16px;">
+            <a href="javascript:history.back()" style="font-size: 14px; color: #6B7280; text-decoration: none; font-weight: 500;">&larr; Kembali ke halaman sebelumnya</a>
+        </div>
+    </div>
+</div>

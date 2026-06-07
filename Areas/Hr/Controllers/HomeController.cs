@@ -1,4 +1,5 @@
 using LightenUp.Web.Data;
+using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
 using LightenUp.Web.Services;
@@ -11,6 +12,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    [RequiresCompanySubscription]
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -34,9 +36,6 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 .FirstOrDefaultAsync(h => h.UserId == user.Id);
             if (hr == null || hr.OnboardingCompletedAt == null)
                 return RedirectToAction("Welcome", "Onboarding");
-
-            if (!user.IsApprovedByAdmin)
-                return RedirectToAction("PendingApproval", "Account", new { area = "" });
 
             var companyId = hr.CompanyId ?? 0;
 

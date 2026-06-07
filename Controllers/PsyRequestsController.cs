@@ -1,6 +1,7 @@
 using LightenUp.Web.Data;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,16 @@ namespace LightenUp.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly AssignmentActivationService _activation;
 
-        public PsyRequestsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public PsyRequestsController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            AssignmentActivationService activation)
         {
             _context = context;
             _userManager = userManager;
+            _activation = activation;
         }
 
         private async Task<Psychologist?> GetPsyAsync()
@@ -28,7 +34,7 @@ namespace LightenUp.Web.Controllers
         }
 
         // ═════════════════════════════════════════
-        //  Inbox
+        //  Inbox (HR requests + Patient assignment requests)
         // ═════════════════════════════════════════
         [HttpGet]
         public async Task<IActionResult> Index(string tab = "Pending")
@@ -40,6 +46,7 @@ namespace LightenUp.Web.Controllers
                 .Include(r => r.Patient).ThenInclude(p => p!.User)
                 .Include(r => r.Patient).ThenInclude(p => p!.Company)
                 .Include(r => r.RequestedByHr)
+                .Include(r => r.RequestedByPatient)
                 .Where(r => r.PsychologistId == psy.PsychologistId);
 
             if (tab is "Pending" or "Approved" or "Rejected")
@@ -50,8 +57,8 @@ namespace LightenUp.Web.Controllers
                 Id = r.Id,
                 RequestType = r.RequestType,
                 PatientName = r.Patient!.User!.FullName,
-                CompanyName = r.Patient.Company!.Name,
-                HrName = r.RequestedByHr!.FullName,
+                CompanyName = r.Patient.Company != null ? r.Patient.Company.Name : "Publik (B2C)",
+                HrName = r.RequestedByHr != null ? r.RequestedByHr.FullName : (r.RequestedByPatient != null ? r.RequestedByPatient.FullName + " (Pasien)" : "—"),
                 Notes = r.Notes,
                 ProposedTaskName = r.ProposedTaskName,
                 ProposedDeadline = r.ProposedDeadline,
@@ -61,7 +68,60 @@ namespace LightenUp.Web.Controllers
                 RespondedNote = r.RespondedNote
             }).ToListAsync();
 
+            // Also load pending assignment requests from patients
+            var pendingAssignments = await _context.Assignments
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Include(a => a.Patient).ThenInclude(p => p!.Company)
+                .Include(a => a.RequestedBy)
+                .Where(a => a.PsychologistId == psy.PsychologistId && a.Status == "PendingPsychologistApproval")
+                .ToListAsync();
+
+            ViewBag.PendingAssignments = pendingAssignments;
+
             return View(new PsyRequestsViewModel { Tab = tab, Items = items });
+        }
+
+        // ─── Accept patient's choice of this psychologist ───
+        [HttpPost]
+        public async Task<IActionResult> AcceptAssignment(int assignmentId)
+        {
+            var psy = await GetPsyAsync();
+            if (psy == null) return Forbid();
+
+            var user = await _userManager.GetUserAsync(User);
+            var a = await _context.Assignments
+                .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId &&
+                                         a.PsychologistId == psy.PsychologistId &&
+                                         a.Status == "PendingPsychologistApproval");
+            if (a == null) return NotFound();
+
+            await _activation.ActivateAsync(a, user?.Id);
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Permintaan pasien diterima. Penugasan kini aktif.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ─── Reject patient's choice of this psychologist ───
+        [HttpPost]
+        public async Task<IActionResult> RejectAssignment(int assignmentId, string? note)
+        {
+            var psy = await GetPsyAsync();
+            if (psy == null) return Forbid();
+
+            var user = await _userManager.GetUserAsync(User);
+            var a = await _context.Assignments
+                .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId &&
+                                         a.PsychologistId == psy.PsychologistId &&
+                                         a.Status == "PendingPsychologistApproval");
+            if (a == null) return NotFound();
+
+            a.Status = "Rejected";
+            a.DecisionByUserId = user?.Id;
+            a.DecisionAt = DateTime.UtcNow;
+            a.DecisionNote = note;
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Permintaan pasien ditolak.";
+            return RedirectToAction(nameof(Index));
         }
 
         // ═════════════════════════════════════════

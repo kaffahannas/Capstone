@@ -3,6 +3,8 @@
     ViewData["Title"] = "Langganan Perusahaan";
     ViewBag.ActiveNav = "Langganan";
     var idCulture = new System.Globalization.CultureInfo("id-ID");
+    var employeeCount = ViewBag.EmployeeCount as int? ?? 0;
+    var employeeLimit = ViewBag.EmployeeLimit as int? ?? 0;
 
     int daysLeft = 0;
     if (Model.HasActiveSubscription && Model.ActiveUntil.HasValue)
@@ -110,6 +112,20 @@
                     <span class="hrln-active-days-lbl">hari</span>
                 </div>
             </div>
+
+            @if (employeeLimit > 0)
+            {
+                var usagePct = Math.Min(100, (int)Math.Round(employeeCount * 100.0 / employeeLimit));
+                <div class="hrln-active-card" style="margin-top:16px; background:#f8fafc;">
+                    <div class="hrln-active-info" style="flex:1;">
+                        <div class="hrln-active-plan-name">Kuota Karyawan</div>
+                        <div class="hrln-active-expiry">@employeeCount / @employeeLimit terdaftar</div>
+                        <div style="margin-top:10px; height:8px; background:#e2e8f0; border-radius:999px; overflow:hidden;">
+                            <div style="width:@(usagePct)%; height:100%; background:@(usagePct >= 90 ? "#ef4444" : "#6366f1");"></div>
+                        </div>
+                    </div>
+                </div>
+            }
 
             @* ── Divisions & Referral ── *@
             <div class="hrln-section">
@@ -248,6 +264,11 @@
                         <p class="hrln-plan-desc">@plan.Description</p>
 
                         <ul class="hrln-plan-features">
+                            @if (plan.EmployeeLimit > 0)
+                            {
+                                <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Hingga @plan.EmployeeLimit karyawan</li>
+                                <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Slot payroll ~ Rp @((plan.Price / plan.EmployeeLimit).ToString("N0", idCulture))/bulan</li>
+                            }
                             <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> HR Console penuh</li>
                             <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Kode referral per divisi</li>
                             <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Monitoring karyawan</li>

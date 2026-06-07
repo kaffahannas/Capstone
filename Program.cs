@@ -25,6 +25,9 @@ builder.Services.AddScoped<LightenUp.Web.Services.HealthStatusService>();
 builder.Services.AddScoped<LightenUp.Web.Services.UserUploadService>();
 builder.Services.AddScoped<LightenUp.Web.Services.DuitkuService>();
 builder.Services.AddScoped<LightenUp.Web.Services.SubscriptionAccessService>();
+builder.Services.AddScoped<LightenUp.Web.Services.SubscriptionPricingService>();
+builder.Services.AddScoped<LightenUp.Web.Services.PsychologistWorkloadService>();
+builder.Services.AddScoped<LightenUp.Web.Services.AssignmentActivationService>();
 builder.Services.AddScoped<LightenUp.Web.Services.IEmailSender, LightenUp.Web.Services.SmtpEmailSender>();
 
 var app = builder.Build();
@@ -40,6 +43,9 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+        // Create/update schema before any Identity queries (roles/admin need existing tables).
+        await context.Database.MigrateAsync();
 
         // 1. Ensure Identity roles exist
         string[] roles = { "Admin", "Patient", "Psychologist", "HR" };

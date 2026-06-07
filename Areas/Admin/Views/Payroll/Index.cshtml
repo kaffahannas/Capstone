@@ -1,0 +1,110 @@
+@using LightenUp.Web.Areas.Admin.Controllers
+@model List<LightenUp.Web.Areas.Admin.Controllers.AdminPayrollRow>
+@{
+    ViewData["Title"] = "Payroll Psikolog";
+    ViewBag.ActiveNav = "Payroll";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+    string Idr(decimal v) => v.ToString("C0", idCulture);
+    var totalPsyShare = Model.Sum(r => r.PsyShareMonthly);
+    var totalGross = Model.Sum(r => r.GrossMonthly);
+    var monthLabel = DateTime.Now.ToString("MMMM yyyy", idCulture);
+}
+
+@if (TempData["success"] is string ok)
+{
+    <div class="adm-alert success">✅ @ok</div>
+}
+
+<div class="adm-page-header">
+    <h1>Payroll Psikolog</h1>
+    <p class="adm-page-sub">
+        Model per-sesi (Sir Lukas) — Periode: <strong>@monthLabel</strong>.
+        Formula: <code>Nilai Sesi = Slot Pasien ÷ Maks. Sesi/Bulan</code>, lalu × persentase psikolog per sesi selesai.
+    </p>
+</div>
+
+@* KPI summary strip *@
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
+    <div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #F3F4F6;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9CA3AF;">Total Psikolog</p>
+        <p style="margin:0;font-size:28px;font-weight:800;color:#111827;">@Model.Count</p>
+    </div>
+    <div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #F3F4F6;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9CA3AF;">Total Slot Bulanan</p>
+        <p style="margin:0;font-size:22px;font-weight:800;color:#4338CA;">@Idr(totalGross)</p>
+    </div>
+    <div style="background:linear-gradient(135deg,#312E81,#4338CA);border-radius:14px;padding:20px;box-shadow:0 4px 16px rgba(67,56,202,0.25);border:none;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,0.7);">Proyeksi Bayar Psikolog (bulan ini)</p>
+        <p style="margin:0;font-size:22px;font-weight:800;color:#fff;">@Idr(totalPsyShare)</p>
+    </div>
+</div>
+
+<div class="adm-card">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>Psikolog</th>
+                <th style="text-align:center;">% Psy</th>
+                <th style="text-align:center;">Maks. Sesi</th>
+                <th style="text-align:center;">Pasien Aktif</th>
+                <th style="text-align:center;">Sesi Selesai (Bulan ini)</th>
+                <th style="text-align:right;">Nilai per Sesi (Total)</th>
+                <th style="text-align:right;">Bayaran Psikolog (Bulan ini)</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var r in Model)
+        {
+            var psyPerSesValueFmt = r.ActivePatients > 0 && r.MaxSessionsPerMonth > 0
+                ? Idr(r.PerSessionValueTotal)
+                : "—";
+            <tr>
+                <td>
+                    <strong>@r.FullName</strong>
+                    <br><small class="text-muted">@r.Email</small>
+                </td>
+                <td style="text-align:center;">
+                    <span style="background:#EEF2FF;color:#4338CA;padding:4px 10px;border-radius:999px;font-weight:700;font-size:13px;">@r.DefaultPsychologistPercentage%</span>
+                </td>
+                <td style="text-align:center;">
+                    <span style="background:#F3F4F6;color:#374151;padding:4px 10px;border-radius:999px;font-weight:600;font-size:13px;">@r.MaxSessionsPerMonth sesi</span>
+                </td>
+                <td style="text-align:center;font-weight:600;">@r.ActivePatients</td>
+                <td style="text-align:center;">
+                    @if (r.CompletedSessionsThisMonth > 0)
+                    {
+                        <span style="background:#D1FAE5;color:#065F46;padding:4px 10px;border-radius:999px;font-weight:700;font-size:13px;">@r.CompletedSessionsThisMonth sesi</span>
+                    }
+                    else
+                    {
+                        <span style="color:#9CA3AF;font-size:13px;">Belum ada</span>
+                    }
+                </td>
+                <td style="text-align:right;font-size:14px;color:#4B5563;">@psyPerSesValueFmt</td>
+                <td style="text-align:right;">
+                    @if (r.PsyShareMonthly > 0)
+                    {
+                        <strong style="font-size:15px;color:#059669;">@Idr(r.PsyShareMonthly)</strong>
+                    }
+                    else
+                    {
+                        <span style="color:#9CA3AF;font-size:13px;">@Idr(0)</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@r.PsychologistId" class="adm-btn adm-btn-sm adm-btn-primary">
+                        ⚙️ Edit
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top:16px;padding:14px 18px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;font-size:13px;color:#92400E;">
+    <strong>ℹ️ Catatan:</strong>
+    Bayaran aktual ditransfer setelah bulan berakhir. Proyeksi di atas berdasarkan sesi yang telah berstatus <em>Completed</em> dalam bulan berjalan.
+    Nilai slot = langganan pasien dibagi maks. sesi per bulan yang dikonfigurasi.
+</div>

@@ -16,8 +16,9 @@ public class SubscriptionController : Controller
 {
     private static readonly List<SubscriptionPlanViewModel> Plans =
     [
-        new() { PlanId = "company-monthly", Name = "Perusahaan Bulanan", Price = 499000, DurationMonths = 1, Description = "Akses HR Console + kode referral untuk karyawan (hingga paket aktif)." },
-        new() { PlanId = "company-yearly", Name = "Perusahaan Tahunan", Price = 4990000, DurationMonths = 12, Description = "Paket tahunan perusahaan (hemat ~17%). Kode referral otomatis setelah pembayaran." }
+        new() { PlanId = "company-10", Name = "Perusahaan 10 Karyawan", Price = 4500000, DurationMonths = 12, EmployeeLimit = 10, Description = "Hingga 10 karyawan terdaftar. Nilai slot payroll: Rp 450.000/karyawan/bulan." },
+        new() { PlanId = "company-25", Name = "Perusahaan 25 Karyawan", Price = 10000000, DurationMonths = 12, EmployeeLimit = 25, Description = "Hingga 25 karyawan terdaftar. Nilai slot payroll: Rp 400.000/karyawan/bulan." },
+        new() { PlanId = "company-50", Name = "Perusahaan 50 Karyawan", Price = 18000000, DurationMonths = 12, EmployeeLimit = 50, Description = "Hingga 50 karyawan terdaftar. Nilai slot payroll: Rp 360.000/karyawan/bulan." }
     ];
 
     private readonly ApplicationDbContext _context;
@@ -45,8 +46,16 @@ public class SubscriptionController : Controller
             return RedirectToAction("Welcome", "Onboarding");
 
         CompanySubscription? active = null;
+        int employeeCount = 0;
+        int employeeLimit = 0;
         if (hr.CompanyId != null)
+        {
             active = await _access.GetActiveCompanySubscriptionAsync(hr.CompanyId.Value);
+            employeeCount = await _context.Patients.CountAsync(p =>
+                p.CompanyId == hr.CompanyId && p.EmploymentStatus == "active");
+            employeeCount += await _context.PendingEmployees.CountAsync(p => p.CompanyId == hr.CompanyId);
+            employeeLimit = active?.EmployeeLimit ?? 0;
+        }
 
         var divisions = new List<CompanyDivisionViewModel>();
         if (hr.CompanyId != null)
@@ -58,12 +67,15 @@ public class SubscriptionController : Controller
                     DivisionId = d.DivisionId,
                     Name = d.Name,
                     ReferralCode = d.ReferralCode,
-                    EmployeeCount = _context.Patients.Count(p => p.CompanyId == hr.CompanyId && p.Department == d.Name)
+                    EmployeeCount = _context.Patients.Count(p => p.CompanyId == hr.CompanyId && p.Department == d.Name) +
+                                    _context.PendingEmployees.Count(p => p.CompanyId == hr.CompanyId && p.Department == d.Name)
                 })
                 .ToListAsync();
         }
 
         ViewBag.ActiveNav = "Langganan";
+        ViewBag.EmployeeCount = employeeCount;
+        ViewBag.EmployeeLimit = employeeLimit;
         return View(new HrSubscriptionIndexViewModel
         {
             Plans = Plans,
@@ -135,7 +147,8 @@ public class SubscriptionController : Controller
             PlanName = plan.Name,
             Status = "Pending",
             StartDate = DateTime.Today,
-            EndDate = DateTime.Today.AddMonths(plan.DurationMonths)
+            EndDate = DateTime.Today.AddMonths(plan.DurationMonths),
+            EmployeeLimit = plan.EmployeeLimit
         };
         _context.CompanySubscriptions.Add(subscription);
         await _context.SaveChangesAsync();

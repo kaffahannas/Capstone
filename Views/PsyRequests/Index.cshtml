@@ -1,8 +1,10 @@
+@using LightenUp.Web.Models
 @model LightenUp.Web.Models.ViewModels.PsyRequestsViewModel
 @{
-    ViewData["Title"] = "Permintaan HR";
+    ViewData["Title"] = "Permintaan & Inbox";
     Layout = "_LayoutDashboard";
     var idCulture = new System.Globalization.CultureInfo("id-ID");
+    var pendingAssignments = ViewBag.PendingAssignments as List<PatientPsychologistAssignment> ?? new List<PatientPsychologistAssignment>();
 
     var countWorksheet = Model.Items.Count(i => i.RequestType == "Worksheet");
     var countSchedule  = Model.Items.Count(i => i.RequestType == "Schedule");
@@ -18,12 +20,40 @@
 
 <div class="req-page">
 
+@* ── Patient assignment requests section ── *@
+@if (pendingAssignments.Any())
+{
+    <div style="background:#fffbeb; border:1px solid #fcd34d; border-radius:12px; padding:20px; margin-bottom:24px;">
+        <h3 style="margin:0 0 12px; font-size:16px;">🙋 Permintaan Pasien Memilih Anda (@pendingAssignments.Count)</h3>
+        @foreach (var a in pendingAssignments)
+        {
+            <div style="background:#fff; border-radius:10px; padding:16px; margin-bottom:12px; display:flex; align-items:center; gap:16px;">
+                <div style="flex:1;">
+                    <strong>@(a.Patient?.User?.FullName ?? "—")</strong>
+                    <span style="color:#6b7280; font-size:13px; margin-left:8px;">(@(a.Patient?.Company != null ? a.Patient.Company.Name : "Publik B2C"))</span>
+                    <div style="color:#6b7280; font-size:12px; margin-top:4px;">
+                        Diminta: @a.AssignedAt.ToString("dd MMM yyyy")
+                    </div>
+                </div>
+                <form asp-action="AcceptAssignment" method="post" class="d-inline">
+                    <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
+                    <button type="submit" style="background:#065f46; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-right:8px;" onclick="return confirm('Terima permintaan pasien ini?')">✔ Terima</button>
+                </form>
+                <form asp-action="RejectAssignment" method="post" class="d-inline">
+                    <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
+                    <button type="submit" style="background:#7f1d1d; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer;" onclick="return confirm('Tolak permintaan pasien ini?')">✕ Tolak</button>
+                </form>
+            </div>
+        }
+    </div>
+}
+
 @* ── Hero ── *@
 <div class="req-hero">
     <div class="req-hero-left">
-        <p class="req-hero-eyebrow">Psikolog · Inbox</p>
-        <h1 class="req-hero-title">Permintaan dari HR</h1>
-        <p class="req-hero-sub">Tinjau dan tanggapi usulan worksheet atau jadwal sesi dari tim HR perusahaan mitra.</p>
+        <p class="req-hero-eyebrow">PSIKOLOG · INBOX</p>
+        <h1 class="req-hero-title">Permintaan</h1>
+        <p class="req-hero-sub">Tinjau dan tanggapi usulan worksheet atau jadwal sesi dari pasien maupun tim HR perusahaan mitra.</p>
     </div>
     <div class="req-hero-stats">
         <div class="req-hero-stat req-hero-stat--total">

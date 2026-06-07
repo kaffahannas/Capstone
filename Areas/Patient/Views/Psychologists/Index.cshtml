@@ -1,0 +1,133 @@
+@using LightenUp.Web.Models
+@model List<LightenUp.Web.Models.Psychologist>
+@{
+    ViewData["Title"] = "Pilih Psikolog";
+    ViewBag.ActiveNav = "Psikolog";
+    var activeAssignment = ViewBag.ActiveAssignment as PatientPsychologistAssignment;
+    var pendingAdminRequest = ViewBag.PendingAdminRequest as PatientAdminAssignmentRequest;
+    var hasActivePsychologist = (bool)(ViewBag.HasActivePsychologist ?? false);
+}
+
+<div style="display: flex; flex-direction: column; min-height: calc(100vh - 120px);">
+
+<div class="tasks-hero" style="flex-shrink:0; background: linear-gradient(135deg,#312E81 0%,#4338CA 100%); color:white; padding:32px; border-radius:20px; margin-bottom:24px; box-shadow:0 10px 25px rgba(49,46,129,.2); position:relative; overflow:hidden;">
+    <div style="position:absolute; right:-20px; top:-40px; opacity:.1; font-size:150px; user-select:none;">🩺</div>
+    <div style="position:relative; z-index:1;">
+        <h1 style="margin:0 0 8px; font-size:28px; font-weight:700; display:flex; align-items:center; gap:12px;">
+            <span style="background:rgba(255,255,255,.2); border-radius:12px; padding:8px; font-size:24px; line-height:1;">🩺</span>
+            Pilih Psikolog
+        </h1>
+        <p style="margin:0; font-size:15px; opacity:.9;">Pilih psikolog yang ingin Anda ajak bekerja sama. Psikolog perlu menyetujui permintaan Anda.</p>
+    </div>
+</div>
+
+@if (TempData["success"] is string ok)
+{
+    <div style="background:#ecfdf5; border:1px solid #6ee7b7; color:#065f46; border-radius:12px; padding:16px; margin-bottom:16px;">✅ @ok</div>
+}
+@if (TempData["error"] is string err)
+{
+    <div style="background:#fef2f2; border:1px solid #fca5a5; color:#7f1d1d; border-radius:12px; padding:16px; margin-bottom:16px;">⚠️ @err</div>
+}
+
+@if (pendingAdminRequest != null)
+{
+    <div style="background:#eff6ff; border:1px solid #93c5fd; border-radius:12px; padding:16px; margin-bottom:24px;">
+        <strong>📨 Permintaan ke Admin sedang diproses.</strong> Tim LightenUp akan menugaskan psikolog untuk Anda.
+    </div>
+}
+else if (!hasActivePsychologist && activeAssignment == null)
+{
+    <div style="background:#f5f3ff; border:1px solid #c4b5fd; border-radius:12px; padding:20px; margin-bottom:24px;">
+        <strong>Belum punya psikolog?</strong>
+        <p style="margin:8px 0 12px; font-size:14px; color:#4b5563;">Anda bisa memilih psikolog sendiri di bawah, atau minta Admin LightenUp menugaskan berdasarkan beban kerja psikolog.</p>
+        <form asp-action="RequestAdminAssignment" method="post" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+            @Html.AntiForgeryToken()
+            <div style="flex:1; min-width:200px;">
+                <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Psikolog preferensi (opsional)</label>
+                <select name="preferredPsychologistId" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:8px;">
+                    <option value="">— Tidak ada preferensi —</option>
+                    @foreach (var psy in Model)
+                    {
+                        <option value="@psy.PsychologistId">@(psy.User?.FullName)</option>
+                    }
+                </select>
+            </div>
+            <div style="flex:2; min-width:200px;">
+                <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Catatan (opsional)</label>
+                <input type="text" name="reason" placeholder="Kebutuhan atau preferensi jadwal..."
+                       style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:8px;" />
+            </div>
+            <button type="submit" class="lu-btn lu-btn-primary"
+                    onclick="return confirm('Kirim permintaan penugasan ke Admin?')">
+                Minta Admin Menugaskan
+            </button>
+        </form>
+    </div>
+}
+
+@if (activeAssignment != null)
+{
+    <div style="background:#fffbeb; border:1px solid #fcd34d; border-radius:12px; padding:16px; margin-bottom:24px;">
+        <strong>ℹ️ Status permintaan Anda:</strong> @activeAssignment.Status
+        — dengan Psikolog <strong>@(activeAssignment.Psychologist?.User?.FullName ?? "—")</strong>
+    </div>
+}
+
+<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap:20px;">
+@foreach (var psy in Model)
+{
+    <div style="background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.07); padding:24px; display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+            @if (!string.IsNullOrEmpty(psy.User?.ProfilePicture))
+            {
+                <img src="@psy.User.ProfilePicture" style="width:56px; height:56px; border-radius:50%; object-fit:cover;" alt=""/>
+            }
+            else
+            {
+                <div style="width:56px; height:56px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; color:#4338ca;">
+                    @(psy.User?.FullName?.Length > 0 ? psy.User.FullName[0].ToString().ToUpper() : "?")
+                </div>
+            }
+            <div>
+                <div style="font-weight:700; font-size:16px;">@(psy.User?.FullName ?? "—")</div>
+                <div style="color:#6b7280; font-size:13px;">@(psy.Specialization ?? "Umum")</div>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            @if (psy.ExperienceYears > 0)
+            {
+                <span style="background:#f3f4f6; border-radius:8px; padding:4px 10px; font-size:12px;">@psy.ExperienceYears tahun pengalaman</span>
+            }
+            @if (!string.IsNullOrEmpty(psy.PracticeLocation))
+            {
+                <span style="background:#f3f4f6; border-radius:8px; padding:4px 10px; font-size:12px;">📍 @psy.PracticeLocation</span>
+            }
+            @if (psy.AcceptsB2B)
+            {
+                <span style="background:#ecfdf5; color:#065f46; border-radius:8px; padding:4px 10px; font-size:12px;">✔ Menerima B2B</span>
+            }
+        </div>
+
+        @if (activeAssignment == null && pendingAdminRequest == null)
+        {
+            <form asp-action="Request" method="post" style="margin-top:auto;">
+                <input type="hidden" name="psychologistId" value="@psy.PsychologistId" />
+                <button type="submit" class="lu-btn lu-btn-primary" style="width:100%;"
+                    onclick="return confirm('Kirim permintaan ke psikolog @(psy.User?.FullName ?? "")?')">
+                    Pilih Psikolog Ini
+                </button>
+            </form>
+        }
+        else
+        {
+            <button class="lu-btn lu-btn-outline" style="width:100%;" disabled>
+                @(activeAssignment?.PsychologistId == psy.PsychologistId ? "Sudah Dipilih" : "Tidak Tersedia")
+            </button>
+        }
+    </div>
+}
+</div>
+
+</div>

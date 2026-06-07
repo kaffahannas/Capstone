@@ -16,10 +16,13 @@
 
     // Hero stats
     var now           = DateTime.Now;
-    var countTotal     = sessions.Count;
-    var countUpcoming  = sessions.Count(s => s.Status != "Completed" && s.Status != "Cancelled" && s.SessionStart > now);
-    var countCompleted = sessions.Count(s => s.Status == "Completed");
-    var countCancelled = sessions.Count(s => s.Status == "Cancelled");
+    var allSessions = (ViewBag.AllSessionsInWindow as List<LightenUp.Web.Models.Schedule>) ?? sessions;
+    var upcoming = allSessions.Where(s => s.Status != "Completed" && s.Status != "Cancelled" && s.SessionStart >= now).OrderBy(s => s.SessionStart).ToList();
+    
+    var countTotal = allSessions.Count;
+    var countUpcoming = upcoming.Count;
+    var countCompleted = allSessions.Count(s => s.Status == "Completed" || (s.Status == "Scheduled" && s.SessionStart.AddMinutes(s.DurationMinutes) <= now));
+    var countCancelled = allSessions.Count(s => s.Status == "Cancelled");
 
     string DayLabel(DateTime d)
     {
@@ -184,6 +187,18 @@ else
             } catch (err) {
                 console.error(err);
                 alert("Gagal memuat detail jadwal.");
+            }
+        }
+        window.openEditScheduleModal = async function(id) {
+            try {
+                const res = await fetch(`/Psychologist/EditScheduleModal/${id}`);
+                if (!res.ok) throw new Error('Failed to load');
+                const html = await res.text();
+                document.getElementById('scheduleDetailModal').innerHTML = html;
+                // keep modal active since it replaces content
+            } catch (err) {
+                console.error(err);
+                alert("Gagal memuat form edit jadwal.");
             }
         }
         window.closeScheduleDetailModal = function() {

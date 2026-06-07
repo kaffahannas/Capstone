@@ -1,0 +1,75 @@
+@using LightenUp.Web.Controllers
+@model LightenUp.Web.Controllers.PsyScheduleEditViewModel
+@{
+    ViewData["Title"] = "Edit Jadwal";
+    Layout = "_LayoutDashboard";
+}
+
+<a class="pd-back" asp-action="Scheduling" style="display: inline-flex; align-items: center; gap: 8px; color: #4F46E5; text-decoration: none; font-weight: 500; font-size: 14px; margin-bottom: 24px; transition: color 0.2s;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Kembali ke Daftar Jadwal
+</a>
+
+<div class="tasks-hero" style="background: linear-gradient(135deg, #4338CA 0%, #6366F1 100%); color: white; padding: 32px; border-radius: 20px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(67, 56, 202, 0.25); max-width: 720px; position: relative; overflow: hidden;">
+    <div style="position: relative; z-index: 1;">
+        <h1 style="margin: 0 0 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.02em;">Edit Jadwal Konseling</h1>
+        <p style="margin: 0; font-size: 15px; opacity: 0.9;">Pasien: <strong>@Model.PatientName</strong></p>
+    </div>
+    <svg style="position: absolute; right: 0; top: 0; height: 100%; opacity: 0.1;" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon fill="currentColor" points="0,100 100,0 100,100"/></svg>
+</div>
+
+<div style="max-width: 720px;">
+    <form asp-action="EditSchedule" method="post">
+        <div class="detail-card" style="padding: 32px; border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); background: #fff; border: 1px solid #F3F4F6;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ScheduleId" />
+            <input type="hidden" asp-for="PatientName" />
+            
+            <div asp-validation-summary="ModelOnly" style="background:#FEE2E2;color:#B91C1C;padding:12px 16px;border-radius:12px;margin-bottom:24px;font-size:14px;font-weight:500;"></div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+                <div class="form-group">
+                    <label asp-for="SessionStart" class="form-label" style="display:block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Waktu Mulai</label>
+                    <input asp-for="SessionStart" type="datetime-local" class="form-control" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #D1D5DB; font-size: 15px; outline: none; transition: all 0.2s;" onfocus="this.style.borderColor='#6366F1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)';" onblur="this.style.borderColor='#D1D5DB'; this.style.boxShadow='none';" />
+                    <span asp-validation-for="SessionStart" style="color:#DC2626;font-size:13px;margin-top:6px;display:block;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DurationMinutes" class="form-label" style="display:block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Durasi (menit)</label>
+                    <input asp-for="DurationMinutes" type="number" min="15" max="240" class="form-control" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #D1D5DB; font-size: 15px; outline: none; transition: all 0.2s;" onfocus="this.style.borderColor='#6366F1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)';" onblur="this.style.borderColor='#D1D5DB'; this.style.boxShadow='none';" />
+                    <span asp-validation-for="DurationMinutes" style="color:#DC2626;font-size:13px;margin-top:6px;display:block;"></span>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label asp-for="Status" class="form-label" style="display:block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Status Sesi</label>
+                <select asp-for="Status" class="form-control" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #D1D5DB; font-size: 15px; outline: none; transition: all 0.2s; background: white; appearance: none; cursor: pointer;" onfocus="this.style.borderColor='#6366F1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)';" onblur="this.style.borderColor='#D1D5DB'; this.style.boxShadow='none';">
+                    <option value="Scheduled">Akan Datang (Scheduled)</option>
+                    <option value="Completed">Selesai (Completed)</option>
+                    <option value="Cancelled">Dibatalkan (Cancelled)</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label asp-for="MeetingLink" class="form-label" style="display:block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Link Google Meet <small style="color:#9CA3AF;font-weight:400;margin-left:4px;">(Opsional)</small></label>
+                <input asp-for="MeetingLink" type="url" class="form-control" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #D1D5DB; font-size: 15px; outline: none; transition: all 0.2s;" onfocus="this.style.borderColor='#6366F1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)';" onblur="this.style.borderColor='#D1D5DB'; this.style.boxShadow='none';" placeholder="https://meet.google.com/..." />
+                <span asp-validation-for="MeetingLink" style="color:#DC2626;font-size:13px;margin-top:6px;display:block;"></span>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label asp-for="Notes" class="form-label" style="display:block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Catatan Tambahan <small style="color:#9CA3AF;font-weight:400;margin-left:4px;">(Opsional)</small></label>
+                <textarea asp-for="Notes" rows="4" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #D1D5DB; font-size: 15px; outline: none; transition: all 0.2s; font-family: inherit; resize: vertical;" onfocus="this.style.borderColor='#6366F1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)';" onblur="this.style.borderColor='#D1D5DB'; this.style.boxShadow='none';" placeholder="Tambahkan catatan sesi..."></textarea>
+                <span asp-validation-for="Notes" style="color:#DC2626;font-size:13px;margin-top:6px;display:block;"></span>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:16px; justify-content:flex-end; margin-top:32px;">
+            <a asp-action="Scheduling" style="padding: 12px 28px; border-radius: 999px; font-size: 15px; font-weight: 600; text-decoration: none; color: #4B5563; background: #F3F4F6; border: 1px solid #E5E7EB; transition: all 0.2s;">Batalkan</a>
+            <button type="submit" style="padding: 12px 28px; border-radius: 999px; font-size: 15px; font-weight: 600; color: white; background: #4338CA; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(67,56,202,0.3); transition: all 0.2s;">Simpan Perubahan</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

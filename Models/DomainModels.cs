@@ -210,6 +210,9 @@ namespace LightenUp.Web.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
+        /// <summary>Max employees covered by this plan (0 = unlimited legacy).</summary>
+        public int EmployeeLimit { get; set; }
+
         public virtual ICollection<PaymentTransaction> Payments { get; set; } = new List<PaymentTransaction>();
     }
 
@@ -307,7 +310,78 @@ namespace LightenUp.Web.Models
         public virtual ApplicationUser? AssignedByHr { get; set; }
 
         public DateTime AssignedAt { get; set; } = DateTime.Now;
+
+        // Status values:
+        // PendingAdminApproval   — psychologist added patient; waiting for admin OK
+        // PendingPsychologistApproval — patient chose psychologist; waiting psy to accept
+        // Active                 — fully approved, live assignment
+        // PendingCancellationByHr    — psy wants to end B2B partnership; HR must approve
+        // PendingCancellationByAdmin — HR wants to remove employee's psy; Admin must approve
+        // Cancelled              — assignment ended
+        // Rejected               — approval denied
         public string Status { get; set; } = "Active";
+
+        // Who requested this assignment and in what role ("Psychologist" / "Patient")
+        public string? RequestedByUserId { get; set; }
+        [ForeignKey("RequestedByUserId")]
+        public virtual ApplicationUser? RequestedBy { get; set; }
+        [StringLength(32)] public string? RequestedByRole { get; set; }
+
+        // Cancellation request tracking
+        public string? CancellationRequestedByUserId { get; set; }
+        [ForeignKey("CancellationRequestedByUserId")]
+        public virtual ApplicationUser? CancellationRequestedBy { get; set; }
+        [StringLength(1000)] public string? CancellationReason { get; set; }
+        public DateTime? CancellationRequestedAt { get; set; }
+
+        // Decision (approve/reject) tracking
+        public string? DecisionByUserId { get; set; }
+        [ForeignKey("DecisionByUserId")]
+        public virtual ApplicationUser? DecisionBy { get; set; }
+        public DateTime? DecisionAt { get; set; }
+        [StringLength(1000)] public string? DecisionNote { get; set; }
+
+        /// <summary>Monthly subscription slot value (IDR) snapshotted when assignment becomes Active.</summary>
+        [Column(TypeName = "decimal(14,2)")]
+        public decimal? SlotValue { get; set; }
+
+        /// <summary>Psychologist revenue share % of SlotValue (e.g. 40 = 40%).</summary>
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal? PsychologistRevenuePercentage { get; set; }
+    }
+
+    /// <summary>Patient asks admin to assign a psychologist when they have no active one.</summary>
+    public class PatientAdminAssignmentRequest
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int PatientId { get; set; }
+        [ForeignKey("PatientId")]
+        public virtual Patient? Patient { get; set; }
+
+        public int? PreferredPsychologistId { get; set; }
+        [ForeignKey("PreferredPsychologistId")]
+        public virtual Psychologist? PreferredPsychologist { get; set; }
+
+        [StringLength(1000)]
+        public string? Reason { get; set; }
+
+        /// <summary>Pending | Assigned | Dismissed</summary>
+        [Required, StringLength(32)]
+        public string Status { get; set; } = "Pending";
+
+        public int? AssignedPsychologistId { get; set; }
+        [ForeignKey("AssignedPsychologistId")]
+        public virtual Psychologist? AssignedPsychologist { get; set; }
+
+        public string? AssignedByAdminUserId { get; set; }
+        [ForeignKey("AssignedByAdminUserId")]
+        public virtual ApplicationUser? AssignedByAdmin { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? DecisionAt { get; set; }
     }
 
     public class Schedule
@@ -404,17 +478,57 @@ namespace LightenUp.Web.Models
         public DateTime? ClaimedAt { get; set; }
     }
 
-    // ─── HR slice 5: requests from HR to psychologist ─────
-    // "+" buttons on /Hr/Worksheets and /Hr/Schedules create these.
-    public class PsychologistRequest
+    public class HrEmployeeRemovalRequest
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public string RequestedByHrUserId { get; set; } = string.Empty;
+        public int PatientId { get; set; }
+        [ForeignKey("PatientId")]
+        public virtual Patient? Patient { get; set; }
+
+        public string? RequestedByHrUserId { get; set; }
         [ForeignKey("RequestedByHrUserId")]
         public virtual ApplicationUser? RequestedByHr { get; set; }
+
+        [StringLength(1000)]
+        public string? Reason { get; set; }
+
+        [Required, StringLength(32)]
+        public string Status { get; set; } = "Pending"; // Pending, Approved, Rejected
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public string? DecisionByAdminUserId { get; set; }
+        [ForeignKey("DecisionByAdminUserId")]
+        public virtual ApplicationUser? DecisionByAdmin { get; set; }
+
+        public DateTime? DecisionAt { get; set; }
+        [StringLength(1000)]
+        public string? DecisionNote { get; set; }
+    }
+
+    // ─── HR slice 5 & Patient: requests to psychologist ─────
+    // Created by HR ("+" buttons on /Hr/Worksheets and /Hr/Schedules)
+    // OR by Patient (choose session via /Patient/Psychologists/RequestSession).
+    public class PsychologistRequest
+    {
+        [Key]
+        public int Id { get; set; }
+
+        // HR requester (null when request is made by patient)
+        public string? RequestedByHrUserId { get; set; }
+        [ForeignKey("RequestedByHrUserId")]
+        public virtual ApplicationUser? RequestedByHr { get; set; }
+
+        // Patient requester (null when request is made by HR)
+        public string? RequestedByPatientUserId { get; set; }
+        [ForeignKey("RequestedByPatientUserId")]
+        public virtual ApplicationUser? RequestedByPatient { get; set; }
+
+        // "HR" or "Patient" — identifies who originated the request
+        [StringLength(32)] public string RequesterRole { get; set; } = "HR";
 
         [Required]
         public int PatientId { get; set; }
@@ -439,6 +553,41 @@ namespace LightenUp.Web.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? RespondedAt { get; set; }
         [StringLength(500)] public string? RespondedNote { get; set; }
+    }
+
+    // ─── Payroll settings per psychologist (set by Admin) ─────
+    public class PsychologistPayrollSetting
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int PsychologistId { get; set; }
+        [ForeignKey("PsychologistId")]
+        public virtual Psychologist? Psychologist { get; set; }
+
+        // Rate per completed counseling session (in IDR)
+        [Required]
+        public decimal SessionRate { get; set; } = 0;
+
+        // Default percentage for new assignments (e.g. 40 = 40% psychologist, 60% LightenUp)
+        [Required]
+        public decimal PsychologistPercentage { get; set; } = 40;
+
+        /// <summary>
+        /// Maximum sessions per month used in slot-value calculation.
+        /// Sir Lukas formula: per-session value = SlotValue / MaxSessionsPerMonth.
+        /// Then psychologist earns PsychologistPercentage% of that per-session value.
+        /// Default is 4 (adjustable by Admin).
+        /// </summary>
+        [Required]
+        public int MaxSessionsPerMonth { get; set; } = 4;
+
+        public string? UpdatedByAdminUserId { get; set; }
+        [ForeignKey("UpdatedByAdminUserId")]
+        public virtual ApplicationUser? UpdatedByAdmin { get; set; }
+
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }
 
     // ─── HR slice 6 & Psy slice 9: escalation reports (bidirectional) ─────

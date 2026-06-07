@@ -1,0 +1,98 @@
+@{
+    var psyName = ViewBag.PsychologistName as string ?? "Psikolog Anda";
+    var patientId = ViewBag.PatientId as int? ?? 0;
+    var psyId = ViewBag.PsychologistId as int? ?? 0;
+}
+
+<div class="prf-modal-overlay" id="requestSessionModalOverlay" role="dialog" aria-modal="true" aria-labelledby="requestSessionModalTitle">
+    <div class="prf-modal" style="max-width: 520px;">
+        <div class="prf-modal-header">
+            <h2 id="requestSessionModalTitle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-3px;margin-right:8px;color:#4338CA" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Minta Jadwal Sesi
+            </h2>
+            <button type="button" class="prf-modal-close" onclick="closeRequestSessionModal()" aria-label="Tutup">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <form asp-action="RequestSession" asp-controller="Jadwal" asp-area="Patient" method="post" autocomplete="off">
+            @Html.AntiForgeryToken()
+
+            <div class="prf-modal-body">
+                <div style="background:#EEF2FF; border-radius:10px; padding:12px 16px; margin-bottom:20px; display:flex; align-items:center; gap:10px; border: 1px solid #C7D2FE;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4338CA" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <div style="font-size:13px;">
+                        <span style="color:#4B5563;">Psikolog: </span>
+                        <strong style="color:#3730A3;">@psyName</strong>
+                    </div>
+                </div>
+
+                <p style="margin:0 0 4px;font-size:13px;color:var(--text-muted, #6B7280);">Pilih tanggal dan waktu yang Anda inginkan. Psikolog Anda akan mengonfirmasi ketersediaan.</p>
+
+                <div asp-validation-summary="ModelOnly" style="color:#B91C1C;font-size:13px;margin:0 0 12px;"></div>
+
+                <div class="prf-form-group">
+                    <label for="proposedDate">Usulan Tanggal & Waktu</label>
+                    <input type="datetime-local" id="proposedDate" name="proposedDate" required
+                           style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid #D1D5DB;font-size:14px;outline:none;font-family:inherit;"
+                           onfocus="this.style.borderColor='#6366F1';this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+                           onblur="this.style.borderColor='#D1D5DB';this.style.boxShadow='none'"
+                           min="@DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm")" />
+                </div>
+
+                <div class="prf-form-group">
+                    <label for="sessionNotes">Catatan Tambahan (Opsional)</label>
+                    <textarea id="sessionNotes" name="notes" rows="3"
+                              style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid #D1D5DB;font-size:14px;outline:none;font-family:inherit;resize:vertical;"
+                              onfocus="this.style.borderColor='#6366F1';this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+                              onblur="this.style.borderColor='#D1D5DB';this.style.boxShadow='none'"
+                              placeholder="Mis. Topik yang ingin dibahas, preferensi jam, dll."></textarea>
+                </div>
+
+                <div style="background:#FFFBEB;border-radius:8px;padding:10px 14px;border:1px solid #FDE68A;font-size:12.5px;color:#92400E;">
+                    ℹ️ Permintaan ini akan diteruskan ke psikolog Anda untuk dikonfirmasi. Jadwal resmi hanya terkonfirmasi setelah psikolog menambahkannya ke jadwal.
+                </div>
+            </div>
+
+            <div class="prf-modal-footer">
+                <button type="button" class="prf-modal-btn prf-modal-btn--cancel" onclick="closeRequestSessionModal()">Batalkan</button>
+                <button type="submit" class="prf-modal-btn prf-modal-btn--save">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;margin-right:6px" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Kirim Permintaan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    function openRequestSessionModal() {
+        var overlay = document.getElementById('requestSessionModalOverlay');
+        if (!overlay) return;
+        overlay.classList.add('prf-modal--open');
+        document.body.style.overflow = 'hidden';
+        var first = overlay.querySelector('input[type=datetime-local]');
+        if (first) setTimeout(function () { first.focus(); }, 60);
+    }
+    function closeRequestSessionModal() {
+        var overlay = document.getElementById('requestSessionModalOverlay');
+        if (!overlay) return;
+        overlay.classList.remove('prf-modal--open');
+        document.body.style.overflow = '';
+    }
+    window.openRequestSessionModal = openRequestSessionModal;
+    window.closeRequestSessionModal = closeRequestSessionModal;
+
+    var overlay = document.getElementById('requestSessionModalOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeRequestSessionModal();
+        });
+    }
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeRequestSessionModal();
+    });
+})();
+</script>

@@ -203,6 +203,9 @@ namespace LightenUp.Web.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
+                    b.Property<int>("EmployeeLimit")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -222,6 +225,53 @@ namespace LightenUp.Web.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("CompanySubscriptions");
+                });
+
+            modelBuilder.Entity("LightenUp.Web.Models.HrEmployeeRemovalRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DecisionAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DecisionByAdminUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DecisionNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("RequestedByHrUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DecisionByAdminUserId");
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("RequestedByHrUserId");
+
+                    b.ToTable("HrEmployeeRemovalRequests");
                 });
 
             modelBuilder.Entity("LightenUp.Web.Models.HrNotificationPreference", b =>
@@ -390,10 +440,22 @@ namespace LightenUp.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MoodId"));
 
+                    b.Property<int?>("AnxietyScore")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EmotionScore")
+                        .HasColumnType("int");
+
                     b.Property<string>("Feeling")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("nvarchar(16)");
+
+                    b.Property<int?>("FocusScore")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MindLoadScore")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("MoodDate")
                         .HasColumnType("datetime2");
@@ -407,6 +469,9 @@ namespace LightenUp.Web.Migrations
 
                     b.Property<DateTime>("RecordedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("SleepScore")
+                        .HasColumnType("int");
 
                     b.Property<string>("Triggers")
                         .IsRequired()
@@ -513,6 +578,54 @@ namespace LightenUp.Web.Migrations
                     b.ToTable("Patients");
                 });
 
+            modelBuilder.Entity("LightenUp.Web.Models.PatientAdminAssignmentRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AssignedByAdminUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("AssignedPsychologistId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DecisionAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PreferredPsychologistId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedByAdminUserId");
+
+                    b.HasIndex("AssignedPsychologistId");
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("PreferredPsychologistId");
+
+                    b.ToTable("PatientAdminAssignmentRequests");
+                });
+
             modelBuilder.Entity("LightenUp.Web.Models.PatientNotificationPreference", b =>
                 {
                     b.Property<int>("Id")
@@ -558,11 +671,44 @@ namespace LightenUp.Web.Migrations
                     b.Property<string>("AssignedByHrUserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("CancellationRequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CancellationRequestedByUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DecisionAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DecisionByUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DecisionNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
                     b.Property<int>("PsychologistId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("PsychologistRevenuePercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("RequestedByRole")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("RequestedByUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal?>("SlotValue")
+                        .HasColumnType("decimal(14,2)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -572,9 +718,15 @@ namespace LightenUp.Web.Migrations
 
                     b.HasIndex("AssignedByHrUserId");
 
+                    b.HasIndex("CancellationRequestedByUserId");
+
+                    b.HasIndex("DecisionByUserId");
+
                     b.HasIndex("PatientId");
 
                     b.HasIndex("PsychologistId");
+
+                    b.HasIndex("RequestedByUserId");
 
                     b.ToTable("Assignments");
                 });
@@ -804,6 +956,42 @@ namespace LightenUp.Web.Migrations
                     b.ToTable("Psychologists");
                 });
 
+            modelBuilder.Entity("LightenUp.Web.Models.PsychologistPayrollSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MaxSessionsPerMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PsychologistId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PsychologistPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("SessionRate")
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedByAdminUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PsychologistId")
+                        .IsUnique();
+
+                    b.HasIndex("UpdatedByAdminUserId");
+
+                    b.ToTable("PayrollSettings");
+                });
+
             modelBuilder.Entity("LightenUp.Web.Models.PsychologistRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -841,8 +1029,15 @@ namespace LightenUp.Web.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("RequestedByHrUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RequestedByPatientUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RequesterRole")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<DateTime?>("RespondedAt")
                         .HasColumnType("datetime2");
@@ -863,6 +1058,8 @@ namespace LightenUp.Web.Migrations
                     b.HasIndex("PsychologistId");
 
                     b.HasIndex("RequestedByHrUserId");
+
+                    b.HasIndex("RequestedByPatientUserId");
 
                     b.ToTable("PsychologistRequests");
                 });
@@ -1235,6 +1432,29 @@ namespace LightenUp.Web.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("LightenUp.Web.Models.HrEmployeeRemovalRequest", b =>
+                {
+                    b.HasOne("LightenUp.Web.Models.ApplicationUser", "DecisionByAdmin")
+                        .WithMany()
+                        .HasForeignKey("DecisionByAdminUserId");
+
+                    b.HasOne("LightenUp.Web.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LightenUp.Web.Models.ApplicationUser", "RequestedByHr")
+                        .WithMany()
+                        .HasForeignKey("RequestedByHrUserId");
+
+                    b.Navigation("DecisionByAdmin");
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("RequestedByHr");
+                });
+
             modelBuilder.Entity("LightenUp.Web.Models.HrNotificationPreference", b =>
                 {
                     b.HasOne("LightenUp.Web.Models.HrStaff", "Hr")
@@ -1313,6 +1533,38 @@ namespace LightenUp.Web.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("LightenUp.Web.Models.PatientAdminAssignmentRequest", b =>
+                {
+                    b.HasOne("LightenUp.Web.Models.ApplicationUser", "AssignedByAdmin")
+                        .WithMany()
+                        .HasForeignKey("AssignedByAdminUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("LightenUp.Web.Models.Psychologist", "AssignedPsychologist")
+                        .WithMany()
+                        .HasForeignKey("AssignedPsychologistId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("LightenUp.Web.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LightenUp.Web.Models.Psychologist", "PreferredPsychologist")
+                        .WithMany()
+                        .HasForeignKey("PreferredPsychologistId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("AssignedByAdmin");
+
+                    b.Navigation("AssignedPsychologist");
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("PreferredPsychologist");
+                });
+
             modelBuilder.Entity("LightenUp.Web.Models.PatientNotificationPreference", b =>
                 {
                     b.HasOne("LightenUp.Web.Models.Patient", "Patient")
@@ -1331,6 +1583,16 @@ namespace LightenUp.Web.Migrations
                         .HasForeignKey("AssignedByHrUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("LightenUp.Web.Models.ApplicationUser", "CancellationRequestedBy")
+                        .WithMany()
+                        .HasForeignKey("CancellationRequestedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("LightenUp.Web.Models.ApplicationUser", "DecisionBy")
+                        .WithMany()
+                        .HasForeignKey("DecisionByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("LightenUp.Web.Models.Patient", "Patient")
                         .WithMany("Assignments")
                         .HasForeignKey("PatientId")
@@ -1343,11 +1605,22 @@ namespace LightenUp.Web.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("LightenUp.Web.Models.ApplicationUser", "RequestedBy")
+                        .WithMany()
+                        .HasForeignKey("RequestedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("AssignedByHr");
+
+                    b.Navigation("CancellationRequestedBy");
+
+                    b.Navigation("DecisionBy");
 
                     b.Navigation("Patient");
 
                     b.Navigation("Psychologist");
+
+                    b.Navigation("RequestedBy");
                 });
 
             modelBuilder.Entity("LightenUp.Web.Models.PaymentTransaction", b =>
@@ -1421,6 +1694,24 @@ namespace LightenUp.Web.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("LightenUp.Web.Models.PsychologistPayrollSetting", b =>
+                {
+                    b.HasOne("LightenUp.Web.Models.Psychologist", "Psychologist")
+                        .WithMany()
+                        .HasForeignKey("PsychologistId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LightenUp.Web.Models.ApplicationUser", "UpdatedByAdmin")
+                        .WithMany()
+                        .HasForeignKey("UpdatedByAdminUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Psychologist");
+
+                    b.Navigation("UpdatedByAdmin");
+                });
+
             modelBuilder.Entity("LightenUp.Web.Models.PsychologistRequest", b =>
                 {
                     b.HasOne("LightenUp.Web.Models.Patient", "Patient")
@@ -1437,14 +1728,20 @@ namespace LightenUp.Web.Migrations
                     b.HasOne("LightenUp.Web.Models.ApplicationUser", "RequestedByHr")
                         .WithMany()
                         .HasForeignKey("RequestedByHrUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("LightenUp.Web.Models.ApplicationUser", "RequestedByPatient")
+                        .WithMany()
+                        .HasForeignKey("RequestedByPatientUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Patient");
 
                     b.Navigation("Psychologist");
 
                     b.Navigation("RequestedByHr");
+
+                    b.Navigation("RequestedByPatient");
                 });
 
             modelBuilder.Entity("LightenUp.Web.Models.Report", b =>

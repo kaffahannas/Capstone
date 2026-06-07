@@ -27,6 +27,7 @@ namespace LightenUp.Web.Data
         public DbSet<CompanySubscription> CompanySubscriptions { get; set; }
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<PatientPsychologistAssignment> Assignments { get; set; }
+        public DbSet<PatientAdminAssignmentRequest> PatientAdminAssignmentRequests { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Worksheet> Worksheets { get; set; }
         public DbSet<MoodTracker> MoodTrackers { get; set; }
@@ -36,12 +37,14 @@ namespace LightenUp.Web.Data
 
         // HR tables
         public DbSet<PendingEmployee> PendingEmployees { get; set; }
+        public DbSet<HrEmployeeRemovalRequest> HrEmployeeRemovalRequests { get; set; }
         public DbSet<PsychologistRequest> PsychologistRequests { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<HrNotificationPreference> HrNotificationPreferences { get; set; }
 
         // Psychologist tables
         public DbSet<PsyNotificationPreference> PsyNotificationPreferences { get; set; }
+        public DbSet<PsychologistPayrollSetting> PayrollSettings { get; set; }
 
         // ==========================================
         // KONFIGURASI RELASI (Fluent API)
@@ -73,6 +76,61 @@ namespace LightenUp.Web.Data
                 .WithMany()
                 .HasForeignKey(a => a.AssignedByHrUserId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // 1c. RequestedBy, CancellationRequestedBy, DecisionBy — Restrict avoids SQL Server multiple-cascade-path errors.
+            builder.Entity<PatientPsychologistAssignment>()
+                .HasOne(a => a.RequestedBy)
+                .WithMany()
+                .HasForeignKey(a => a.RequestedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<PatientPsychologistAssignment>()
+                .HasOne(a => a.CancellationRequestedBy)
+                .WithMany()
+                .HasForeignKey(a => a.CancellationRequestedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<PatientPsychologistAssignment>()
+                .HasOne(a => a.DecisionBy)
+                .WithMany()
+                .HasForeignKey(a => a.DecisionByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<PatientPsychologistAssignment>()
+                .Property(a => a.SlotValue)
+                .HasColumnType("decimal(14,2)");
+
+            builder.Entity<PatientPsychologistAssignment>()
+                .Property(a => a.PsychologistRevenuePercentage)
+                .HasColumnType("decimal(5,2)");
+
+            // 1d. PatientAdminAssignmentRequest FKs — Restrict
+            builder.Entity<PatientAdminAssignmentRequest>()
+                .HasOne(r => r.Patient)
+                .WithMany()
+                .HasForeignKey(r => r.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<PatientAdminAssignmentRequest>()
+                .HasOne(r => r.PreferredPsychologist)
+                .WithMany()
+                .HasForeignKey(r => r.PreferredPsychologistId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            builder.Entity<PatientAdminAssignmentRequest>()
+                .HasOne(r => r.AssignedPsychologist)
+                .WithMany()
+                .HasForeignKey(r => r.AssignedPsychologistId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            builder.Entity<PatientAdminAssignmentRequest>()
+                .HasOne(r => r.AssignedByAdmin)
+                .WithMany()
+                .HasForeignKey(r => r.AssignedByAdminUserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             // 2. Relasi Schedule (Jadwal)
             builder.Entity<Schedule>()
@@ -204,7 +262,41 @@ namespace LightenUp.Web.Data
                 .HasOne(r => r.RequestedByHr)
                 .WithMany()
                 .HasForeignKey(r => r.RequestedByHrUserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            builder.Entity<PsychologistRequest>()
+                .HasOne(r => r.RequestedByPatient)
+                .WithMany()
+                .HasForeignKey(r => r.RequestedByPatientUserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            // 16. PsychologistPayrollSetting — one per psychologist
+            builder.Entity<PsychologistPayrollSetting>()
+                .HasIndex(p => p.PsychologistId)
+                .IsUnique();
+
+            builder.Entity<PsychologistPayrollSetting>()
+                .HasOne(p => p.Psychologist)
+                .WithMany()
+                .HasForeignKey(p => p.PsychologistId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<PsychologistPayrollSetting>()
+                .Property(p => p.SessionRate)
+                .HasColumnType("decimal(14,2)");
+
+            builder.Entity<PsychologistPayrollSetting>()
+                .Property(p => p.PsychologistPercentage)
+                .HasColumnType("decimal(5,2)");
+
+            builder.Entity<PsychologistPayrollSetting>()
+                .HasOne(p => p.UpdatedByAdmin)
+                .WithMany()
+                .HasForeignKey(p => p.UpdatedByAdminUserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .IsRequired(false);
 
             // 12. Report — Restrict cascade
             builder.Entity<Report>()

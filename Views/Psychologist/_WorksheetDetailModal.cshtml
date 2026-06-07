@@ -94,8 +94,11 @@
             </div>
         </form>
 
-        <div style="display: flex; justify-content: flex-end; height: 36px;">
-            <button type="button" class="btn-outline" onclick="closeWorksheetDetailModal()" style="height: 100%; display: flex; align-items: center; justify-content: center; margin: 0; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0 32px; border-radius: 999px; font-size: 13px; font-weight: 500;">Tutup</button>
+        <div style="display: flex; justify-content: flex-end; height: 36px; gap: 12px;">
+            <button type="button" class="btn-outline" onclick="openEditWorksheetModal(@Model.WorksheetId)" style="height: 100%; display: flex; align-items: center; justify-content: center; margin: 0; border-radius: 999px; font-size: 13px; font-weight: 500; padding: 0 20px; border: 1px solid #4338CA; color: #4338CA; background: transparent;">
+                Edit Worksheet
+            </button>
+            <button type="button" class="btn-outline" onclick="closeWorksheetDetailModal()" style="height: 100%; display: flex; align-items: center; justify-content: center; margin: 0; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 999px; font-size: 13px; font-weight: 500; padding: 0 24px;">Tutup</button>
         </div>
     </div>
 </div>

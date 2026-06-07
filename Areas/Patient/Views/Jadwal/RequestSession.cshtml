@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Minta Jadwal Sesi";
+    ViewBag.ActiveNav = "Jadwal";
+    var psyName = ViewBag.PsychologistName as string ?? "Psikolog";
+}
+
+<div style="max-width:560px; margin:0 auto;">
+<div class="tasks-hero" style="background:linear-gradient(135deg,#312E81 0%,#4338CA 100%); color:white; padding:32px; border-radius:20px; margin-bottom:28px; box-shadow:0 10px 25px rgba(49,46,129,.2);">
+    <h1 style="margin:0 0 8px; font-size:24px; font-weight:700; display:flex; align-items:center; gap:12px;">
+        <span style="background:rgba(255,255,255,.2); border-radius:12px; padding:8px; font-size:22px; line-height:1;">📅</span>
+        Minta Jadwal Sesi
+    </h1>
+    <p style="margin:0; font-size:14px; opacity:.9;">Psikolog Anda: <strong>@psyName</strong></p>
+</div>
+
+<div style="background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.07); padding:28px;">
+    <form asp-action="RequestSession" method="post">
+        @Html.AntiForgeryToken()
+
+        <div style="margin-bottom:20px;">
+            <label style="font-weight:600; font-size:14px; color:#374151; display:block; margin-bottom:6px;">
+                Usulan Tanggal &amp; Waktu Sesi <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="datetime-local" name="proposedDate"
+                   min="@DateTime.Now.AddHours(2).ToString("yyyy-MM-ddTHH:mm")"
+                   style="width:100%; padding:10px 14px; border:1.5px solid #e5e7eb; border-radius:10px; font-size:14px;"
+                   required />
+        </div>
+
+        <div style="margin-bottom:24px;">
+            <label style="font-weight:600; font-size:14px; color:#374151; display:block; margin-bottom:6px;">
+                Catatan <small style="color:#9ca3af; font-weight:400;">(opsional)</small>
+            </label>
+            <textarea name="notes" rows="3"
+                      style="width:100%; padding:10px 14px; border:1.5px solid #e5e7eb; border-radius:10px; font-size:14px; resize:vertical;"
+                      placeholder="Sampaikan topik yang ingin didiskusikan..."></textarea>
+        </div>
+
+        <div style="display:flex; gap:12px;">
+            <a asp-action="Index" style="flex:1; text-align:center; padding:12px; border:1.5px solid #e5e7eb; border-radius:10px; font-weight:600; color:#374151; text-decoration:none;">
+                Batal
+            </a>
+            <button type="submit" style="flex:2; background:#4338ca; color:#fff; border:none; border-radius:10px; padding:12px; font-weight:700; cursor:pointer; font-size:15px;">
+                Kirim Permintaan
+            </button>
+        </div>
+    </form>
+</div>
+</div>

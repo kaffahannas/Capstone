@@ -7,6 +7,7 @@ public class SubscriptionPlanViewModel
     public decimal Price { get; set; }
     public string Description { get; set; } = "";
     public int DurationMonths { get; set; } = 1;
+    public int EmployeeLimit { get; set; }
 }
 
 public class PatientSubscriptionIndexViewModel

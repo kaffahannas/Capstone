@@ -32,10 +32,11 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string tab = "All")
         {
+            // HR is now auto-approved at registration; only Psychologists need manual approval.
             var pending = await _userManager.Users
-                .Where(u => !u.IsApprovedByAdmin && (u.RoleType == "Psychologist" || u.RoleType == "HR"))
+                .Where(u => !u.IsApprovedByAdmin && u.RoleType == "Psychologist")
                 .ToListAsync();
-            if (tab is "Psychologist" or "HR") pending = pending.Where(u => u.RoleType == tab).ToList();
+            if (tab == "Psychologist") pending = pending.Where(u => u.RoleType == tab).ToList();
 
             // Pre-fetch psy + hr + company lookups
             var psyMap = await _context.Psychologists
@@ -172,6 +173,78 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         {
             try { await _email.SendAsync(to, subject, body); }
             catch (Exception ex) { _log.LogWarning(ex, "Failed to send approval email to {To}", to); }
+        }
+
+        // --- EMPLOYEE REMOVAL REQUESTS ---
+        [HttpGet]
+        public async Task<IActionResult> EmployeeRemovals()
+        {
+            var requests = await _context.HrEmployeeRemovalRequests
+                .Include(r => r.Patient!)
+                    .ThenInclude(p => p.User)
+                .Include(r => r.RequestedByHr)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            ViewBag.ActiveNav = "EmployeeRemovals";
+            ViewData["Title"] = "Pemberhentian Karyawan";
+            return View(requests);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveEmployeeRemoval(int id, string note)
+        {
+            var req = await _context.HrEmployeeRemovalRequests.Include(r => r.Patient).FirstOrDefaultAsync(r => r.Id == id);
+            if (req == null) return NotFound();
+
+            var adminId = _userManager.GetUserId(User);
+
+            req.Status = "Approved";
+            req.DecisionAt = DateTime.UtcNow;
+            req.DecisionByAdminUserId = adminId;
+            req.DecisionNote = note;
+
+            if (req.Patient != null)
+            {
+                var companyId = req.Patient.CompanyId;
+                req.Patient.CompanyId = null;
+
+                if (companyId.HasValue)
+                {
+                    var assignments = await _context.Assignments
+                        .Where(a => a.PatientId == req.PatientId && a.Status == "Active")
+                        .ToListAsync();
+                    foreach (var a in assignments)
+                    {
+                        a.Status = "CancelledByAdmin";
+                        a.CancellationReason = "Karyawan diberhentikan oleh HR.";
+                        a.CancellationRequestedAt = DateTime.UtcNow;
+                        a.CancellationRequestedByUserId = adminId;
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Permintaan pemberhentian disetujui. Akun karyawan menjadi publik.";
+            return RedirectToAction(nameof(EmployeeRemovals));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectEmployeeRemoval(int id, string note)
+        {
+            var req = await _context.HrEmployeeRemovalRequests.FirstOrDefaultAsync(r => r.Id == id);
+            if (req == null) return NotFound();
+
+            var adminId = _userManager.GetUserId(User);
+
+            req.Status = "Rejected";
+            req.DecisionAt = DateTime.UtcNow;
+            req.DecisionByAdminUserId = adminId;
+            req.DecisionNote = note;
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Permintaan pemberhentian ditolak.";
+            return RedirectToAction(nameof(EmployeeRemovals));
         }
     }
 }

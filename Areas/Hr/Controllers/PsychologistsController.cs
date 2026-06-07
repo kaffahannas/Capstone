@@ -129,5 +129,72 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // ─── HR: melihat permintaan pembatalan dari psikolog (B2B) ───
+        [HttpGet]
+        public async Task<IActionResult> PendingCancellations()
+        {
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
+
+            var pending = await _context.Assignments
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Include(a => a.Psychologist).ThenInclude(p => p!.User)
+                .Include(a => a.CancellationRequestedBy)
+                .Where(a => a.Status == "PendingCancellationByHr"
+                         && a.Patient!.CompanyId == hr.CompanyId.Value)
+                .ToListAsync();
+
+            ViewBag.ActiveNav = "PendingCancellations";
+            ViewData["Title"] = "Permintaan Pembatalan Kemitraan";
+            return View(pending);
+        }
+
+        // ─── HR menyetujui pembatalan B2B partnership ───
+        [HttpPost]
+        public async Task<IActionResult> ApproveCancellation(int assignmentId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var hr = await GetHrAsync();
+            if (hr == null) return Forbid();
+
+            var a = await _context.Assignments
+                .Include(a => a.Patient)
+                .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId &&
+                                         a.Status == "PendingCancellationByHr" &&
+                                         a.Patient!.CompanyId == hr.CompanyId);
+            if (a == null) return NotFound();
+
+            a.Status = "Cancelled";
+            a.DecisionByUserId = user?.Id;
+            a.DecisionAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Pembatalan kemitraan psikolog disetujui.";
+            return RedirectToAction(nameof(PendingCancellations));
+        }
+
+        // ─── HR menolak pembatalan B2B partnership ───
+        [HttpPost]
+        public async Task<IActionResult> RejectCancellation(int assignmentId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var hr = await GetHrAsync();
+            if (hr == null) return Forbid();
+
+            var a = await _context.Assignments
+                .Include(a => a.Patient)
+                .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId &&
+                                         a.Status == "PendingCancellationByHr" &&
+                                         a.Patient!.CompanyId == hr.CompanyId);
+            if (a == null) return NotFound();
+
+            a.Status = "Active";
+            a.DecisionByUserId = user?.Id;
+            a.DecisionAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Permintaan pembatalan ditolak. Penugasan tetap aktif.";
+            return RedirectToAction(nameof(PendingCancellations));
+        }
     }
 }
+

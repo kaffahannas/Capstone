@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LightenUp.Web.Services;
 
 namespace LightenUp.Web.Models.ViewModels
 {
@@ -14,6 +15,11 @@ namespace LightenUp.Web.Models.ViewModels
         public int PendingPsychologists { get; set; }
         public int PendingHrs { get; set; }
         public int PendingTotal => PendingPsychologists + PendingHrs;
+
+        public int PendingAdminAssignments { get; set; }
+        public int PendingCancellationByAdmin { get; set; }
+        public int PendingPatientAdminRequests { get; set; }
+        public int PendingAssignmentsTotal => PendingAdminAssignments + PendingCancellationByAdmin + PendingPatientAdminRequests;
     }
 
     // ─── Approvals queue ───
@@ -185,5 +191,21 @@ namespace LightenUp.Web.Models.ViewModels
 
         [Required, Compare("NewPassword"), DataType(DataType.Password)]
         public string ConfirmPassword { get; set; } = "";
+    }
+
+    public class AdminNavBadgesViewModel
+    {
+        public int AssignmentBadgeCount { get; set; }
+    }
+
+    public class AdminAssignmentsIndexViewModel
+    {
+        public string Tab { get; set; } = "psy";
+        public List<PatientPsychologistAssignment> PendingAssignments { get; set; } = new();
+        public List<PatientAdminAssignmentRequest> PatientAdminRequests { get; set; } = new();
+        public List<PsychologistWorkloadInfo> Psychologists { get; set; } = new();
+        public int PendingPsyCount { get; set; }
+        public int PendingCancelCount { get; set; }
+        public int PendingPatientRequestCount { get; set; }
     }
 }

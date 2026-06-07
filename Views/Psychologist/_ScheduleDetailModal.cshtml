@@ -51,6 +51,14 @@
             </div>
         </div>
         
+        @if (!string.IsNullOrEmpty(Model.MeetingLink))
+        {
+            <div style="margin-bottom: 24px;">
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Link Google Meet</div>
+                <a href="@Model.MeetingLink" target="_blank" rel="noopener" style="font-size: 14px; color: #4338CA; word-break: break-all;">@Model.MeetingLink</a>
+            </div>
+        }
+        
         @if (!string.IsNullOrEmpty(Model.Notes))
         {
             <div style="margin-bottom: 24px;">
@@ -61,8 +69,20 @@
             </div>
         }
 
-        <div style="display: flex; gap: 12px; height: 36px; justify-content: flex-end;">
+        <div style="display: flex; gap: 12px; height: 36px; justify-content: flex-end; flex-wrap: wrap;">
             <button type="button" class="btn-outline" onclick="closeScheduleDetailModal()" style="height: 100%; display: flex; align-items: center; justify-content: center; margin: 0; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 999px; font-size: 13px; font-weight: 500; padding: 0 24px;">Tutup</button>
+            @if (Model.Status != "Cancelled" && Model.Status != "Completed")
+            {
+                <form asp-action="CancelSchedule" asp-controller="Psychologist" asp-route-id="@Model.ScheduleId" method="post" style="margin: 0; height: 100%;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-outline" onclick="return confirm('Apakah Anda yakin ingin membatalkan jadwal ini?');" style="height: 100%; display: flex; align-items: center; justify-content: center; margin: 0; border-radius: 999px; font-size: 13px; font-weight: 500; padding: 0 20px; border: 1px solid #EF4444; color: #EF4444; background: transparent;">
+                        Batalkan Jadwal
+                    </button>
+                </form>
+            }
+            <button type="button" class="btn-outline" onclick="openEditScheduleModal(@Model.ScheduleId)" style="height: 100%; display: flex; align-items: center; justify-content: center; margin: 0; border-radius: 999px; font-size: 13px; font-weight: 500; padding: 0 20px; border: 1px solid #4338CA; color: #4338CA; background: transparent;">
+                Edit Jadwal
+            </button>
             <a href="@Url.Action("PatientScheduleHistory", "Psychologist", new { id = Model.PatientId })" 
                class="btn-fill" style="height: 100%; display: flex; align-items: center; justify-content: center; margin: 0; text-decoration: none; border-radius: 999px; font-size: 13px; font-weight: 500; padding: 0 24px;">
                 Lihat Riwayat Lengkap Klien

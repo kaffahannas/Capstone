@@ -246,7 +246,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             _context.HrNotificationPreferences.Add(new HrNotificationPreference { HrId = hr.HrId });
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("PendingApproval", "Account", new { area = "" });
+            // HR is now auto-approved; send them straight to subscription purchase.
+            return RedirectToAction("Index", "Subscription", new { area = "Hr" });
         }
 
         [HttpGet]

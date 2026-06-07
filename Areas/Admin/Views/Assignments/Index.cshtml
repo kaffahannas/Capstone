@@ -1,0 +1,265 @@
+@using LightenUp.Web.Models
+@using LightenUp.Web.Services
+@model LightenUp.Web.Models.ViewModels.AdminAssignmentsIndexViewModel
+@{
+    ViewData["Title"] = "Permintaan Penugasan";
+    ViewBag.ActiveNav = "Assignments";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    string StatusLabel(string s) => s switch {
+        "PendingAdminApproval" => "Psy menambah klien",
+        "PendingCancellationByAdmin" => "HR minta batalkan",
+        "Active" => "Aktif",
+        "Cancelled" => "Dibatalkan",
+        "Rejected" => "Ditolak",
+        "Completed" => "Selesai",
+        _ => s
+    };
+
+    string StatusBadgeClass(string s) => s switch {
+        "Active" => "badge-success",
+        "PendingAdminApproval" => "badge-pending",
+        "PendingCancellationByAdmin" => "badge-warning",
+        "Cancelled" => "badge-danger",
+        "Rejected" => "badge-danger",
+        "Completed" => "badge-info",
+        _ => "badge-secondary"
+    };
+}
+
+<style>
+    .badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+    .badge-success { background: #d1fae5; color: #065f46; }
+    .badge-pending { background: #e0e7ff; color: #3730a3; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+    .badge-secondary { background: #f3f4f6; color: #4b5563; }
+    
+    .adm-empty-state-premium {
+        text-align: center;
+        padding: 64px 24px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+        border: 1px dashed #D1D5DB;
+        margin-top: 16px;
+    }
+    .adm-empty-state-premium .icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: #9CA3AF;
+        display: inline-block;
+        background: #F3F4F6;
+        width: 96px;
+        height: 96px;
+        line-height: 96px;
+        border-radius: 50%;
+    }
+    .adm-empty-state-premium h3 {
+        margin: 0 0 8px;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 600;
+    }
+    .adm-empty-state-premium p {
+        margin: 0;
+        color: #6B7280;
+        font-size: 14px;
+    }
+</style>
+
+@if (TempData["success"] is string ok)
+{
+    <div class="adm-alert success" style="background:#D1FAE5; color:#065F46; padding:16px; border-radius:12px; margin-bottom:24px; font-weight:500;">✅ @ok</div>
+}
+@if (TempData["error"] is string err)
+{
+    <div class="adm-alert" style="background:#FEE2E2; color:#991B1B; padding:16px; border-radius:12px; margin-bottom:24px; font-weight:500;">⚠️ @err</div>
+}
+
+<div class="adm-page-header" style="margin-bottom: 24px;">
+    <h1 style="font-size: 28px; font-weight: 700; color: #111827; margin: 0 0 8px;">Manajemen Penugasan</h1>
+    <p class="adm-page-sub" style="color: #6B7280; margin: 0; font-size: 15px;">Kelola permintaan psikolog, pembatalan HR, dan pantau status seluruh penugasan pasien.</p>
+</div>
+
+<div class="adm-tabs" style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; background: #fff; padding: 12px; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.03);">
+    <a class="adm-btn adm-btn-sm @(Model.Tab == "psy" ? "adm-btn-primary" : "")" style="@(Model.Tab == "psy" ? "background:#4338CA;color:white;" : "background:#F3F4F6;color:#4B5563;") border-radius: 8px; padding: 8px 16px; text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.2s;"
+       asp-action="Index" asp-route-tab="psy">
+        Psy → Pasien @if (Model.PendingPsyCount > 0) { <span class="nav-badge" style="background:#EF4444;color:white;padding:2px 6px;border-radius:999px;font-size:12px;margin-left:6px;">@Model.PendingPsyCount</span> }
+    </a>
+    <a class="adm-btn adm-btn-sm @(Model.Tab == "cancel" ? "adm-btn-primary" : "")" style="@(Model.Tab == "cancel" ? "background:#4338CA;color:white;" : "background:#F3F4F6;color:#4B5563;") border-radius: 8px; padding: 8px 16px; text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.2s;"
+       asp-action="Index" asp-route-tab="cancel">
+        Pembatalan HR @if (Model.PendingCancelCount > 0) { <span class="nav-badge" style="background:#EF4444;color:white;padding:2px 6px;border-radius:999px;font-size:12px;margin-left:6px;">@Model.PendingCancelCount</span> }
+    </a>
+    <a class="adm-btn adm-btn-sm @(Model.Tab == "patient" ? "adm-btn-primary" : "")" style="@(Model.Tab == "patient" ? "background:#4338CA;color:white;" : "background:#F3F4F6;color:#4B5563;") border-radius: 8px; padding: 8px 16px; text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.2s;"
+       asp-action="Index" asp-route-tab="patient">
+        Minta Admin @if (Model.PendingPatientRequestCount > 0) { <span class="nav-badge" style="background:#EF4444;color:white;padding:2px 6px;border-radius:999px;font-size:12px;margin-left:6px;">@Model.PendingPatientRequestCount</span> }
+    </a>
+    <div style="width: 1px; background: #E5E7EB; margin: 0 4px;"></div>
+    <a class="adm-btn adm-btn-sm @(Model.Tab == "aktif" ? "adm-btn-primary" : "")" style="@(Model.Tab == "aktif" ? "background:#059669;color:white;" : "background:#F3F4F6;color:#4B5563;") border-radius: 8px; padding: 8px 16px; text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.2s;"
+       asp-action="Index" asp-route-tab="aktif">
+        Penugasan Aktif
+    </a>
+    <a class="adm-btn adm-btn-sm @(Model.Tab == "riwayat" ? "adm-btn-primary" : "")" style="@(Model.Tab == "riwayat" ? "background:#6B7280;color:white;" : "background:#F3F4F6;color:#4B5563;") border-radius: 8px; padding: 8px 16px; text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.2s;"
+       asp-action="Index" asp-route-tab="riwayat">
+        Riwayat Selesai/Batal
+    </a>
+</div>
+
+@if (Model.Tab is "psy" or "cancel" or "aktif" or "riwayat")
+{
+    if (!Model.PendingAssignments.Any())
+    {
+        <div class="adm-empty-state-premium">
+            <div class="icon">✨</div>
+            <h3>Belum ada data penugasan</h3>
+            <p>Semua tenang dan terkendali. Tidak ada permintaan atau data di tab ini saat ini.</p>
+        </div>
+    }
+    else
+    {
+        <div class="adm-card" style="background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden;">
+            <table class="adm-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: #F9FAFB; border-bottom: 1px solid #E5E7EB;">
+                    <tr>
+                        <th style="padding: 16px; font-weight: 600; color: #4B5563; font-size: 13px;">Pasien</th>
+                        <th style="padding: 16px; font-weight: 600; color: #4B5563; font-size: 13px;">Psikolog</th>
+                        <th style="padding: 16px; font-weight: 600; color: #4B5563; font-size: 13px;">Status</th>
+                        <th style="padding: 16px; font-weight: 600; color: #4B5563; font-size: 13px;">Pemohon</th>
+                        <th style="padding: 16px; font-weight: 600; color: #4B5563; font-size: 13px;">Info & Alasan</th>
+                        <th style="padding: 16px; font-weight: 600; color: #4B5563; font-size: 13px;">Tanggal</th>
+                        @if(Model.Tab is "psy" or "cancel") { <th style="padding: 16px; font-weight: 600; color: #4B5563; font-size: 13px; text-align: right;">Aksi</th> }
+                    </tr>
+                </thead>
+                <tbody style="font-size: 14px;">
+                @foreach (var a in Model.PendingAssignments)
+                {
+                    <tr style="border-bottom: 1px solid #F3F4F6; transition: background 0.2s;">
+                        <td style="padding: 16px;">
+                            <strong style="color: #111827; display: block; margin-bottom: 2px;">@(a.Patient?.User?.FullName ?? "—")</strong>
+                            <span style="font-size: 12px; color: #6B7280; background: #F3F4F6; padding: 2px 6px; border-radius: 4px;">@(a.Patient?.CompanyId != null ? (a.Patient.Company?.Name ?? "B2B") : "Publik (B2C)")</span>
+                        </td>
+                        <td style="padding: 16px; color: #374151; font-weight: 500;">@(a.Psychologist?.User?.FullName ?? "—")</td>
+                        <td style="padding: 16px;"><span class="badge @StatusBadgeClass(a.Status)">@StatusLabel(a.Status)</span></td>
+                        <td style="padding: 16px; color: #4B5563;">@(a.RequestedBy?.FullName ?? a.CancellationRequestedBy?.FullName ?? "—")</td>
+                        <td style="padding: 16px;">
+                            @if (!string.IsNullOrEmpty(a.CancellationReason))
+                            {
+                                <span style="color: #4B5563; font-size: 13px;" title="@a.CancellationReason">@(a.CancellationReason.Length > 40 ? a.CancellationReason[..40] + "…" : a.CancellationReason)</span>
+                            }
+                            else { <span style="color: #9CA3AF;">—</span> }
+                        </td>
+                        <td style="padding: 16px; color: #6B7280; font-size: 13px;">@(a.CancellationRequestedAt?.ToString("dd MMM yyyy") ?? a.AssignedAt.ToString("dd MMM yyyy"))</td>
+                        
+                        @if(Model.Tab is "psy" or "cancel") 
+                        {
+                            <td style="padding: 16px; text-align: right; min-width: 240px;">
+                                @if (a.Status == "PendingAdminApproval")
+                                {
+                                    <form asp-action="Approve" method="post" style="margin-bottom:8px;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
+                                        <div style="display:flex; gap:8px; align-items:center; justify-content: flex-end; margin-bottom:8px;">
+                                            <label style="font-size:12px; color: #4B5563; font-weight: 500;">% Psy:</label>
+                                            <input type="number" name="psychologistRevenuePercentage" value="40" min="0" max="100" step="1"
+                                                   style="width:70px; padding:6px 10px; border:1px solid #D1D5DB; border-radius:8px; font-size: 13px; text-align: center; outline: none;" onfocus="this.style.borderColor='#4338CA';" onblur="this.style.borderColor='#D1D5DB';" />
+                                        </div>
+                                        <button type="submit" style="background:#059669; color:white; border:none; padding:6px 12px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';"
+                                                onclick="return confirm('Setujui dan aktifkan penugasan?')">Setujui</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Approve" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
+                                        <button type="submit" style="background:#059669; color:white; border:none; padding:6px 12px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';"
+                                                onclick="return confirm('Setujui pembatalan?')">Setujui Batal</button>
+                                    </form>
+                                }
+                                <form asp-action="Reject" method="post" class="d-inline ms-1" style="display: inline-block; margin-left: 8px;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
+                                    <button type="submit" style="background:#DC2626; color:white; border:none; padding:6px 12px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';"
+                                            onclick="return confirm('Tolak permintaan ini?')">Tolak</button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+else if (Model.Tab == "patient")
+{
+    if (!Model.PatientAdminRequests.Any())
+    {
+        <div class="adm-empty-state-premium">
+            <div class="icon">📬</div>
+            <h3>Belum ada permintaan dari pasien</h3>
+            <p>Pasien yang meminta dicarikan psikolog oleh admin akan muncul di sini.</p>
+        </div>
+    }
+    else
+    {
+        foreach (var req in Model.PatientAdminRequests)
+        {
+            <div class="adm-card" style="background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 24px; margin-bottom: 20px; border: 1px solid #F3F4F6;">
+                <div style="display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:20px; padding-bottom: 20px; border-bottom: 1px solid #F3F4F6;">
+                    <div>
+                        <strong style="font-size:18px; color: #111827; display: block; margin-bottom: 4px;">@(req.Patient?.User?.FullName ?? "—")</strong>
+                        <div style="font-size:14px; color:#6B7280; margin-bottom: 12px;">
+                            <span style="background: #F3F4F6; padding: 2px 8px; border-radius: 6px; font-weight: 500; color: #374151; margin-right: 8px;">@(req.Patient?.CompanyId != null ? (req.Patient.Company?.Name ?? "B2B") : "Publik (B2C)")</span>
+                            @req.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm", idCulture)
+                        </div>
+                        @if (!string.IsNullOrEmpty(req.Reason))
+                        {
+                            <div style="background: #FFFBEB; padding: 12px 16px; border-radius: 8px; border: 1px solid #FEF3C7; color: #92400E; font-size: 14px; margin-bottom: 12px;">
+                                <strong style="font-weight: 600;">Keluhan/Alasan:</strong> @req.Reason
+                            </div>
+                        }
+                        @if (req.PreferredPsychologist != null)
+                        {
+                            <p style="font-size:14px; margin:0; color: #4B5563;">Preferensi Pasien: <strong style="color: #4338CA;">@(req.PreferredPsychologist.User?.FullName)</strong></p>
+                        }
+                    </div>
+                </div>
+
+                <form asp-action="AssignPatient" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="requestId" value="@req.Id" />
+                    <div style="display:grid; grid-template-columns: 1fr 120px auto auto; gap:16px; align-items:end;">
+                        <div>
+                            <label style="font-size:13px; font-weight:600; display:block; margin-bottom:8px; color: #374151;">Pilih Psikolog (Berdasarkan Beban Kerja)</label>
+                            <select name="psychologistId" required
+                                    style="width:100%; padding:10px 14px; border:1px solid #D1D5DB; border-radius:10px; font-size:14px; outline:none; cursor:pointer;"
+                                    onfocus="this.style.borderColor='#4338CA'; this.style.boxShadow='0 0 0 3px rgba(67,56,202,0.1)';"
+                                    onblur="this.style.borderColor='#D1D5DB'; this.style.boxShadow='none';">
+                                @foreach (var psy in Model.Psychologists)
+                                {
+                                    var selected = req.PreferredPsychologistId == psy.PsychologistId;
+                                    var wlClass = psy.WorkloadLevel == "low" ? "🟢 Sedikit" : (psy.WorkloadLevel == "high" ? "🔴 Padat" : "🟡 Normal");
+                                    <option value="@psy.PsychologistId" selected="@selected">
+                                        @wlClass — @psy.FullName (@psy.ActiveCaseload Pasien Aktif)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:13px; font-weight:600; display:block; margin-bottom:8px; color: #374151;">Bagi Hasil (%)</label>
+                            <input type="number" name="psychologistRevenuePercentage" value="40" min="0" max="100" required
+                                   style="width:100%; padding:10px 14px; border:1px solid #D1D5DB; border-radius:10px; font-size: 14px; text-align: center; outline: none;" onfocus="this.style.borderColor='#4338CA'; this.style.boxShadow='0 0 0 3px rgba(67,56,202,0.1)';" onblur="this.style.borderColor='#D1D5DB'; this.style.boxShadow='none';" />
+                        </div>
+                        <button type="submit" style="background:#4338CA; color:white; border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; height: 42px; transition: all 0.2s; box-shadow: 0 2px 8px rgba(67,56,202,0.3);" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(67,56,202,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(67,56,202,0.3)';"
+                                onclick="return confirm('Tugaskan psikolog ke pasien ini?')">Tugaskan</button>
+                        <button formaction="@Url.Action("DismissPatientRequest")" type="submit" style="background:#F3F4F6; color:#4B5563; border:1px solid #E5E7EB; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; height: 42px; transition: all 0.2s;" onmouseover="this.style.background='#E5E7EB';" onmouseout="this.style.background='#F3F4F6';"
+                                onclick="return confirm('Tutup permintaan ini tanpa menugaskan?')">Abaikan</button>
+                    </div>
+                </form>
+            </div>
+        }
+    }
+}

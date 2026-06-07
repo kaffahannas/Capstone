@@ -1,0 +1,199 @@
+@using LightenUp.Web.Models
+@{
+    ViewData["Title"] = "Laporan Karyawan";
+    Layout = null; // Print-only, no nav
+    var patient = ViewBag.Patient as Patient;
+    var moods = ViewBag.Moods as List<MoodTracker> ?? new List<MoodTracker>();
+    var sessions = ViewBag.Sessions as List<Schedule> ?? new List<Schedule>();
+    var worksheets = ViewBag.Worksheets as List<Worksheet> ?? new List<Worksheet>();
+    string companyName = ViewBag.CompanyName ?? "";
+    DateTime generatedAt = ViewBag.GeneratedAt ?? DateTime.Now;
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    string AgeStr(DateTime? dob) {
+        if (!dob.HasValue) return "—";
+        var today = DateTime.Today;
+        int age = today.Year - dob.Value.Year;
+        if (dob.Value.Date > today.AddYears(-age)) age--;
+        return $"{age} tahun";
+    }
+    string Gender(string? g) => g == "Male" ? "Laki-laki" : g == "Female" ? "Perempuan" : (g ?? "—");
+    string FeelingLabel(string? f) => f switch {
+        "Overjoyed" => "Sangat Bahagia", "Happy" => "Bahagia", "Calm" => "Tenang",
+        "Neutral" => "Biasa", "Disappointed" => "Kecewa", "Angry" => "Marah", _ => f ?? "—"
+    };
+}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Laporan Karyawan — @(patient?.User?.FullName ?? "—")</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #1f2937; margin: 0; padding: 24px; font-size: 13px; background: #fff; }
+        h1 { font-size: 20px; font-weight: 700; margin: 0; }
+        h2 { font-size: 14px; font-weight: 700; margin: 20px 0 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; color: #4338ca; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #4338ca; padding-bottom: 16px; margin-bottom: 20px; }
+        .logo { font-size: 22px; font-weight: 800; color: #4338ca; }
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 16px; margin-bottom: 16px; }
+        .info-item { }
+        .info-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; }
+        .info-value { font-weight: 600; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: #f3f4f6; font-weight: 600; padding: 7px 10px; text-align: left; }
+        td { padding: 7px 10px; border-bottom: 1px solid #f3f4f6; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+        .badge-sehat { background: #d1fae5; color: #065f46; }
+        .badge-beresiko { background: #fef9c3; color: #854d0e; }
+        .badge-bahaya { background: #fee2e2; color: #991b1b; }
+        .no-break { page-break-inside: avoid; }
+        .footer { margin-top: 28px; text-align: center; color: #9ca3af; font-size: 11px; border-top: 1px solid #e5e7eb; padding-top: 12px; }
+        .print-btn { position: fixed; bottom: 24px; right: 24px; background: #4338ca; color: #fff; border: none; border-radius: 10px; padding: 12px 24px; font-weight: 700; cursor: pointer; font-size: 14px; box-shadow: 0 4px 16px rgba(67,56,202,.3); }
+        @@media print {
+            .print-btn { display: none; }
+            body { padding: 10mm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <div class="logo">LightenUp</div>
+        <div style="color:#6b7280; font-size:12px; margin-top:4px;">Laporan Data Karyawan</div>
+    </div>
+    <div style="text-align:right;">
+        <div style="font-weight:600;">@companyName</div>
+        <div style="color:#6b7280; font-size:11px;">Dibuat: @generatedAt.ToString("dd MMMM yyyy, HH:mm", idCulture)</div>
+    </div>
+</div>
+
+<!-- Employee profile -->
+<h2>📋 Profil Karyawan</h2>
+<div class="info-grid">
+    <div class="info-item">
+        <div class="info-label">Nama Lengkap</div>
+        <div class="info-value">@(patient?.User?.FullName ?? "—")</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label">Email</div>
+        <div class="info-value">@(patient?.User?.Email ?? "—")</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label">Jenis Kelamin</div>
+        <div class="info-value">@Gender(patient?.Gender)</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label">Usia</div>
+        <div class="info-value">@AgeStr(patient?.DateOfBirth)</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label">Divisi</div>
+        <div class="info-value">@(patient?.Department ?? "—")</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label">ID Karyawan</div>
+        <div class="info-value">@(patient?.EmployeeId ?? "—")</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label">Status Mental</div>
+        <div class="info-value">
+            <span class="badge @(patient?.MentalHealthStatus == "Sehat" ? "badge-sehat" : patient?.MentalHealthStatus == "Beresiko" ? "badge-beresiko" : "badge-bahaya")">
+                @(patient?.MentalHealthStatus ?? "—")
+            </span>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(patient?.Symptoms))
+    {
+        <div class="info-item" style="grid-column: 1 / -1;">
+            <div class="info-label">Gejala / Catatan</div>
+            <div class="info-value" style="font-weight:400;">@patient.Symptoms</div>
+        </div>
+    }
+</div>
+
+<!-- Mood log -->
+<h2 class="no-break">📊 Riwayat Mood (30 Hari Terakhir)</h2>
+@if (!moods.Any())
+{
+    <p style="color:#9ca3af;">Belum ada data mood.</p>
+}
+else
+{
+    <table class="no-break">
+        <thead>
+            <tr><th>Tanggal</th><th>Mood</th><th>Catatan</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var m in moods.OrderByDescending(x => x.MoodDate).Take(20))
+        {
+            <tr>
+                <td>@m.MoodDate.ToString("dd MMM yyyy", idCulture)</td>
+                <td>@FeelingLabel(m.Feeling)</td>
+                <td>@(m.Note ?? "—")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<!-- Sessions -->
+<h2 class="no-break">🩺 Riwayat Sesi Konseling</h2>
+@if (!sessions.Any())
+{
+    <p style="color:#9ca3af;">Belum ada sesi konseling.</p>
+}
+else
+{
+    <table class="no-break">
+        <thead>
+            <tr><th>Tanggal &amp; Waktu</th><th>Psikolog</th><th>Status</th><th>Catatan</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var s in sessions)
+        {
+            <tr>
+                <td>@s.SessionStart.ToString("dd MMM yyyy, HH:mm", idCulture)</td>
+                <td>@(s.Psychologist?.User?.FullName ?? "—")</td>
+                <td>@s.Status</td>
+                <td>@(s.Notes ?? "—")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<!-- Worksheets -->
+<h2 class="no-break">📝 Riwayat Worksheet</h2>
+@if (!worksheets.Any())
+{
+    <p style="color:#9ca3af;">Belum ada worksheet.</p>
+}
+else
+{
+    <table class="no-break">
+        <thead>
+            <tr><th>Nama Tugas</th><th>Deadline</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var w in worksheets)
+        {
+            <tr>
+                <td>@w.TaskName</td>
+                <td>@w.Deadline.ToString("dd MMM yyyy", idCulture)</td>
+                <td>@w.Status</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<div class="footer">
+    Dokumen ini dibuat secara otomatis oleh sistem LightenUp · Rahasia &amp; Hanya untuk Internal Perusahaan
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+
+</body>
+</html>

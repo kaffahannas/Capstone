@@ -24,9 +24,6 @@
     <a class="adm-tab @(Model.Tab == "Psychologist" ? "active" : "")" asp-action="Index" asp-route-tab="Psychologist">
         🩺 Psikolog
     </a>
-    <a class="adm-tab @(Model.Tab == "HR" ? "active" : "")" asp-action="Index" asp-route-tab="HR">
-        🏢 HR
-    </a>
 </div>
 
 @if (!Model.Items.Any())
@@ -35,7 +32,7 @@
         <div class="adm-empty">
             <div class="adm-empty-icon">✅</div>
             <div class="adm-empty-title">Tidak ada akun menunggu persetujuan</div>
-            <div class="adm-empty-sub">Psikolog dan HR baru akan muncul di sini setelah menyelesaikan onboarding mereka.</div>
+            <div class="adm-empty-sub">Psikolog baru akan muncul di sini setelah menyelesaikan onboarding.</div>
         </div>
     </div>
 }

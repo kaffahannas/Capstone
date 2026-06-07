@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,16 +43,21 @@ namespace LightenUp.Web.Controllers
 
             if (psychologist == null) return NotFound("Data Psikolog tidak ditemukan.");
 
-            // 1A. Klien Aktif (Yang sedang ditangani)
-            var assignedPatientIds = await _context.Assignments
-                .Where(a => a.PsychologistId == psychologist.PsychologistId && a.Status == "Active")
-                .Select(a => a.PatientId)
+            // 1A. Klien Aktif (Yang sedang ditangani) — include AssignmentId for cancel modal
+            var activeAssignments = await _context.Assignments
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Include(a => a.Patient).ThenInclude(p => p!.Company)
+                .Where(a => a.PsychologistId == psychologist.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                 .ToListAsync();
 
-            var activePatients = await _context.Patients
-                .Include(p => p.User)
-                .Include(p => p.Company)
-                .Where(p => assignedPatientIds.Contains(p.PatientId))
+            var activePatients = activeAssignments.Select(a => a.Patient!).ToList();
+
+            // 1A-pending. Klien menunggu persetujuan Admin atau psikolog
+            var pendingAssignments = await _context.Assignments
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Include(a => a.Patient).ThenInclude(p => p!.Company)
+                .Where(a => a.PsychologistId == psychologist.PsychologistId &&
+                            (a.Status == "PendingAdminApproval" || a.Status == "PendingPsychologistApproval"))
                 .ToListAsync();
 
             // 1B. Daftar Perusahaan Mitra
@@ -62,7 +68,8 @@ namespace LightenUp.Web.Controllers
             var unassignedPatientsDb = await _context.Patients
                 .Include(p => p.User)
                 .Include(p => p.Company)
-                .Where(p => !_context.Assignments.Any(a => a.PatientId == p.PatientId && a.Status == "Active"))
+                .Where(p => !_context.Assignments.Any(a => a.PatientId == p.PatientId &&
+                    (a.Status == "Active" || a.Status == "PendingAdminApproval" || a.Status == "PendingPsychologistApproval")))
                 .Where(p => p.CompanyId == null || partnerCompanyIds.Contains(p.CompanyId.Value))
                 .ToListAsync();
 
@@ -70,13 +77,26 @@ namespace LightenUp.Web.Controllers
             {
                 PsychologistName = user.FullName ?? "Psikolog",
                 TotalClients = activePatients.Count,
-                Patients = activePatients.Select(p => new PatientListItem
+                Patients = activeAssignments.Select(a => new PatientListItem
                 {
-                    PatientId = p.PatientId,
-                    FullName = p.User?.FullName ?? "Anonim",
-                    Gender = p.Gender ?? "-",
-                    JoinedDate = DateTime.Now.AddMonths(-1),
-                    Status = p.MentalHealthStatus ?? "Sehat"
+                    PatientId = a.Patient?.PatientId ?? 0,
+                    FullName = a.Patient?.User?.FullName ?? "Anonim",
+                    Gender = a.Patient?.Gender ?? "-",
+                    JoinedDate = a.AssignedAt,
+                    Status = a.Patient?.MentalHealthStatus ?? "Sehat",
+                    CompanyId = a.Patient?.CompanyId,
+                    CompanyName = a.Patient?.Company?.Name ?? "Publik",
+                    AssignmentId = a.AssignmentId
+                }).ToList(),
+                PendingAssignments = pendingAssignments.Select(a => new PatientListItem
+                {
+                    PatientId = a.Patient?.PatientId ?? 0,
+                    FullName = a.Patient?.User?.FullName ?? "Anonim",
+                    Gender = a.Patient?.Gender ?? "-",
+                    Status = a.Status,
+                    CompanyId = a.Patient?.CompanyId,
+                    CompanyName = a.Patient?.Company?.Name ?? "Publik",
+                    AssignmentId = a.AssignmentId
                 }).ToList(),
                 PartnerCompanies = partnerCompanies,
                 UnassignedPatients = unassignedPatientsDb.Select(p => new PatientListItem
@@ -125,18 +145,71 @@ namespace LightenUp.Web.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            if (psych == null) return NotFound();
+
+            // Prevent duplicate pending/active requests
+            var existing = await _context.Assignments.FirstOrDefaultAsync(a =>
+                a.PatientId == patientId && a.PsychologistId == psych.PsychologistId &&
+                (a.Status == "Active" || a.Status == "PendingAdminApproval"));
+            if (existing != null)
+            {
+                TempData["info"] = "Permintaan untuk klien ini sudah ada atau sedang ditangani.";
+                return RedirectToAction("Index");
+            }
 
             var assignment = new PatientPsychologistAssignment
             {
                 PatientId = patientId,
                 PsychologistId = psych.PsychologistId,
-                Status = "Active",
-                AssignedAt = DateTime.Now
+                Status = "PendingAdminApproval",
+                AssignedAt = DateTime.Now,
+                RequestedByUserId = user.Id,
+                RequestedByRole = "Psychologist"
             };
 
             _context.Assignments.Add(assignment);
             await _context.SaveChangesAsync();
 
+            TempData["success"] = "Permintaan penambahan klien dikirim. Menunggu persetujuan Admin.";
+            return RedirectToAction("Index");
+        }
+
+        // ==========================================
+        // FITUR CANCEL ASSIGNMENT (Psikolog membatalkan kemitraan dengan pasien)
+        // ==========================================
+        [HttpPost]
+        public async Task<IActionResult> CancelAssignment(int assignmentId, string reason)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            if (psych == null) return Forbid();
+
+            var assignment = await _context.Assignments
+                .Include(a => a.Patient)
+                .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId && a.PsychologistId == psych.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellation"));
+            if (assignment == null) return NotFound();
+
+            var isB2B = assignment.Patient?.CompanyId != null;
+            if (isB2B)
+            {
+                // B2B: need HR approval first
+                assignment.Status = "PendingCancellationByHr";
+                assignment.CancellationRequestedByUserId = user.Id;
+                assignment.CancellationReason = reason;
+                assignment.CancellationRequestedAt = DateTime.UtcNow;
+                TempData["success"] = "Permintaan pembatalan kemitraan dikirim ke HR untuk disetujui.";
+            }
+            else
+            {
+                // B2C: cancel needs Admin approval
+                assignment.Status = "PendingCancellationByAdmin";
+                assignment.CancellationRequestedByUserId = user.Id;
+                assignment.CancellationReason = reason;
+                assignment.CancellationRequestedAt = DateTime.UtcNow;
+                TempData["success"] = "Permintaan pembatalan kemitraan dikirim ke Admin untuk disetujui.";
+            }
+
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
@@ -207,6 +280,15 @@ namespace LightenUp.Web.Controllers
             ViewBag.Symptoms = patient.Symptoms;
             ViewBag.MoodLabels = System.Text.Json.JsonSerializer.Serialize(chartDates.Select(d => d.ToString("dd/MM")));
             ViewBag.MoodScores = System.Text.Json.JsonSerializer.Serialize(chartScores);
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId != null)
+            {
+                var activeAssignment = await _context.Assignments
+                    .Where(a => a.PatientId == id && a.PsychologistId == psyId.Value && (a.Status == "Active" || a.Status == "PendingCancellation"))
+                    .FirstOrDefaultAsync();
+                ViewBag.AssignmentId = activeAssignment?.AssignmentId;
+            }
+
             ViewBag.SehatPct = (int)Math.Round((double)sehatN / totalN * 100);
             ViewBag.BeresikoPct = (int)Math.Round((double)beresikoN / totalN * 100);
             ViewBag.BahayaPct = (int)Math.Round((double)bahayaN / totalN * 100);
@@ -322,7 +404,7 @@ namespace LightenUp.Web.Controllers
 
             // Workload counts
             var activeCases = await _context.Assignments
-                .CountAsync(a => a.PsychologistId == psych.PsychologistId && a.Status == "Active");
+                .CountAsync(a => a.PsychologistId == psych.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellation"));
             var employeesCount = await _context.Assignments
                 .Where(a => a.PsychologistId == psych.PsychologistId)
                 .Select(a => a.PatientId).Distinct().CountAsync();
@@ -443,7 +525,7 @@ namespace LightenUp.Web.Controllers
         private async Task<List<LightenUp.Web.Models.ViewModels.PsyPatientOption>> LoadPatientOptionsAsync(int psyId)
         {
             return await _context.Assignments
-                .Where(a => a.PsychologistId == psyId && a.Status == "Active")
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellation"))
                 .Include(a => a.Patient).ThenInclude(p => p!.User)
                 .Include(a => a.Patient).ThenInclude(p => p!.Company)
                 .Select(a => new LightenUp.Web.Models.ViewModels.PsyPatientOption
@@ -463,6 +545,80 @@ namespace LightenUp.Web.Controllers
             if (patientId.HasValue)
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = patientId.Value, add = true });
             return RedirectToAction(nameof(Scheduling), new { add = true, patientId });
+        }
+
+        // ═════════════════════════════════════════
+        //  Edit Schedule (psikolog dapat mengedit jadwal)
+        // ═════════════════════════════════════════
+        [HttpGet]
+        public async Task<IActionResult> EditSchedule(int id)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            var s = await _context.Schedules
+                .Include(x => x.Patient).ThenInclude(p => p!.User)
+                .FirstOrDefaultAsync(x => x.ScheduleId == id && x.PsychologistId == psyId.Value);
+            if (s == null) return NotFound();
+
+            var model = new PsyScheduleEditViewModel
+            {
+                ScheduleId = s.ScheduleId,
+                PatientName = s.Patient?.User?.FullName ?? "—",
+                SessionStart = s.SessionStart,
+                DurationMinutes = s.DurationMinutes,
+                Status = s.Status,
+                Notes = s.Notes,
+                MeetingLink = s.MeetingLink
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditSchedule(PsyScheduleEditViewModel model)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var s = await _context.Schedules
+                .FirstOrDefaultAsync(x => x.ScheduleId == model.ScheduleId && x.PsychologistId == psyId.Value);
+            if (s == null) return NotFound();
+
+            s.SessionStart = model.SessionStart;
+            s.DurationMinutes = model.DurationMinutes;
+            s.Status = model.Status;
+            s.Notes = string.IsNullOrWhiteSpace(model.Notes) ? null : model.Notes;
+            s.MeetingLink = string.IsNullOrWhiteSpace(model.MeetingLink) ? null : model.MeetingLink;
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Jadwal sesi berhasil diperbarui.";
+            return RedirectToAction(nameof(Scheduling));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelSchedule(int id)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            var s = await _context.Schedules
+                .FirstOrDefaultAsync(x => x.ScheduleId == id && x.PsychologistId == psyId.Value);
+            if (s == null) return NotFound();
+
+            if (s.Status != "Completed")
+            {
+                s.Status = "Cancelled";
+                await _context.SaveChangesAsync();
+                TempData["success"] = "Jadwal berhasil dibatalkan.";
+            }
+
+            return RedirectToAction(nameof(Scheduling));
         }
 
         [HttpPost]
@@ -550,6 +706,58 @@ namespace LightenUp.Web.Controllers
             return RedirectToAction(nameof(Worksheet));
         }
 
+        // ═════════════════════════════════════════
+        //  Edit Task / Worksheet
+        // ═════════════════════════════════════════
+        [HttpGet]
+        public async Task<IActionResult> EditWorksheet(int id)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            var w = await _context.Worksheets
+                .Include(x => x.Patient).ThenInclude(p => p!.User)
+                .FirstOrDefaultAsync(x => x.WorksheetId == id && x.PsychologistId == psyId.Value);
+            
+            if (w == null) return NotFound();
+
+            var model = new LightenUp.Web.Models.ViewModels.PsyWorksheetEditViewModel
+            {
+                WorksheetId = w.WorksheetId,
+                PatientName = w.Patient?.User?.FullName ?? "—",
+                TaskName = w.TaskName,
+                Description = w.Description,
+                DeadlineDate = w.Deadline.Date,
+                DeadlineTime = w.Deadline.TimeOfDay
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditWorksheet(LightenUp.Web.Models.ViewModels.PsyWorksheetEditViewModel model)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction(nameof(Index));
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var w = await _context.Worksheets
+                .FirstOrDefaultAsync(x => x.WorksheetId == model.WorksheetId && x.PsychologistId == psyId.Value);
+            
+            if (w == null) return NotFound();
+
+            w.TaskName = model.TaskName;
+            w.Description = model.Description;
+            w.Deadline = model.DeadlineDate.Date.Add(model.DeadlineTime);
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Worksheet berhasil diperbarui.";
+            return RedirectToAction(nameof(Worksheet));
+        }
+
         // ==========================================
         // 6. PAGES — all DB-driven now (no hardcoded data)
         // ==========================================
@@ -579,7 +787,7 @@ namespace LightenUp.Web.Controllers
 
             // Distinct patients assigned to this psychologist (active only)
             var assignedIds = await _context.Assignments
-                .Where(a => a.PsychologistId == psyId && a.Status == "Active")
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                 .Select(a => a.PatientId)
                 .Distinct()
                 .ToListAsync();
@@ -757,11 +965,17 @@ namespace LightenUp.Web.Controllers
                 .Include(s => s.Patient).ThenInclude(p => p!.Company)
                 .Where(s => s.PsychologistId == psyId && s.SessionStart >= today.AddDays(-30) && s.SessionStart < monthEnd);
 
-            if (filter == "Selesai") q = q.Where(s => s.Status == "Completed");
-            else if (filter == "Dibatalkan") q = q.Where(s => s.Status == "Cancelled");
+            var allSessionsInWindow = await q.OrderBy(s => s.SessionStart).ToListAsync();
 
-            var sessions = await q.OrderBy(s => s.SessionStart).ToListAsync();
+            var now = DateTime.Now;
+            var sessions = filter switch
+            {
+                "Selesai" => allSessionsInWindow.Where(s => s.Status == "Completed" || (s.Status == "Scheduled" && s.SessionStart.AddMinutes(s.DurationMinutes) <= now)).ToList(),
+                "Dibatalkan" => allSessionsInWindow.Where(s => s.Status == "Cancelled").ToList(),
+                _ => allSessionsInWindow
+            };
 
+            ViewBag.AllSessionsInWindow = allSessionsInWindow;
             ViewBag.Today = today;
             ViewBag.Filter = filter;
             ViewBag.Sessions = sessions;
@@ -805,6 +1019,56 @@ namespace LightenUp.Web.Controllers
             if (schedule == null) return NotFound();
 
             return PartialView("_ScheduleDetailModal", schedule);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditScheduleModal(int id)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return Unauthorized();
+
+            var s = await _context.Schedules
+                .Include(x => x.Patient).ThenInclude(p => p!.User)
+                .FirstOrDefaultAsync(x => x.ScheduleId == id && x.PsychologistId == psyId.Value);
+            if (s == null) return NotFound();
+
+            var model = new PsyScheduleEditViewModel
+            {
+                ScheduleId = s.ScheduleId,
+                PatientName = s.Patient?.User?.FullName ?? "—",
+                SessionStart = s.SessionStart,
+                DurationMinutes = s.DurationMinutes,
+                Status = s.Status,
+                Notes = s.Notes,
+                MeetingLink = s.MeetingLink
+            };
+
+            return PartialView("_EditScheduleModal", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditWorksheetModal(int id)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return Unauthorized();
+
+            var w = await _context.Worksheets
+                .Include(x => x.Patient).ThenInclude(p => p!.User)
+                .FirstOrDefaultAsync(x => x.WorksheetId == id && x.PsychologistId == psyId.Value);
+            
+            if (w == null) return NotFound();
+
+            var model = new LightenUp.Web.Models.ViewModels.PsyWorksheetEditViewModel
+            {
+                WorksheetId = w.WorksheetId,
+                PatientName = w.Patient?.User?.FullName ?? "—",
+                TaskName = w.TaskName,
+                Description = w.Description,
+                DeadlineDate = w.Deadline.Date,
+                DeadlineTime = w.Deadline.TimeOfDay
+            };
+
+            return PartialView("_EditWorksheetModal", model);
         }
 
         [HttpGet]
@@ -969,7 +1233,7 @@ namespace LightenUp.Web.Controllers
 
             // Active patients in this company that THIS psychologist is assigned to.
             var assignedPatientIds = await _context.Assignments
-                .Where(a => a.PsychologistId == psyId && a.Status == "Active")
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                 .Select(a => a.PatientId)
                 .ToListAsync();
 
@@ -997,7 +1261,7 @@ namespace LightenUp.Web.Controllers
             if (company == null) return NotFound();
 
             var assignedPatientIds = await _context.Assignments
-                .Where(a => a.PsychologistId == psyId && a.Status == "Active")
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                 .Select(a => a.PatientId)
                 .ToListAsync();
 
@@ -1025,7 +1289,7 @@ namespace LightenUp.Web.Controllers
             if (company == null) return NotFound();
 
             var assignedPatientIds = await _context.Assignments
-                .Where(a => a.PsychologistId == psyId && a.Status == "Active")
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                 .Select(a => a.PatientId)
                 .ToListAsync();
 
@@ -1140,6 +1404,47 @@ namespace LightenUp.Web.Controllers
         }
 
         // ==========================================
+        // PAYSLIP — Psikolog melihat ringkasan pendapatan
+        // ==========================================
+        [HttpGet]
+        public async Task<IActionResult> Payslip()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            if (psych == null) return NotFound();
+
+            var activeAssignments = await _context.Assignments
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Where(a => a.PsychologistId == psych.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
+                .ToListAsync();
+
+            var grossThisMonth = activeAssignments.Sum(a => a.SlotValue ?? 0);
+            var psyShareThisMonth = activeAssignments.Sum(a =>
+                (a.SlotValue ?? 0) * (a.PsychologistRevenuePercentage ?? SubscriptionPricingService.DefaultPsychologistRevenuePercentage) / 100);
+
+            var assignmentRows = activeAssignments.Select(a => new PayslipAssignmentRow
+            {
+                PatientName = a.Patient?.User?.FullName ?? "—",
+                SlotValue = a.SlotValue ?? 0,
+                Percentage = a.PsychologistRevenuePercentage ?? SubscriptionPricingService.DefaultPsychologistRevenuePercentage,
+                Earning = (a.SlotValue ?? 0) * (a.PsychologistRevenuePercentage ?? SubscriptionPricingService.DefaultPsychologistRevenuePercentage) / 100,
+                IsB2B = a.Patient?.CompanyId != null
+            }).OrderBy(r => r.PatientName).ToList();
+
+            ViewBag.PsyName = user.FullName;
+            ViewBag.AssignmentRows = assignmentRows;
+            ViewBag.ActivePatientCount = activeAssignments.Count;
+            ViewBag.GrossThisMonth = grossThisMonth;
+            ViewBag.PsyShareThisMonth = psyShareThisMonth;
+            ViewBag.MonthLabel = DateTime.Now.ToString("MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
+            ViewBag.HasSnapshots = activeAssignments.Any(a => a.SlotValue != null);
+
+            return View();
+        }
+
+        // ==========================================
         // HELPER
         // ==========================================
         private static string GetRandomStatus()
@@ -1158,6 +1463,7 @@ namespace LightenUp.Web.Controllers
         public string PsychologistName { get; set; } = string.Empty;
         public int TotalClients { get; set; }
         public List<PatientListItem> Patients { get; set; } = new List<PatientListItem>();
+        public List<PatientListItem> PendingAssignments { get; set; } = new List<PatientListItem>();
         public List<Company> PartnerCompanies { get; set; } = new List<Company>();
         public List<PatientListItem> UnassignedPatients { get; set; } = new List<PatientListItem>();
     }
@@ -1173,6 +1479,9 @@ namespace LightenUp.Web.Controllers
         // Tambahan untuk Filter
         public int? CompanyId { get; set; }
         public string CompanyName { get; set; } = string.Empty;
+
+        // Assignment tracking
+        public int AssignmentId { get; set; }
     }
 
     public class PatientDetailViewModel
@@ -1212,6 +1521,17 @@ namespace LightenUp.Web.Controllers
         public string StatusClass { get; set; } = string.Empty;
     }
 
+    public class PsyScheduleEditViewModel
+    {
+        public int ScheduleId { get; set; }
+        public string PatientName { get; set; } = string.Empty;
+        [Required] public DateTime SessionStart { get; set; }
+        [Required] public int DurationMinutes { get; set; } = 60;
+        [Required] public string Status { get; set; } = "Scheduled";
+        public string? Notes { get; set; }
+        public string? MeetingLink { get; set; }
+    }
+
     public class WorksheetDetailViewModel
     {
         public int TaskId { get; set; }
@@ -1234,5 +1554,14 @@ namespace LightenUp.Web.Controllers
         public string PracticeLocation { get; set; } = string.Empty;
         public string SiapNumber { get; set; } = string.Empty;
         public string SippNumber { get; set; } = string.Empty;
+    }
+
+    public class PayslipAssignmentRow
+    {
+        public string PatientName { get; set; } = string.Empty;
+        public decimal SlotValue { get; set; }
+        public decimal Percentage { get; set; }
+        public decimal Earning { get; set; }
+        public bool IsB2B { get; set; }
     }
 }
