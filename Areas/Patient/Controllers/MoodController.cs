@@ -88,9 +88,14 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         [HttpPost, ActionName("Triggers")]
         public IActionResult TriggersPost(MoodTrackerSessionViewModel model)
         {
+            if (model.Triggers != null)
+            {
+                model.Triggers.RemoveAll(string.IsNullOrWhiteSpace);
+            }
+
             if (model.Triggers == null || model.Triggers.Count == 0)
             {
-                ModelState.AddModelError(nameof(model.Triggers), "Pilih minimal satu pemicu.");
+                ModelState.AddModelError(nameof(model.Triggers), "Pilih minimal satu pemicu atau ketik pemicu lainnya.");
                 ViewBag.ActiveNav = "Beranda";
                 return View(model);
             }
@@ -177,6 +182,13 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         [HttpPost, ActionName("Summary")]
         public async Task<IActionResult> SummaryPost(MoodTrackerSessionViewModel model)
         {
+            if (model.FocusScore < 1 || model.AnxietyScore < 1 || model.SleepScore < 1 || model.MindLoadScore < 1 || model.EmotionScore < 1)
+            {
+                TempData["error"] = "Mohon lengkapi semua pertanyaan (5 langkah) terlebih dahulu.";
+                model.QuestionStep = 1;
+                return RedirectToAction(nameof(Question), MakeRouteValues(model));
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.ActiveNav = "Beranda";
@@ -206,7 +218,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                     MindLoadScore = ToNullable(model.MindLoadScore),
                     EmotionScore  = ToNullable(model.EmotionScore),
                     MoodDate      = today,
-                    RecordedAt    = DateTime.Now
+                    RecordedAt    = DateTime.UtcNow
                 });
             }
             else
@@ -219,11 +231,11 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 existing.SleepScore    = ToNullable(model.SleepScore);
                 existing.MindLoadScore = ToNullable(model.MindLoadScore);
                 existing.EmotionScore  = ToNullable(model.EmotionScore);
-                existing.RecordedAt    = DateTime.Now;
+                existing.RecordedAt    = DateTime.UtcNow;
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Dashboard");
+            return Content("<script>window.parent.location.reload();</script>", "text/html");
         }
 
         // ═══ Helper ═══════════════════════════════════════════════════════

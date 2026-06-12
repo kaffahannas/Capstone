@@ -36,11 +36,6 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime? NextSessionAt { get; set; }
         public bool RecommendSession => MentalHealthStatus == "Beresiko";
 
-        // Notification preferences
-        public bool RemindMoodCheck { get; set; } = true;
-        public bool RemindCounselingSession { get; set; } = true;
-        public bool AllowHrPsychologistNotif { get; set; } = true;
-        public string ReminderTime { get; set; } = "09:00";
 
         // Support button targets
         public string? EmergencyContactEmail { get; set; }
@@ -87,11 +82,6 @@ namespace LightenUp.Web.Models.ViewModels
         [StringLength(256)][EmailAddress] public string? EmergencyContactEmail { get; set; }
         [StringLength(32)] public string? EmergencyContactRelation { get; set; }
 
-        // Notification prefs
-        public bool RemindMoodCheck { get; set; } = true;
-        public bool RemindCounselingSession { get; set; } = true;
-        public bool AllowHrPsychologistNotif { get; set; } = true;
-        public TimeSpan ReminderTime { get; set; } = new TimeSpan(9, 0, 0);
 
         // For display only
         public bool IsAlreadyB2B { get; set; }

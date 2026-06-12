@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
@@ -111,11 +112,10 @@ namespace LightenUp.Web.Models.ViewModels
         // B2B setting
         public bool AcceptsB2B { get; set; }
 
-        // Notification preferences
-        public bool RemindNewReports { get; set; } = true;
-        public bool RemindFollowUp { get; set; } = true;
-        public bool AllowHrPatientNotif { get; set; } = false;
-        public string Frequency { get; set; } = "Daily";
+
+
+        // Payroll
+        public string? BankDetailsPdfPath { get; set; }
     }
 
     public class EditProfileViewModel
@@ -132,5 +132,28 @@ namespace LightenUp.Web.Models.ViewModels
         public string? OfficeAddress { get; set; }
         public string? SippNumber { get; set; }
         public int? ExperienceYears { get; set; }
+        public Microsoft.AspNetCore.Http.IFormFile? BankDocumentFile { get; set; }
+    }
+
+    public class EditScheduleViewModel
+    {
+        public int ScheduleId { get; set; }
+        public string PatientName { get; set; } = string.Empty;
+        
+        [Required]
+        public DateTime SessionDate { get; set; }
+
+        [Required]
+        public TimeSpan SessionTime { get; set; }
+
+        [Range(15, 240)]
+        public int DurationMinutes { get; set; } = 60;
+
+        [StringLength(500)]
+        public string? Notes { get; set; }
+
+        [Url]
+        [StringLength(500)]
+        public string? MeetingLink { get; set; }
     }
 }

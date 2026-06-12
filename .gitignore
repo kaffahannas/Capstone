@@ -26,9 +26,13 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-# Visual Studio / Rider
+# Visual Studio / Rider / VS Code (local overrides)
 .vs/
 .idea/
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
 *.DotSettings.user
 _ReSharper*/
 *.[Rr]e[Ss]harper
@@ -80,19 +84,35 @@ secrets.json
 .env.*
 *.pfx
 
-# User Secrets are stored outside the repo by default; keep local overrides out
+# User Secrets live outside the repo; keep local overrides out
 appsettings.Development.local.json
 
-## ── IDE / AI / design (local only) ───────────────────────────
+## ── IDE / AI assistants (local only) ──────────────────────────
 .cursor/
+.claude/
 .claire/
 CLAUDE.md
-_figma/
+AGENTS.md
+
+## ── Capstone / design drafts (local only) ─────────────────────
 Form_Capstone/
+Form4-*/
+_figma/
+*.docx.pdf
+
+# Old internal docs — team uses Google Docs
+docs/
+
+## ── Local scratch & debug ───────────────────────────────────────
+temp_*.css
+temp_*.scss
+debug-*.log
+*.log
 
 ## ── App-specific ──────────────────────────────────────────────
-# User-uploaded files (profiles, documents, worksheets)
+# User uploads (profiles, documents, worksheets, payout proofs)
 wwwroot/uploads/
 
-# Keep upload folder structure if you add a .gitkeep later:
-# !wwwroot/uploads/.gitkeep
+# Optional: keep empty upload folders in git
+# !wwwroot/uploads/**/
+# !wwwroot/uploads/**/.gitkeep

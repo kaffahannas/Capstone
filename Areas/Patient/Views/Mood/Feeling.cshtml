@@ -15,7 +15,7 @@
         @foreach (var f in MoodOptions.Feelings)
         {
             <label class="mood-card @f.Value.ToLowerInvariant() @(Model.Feeling == f.Value ? "selected" : "")">
-                <input type="radio" asp-for="Feeling" value="@f.Value" style="display:none" />
+                <input type="radio" asp-for="Feeling" value="@f.Value" class="mood-hidden-input" />
                 <span class="emoji">@f.Emoji</span>
                 <span class="name">@f.Label</span>
             </label>
@@ -23,7 +23,7 @@
     </div>
     <span asp-validation-for="Feeling" class="text-danger"></span>
 
-    <button type="submit" class="btn-primary" style="width:100%; padding:14px;">Berikutnya</button>
+    <button type="submit" class="btn-primary mood-feeling-submit">Berikutnya</button>
 </form>
 
 @section Scripts {

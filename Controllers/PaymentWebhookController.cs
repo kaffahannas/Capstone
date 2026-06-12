@@ -7,6 +7,7 @@ using System.Text.Json;
 namespace LightenUp.Web.Controllers;
 
 [ApiController]
+[IgnoreAntiforgeryToken]
 [Route("api/payment/duitku")]
 public class PaymentWebhookController : ControllerBase
 {
@@ -38,18 +39,28 @@ public class PaymentWebhookController : ControllerBase
         if (payment == null)
             return NotFound();
 
-        if (!string.IsNullOrEmpty(form.Signature))
+        // Idempotency: skip if already processed
+        if (payment.PaymentStatus == "paid")
         {
-            var amountStr = ((int)payment.Amount).ToString();
-            if (!_duitku.VerifyCallbackSignature(
-                    form.MerchantCode ?? "",
-                    amountStr,
-                    form.MerchantOrderId,
-                    form.Signature))
-            {
-                _log.LogWarning("Invalid DuitKu signature for {OrderId}", form.MerchantOrderId);
-                return Unauthorized();
-            }
+            _log.LogInformation("DuitKu callback for already-paid order {OrderId}, skipping.", form.MerchantOrderId);
+            return Ok();
+        }
+
+        if (string.IsNullOrEmpty(form.Signature))
+        {
+            _log.LogWarning("Missing DuitKu signature for {OrderId}", form.MerchantOrderId);
+            return Unauthorized();
+        }
+
+        var amountStr = ((int)payment.Amount).ToString();
+        if (!_duitku.VerifyCallbackSignature(
+                form.MerchantCode ?? "",
+                amountStr,
+                form.MerchantOrderId,
+                form.Signature))
+        {
+            _log.LogWarning("Invalid DuitKu signature for {OrderId}", form.MerchantOrderId);
+            return Unauthorized();
         }
 
         payment.CallbackPayload = payloadJson;

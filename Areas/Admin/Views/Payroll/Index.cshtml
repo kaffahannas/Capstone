@@ -15,42 +15,42 @@
     <div class="adm-alert success">✅ @ok</div>
 }
 
+<div class="lu-page pay-page">
 <div class="adm-page-header">
     <h1>Payroll Psikolog</h1>
     <p class="adm-page-sub">
-        Model per-sesi (Sir Lukas) — Periode: <strong>@monthLabel</strong>.
-        Formula: <code>Nilai Sesi = Slot Pasien ÷ Maks. Sesi/Bulan</code>, lalu × persentase psikolog per sesi selesai.
+        Model per-sesi — Periode: <strong>@monthLabel</strong>.
+        Formula: <code>Nilai Sesi = Biaya Langganan ÷ Maks. Sesi/Bulan</code>, lalu × persentase psikolog per sesi selesai.
     </p>
 </div>
 
 @* KPI summary strip *@
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
-    <div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #F3F4F6;">
-        <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9CA3AF;">Total Psikolog</p>
-        <p style="margin:0;font-size:28px;font-weight:800;color:#111827;">@Model.Count</p>
+<div class="pay-kpi-grid">
+    <div class="pay-kpi-card">
+        <p class="pay-kpi-label">Total Psikolog</p>
+        <p class="pay-kpi-value">@Model.Count</p>
     </div>
-    <div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #F3F4F6;">
-        <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9CA3AF;">Total Slot Bulanan</p>
-        <p style="margin:0;font-size:22px;font-weight:800;color:#4338CA;">@Idr(totalGross)</p>
+    <div class="pay-kpi-card">
+        <p class="pay-kpi-label">Total Slot Bulanan</p>
+        <p class="pay-kpi-value pay-kpi-value--medium pay-kpi-value--purple">@Idr(totalGross)</p>
     </div>
-    <div style="background:linear-gradient(135deg,#312E81,#4338CA);border-radius:14px;padding:20px;box-shadow:0 4px 16px rgba(67,56,202,0.25);border:none;">
-        <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,0.7);">Proyeksi Bayar Psikolog (bulan ini)</p>
-        <p style="margin:0;font-size:22px;font-weight:800;color:#fff;">@Idr(totalPsyShare)</p>
+    <div class="pay-kpi-card pay-kpi-card--accent">
+        <p class="pay-kpi-label">Proyeksi Bayar Psikolog (bulan ini)</p>
+        <p class="pay-kpi-value pay-kpi-value--medium pay-kpi-value--white">@Idr(totalPsyShare)</p>
     </div>
 </div>
 
-<div class="adm-card">
+<div class="adm-table-wrap lu-list-scroll">
     <table class="adm-table">
         <thead>
             <tr>
-                <th>Psikolog</th>
-                <th style="text-align:center;">% Psy</th>
-                <th style="text-align:center;">Maks. Sesi</th>
-                <th style="text-align:center;">Pasien Aktif</th>
-                <th style="text-align:center;">Sesi Selesai (Bulan ini)</th>
-                <th style="text-align:right;">Nilai per Sesi (Total)</th>
-                <th style="text-align:right;">Bayaran Psikolog (Bulan ini)</th>
-                <th>Aksi</th>
+                <th class="pay-th-psy">Psikolog</th>
+                <th class="pay-th-center">% Psy</th>
+                <th class="pay-th-center">Maks. Sesi</th>
+                <th class="pay-th-center">Pasien Aktif</th>
+                <th class="pay-th-center">Sesi Selesai (Bulan ini)</th>
+                <th class="pay-th-right">Bayaran Psikolog (Bulan ini)</th>
+                <th class="pay-th-actions">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -64,38 +64,42 @@
                     <strong>@r.FullName</strong>
                     <br><small class="text-muted">@r.Email</small>
                 </td>
-                <td style="text-align:center;">
-                    <span style="background:#EEF2FF;color:#4338CA;padding:4px 10px;border-radius:999px;font-weight:700;font-size:13px;">@r.DefaultPsychologistPercentage%</span>
+                <td class="pay-td-center">
+                    <span class="pay-badge-pct">@r.DefaultPsychologistPercentage%</span>
                 </td>
-                <td style="text-align:center;">
-                    <span style="background:#F3F4F6;color:#374151;padding:4px 10px;border-radius:999px;font-weight:600;font-size:13px;">@r.MaxSessionsPerMonth sesi</span>
+                <td class="pay-td-center">
+                    <span class="pay-badge-sessions">@r.MaxSessionsPerMonth sesi</span>
                 </td>
-                <td style="text-align:center;font-weight:600;">@r.ActivePatients</td>
-                <td style="text-align:center;">
+                <td class="pay-td-count">@r.ActivePatients</td>
+                <td class="pay-td-center">
                     @if (r.CompletedSessionsThisMonth > 0)
                     {
-                        <span style="background:#D1FAE5;color:#065F46;padding:4px 10px;border-radius:999px;font-weight:700;font-size:13px;">@r.CompletedSessionsThisMonth sesi</span>
+                        <span class="pay-badge-completed">@r.CompletedSessionsThisMonth sesi</span>
                     }
                     else
                     {
-                        <span style="color:#9CA3AF;font-size:13px;">Belum ada</span>
+                        <span class="pay-text-muted">Belum ada</span>
                     }
                 </td>
-                <td style="text-align:right;font-size:14px;color:#4B5563;">@psyPerSesValueFmt</td>
-                <td style="text-align:right;">
+                <td class="pay-td-right">
                     @if (r.PsyShareMonthly > 0)
                     {
-                        <strong style="font-size:15px;color:#059669;">@Idr(r.PsyShareMonthly)</strong>
+                        <strong class="pay-amount-positive">@Idr(r.PsyShareMonthly)</strong>
                     }
                     else
                     {
-                        <span style="color:#9CA3AF;font-size:13px;">@Idr(0)</span>
+                        <span class="pay-text-muted">@Idr(0)</span>
                     }
                 </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@r.PsychologistId" class="adm-btn adm-btn-sm adm-btn-primary">
-                        ⚙️ Edit
-                    </a>
+                <td class="pay-td-right">
+                    <div class="pay-action-row">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="openSettingsModal(@r.PsychologistId, '@r.FullName', @r.DefaultPsychologistPercentage)">
+                            Pengaturan
+                        </button>
+                        <a asp-action="Transfer" asp-route-id="@r.PsychologistId" class="btn btn-sm btn-primary pay-btn-transfer">
+                            Transfer
+                        </a>
+                    </div>
                 </td>
             </tr>
         }
@@ -103,8 +107,58 @@
     </table>
 </div>
 
-<div style="margin-top:16px;padding:14px 18px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;font-size:13px;color:#92400E;">
+<div class="pay-note">
     <strong>ℹ️ Catatan:</strong>
     Bayaran aktual ditransfer setelah bulan berakhir. Proyeksi di atas berdasarkan sesi yang telah berstatus <em>Completed</em> dalam bulan berjalan.
-    Nilai slot = langganan pasien dibagi maks. sesi per bulan yang dikonfigurasi.
+    Biaya langganan diambil dari subscription aktif pasien/perusahaan dan payment terkait.
 </div>
+</div>
+
+<dialog id="settingsModal" class="pay-settings-modal" oncancel="closeSettingsModal()">
+    <div class="pay-modal-header">
+        <h3 class="pay-modal-title">Pengaturan Payroll</h3>
+        <button type="button" onclick="closeSettingsModal()" class="pay-modal-close">&times;</button>
+    </div>
+    <form asp-action="Edit" method="post">
+        <div class="pay-modal-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="modalPsyId" name="PsychologistId" />
+            
+            <p class="pay-modal-intro">Psikolog: <strong id="modalPsyName"></strong></p>
+            
+            <div class="pay-modal-field">
+                <label class="pay-modal-label">Persentase Bagi Hasil (%)</label>
+                <input type="number" id="modalPsyPct" name="PsychologistPercentage" min="0" max="100" step="0.01" required class="form-control pay-modal-input" />
+            </div>
+            
+            <div class="pay-modal-field pay-modal-field--spaced">
+                <label class="pay-modal-label">Alasan Perubahan (wajib jika diubah)</label>
+                <textarea name="AdminReason" rows="2" class="form-control pay-modal-input" placeholder="Misal: Penyesuaian kontrak baru"></textarea>
+            </div>
+            
+            <div class="pay-modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </form>
+</dialog>
+
+@section Scripts {
+    <script>
+        const modal = document.getElementById('settingsModal');
+        function openSettingsModal(id, name, pct) {
+            document.getElementById('modalPsyId').value = id;
+            document.getElementById('modalPsyName').textContent = name;
+            document.getElementById('modalPsyPct').value = pct;
+            
+            // clear the reason field
+            document.querySelector('textarea[name="AdminReason"]').value = '';
+            
+            modal.showModal();
+        }
+        function closeSettingsModal() {
+            modal.close();
+        }
+    </script>
+}

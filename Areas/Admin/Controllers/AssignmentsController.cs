@@ -34,29 +34,15 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string tab = "psy")
+        public async Task<IActionResult> Index(string tab = "patient")
         {
-            var pendingPsyCount = await _context.Assignments.CountAsync(a => a.Status == "PendingAdminApproval");
-            var pendingCancelCount = await _context.Assignments.CountAsync(a => a.Status == "PendingCancellationByAdmin");
             var pendingPatientCount = await _context.PatientAdminAssignmentRequests.CountAsync(r => r.Status == "Pending");
-
-            var pendingAssignments = new List<PatientPsychologistAssignment>();
-            if (tab is "psy" or "cancel")
-            {
-                var status = tab == "psy" ? "PendingAdminApproval" : "PendingCancellationByAdmin";
-                pendingAssignments = await _context.Assignments
-                    .Include(a => a.Patient).ThenInclude(p => p!.User)
-                    .Include(a => a.Patient).ThenInclude(p => p!.Company)
-                    .Include(a => a.Psychologist).ThenInclude(p => p!.User)
-                    .Include(a => a.RequestedBy)
-                    .Include(a => a.CancellationRequestedBy)
-                    .Where(a => a.Status == status)
-                    .OrderByDescending(a => a.AssignedAt)
-                    .ToListAsync();
-            }
+            var pendingB2BCount = await _context.CompanyPsychologistRequests.CountAsync(r => r.PsychologistId == null && r.Status == "Pending");
 
             var patientRequests = new List<PatientAdminAssignmentRequest>();
+            var b2bRequests = new List<CompanyPsychologistRequest>();
             List<PsychologistWorkloadInfo> psychologists = new();
+            
             if (tab == "patient")
             {
                 patientRequests = await _context.PatientAdminAssignmentRequests
@@ -69,75 +55,37 @@ namespace LightenUp.Web.Areas.Admin.Controllers
 
                 psychologists = await _workload.GetApprovedPsychologistsWithWorkloadAsync(b2bOnly: false);
             }
+            else if (tab == "workload")
+            {
+                psychologists = await _workload.GetApprovedPsychologistsWithWorkloadAsync(b2bOnly: false);
+            }
+            else if (tab == "b2b")
+            {
+                b2bRequests = await _context.CompanyPsychologistRequests
+                    .Include(r => r.Company)
+                    .Where(r => r.PsychologistId == null && r.Status == "Pending")
+                    .OrderByDescending(r => r.RequestDate)
+                    .ToListAsync();
+
+                psychologists = await _workload.GetApprovedPsychologistsWithWorkloadAsync(b2bOnly: true);
+            }
 
             ViewBag.ActiveNav = "Assignments";
-            ViewData["Title"] = "Permintaan Penugasan";
+            ViewData["Title"] = "Penugasan Psikolog";
             return View(new AdminAssignmentsIndexViewModel
             {
                 Tab = tab,
-                PendingAssignments = pendingAssignments,
                 PatientAdminRequests = patientRequests,
+                B2BRequests = b2bRequests,
                 Psychologists = psychologists,
-                PendingPsyCount = pendingPsyCount,
-                PendingCancelCount = pendingCancelCount,
-                PendingPatientRequestCount = pendingPatientCount
+                PendingPatientRequestCount = pendingPatientCount,
+                PendingB2BRequestCount = pendingB2BCount
             });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(int assignmentId, string? note, decimal? psychologistRevenuePercentage)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var a = await _context.Assignments.FindAsync(assignmentId);
-            if (a == null) return NotFound();
-
-            var returnTab = a.Status == "PendingCancellationByAdmin" ? "cancel" : "psy";
-
-            if (a.Status == "PendingAdminApproval")
-            {
-                await _activation.ActivateAsync(a, user?.Id, note, psychologistRevenuePercentage);
-            }
-            else if (a.Status == "PendingCancellationByAdmin")
-            {
-                a.Status = "Cancelled";
-                a.DecisionByUserId = user?.Id;
-                a.DecisionAt = DateTime.UtcNow;
-                a.DecisionNote = note;
-            }
-
-            await _context.SaveChangesAsync();
-            TempData["success"] = "Permintaan disetujui.";
-            return RedirectToAction(nameof(Index), new { tab = returnTab });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(int assignmentId, string? note)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var a = await _context.Assignments.FindAsync(assignmentId);
-            if (a == null) return NotFound();
-
-            var returnTab = a.Status == "PendingCancellationByAdmin" ? "cancel" : "psy";
-
-            if (a.Status == "PendingCancellationByAdmin")
-                a.Status = "Active";
-            else
-                a.Status = "Rejected";
-
-            a.DecisionByUserId = user?.Id;
-            a.DecisionAt = DateTime.UtcNow;
-            a.DecisionNote = note;
-
-            await _context.SaveChangesAsync();
-            TempData["success"] = "Permintaan ditolak.";
-            return RedirectToAction(nameof(Index), new { tab = returnTab });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignPatient(int requestId, int psychologistId, decimal psychologistRevenuePercentage, string? note)
+        public async Task<IActionResult> AssignPatient(int requestId, int psychologistId, decimal? psychologistRevenuePercentage, string? note)
         {
             var user = await _userManager.GetUserAsync(User);
             var req = await _context.PatientAdminAssignmentRequests
@@ -157,9 +105,6 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 TempData["error"] = "Psikolog tidak ditemukan.";
                 return RedirectToAction(nameof(Index), new { tab = "patient" });
             }
-
-            if (psychologistRevenuePercentage is < 0 or > 100)
-                psychologistRevenuePercentage = SubscriptionPricingService.DefaultPsychologistRevenuePercentage;
 
             var assignment = new PatientPsychologistAssignment
             {
@@ -201,6 +146,40 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan pasien ditutup.";
             return RedirectToAction(nameof(Index), new { tab = "patient" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignB2BPsychologist(int requestId, int psychologistId)
+        {
+            var req = await _context.CompanyPsychologistRequests.FirstOrDefaultAsync(r => r.Id == requestId && r.PsychologistId == null && r.Status == "Pending");
+            if (req == null) return NotFound();
+
+            req.PsychologistId = psychologistId;
+            req.RespondedDate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            TempData["success"] = "Permintaan kemitraan telah diteruskan ke psikolog terpilih.";
+            return RedirectToAction(nameof(Index), new { tab = "b2b" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DismissB2BRequest(int requestId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var req = await _context.CompanyPsychologistRequests
+                .FirstOrDefaultAsync(r => r.Id == requestId && r.PsychologistId == null && r.Status == "Pending");
+            if (req == null) return NotFound();
+
+            req.Status = "Rejected"; // Or "Dismissed" if we add that status for B2B requests. The model comment says Pending, Approved, Rejected.
+            req.RespondedDate = DateTime.UtcNow;
+            req.HandledByAdminUserId = user?.Id;
+            
+            await _context.SaveChangesAsync();
+
+            TempData["success"] = "Permintaan B2B ditolak / ditutup.";
+            return RedirectToAction(nameof(Index), new { tab = "b2b" });
         }
     }
 }

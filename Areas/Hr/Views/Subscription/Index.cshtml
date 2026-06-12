@@ -11,7 +11,6 @@
         daysLeft = Math.Max(0, (Model.ActiveUntil.Value - DateTime.Today).Days);
     bool expiringSoon = daysLeft > 0 && daysLeft <= 30;
 }
-
 <div class="hrln-page">
 
     @* ══════ HERO ══════ *@
@@ -116,12 +115,12 @@
             @if (employeeLimit > 0)
             {
                 var usagePct = Math.Min(100, (int)Math.Round(employeeCount * 100.0 / employeeLimit));
-                <div class="hrln-active-card" style="margin-top:16px; background:#f8fafc;">
-                    <div class="hrln-active-info" style="flex:1;">
+                <div class="hrln-active-card hrln-active-card--quota">
+                    <div class="hrln-active-info">
                         <div class="hrln-active-plan-name">Kuota Karyawan</div>
                         <div class="hrln-active-expiry">@employeeCount / @employeeLimit terdaftar</div>
-                        <div style="margin-top:10px; height:8px; background:#e2e8f0; border-radius:999px; overflow:hidden;">
-                            <div style="width:@(usagePct)%; height:100%; background:@(usagePct >= 90 ? "#ef4444" : "#6366f1");"></div>
+                        <div class="hrln-quota-bar-track">
+                            <div class="hrln-quota-bar-fill @(usagePct >= 90 ? "hrln-quota-bar-fill--warn" : "")" style="--bar-w:@(usagePct)%"></div>
                         </div>
                     </div>
                 </div>
@@ -224,9 +223,9 @@
             <div class="hrln-plans-grid">
                 @foreach (var plan in Model.Plans)
                 {
-                    var isYearly = plan.DurationMonths >= 12;
-                    <div class="hrln-plan @(isYearly ? "hrln-plan--popular" : "")">
-                        @if (isYearly)
+                    var isPopular = plan.EmployeeLimit == 25;
+                    <div class="hrln-plan @(isPopular ? "hrln-plan--popular" : "")">
+                        @if (isPopular)
                         {
                             <div class="hrln-plan-popular-badge">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -234,8 +233,8 @@
                             </div>
                         }
 
-                        <div class="hrln-plan-icon hrln-plan-icon--@(isYearly ? "yellow" : "blue")" aria-hidden="true">
-                            @if (isYearly)
+                        <div class="hrln-plan-icon hrln-plan-icon--@(isPopular ? "yellow" : "blue")" aria-hidden="true">
+                            @if (isPopular)
                             {
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             }
@@ -253,11 +252,11 @@
                         </div>
                         <div class="hrln-plan-duration">per @plan.DurationMonths bulan</div>
 
-                        @if (isYearly)
+                        @if (isPopular)
                         {
                             <div class="hrln-plan-save">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                                Hemat ~17% dibanding bulanan
+                                Rekomendasi terbaik
                             </div>
                         }
 
@@ -272,16 +271,16 @@
                             <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> HR Console penuh</li>
                             <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Kode referral per divisi</li>
                             <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Monitoring karyawan</li>
-                            @if (isYearly)
+                            @if (isPopular)
                             {
                                 <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Prioritas dukungan</li>
                             }
                         </ul>
 
-                        <form asp-action="Checkout" method="post" style="margin-top:auto;">
+                        <form asp-action="Checkout" method="post" class="hrln-plan-form">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="planId" value="@plan.PlanId" />
-                            <button type="submit" class="hrln-plan-btn @(isYearly ? "hrln-plan-btn--popular" : "hrln-plan-btn--default")">
+                            <button type="submit" class="hrln-plan-btn hrln-plan-btn--popular">
                                 @if (Model.HasActiveSubscription)
                                 {
                                     <text>Pilih Paket Ini</text>

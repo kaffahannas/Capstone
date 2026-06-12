@@ -243,8 +243,6 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             hr.Department = model.Department.Trim();
             hr.OnboardingCompletedAt = DateTime.UtcNow;
 
-            _context.HrNotificationPreferences.Add(new HrNotificationPreference { HrId = hr.HrId });
-
             await _context.SaveChangesAsync();
             // HR is now auto-approved; send them straight to subscription purchase.
             return RedirectToAction("Index", "Subscription", new { area = "Hr" });

@@ -1,0 +1,378 @@
+@model LightenUp.Web.Models.ViewModels.StatisticsViewModel
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Statistik Keseluruhan";
+    var cid = new System.Globalization.CultureInfo("id-ID");
+
+    var divisions = (ViewBag.Divisions as List<LightenUp.Web.Areas.Psychologist.Controllers.DashboardController.DivisionRow>)
+                    ?? new List<LightenUp.Web.Areas.Psychologist.Controllers.DashboardController.DivisionRow>();
+    var divLabels  = System.Text.Json.JsonSerializer.Serialize(divisions.Select(d => d.Name));
+    var divStress  = System.Text.Json.JsonSerializer.Serialize(divisions.Select(d => d.StressPct));
+    var divSehat   = System.Text.Json.JsonSerializer.Serialize(divisions.Select(d => d.SehatPct));
+    var divTotal   = System.Text.Json.JsonSerializer.Serialize(divisions.Select(d => d.Total));
+
+    var healthScore = Model.TotalClients > 0
+        ? (int)Math.Round((double)Model.HealthyCount / Model.TotalClients * 100)
+        : 0;
+    var scoreLabel = healthScore >= 70 ? "Sangat Baik" : healthScore >= 40 ? "Perlu Perhatian" : "Kritis";
+    var scoreSuffix = healthScore >= 70 ? "👍" : healthScore >= 40 ? "⚠️" : "🚨";
+
+    // arc: circumference = 2π × 33 = 207.35
+    var arcOffset = (int)Math.Round(207.35 * (1 - healthScore / 100.0));
+}
+
+@* ── Hero banner ── *@
+<div class="stat-hero">
+    <div class="stat-hero-left">
+        <p class="stat-hero-eyebrow">Laporan Kesehatan Mental</p>
+        <h1 class="stat-hero-title">Statistik Keseluruhan</h1>
+        <p class="stat-hero-sub">@DateTime.Now.ToString("dddd, d MMMM yyyy", cid) · Ringkasan semua klien aktif Anda</p>
+    </div>
+    <div class="stat-hero-score">
+        <div class="stat-score-ring">
+            <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+                <circle cx="40" cy="40" r="33" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="7"/>
+                <circle cx="40" cy="40" r="33" fill="none" stroke="white" stroke-width="7"
+                        stroke-linecap="round"
+                        stroke-dasharray="207.35"
+                        stroke-dashoffset="@arcOffset"
+                        transform="rotate(-90 40 40)"
+                        class="stat-score-ring-progress"/>
+            </svg>
+            <div class="stat-score-inner">
+                <span class="stat-score-pct">@healthScore<small>%</small></span>
+            </div>
+        </div>
+        <div class="stat-score-meta">
+            <p class="stat-score-name">Wellness Score @scoreSuffix</p>
+            <p class="stat-score-label">@scoreLabel · @Model.TotalClients klien aktif</p>
+        </div>
+    </div>
+</div>
+
+@* ── KPI cards ── *@
+<div class="stat-kpi-row">
+    <div class="stat-kpi stat-kpi--total">
+        <div class="stat-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="stat-kpi-body">
+            <span class="stat-kpi-value">@Model.TotalClients</span>
+            <span class="stat-kpi-label">Total Klien</span>
+        </div>
+        <div class="stat-kpi-bar stat-kpi-bar--total stat-kpi-bar--full"></div>
+    </div>
+
+    <div class="stat-kpi stat-kpi--sehat">
+        <div class="stat-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="stat-kpi-body">
+            <span class="stat-kpi-value">@Model.HealthyCount</span>
+            <span class="stat-kpi-label">Sehat</span>
+        </div>
+        @if (Model.TotalClients > 0)
+        {
+            var pct = (int)Math.Round((double)Model.HealthyCount / Model.TotalClients * 100);
+            <div class="stat-kpi-bar stat-kpi-bar--sehat" style="--bar-w:@pct%"></div>
+        }
+    </div>
+
+    <div class="stat-kpi stat-kpi--beresiko">
+        <div class="stat-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="stat-kpi-body">
+            <span class="stat-kpi-value">@Model.AtRiskCount</span>
+            <span class="stat-kpi-label">Beresiko</span>
+        </div>
+        @if (Model.TotalClients > 0)
+        {
+            var pct = (int)Math.Round((double)Model.AtRiskCount / Model.TotalClients * 100);
+            <div class="stat-kpi-bar stat-kpi-bar--beresiko" style="--bar-w:@pct%"></div>
+        }
+    </div>
+
+    <div class="stat-kpi stat-kpi--bahaya">
+        <div class="stat-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="stat-kpi-body">
+            <span class="stat-kpi-value">@Model.DangerCount</span>
+            <span class="stat-kpi-label">Bahaya</span>
+        </div>
+        @if (Model.TotalClients > 0)
+        {
+            var pct = (int)Math.Round((double)Model.DangerCount / Model.TotalClients * 100);
+            <div class="stat-kpi-bar stat-kpi-bar--bahaya" style="--bar-w:@pct%"></div>
+        }
+    </div>
+</div>
+
+@* ── Charts row ── *@
+<div class="stat-charts-row">
+
+    <div class="stat-chart-card stat-chart-card--donut">
+        <div class="stat-chart-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            <h3 class="stat-chart-title">Distribusi Status Klien</h3>
+        </div>
+        @if (Model.TotalClients == 0)
+        {
+            <div class="stat-empty">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+                <p>Belum ada klien aktif</p>
+            </div>
+        }
+        else
+        {
+            <div class="stat-donut-wrap">
+                <div class="stat-canvas-wrap"><canvas id="pieChart"></canvas></div>
+                <ul class="stat-legend">
+                    <li class="stat-legend-item">
+                        <span class="stat-legend-dot stat-legend-dot--sehat"></span>
+                        <span>Sehat</span>
+                        <strong>@Model.HealthyCount</strong>
+                    </li>
+                    <li class="stat-legend-item">
+                        <span class="stat-legend-dot stat-legend-dot--beresiko"></span>
+                        <span>Beresiko</span>
+                        <strong>@Model.AtRiskCount</strong>
+                    </li>
+                    <li class="stat-legend-item">
+                        <span class="stat-legend-dot stat-legend-dot--bahaya"></span>
+                        <span>Bahaya</span>
+                        <strong>@Model.DangerCount</strong>
+                    </li>
+                </ul>
+            </div>
+        }
+    </div>
+
+    <div class="stat-chart-card stat-chart-card--bar">
+        <div class="stat-chart-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <h3 class="stat-chart-title">Tingkat Stress per Perusahaan</h3>
+        </div>
+        @if (!divisions.Any())
+        {
+            <div class="stat-empty">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-8h6v8"/></svg>
+                <p>Belum ada perusahaan mitra</p>
+            </div>
+        }
+        else
+        {
+            <div class="stat-canvas-wrap"><canvas id="barChart"></canvas></div>
+        }
+    </div>
+
+</div>
+
+@* ── Division summary ── *@
+@if (divisions.Any())
+{
+    <div class="stat-section-head">
+        <div class="stat-section-title-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-8h6v8"/></svg>
+            <h2 class="stat-section-title">Ringkasan per Perusahaan</h2>
+            <span class="stat-section-chip">@divisions.Count perusahaan</span>
+        </div>
+    </div>
+
+    <div class="stat-division-grid">
+        @foreach (var d in divisions)
+        {
+            var statusColor = d.StressPct >= 50 ? "#EF4444" : d.StressPct >= 25 ? "#F59E0B" : "#10B981";
+            var statusLabel = d.StressPct >= 50 ? "Tinggi" : d.StressPct >= 25 ? "Sedang" : "Rendah";
+            var statusCss   = d.StressPct >= 50 ? "bahaya" : d.StressPct >= 25 ? "beresiko" : "sehat";
+            var initial     = string.IsNullOrEmpty(d.Name) ? "?" : d.Name.Substring(0, 1).ToUpper();
+            <div class="stat-div-card" onclick="openCompanyStatsModal('@Uri.EscapeDataString(d.Name)')">
+                <div class="stat-div-header">
+                    <div class="stat-div-logo">@initial</div>
+                    <div class="stat-div-meta">
+                        <span class="stat-div-name">@d.Name</span>
+                        <span class="stat-div-count">@d.Total klien</span>
+                    </div>
+                    <span class="stat-div-chip stat-div-chip--@statusCss">@statusLabel</span>
+                </div>
+                <div class="stat-div-bars">
+                    <div class="stat-div-bar-row">
+                        <span class="stat-div-bar-label">Sehat</span>
+                        <div class="stat-div-bar-track">
+                            <div class="stat-div-bar-fill stat-div-bar-fill--sehat" style="--bar-w:@d.SehatPct%"></div>
+                        </div>
+                        <span class="stat-div-bar-pct">@d.SehatPct%</span>
+                    </div>
+                    <div class="stat-div-bar-row">
+                        <span class="stat-div-bar-label">Stress</span>
+                        <div class="stat-div-bar-track">
+                            <div class="stat-div-bar-fill stat-div-bar-fill--stress" style="--bar-w:@d.StressPct%"></div>
+                        </div>
+                        <span class="stat-div-bar-pct">@d.StressPct%</span>
+                    </div>
+                </div>
+                <div class="stat-div-footer">
+                    Lihat detail <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="stat-no-div">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-8h6v8"/></svg>
+        <p>Belum ada perusahaan mitra yang terdaftar untuk klien Anda.</p>
+    </div>
+}
+
+<div class="modal-overlay" id="companyStatsModal">
+    <!-- content injected via ajax -->
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    @if (Model.TotalClients > 0)
+    {
+        <text>
+    var ctx = document.getElementById('pieChart');
+    if (ctx) {
+        new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Sehat', 'Beresiko', 'Bahaya'],
+                datasets: [{
+                    data: [@Model.HealthyCount, @Model.AtRiskCount, @Model.DangerCount],
+                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverBorderColor: '#ffffff',
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '68%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                var total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                var pct = total > 0 ? Math.round(ctx.parsed / total * 100) : 0;
+                                return ' ' + ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+        </text>
+    }
+
+    @if (divisions.Any())
+    {
+        <text>
+    var barCtx = document.getElementById('barChart');
+    if (barCtx) {
+        new Chart(barCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(divLabels),
+                datasets: [
+                    {
+                        label: 'Sehat (%)',
+                        data: @Html.Raw(divSehat),
+                        backgroundColor: '#10B981',
+                        borderRadius: 6,
+                        barPercentage: 0.55
+                    },
+                    {
+                        label: 'Stress (%)',
+                        data: @Html.Raw(divStress),
+                        backgroundColor: '#F59E0B',
+                        borderRadius: 6,
+                        barPercentage: 0.55
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { family: 'Inter', size: 12 }, padding: 16, usePointStyle: true }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true, max: 100,
+                        ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 } },
+                        grid: { color: '#F3F4F6' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Inter', size: 12 } }
+                    }
+                }
+            }
+        });
+    }
+        </text>
+    }
+
+});
+
+window.openCompanyStatsModal = async function(companyNameUri) {
+    try {
+        const res = await fetch(`/Psychologist/Client/CompanyStatsModal?companyName=${companyNameUri}`);
+        if (!res.ok) throw new Error('Failed to load company stats');
+        const html = await res.text();
+        document.getElementById('companyStatsModal').innerHTML = html;
+        document.getElementById('companyStatsModal').classList.add('active');
+
+        // Initialize chart if canvas exists
+        const canvas = document.getElementById('companyStatsModalChart');
+        if (canvas) {
+            const sehat = parseInt(canvas.getAttribute('data-sehat') || '0');
+            const beresiko = parseInt(canvas.getAttribute('data-beresiko') || '0');
+            const bahaya = parseInt(canvas.getAttribute('data-bahaya') || '0');
+
+            new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sehat', 'Beresiko', 'Bahaya'],
+                    datasets: [{
+                        data: [sehat, beresiko, bahaya],
+                        backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Gagal memuat statistik perusahaan.");
+    }
+}
+
+window.closeCompanyStatsModal = function() {
+    document.getElementById('companyStatsModal').classList.remove('active');
+}
+</script>
+}

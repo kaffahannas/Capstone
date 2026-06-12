@@ -1,0 +1,28 @@
+.rth-card {
+    max-width: 560px;
+    margin: 40px auto;
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.rth-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.rth-title {
+    margin: 0 0 8px;
+}
+
+.rth-desc {
+    color: #6B7280;
+}
+
+.rth-note {
+    font-size: 13px;
+    color: #9CA3AF;
+    margin-top: 24px;
+}

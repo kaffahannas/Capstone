@@ -20,18 +20,18 @@
 
     <div class="onb-pill-row">
         <label class="onb-pill @(Model.HasPreviousCounseling == true ? "selected" : "")">
-            <input type="radio" asp-for="HasPreviousCounseling" value="true" style="display:none" />
+            <input type="radio" asp-for="HasPreviousCounseling" value="true" class="onb-hidden-input" />
             Pernah
         </label>
         <label class="onb-pill @(Model.HasPreviousCounseling == false ? "selected" : "")">
-            <input type="radio" asp-for="HasPreviousCounseling" value="false" style="display:none" />
+            <input type="radio" asp-for="HasPreviousCounseling" value="false" class="onb-hidden-input" />
             Belum Pernah
         </label>
     </div>
     <span asp-validation-for="HasPreviousCounseling" class="text-danger"></span>
 
     <div class="onb-conditional" id="methodsBlock" hidden="@(Model.HasPreviousCounseling != true)">
-        <strong style="font-size:14px;">Pilih metode konseling yang pernah dilakukan:</strong>
+        <strong class="onb-methods-label">Pilih metode konseling yang pernah dilakukan:</strong>
         <ul class="onb-list">
             @foreach (var m in methods)
             {

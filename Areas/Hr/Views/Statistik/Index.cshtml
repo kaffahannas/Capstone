@@ -17,41 +17,6 @@
 
 @section Head {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-    /* Modal Styling */
-    .psy-modal-overlay {
-        position: fixed; inset: 0; background: rgba(17, 24, 39, 0.7);
-        backdrop-filter: blur(8px); z-index: 1000; display: none;
-        align-items: center; justify-content: center; padding: 20px;
-        opacity: 0; transition: opacity 0.3s;
-    }
-    .psy-modal-overlay.is-active { display: flex; opacity: 1; }
-    .psy-modal-content {
-        background: #fff; border-radius: 24px; width: 100%;
-        max-width: 600px; max-height: 90vh; overflow-y: auto;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        transform: scale(0.95); transition: transform 0.3s; position: relative;
-    }
-    .psy-modal-overlay.is-active .psy-modal-content { transform: scale(1); }
-    .psy-modal-header { padding: 40px 32px; color: #fff; text-align: center; position: relative; }
-    .psy-modal-close {
-        position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2);
-        border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center; cursor: pointer;
-    }
-    .psy-modal-body { padding: 32px; }
-    .psy-modal-footer {
-        padding: 24px 32px; background: #F9FAFB; border-top: 1px solid #F3F4F6;
-        display: flex; justify-content: flex-end; gap: 12px;
-        border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
-    }
-    .btn-mitra {
-        background: var(--lu-primary); color: #fff; border: none;
-        padding: 12px 24px; border-radius: 12px; font-weight: 600;
-        cursor: pointer; transition: background 0.2s;
-    }
-    .btn-mitra:hover { background: #6D28D9; }
-    </style>
 }
 
 @* ── Hero (same stat-hero pattern as Psychologist/Statistics) ── *@
@@ -60,9 +25,9 @@
         <p class="stat-hero-eyebrow">HR · Laporan Kesehatan Mental</p>
         <h1 class="stat-hero-title">Statistik @Model.CompanyName</h1>
         <p class="stat-hero-sub">@DateTime.Now.ToString("dddd, d MMMM yyyy", cid) · Ringkasan kesehatan mental seluruh karyawan</p>
-        <div style="display:flex;gap:10px;margin-top:10px;">
-            <a class="sch-hero-btn" asp-action="ExportCsv" style="font-size:13px;">📥 Export CSV</a>
-            <a class="sch-hero-btn" asp-action="Print" target="_blank" style="font-size:13px;background:rgba(255,255,255,0.15);">🖨️ Cetak PDF</a>
+        <div class="stat-hero-actions">
+            <a class="sch-hero-btn sch-hero-btn--sm" asp-action="ExportCsv">📥 Export CSV</a>
+            <a class="sch-hero-btn sch-hero-btn--sm sch-hero-btn--print" asp-action="Print" target="_blank">🖨️ Cetak PDF</a>
         </div>
     </div>
     <div class="stat-hero-score">
@@ -74,7 +39,7 @@
                         stroke-dasharray="207.35"
                         stroke-dashoffset="@arcOffset"
                         transform="rotate(-90 40 40)"
-                        style="transition: stroke-dashoffset 1s ease;"/>
+                        class="stat-score-ring-progress"/>
             </svg>
             <div class="stat-score-inner">
                 <span class="stat-score-pct">@healthScore<small>%</small></span>
@@ -97,7 +62,7 @@
             <span class="stat-kpi-value">@Model.ActiveCount</span>
             <span class="stat-kpi-label">Total Karyawan</span>
         </div>
-        <div class="stat-kpi-bar stat-kpi-bar--total" style="width:100%"></div>
+        <div class="stat-kpi-bar stat-kpi-bar--total stat-kpi-bar--full"></div>
     </div>
 
     <div class="stat-kpi stat-kpi--sehat">
@@ -109,7 +74,7 @@
             <span class="stat-kpi-label">Sehat</span>
         </div>
         @{ var sehatPct = (int)Math.Round((double)Model.Sehat / total * 100); }
-        <div class="stat-kpi-bar stat-kpi-bar--sehat" style="width:@sehatPct%"></div>
+        <div class="stat-kpi-bar stat-kpi-bar--sehat" style="--bar-w:@sehatPct%"></div>
     </div>
 
     <div class="stat-kpi stat-kpi--beresiko">
@@ -121,7 +86,7 @@
             <span class="stat-kpi-label">Beresiko</span>
         </div>
         @{ var beresikoPct = (int)Math.Round((double)Model.Beresiko / total * 100); }
-        <div class="stat-kpi-bar stat-kpi-bar--beresiko" style="width:@beresikoPct%"></div>
+        <div class="stat-kpi-bar stat-kpi-bar--beresiko" style="--bar-w:@beresikoPct%"></div>
     </div>
 
     <div class="stat-kpi stat-kpi--bahaya">
@@ -133,7 +98,7 @@
             <span class="stat-kpi-label">Bahaya</span>
         </div>
         @{ var bahayaPct = (int)Math.Round((double)Model.Bahaya / total * 100); }
-        <div class="stat-kpi-bar stat-kpi-bar--bahaya" style="width:@bahayaPct%"></div>
+        <div class="stat-kpi-bar stat-kpi-bar--bahaya" style="--bar-w:@bahayaPct%"></div>
     </div>
 </div>
 
@@ -158,17 +123,17 @@
                 <div class="stat-canvas-wrap"><canvas id="pieChart"></canvas></div>
                 <ul class="stat-legend">
                     <li class="stat-legend-item">
-                        <span class="stat-legend-dot" style="background:#10B981"></span>
+                        <span class="stat-legend-dot stat-legend-dot--sehat"></span>
                         <span>Sehat</span>
                         <strong>@Model.Sehat</strong>
                     </li>
                     <li class="stat-legend-item">
-                        <span class="stat-legend-dot" style="background:#F59E0B"></span>
+                        <span class="stat-legend-dot stat-legend-dot--beresiko"></span>
                         <span>Beresiko</span>
                         <strong>@Model.Beresiko</strong>
                     </li>
                     <li class="stat-legend-item">
-                        <span class="stat-legend-dot" style="background:#EF4444"></span>
+                        <span class="stat-legend-dot stat-legend-dot--bahaya"></span>
                         <span>Bahaya</span>
                         <strong>@Model.Bahaya</strong>
                     </li>
@@ -214,7 +179,7 @@
             var statusCss = d.StressPct >= 50 ? "bahaya" : d.StressPct >= 25 ? "beresiko" : "sehat";
             var statusLabel = d.StressPct >= 50 ? "Tinggi" : d.StressPct >= 25 ? "Sedang" : "Rendah";
             var initial = string.IsNullOrEmpty(d.Name) ? "?" : d.Name.Substring(0, 1).ToUpper();
-            <div class="stat-div-card" style="cursor: pointer;" onclick="openDivModal('@d.Name', @d.Count, @d.StressPct, @d.SehatPct, @d.SehatCount, @d.BeresikoCount, @d.BahayaCount)">
+            <div class="stat-div-card" onclick="openDivModal('@d.Name', @d.Count, @d.StressPct, @d.SehatPct, @d.SehatCount, @d.BeresikoCount, @d.BahayaCount)">
                 <div class="stat-div-header">
                     <div class="stat-div-logo">@initial</div>
                     <div class="stat-div-meta">
@@ -226,16 +191,16 @@
                 <div class="stat-div-bars">
                     <div class="stat-div-bar-row">
                         <span class="stat-div-bar-label">Sehat</span>
-                        <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--sehat" style="width:@d.SehatPct%"></div></div>
+                        <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--sehat" style="--bar-w:@d.SehatPct%"></div></div>
                         <span class="stat-div-bar-pct">@d.SehatPct%</span>
                     </div>
                     <div class="stat-div-bar-row">
                         <span class="stat-div-bar-label">Stress</span>
-                        <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--stress" style="width:@d.StressPct%"></div></div>
+                        <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--stress" style="--bar-w:@d.StressPct%"></div></div>
                         <span class="stat-div-bar-pct">@d.StressPct%</span>
                     </div>
                 </div>
-                <div class="stat-div-footer" style="color: var(--lu-primary); font-weight: 600;">
+                <div class="stat-div-footer stat-div-footer--hr">
                     Lihat detail <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
                 </div>
             </div>
@@ -257,57 +222,57 @@ else
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
         
-        <div class="psy-modal-header" style="background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);">
-            <h2 id="dName" style="font-size: 26px; font-weight: 800; margin: 0 0 8px 0;"></h2>
-            <div style="font-size: 15px; opacity: 0.9; font-weight: 500;">
+        <div class="psy-modal-header psy-modal-header--blue">
+            <h2 id="dName" class="psy-modal-title"></h2>
+            <div class="psy-modal-subtitle">
                 <span id="dCount"></span> Karyawan Aktif
             </div>
         </div>
         
         <div class="psy-modal-body">
-            <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 20px;">Distribusi Kesehatan Mental</h3>
+            <h3 class="psy-modal-section-title">Distribusi Kesehatan Mental</h3>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: center;">
-                <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
-                    <div style="background: #ECFDF5; border: 1px solid #D1FAE5; padding: 12px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 24px; font-weight: 800; color: #059669; margin-bottom: 2px;" id="dSehatCount">0</div>
-                        <div style="font-size: 11px; font-weight: 700; color: #10B981; text-transform: uppercase;">Sehat</div>
+            <div class="psy-modal-distro-grid">
+                <div class="psy-modal-stat-grid">
+                    <div class="psy-modal-stat-box--sehat">
+                        <div class="psy-modal-stat-val--sehat" id="dSehatCount">0</div>
+                        <div class="psy-modal-stat-lbl--sehat">Sehat</div>
                     </div>
-                    <div style="background: #FFFBEB; border: 1px solid #FEF3C7; padding: 12px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 24px; font-weight: 800; color: #D97706; margin-bottom: 2px;" id="dBeresikoCount">0</div>
-                        <div style="font-size: 11px; font-weight: 700; color: #F59E0B; text-transform: uppercase;">Beresiko</div>
+                    <div class="psy-modal-stat-box--beresiko">
+                        <div class="psy-modal-stat-val--beresiko" id="dBeresikoCount">0</div>
+                        <div class="psy-modal-stat-lbl--beresiko">Beresiko</div>
                     </div>
-                    <div style="background: #FEF2F2; border: 1px solid #FEE2E2; padding: 12px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 24px; font-weight: 800; color: #DC2626; margin-bottom: 2px;" id="dBahayaCount">0</div>
-                        <div style="font-size: 11px; font-weight: 700; color: #EF4444; text-transform: uppercase;">Bahaya</div>
+                    <div class="psy-modal-stat-box--bahaya">
+                        <div class="psy-modal-stat-val--bahaya" id="dBahayaCount">0</div>
+                        <div class="psy-modal-stat-lbl--bahaya">Bahaya</div>
                     </div>
                 </div>
-                <div style="position: relative; height: 160px;">
+                <div class="psy-modal-chart-wrap--sm">
                     <canvas id="dDoughnutChart"></canvas>
                 </div>
             </div>
             
-            <div class="stat-div-bars" style="margin: 0; margin-bottom: 24px;">
-                <div class="stat-div-bar-row" style="margin-bottom: 12px;">
-                    <span class="stat-div-bar-label" style="width: 50px;">Sehat</span>
-                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--sehat" id="dSehatBar" style="width:0%"></div></div>
+            <div class="stat-div-bars psy-modal-bars">
+                <div class="stat-div-bar-row psy-modal-bar-row--spaced">
+                    <span class="stat-div-bar-label psy-modal-bar-label">Sehat</span>
+                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--sehat psy-modal-bar-fill-init" id="dSehatBar"></div></div>
                     <span class="stat-div-bar-pct" id="dSehatPct">0%</span>
                 </div>
                 <div class="stat-div-bar-row">
-                    <span class="stat-div-bar-label" style="width: 50px;">Stress</span>
-                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--stress" id="dStressBar" style="width:0%"></div></div>
+                    <span class="stat-div-bar-label psy-modal-bar-label">Stress</span>
+                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--stress psy-modal-bar-fill-init" id="dStressBar"></div></div>
                     <span class="stat-div-bar-pct" id="dStressPct">0%</span>
                 </div>
             </div>
             
-            <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 16px;">Perubahan Mood (30 Hari)</h3>
-            <div style="position: relative; height: 250px; width: 100%;">
+            <h3 class="psy-modal-section-title psy-modal-section-title--chart">Perubahan Mood (30 Hari)</h3>
+            <div class="psy-modal-chart-wrap--lg">
                 <canvas id="dChart"></canvas>
             </div>
         </div>
         
         <div class="psy-modal-footer">
-            <a href="#" id="dLink" class="btn-mitra" style="background: #1E40AF; text-decoration: none;" target="_blank">Download Laporan (PDF)</a>
+            <a href="#" id="dLink" class="btn-mitra btn-mitra--blue" target="_blank">Download Laporan (PDF)</a>
         </div>
     </div>
 </div>

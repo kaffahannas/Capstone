@@ -22,6 +22,9 @@ body {
 	min-height: 100vh;
 }
 
+/* Utilities */
+.pd-is-hidden { display: none !important; }
+
 /* ================== SIDEBAR KIRI (layout: site.css app-shell) ================== */
 .sidebar {
 	width: var(--sidebar-width);
@@ -82,12 +85,41 @@ body {
 		font-weight: 600;
 	}
 
+.nav-badge {
+	margin-left: auto;
+	background: #EF4444;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	padding: 2px 7px;
+	border-radius: 999px;
+	min-width: 20px;
+	text-align: center;
+	line-height: 1.4;
+}
+
 /* ================== MAIN CONTENT KANAN ================== */
 .main-content {
 	flex: 1;
 	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 	/* Remove bottom padding so dashboard grid fills to viewport edge */
 	padding-bottom: 0 !important;
+}
+
+.main-content .app-content {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.main-content .app-content > .psy-dashboard-grid {
+	flex: 1;
+	min-height: 0;
 }
 
 .dashboard-header {
@@ -1999,8 +2031,9 @@ body {
     font-weight: 500;
 }
 
-/* Make app-content fill full available width (no max-width cap) for psychologist */
-.main-content .app-content {
+/* Make app-content fill full available width (no max-width cap) for psychologist and HR */
+.main-content .app-content,
+.hr-shell .app-content {
     max-width: 100%;
 }
 

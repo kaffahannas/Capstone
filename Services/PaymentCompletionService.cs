@@ -18,9 +18,17 @@ public static class PaymentCompletionService
             var sub = payment.Subscription ?? await context.Subscriptions.FindAsync(payment.SubscriptionId.Value);
             if (sub != null)
             {
+                var existingActive = await context.Subscriptions
+                    .Where(s => s.PatientId == sub.PatientId && s.Status == "Active" && s.EndDate > DateTime.Today && s.SubscriptionId != sub.SubscriptionId)
+                    .OrderByDescending(s => s.EndDate)
+                    .FirstOrDefaultAsync();
+
+                var startDate = existingActive != null ? existingActive.EndDate : DateTime.Today;
+                var durationMonths = sub.PlanName.Contains("Tahunan", StringComparison.OrdinalIgnoreCase) ? 12 : 1;
+
                 sub.Status = "Active";
-                sub.StartDate = DateTime.Today;
-                sub.EndDate = DateTime.Today.AddMonths(sub.PlanName.Contains("Tahunan", StringComparison.OrdinalIgnoreCase) ? 12 : 1);
+                sub.StartDate = startDate;
+                sub.EndDate = startDate.AddMonths(durationMonths);
             }
         }
 
@@ -33,10 +41,17 @@ public static class PaymentCompletionService
 
             if (companySub != null)
             {
+                var existingActive = await context.CompanySubscriptions
+                    .Where(s => s.CompanyId == companySub.CompanyId && s.Status == "Active" && s.EndDate > DateTime.Today && s.CompanySubscriptionId != companySub.CompanySubscriptionId)
+                    .OrderByDescending(s => s.EndDate)
+                    .FirstOrDefaultAsync();
+
+                var startDate = existingActive != null ? existingActive.EndDate : DateTime.Today;
+                var durationMonths = companySub.PlanName.Contains("Tahunan", StringComparison.OrdinalIgnoreCase) ? 12 : 1;
+
                 companySub.Status = "Active";
-                companySub.StartDate = DateTime.Today;
-                companySub.EndDate = DateTime.Today.AddMonths(
-                    companySub.PlanName.Contains("Tahunan", StringComparison.OrdinalIgnoreCase) ? 12 : 1);
+                companySub.StartDate = startDate;
+                companySub.EndDate = startDate.AddMonths(durationMonths);
 
                 var company = companySub.Company
                     ?? await context.Companies.FindAsync(companySub.CompanyId);

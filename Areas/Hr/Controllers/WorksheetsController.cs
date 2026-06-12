@@ -44,7 +44,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 .Include(p => p.User)
                 .Where(p => p.CompanyId == companyId && p.EmploymentStatus == "active")
                 .OrderBy(p => p.User!.FullName)
-                .Select(p => new HrSimplePatient { PatientId = p.PatientId, FullName = p.User!.FullName, Department = p.Department })
+                .Select(p => new HrSimplePatient { PatientId = p.PatientId, FullName = p.User!.FullName, Department = p.Division != null ? p.Division.Name : "Belum Diatur" })
                 .ToListAsync();
 
             var q = _context.Worksheets
@@ -190,7 +190,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 ProposedTaskName = model.ProposedTaskName,
                 ProposedDeadline = model.ProposedDeadline,
                 Status = "Pending",
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
 
@@ -208,13 +208,14 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             var patients = await _context.Patients
                 .Include(p => p.User)
-                .Where(p => p.CompanyId == hr.CompanyId && p.EmploymentStatus == "active")
+                .Include(p => p.Division)
+                .Where(p => p.CompanyId == hr.CompanyId.Value && p.EmploymentStatus == "active")
                 .OrderBy(p => p.User!.FullName)
                 .Select(p => new HrSimplePatient
                 {
                     PatientId = p.PatientId,
                     FullName = p.User!.FullName,
-                    Department = p.Department
+                    Department = p.Division != null ? p.Division.Name : "Belum Diatur"
                 })
                 .ToListAsync();
 
@@ -256,7 +257,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 ProposedTaskName = model.ProposedTaskName,
                 ProposedDeadline = model.ProposedDeadline,
                 Status = "Pending",
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan worksheet dikirim ke psikolog terkait.";

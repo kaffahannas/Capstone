@@ -86,14 +86,9 @@ public class SubscriptionController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        if (patient.CompanyId != null)
+        if (patient.CompanyId != null && await _access.HasCompanyActiveSubscriptionAsync(patient.CompanyId.Value))
         {
-            if (await _access.HasCompanyActiveSubscriptionAsync(patient.CompanyId.Value))
-            {
-                TempData["success"] = "Langganan perusahaan Anda masih aktif — tidak perlu bayar mandiri.";
-                return RedirectToAction(nameof(Index));
-            }
-            TempData["error"] = "Langganan perusahaan telah berakhir. HR perlu memperpanjang paket, atau Anda dapat berlangganan mandiri di bawah.";
+            TempData["success"] = "Langganan perusahaan Anda masih aktif — tidak perlu bayar mandiri.";
             return RedirectToAction(nameof(Index));
         }
 

@@ -32,15 +32,14 @@
 <!-- ── Toolbar ── -->
 <form method="get" class="adm-toolbar">
     <div class="adm-toolbar-search">
-        <svg class="adm-toolbar-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="search" name="search" placeholder="Cari nama atau email..." value="@Model.Search" />
+        <svg class="adm-toolbar-search-icon usr-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" name="search" placeholder="Cari nama atau email..." value="@Model.Search" class="usr-search-input" />
     </div>
     <select name="role">
         <option value="">Semua Role</option>
         <option value="Patient"       selected="@(Model.Role == "Patient")">Pasien</option>
         <option value="Psychologist"  selected="@(Model.Role == "Psychologist")">Psikolog</option>
         <option value="HR"            selected="@(Model.Role == "HR")">HR</option>
-        <option value="Admin"         selected="@(Model.Role == "Admin")">Admin</option>
     </select>
     <select name="status">
         <option value="">Semua Status</option>
@@ -58,7 +57,7 @@
     }
 </form>
 
-<div class="adm-count-label" style="margin-bottom:14px;">
+<div class="adm-count-label usr-count-label">
     Menampilkan <strong>@Model.Items.Count</strong> dari <strong>@Model.TotalCount</strong> pengguna
 </div>
 
@@ -74,54 +73,44 @@
 }
 else
 {
-    <div class="adm-table-wrap">
-        <table class="adm-table">
-            <thead>
-                <tr>
-                    <th>Pengguna</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Bergabung</th>
-                    <th style="width:80px;"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var u in Model.Items)
-                {
-                    <tr>
-                        <td>
-                            <div class="adm-user-cell">
-                                <div class="adm-avatar-sm">@Initials(u.FullName)</div>
-                                <div>
-                                    <div style="font-weight:600; font-size:13.5px;">@u.FullName</div>
-                                    <div style="font-size:12px; color:var(--adm-muted);">@u.Email</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="badge @RoleBadgeClass(u.Role)">@RoleLabel(u.Role)</span></td>
-                        <td>
-                            @if (!u.IsApprovedByAdmin)
-                            { <span class="badge badge-pending">⏳ Pending</span> }
-                            else if (u.IsActive)
-                            { <span class="badge badge-active">● Aktif</span> }
-                            else
-                            { <span class="badge badge-inactive">○ Nonaktif</span> }
-                        </td>
-                        <td style="font-size:12px; color:var(--adm-muted);">
-                            @(u.CreatedAt.HasValue ? u.CreatedAt.Value.ToString("d MMM yyyy") : "—")
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-secondary" asp-action="Detail" asp-route-id="@u.UserId">Detail</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="usr-cards-container">
+        @foreach (var u in Model.Items)
+        {
+            <div class="usr-card">
+                <div class="usr-card-main">
+                    <div class="usr-avatar">@Initials(u.FullName)</div>
+                    <div class="usr-info">
+                        <div class="usr-name-primary">@u.FullName</div>
+                        <div class="usr-name-secondary">@u.Email</div>
+                    </div>
+                </div>
+                
+                <div class="usr-card-badges">
+                    <span class="usr-badge @RoleBadgeClass(u.Role)">@RoleLabel(u.Role)</span>
+                    @if (!u.IsApprovedByAdmin)
+                    {
+                        <span class="usr-badge badge-pending">⏳ Pending</span>
+                    }
+                    else if (u.IsActive)
+                    {
+                        <span class="usr-badge badge-active">● Aktif</span>
+                    }
+                    else
+                    {
+                        <span class="usr-badge badge-inactive">○ Nonaktif</span>
+                    }
+                </div>
+                
+                <div class="usr-card-action">
+                    <a class="btn btn-sm btn-secondary" asp-action="Detail" asp-route-id="@u.UserId">Detail</a>
+                </div>
+            </div>
+        }
     </div>
 
     @if (totalPages > 1)
     {
-        <div class="adm-pagination">
+        <div class="adm-pagination usr-pagination">
             @if (Model.Page > 1)
             {
                 <a class="btn btn-sm btn-secondary"

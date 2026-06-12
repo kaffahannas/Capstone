@@ -2,13 +2,13 @@
     ViewData["Title"] = "Pembayaran berhasil";
     ViewBag.ActiveNav = "Langganan";
 }
-<div class="lu-card" style="text-align: center; padding: 40px;">
-    <div style="font-size: 48px;">&#10003;</div>
+<div class="lu-card hrln-success-card">
+    <div class="hrln-success-icon">&#10003;</div>
     <h2>Pembayaran berhasil</h2>
     <p>Paket <strong>@ViewBag.PlanName</strong> perusahaan sudah aktif.</p>
     @if (ViewBag.ReferralCode is string code && !string.IsNullOrEmpty(code))
     {
-        <p style="margin-top: 12px;">Kode referral karyawan: <strong style="color:#7C3AED; letter-spacing:1px;">@code</strong></p>
+        <p class="hrln-success-code">Kode referral karyawan: <strong>@code</strong></p>
     }
-    <a asp-controller="Home" asp-action="Index" class="btn btn-primary" style="margin-top: 16px;">Ke Dashboard HR</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary hrln-success-btn">Ke Dashboard HR</a>
 </div>

@@ -1,0 +1,66 @@
+@model LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Tambah Jadwal";
+}
+
+<a href="/Psychologist/Schedule/Scheduling" class="back-link">← Kembali ke Jadwal</a>
+
+<div class="dashboard-header as-header">
+    <div>
+        <h1 class="text-header">Tambah Jadwal Konseling</h1>
+        <p class="text-subtitle">Buat jadwal sesi baru untuk salah satu pasien aktif Anda.</p>
+    </div>
+</div>
+
+<div class="as-card">
+    <form asp-action="AddSchedule" method="post">
+        <div asp-validation-summary="ModelOnly" class="as-validation"></div>
+
+        <div class="form-group as-field">
+            <label class="form-label">Pasien</label>
+            <select asp-for="PatientId" class="form-control as-input">
+                <option value="0">-- Pilih Pasien --</option>
+                @foreach (var p in Model.AvailablePatients)
+                {
+                    <option value="@p.PatientId">@p.FullName @(p.CompanyName != null ? "(" + p.CompanyName + ")" : "")</option>
+                }
+            </select>
+            <span asp-validation-for="PatientId" class="as-field-error"></span>
+        </div>
+
+        <div class="as-datetime-grid">
+            <div class="form-group">
+                <label class="form-label">Tanggal</label>
+                <input asp-for="SessionDate" type="date" class="form-control as-input" />
+                <span asp-validation-for="SessionDate" class="as-field-error"></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Jam</label>
+                <input asp-for="SessionTime" type="time" class="form-control as-input" />
+                <span asp-validation-for="SessionTime" class="as-field-error"></span>
+            </div>
+        </div>
+
+        <div class="form-group as-field">
+            <label class="form-label">Durasi (menit)</label>
+            <input asp-for="DurationMinutes" type="number" min="15" max="240" class="form-control as-input" />
+        </div>
+
+        <div class="form-group as-field">
+            <label class="as-label-block">Link Meeting (Opsional)</label>
+            <input asp-for="MeetingLink" type="url" class="form-control as-input" placeholder="https://meet.google.com/..." />
+            <span asp-validation-for="MeetingLink" class="as-field-error"></span>
+        </div>
+
+        <div class="form-group as-field">
+            <label class="form-label">Deskripsi kegiatan</label>
+            <textarea asp-for="Notes" rows="3" class="form-control as-input as-input--textarea" placeholder="Mis. General Counseling, Review Worksheet, dll."></textarea>
+        </div>
+
+        <div class="as-actions">
+            <a href="/Psychologist/Schedule/Scheduling" class="as-btn-cancel">Batalkan</a>
+            <button type="submit" class="as-btn-submit">Simpan</button>
+        </div>
+    </form>
+</div>

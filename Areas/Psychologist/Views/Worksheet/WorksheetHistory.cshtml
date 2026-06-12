@@ -1,0 +1,88 @@
+@using LightenUp.Web.Models
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Riwayat Worksheet";
+
+    var worksheets = ViewBag.Worksheets as List<Worksheet> ?? new List<Worksheet>();
+    string? companyName = Context.Request.Query["company"].FirstOrDefault();
+    string backUrl = string.IsNullOrEmpty(companyName) ? "/Psychologist/Index" : $"/Psychologist/CompanyDetail?companyName={Uri.EscapeDataString(companyName!)}";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    string StatusClass(string status) => status switch
+    {
+        "Assigned" => "wh-status--assigned",
+        "InProgress" => "wh-status--progress",
+        "Completed" => "wh-status--completed",
+        _ => "wh-status--completed"
+    };
+
+    (string label, string css) MapStatus(string status) => status switch
+    {
+        "Assigned" => ("Belum Selesai", StatusClass(status)),
+        "InProgress" => ("On Progress", StatusClass(status)),
+        "Completed" => ("Selesai", StatusClass(status)),
+        _ => (status, StatusClass(status))
+    };
+}
+
+<a href="@backUrl" class="back-link">← Kembali ke @(string.IsNullOrEmpty(companyName) ? "Beranda" : "Detail Perusahaan")</a>
+
+<div class="dashboard-header wh-header">
+    <div>
+        <h1 class="text-header">Riwayat Worksheet</h1>
+        <p class="text-subtitle">Pantau seluruh riwayat dan progres tugas worksheet client Anda.</p>
+    </div>
+</div>
+
+@if (TempData["success"] is string ok)
+{
+    <div class="lu-alert-success">@ok</div>
+}
+
+<div class="patient-list-container">
+    <div class="wh-toolbar">
+        <div class="wh-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-purple)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="wsSearch" placeholder="Cari berdasarkan tugas atau nama..." class="wh-search-input" />
+        </div>
+        <a href="@Url.Action("Worksheet", "Worksheet", new { add = true })" class="wh-add-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Tambah Tugas
+        </a>
+    </div>
+
+    @if (!worksheets.Any())
+    {
+        <div class="wh-empty">
+            Belum ada worksheet.
+        </div>
+    }
+    else
+    {
+        <div id="wsList" class="wh-list">
+            @foreach (var w in worksheets)
+            {
+                var (label, css) = MapStatus(w.Status);
+                var name = (w.Patient?.User?.FullName ?? "").ToLowerInvariant();
+                var task = (w.TaskName ?? "").ToLowerInvariant();
+                <a class="history-card wh-card-link" href="@Url.Action("ReviewWorksheet", "Worksheet", new { id = w.WorksheetId })" data-search="@name @task">
+                    <div>
+                        <h3>@w.TaskName</h3>
+                        <p>@w.Deadline.ToString("d MMMM yyyy", idCulture) · @(w.Patient?.User?.FullName ?? "—")</p>
+                        <p class="wh-status @css">Status : @label</p>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    const input = document.getElementById('wsSearch');
+    if (input) input.addEventListener('input', () => {
+        const q = input.value.trim().toLowerCase();
+        document.querySelectorAll('#wsList .history-card').forEach(c => {
+            c.style.display = c.dataset.search.includes(q) ? '' : 'none';
+        });
+    });
+</script>

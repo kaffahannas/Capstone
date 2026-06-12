@@ -4,73 +4,70 @@
     ViewBag.ActiveNav = "Jadwal";
 }
 
-<div style="display: flex; flex-direction: column; height: calc(100vh - 120px);">
+<div class="jdw-page">
 
-<div class="tasks-hero" style="flex-shrink: 0; background: linear-gradient(135deg, #312E81 0%, #4338CA 100%); color: white; padding: 32px; border-radius: 20px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(49, 46, 129, 0.2); position: relative; overflow: hidden;">
-    <div style="position: absolute; right: -20px; top: -40px; opacity: 0.1; font-size: 150px; user-select: none;">🗓️</div>
-    <div style="position: relative; z-index: 1;">
-        <h1 style="margin: 0 0 8px; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-            <span style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 8px; font-size: 24px; line-height: 1;">📅</span>
+<div class="jdw-hero">
+    <div class="jdw-hero-deco">🗓️</div>
+    <div class="jdw-hero-inner">
+        <h1 class="jdw-hero-title">
+            <span class="jdw-hero-icon">📅</span>
             Jadwal Konseling
         </h1>
-        <p style="margin: 0; font-size: 15px; opacity: 0.9;">Lihat dan kelola jadwal sesi konselingmu dengan Psikolog.</p>
+        <p class="jdw-hero-sub">Lihat dan kelola jadwal sesi konselingmu dengan Psikolog.</p>
         @if (Model.HasActivePsychologist)
         {
-            <button type="button" onclick="openRequestSessionModal()"
-               style="display:inline-block;margin-top:16px;padding:10px 22px;background:rgba(255,255,255,.95);color:#4338CA;border-radius:999px;font-weight:600;font-size:14px;border:none;cursor:pointer;font-family:inherit;transition:all 0.2s;"
-               onmouseover="this.style.background='#fff';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)';" onmouseout="this.style.background='rgba(255,255,255,.95)';this.style.boxShadow='none';">
+            <button type="button" class="jdw-hero-btn" onclick="openRequestSessionModal()">
                 + Minta Jadwal Sesi ke Psikolog
             </button>
         }
         else
         {
-            <a asp-action="Index" asp-controller="Psychologists" asp-area="Patient"
-               style="display:inline-block;margin-top:16px;padding:10px 22px;background:rgba(255,255,255,.95);color:#4338CA;border-radius:999px;font-weight:600;font-size:14px;text-decoration:none;opacity:0.9;">
+            <a asp-action="Index" asp-controller="Psychologists" asp-area="Patient" class="jdw-hero-btn jdw-hero-btn--muted">
                 Cari Psikolog Dulu
             </a>
         }
     </div>
 </div>
 
-<div class="tasks-container" style="flex: 1; min-height: 0; background: #ffffff; border-radius: 24px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
+<div class="jdw-container">
     
-    <h3 style="flex-shrink: 0; font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-        <span style="color: var(--lu-primary);">✨</span> Sesi Mendatang
+    <h3 class="jdw-section-title">
+        <span class="jdw-section-ico">✨</span> Sesi Mendatang
     </h3>
 
     @if (!Model.UpcomingSessions.Any())
     {
-        <div class="dash-card-empty" style="background: #F9FAFB; padding: 32px; text-align: center; border-radius: 16px; margin-bottom: 32px;">
-            <p style="color: var(--lu-text-muted); margin: 0;">Belum ada jadwal sesi mendatang.</p>
+        <div class="dash-card-empty jdw-empty jdw-empty--upcoming">
+            <p class="jdw-empty-text">Belum ada jadwal sesi mendatang.</p>
         </div>
     }
     else
     {
-        <div class="custom-scroll" style="flex: 2; min-height: 150px; display: block; margin-bottom: 32px; overflow-y: auto; padding-right: 8px;">
+        <div class="custom-scroll jdw-scroll--upcoming">
             @foreach (var s in Model.UpcomingSessions)
             {
-                <div style="border: 1px solid var(--lu-border); border-radius: 16px; padding: 24px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s ease; margin-bottom: 16px;">
-                    <div style="display: flex; gap: 20px; align-items: center;">
-                        <div style="background: var(--lu-primary-soft); color: var(--lu-primary); width: 60px; height: 60px; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase;">@s.SessionStart.ToString("MMM")</span>
-                            <span style="font-size: 24px; font-weight: 700; line-height: 1;">@s.SessionStart.ToString("dd")</span>
+                <div class="jdw-session-card">
+                    <div class="jdw-session-left">
+                        <div class="jdw-date-box">
+                            <span class="jdw-date-month">@s.SessionStart.ToString("MMM")</span>
+                            <span class="jdw-date-day">@s.SessionStart.ToString("dd")</span>
                         </div>
                         <div>
-                            <h4 style="margin: 0 0 4px; font-size: 18px; font-weight: 600;">Sesi Konseling - @s.PsychologistName</h4>
-                            <div style="display: flex; gap: 12px; color: var(--lu-text-muted); font-size: 14px;">
-                                <span style="display: flex; align-items: center; gap: 4px;">⏰ @s.SessionStart.ToString("HH:mm") WIB (@s.DurationMinutes menit)</span>
-                                <span style="display: flex; align-items: center; gap: 4px; color: #10B981; font-weight: 500;">🟢 @s.Status</span>
+                            <h4 class="jdw-session-title">Sesi Konseling - @s.PsychologistName</h4>
+                            <div class="jdw-session-meta">
+                                <span class="jdw-meta-item">⏰ @s.SessionStart.ToString("HH:mm") WIB (@s.DurationMinutes menit)</span>
+                                <span class="jdw-meta-item jdw-meta-status">🟢 @s.Status</span>
                             </div>
                         </div>
                     </div>
                     <div>
                         @if (!string.IsNullOrEmpty(s.MeetingLink))
                         {
-                            <a href="@s.MeetingLink" target="_blank" style="display: inline-block; padding: 10px 24px; border-radius: 999px; text-decoration: none; font-weight: 500; background: var(--lu-primary); color: white;">Join Meeting</a>
+                            <a href="@s.MeetingLink" target="_blank" class="jdw-join-btn">Join Meeting</a>
                         }
                         else
                         {
-                            <button disabled style="padding: 10px 24px; border-radius: 999px; opacity: 0.5; cursor: not-allowed; background: #E5E7EB; color: #6B7280; border: none; font-weight: 500; font-family: inherit;">Link Belum Tersedia</button>
+                            <button disabled class="jdw-join-btn--disabled">Link Belum Tersedia</button>
                         }
                     </div>
                 </div>
@@ -78,27 +75,27 @@
         </div>
     }
 
-    <h3 style="flex-shrink: 0; font-size: 18px; font-weight: 600; margin-bottom: 20px; padding-top: 24px; border-top: 1px solid var(--lu-border);">
+    <h3 class="jdw-section-title jdw-section-title--past">
         Riwayat Sesi
     </h3>
 
     @if (!Model.PastSessions.Any())
     {
-        <div class="dash-card-empty" style="background: #F9FAFB; padding: 32px; text-align: center; border-radius: 16px;">
-            <p style="color: var(--lu-text-muted); margin: 0;">Belum ada riwayat sesi.</p>
+        <div class="dash-card-empty jdw-empty">
+            <p class="jdw-empty-text">Belum ada riwayat sesi.</p>
         </div>
     }
     else
     {
-        <div class="custom-scroll" style="flex: 1; min-height: 100px; display: block; overflow-y: auto; padding-right: 8px;">
+        <div class="custom-scroll jdw-scroll--past">
             @foreach (var s in Model.PastSessions)
             {
-                <div style="border: 1px solid var(--lu-border); border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: #F9FAFB; margin-bottom: 12px;">
+                <div class="jdw-past-card">
                     <div>
-                        <h4 style="margin: 0 0 4px; font-size: 15px; font-weight: 600;">Sesi Konseling - @s.PsychologistName</h4>
-                        <p style="margin: 0; font-size: 13px; color: var(--lu-text-muted);">@s.SessionStart.ToString("dd MMM yyyy, HH:mm") WIB</p>
+                        <h4 class="jdw-past-title">Sesi Konseling - @s.PsychologistName</h4>
+                        <p class="jdw-past-date">@s.SessionStart.ToString("dd MMM yyyy, HH:mm") WIB</p>
                     </div>
-                    <span style="font-size: 13px; font-weight: 500; padding: 4px 12px; border-radius: 999px; background: #E5E7EB; color: #4B5563;">@s.Status</span>
+                    <span class="jdw-past-status">@s.Status</span>
                 </div>
             }
         </div>
@@ -109,7 +106,7 @@
 
 @if (TempData["success"] is string okMsg)
 {
-    <div style="position:fixed;bottom:28px;right:24px;background:#065F46;color:#fff;padding:14px 22px;border-radius:14px;font-size:14px;font-weight:500;box-shadow:0 8px 24px rgba(6,95,70,0.25);z-index:9999;display:flex;align-items:center;gap:10px;">
+    <div class="jdw-toast jdw-toast--success">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         @okMsg
     </div>
@@ -117,7 +114,7 @@
 
 @if (TempData["info"] is string infoMsg)
 {
-    <div style="position:fixed;bottom:28px;right:24px;background:#1E3A5F;color:#fff;padding:14px 22px;border-radius:14px;font-size:14px;font-weight:500;box-shadow:0 8px 24px rgba(30,58,95,0.3);z-index:9999;display:flex;align-items:center;gap:10px;">
+    <div class="jdw-toast jdw-toast--info">
         ℹ️ @infoMsg
     </div>
 }

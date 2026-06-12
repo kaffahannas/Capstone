@@ -1,14 +1,13 @@
-@using LightenUp.Web.Models
 @model LightenUp.Web.Models.ViewModels.PsyRequestsViewModel
 @{
     ViewData["Title"] = "Permintaan & Inbox";
     Layout = "_LayoutDashboard";
     var idCulture = new System.Globalization.CultureInfo("id-ID");
-    var pendingAssignments = ViewBag.PendingAssignments as List<PatientPsychologistAssignment> ?? new List<PatientPsychologistAssignment>();
 
-    var countWorksheet = Model.Items.Count(i => i.RequestType == "Worksheet");
-    var countSchedule  = Model.Items.Count(i => i.RequestType == "Schedule");
-    var total          = Model.Items.Count;
+    var countWorksheet  = Model.Items.Count(i => i.RequestType == "Worksheet");
+    var countSchedule   = Model.Items.Count(i => i.RequestType == "Schedule");
+    var countAssignment = Model.Items.Count(i => i.RequestType == "Assignment");
+    var total           = Model.Items.Count;
 
     string TabLabel(string t) => t switch {
         "Pending"  => "Menunggu",
@@ -19,34 +18,6 @@
 }
 
 <div class="req-page">
-
-@* ── Patient assignment requests section ── *@
-@if (pendingAssignments.Any())
-{
-    <div style="background:#fffbeb; border:1px solid #fcd34d; border-radius:12px; padding:20px; margin-bottom:24px;">
-        <h3 style="margin:0 0 12px; font-size:16px;">🙋 Permintaan Pasien Memilih Anda (@pendingAssignments.Count)</h3>
-        @foreach (var a in pendingAssignments)
-        {
-            <div style="background:#fff; border-radius:10px; padding:16px; margin-bottom:12px; display:flex; align-items:center; gap:16px;">
-                <div style="flex:1;">
-                    <strong>@(a.Patient?.User?.FullName ?? "—")</strong>
-                    <span style="color:#6b7280; font-size:13px; margin-left:8px;">(@(a.Patient?.Company != null ? a.Patient.Company.Name : "Publik B2C"))</span>
-                    <div style="color:#6b7280; font-size:12px; margin-top:4px;">
-                        Diminta: @a.AssignedAt.ToString("dd MMM yyyy")
-                    </div>
-                </div>
-                <form asp-action="AcceptAssignment" method="post" class="d-inline">
-                    <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
-                    <button type="submit" style="background:#065f46; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-right:8px;" onclick="return confirm('Terima permintaan pasien ini?')">✔ Terima</button>
-                </form>
-                <form asp-action="RejectAssignment" method="post" class="d-inline">
-                    <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
-                    <button type="submit" style="background:#7f1d1d; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer;" onclick="return confirm('Tolak permintaan pasien ini?')">✕ Tolak</button>
-                </form>
-            </div>
-        }
-    </div>
-}
 
 @* ── Hero ── *@
 <div class="req-hero">
@@ -68,6 +39,13 @@
             <span class="req-hero-stat-val">@countSchedule</span>
             <span class="req-hero-stat-lbl">Jadwal</span>
         </div>
+        @if (countAssignment > 0)
+        {
+            <div class="req-hero-stat req-hero-stat--assign">
+                <span class="req-hero-stat-val">@countAssignment</span>
+                <span class="req-hero-stat-lbl">Pasien</span>
+            </div>
+        }
     </div>
 </div>
 
@@ -125,17 +103,18 @@
             }
         </div>
         <p class="req-empty-title">Tidak ada permintaan @TabLabel(Model.Tab).ToLower()</p>
-        <p class="req-empty-sub">Permintaan baru dari HR akan muncul di sini.</p>
+        <p class="req-empty-sub">Permintaan baru dari HR atau pasien akan muncul di sini.</p>
     </div>
 }
 else
 {
     @foreach (var r in Model.Items)
     {
-        var initial    = r.PatientName.Length > 0 ? r.PatientName.Substring(0, 1).ToUpper() : "?";
-        var hrInitial  = r.HrName.Length > 0 ? r.HrName.Substring(0, 1).ToUpper() : "?";
-        var isWorksheet = r.RequestType == "Worksheet";
-        var isPending   = r.Status == "Pending";
+        var initial       = r.PatientName.Length > 0 ? r.PatientName.Substring(0, 1).ToUpper() : "?";
+        var hrInitial     = r.HrName.Length > 0 ? r.HrName.Substring(0, 1).ToUpper() : "?";
+        var isWorksheet   = r.RequestType == "Worksheet";
+        var isAssignment  = r.RequestType == "Assignment";
+        var isPending     = r.Status == "Pending";
         var statusClass = r.Status switch { "Approved" => "approved", "Rejected" => "rejected", _ => "pending" };
         var statusLabel = r.Status switch { "Approved" => "Disetujui", "Rejected" => "Ditolak", _ => "Menunggu" };
 
@@ -147,8 +126,13 @@ else
                 @* Top row: type chip + id + status *@
                 <div class="req-card-top">
                     <div class="req-card-top-left">
-                        <span class="req-type-chip req-type-chip--@(isWorksheet ? "ws" : "sch")">
-                            @if (isWorksheet)
+                        <span class="req-type-chip req-type-chip--@(isAssignment ? "assign" : isWorksheet ? "ws" : "sch")">
+                            @if (isAssignment)
+                            {
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                @:Pasien Memilih Anda
+                            }
+                            else if (isWorksheet)
                             {
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                                 @:Worksheet
@@ -172,29 +156,51 @@ else
                 </div>
 
                 @* Patient + HR info *@
-                <div class="req-card-parties">
-                    <div class="req-party">
-                        <div class="req-party-av req-party-av--patient">@initial</div>
-                        <div class="req-party-info">
-                            <span class="req-party-name">@r.PatientName</span>
-                            <span class="req-party-meta">Pasien · @r.CompanyName</span>
+                @if (isAssignment)
+                {
+                    <div class="req-card-parties req-card-parties--single">
+                        <div class="req-party">
+                            <div class="req-party-av req-party-av--patient">@initial</div>
+                            <div class="req-party-info">
+                                <span class="req-party-name">@r.PatientName</span>
+                                <span class="req-party-meta">Pasien · @r.CompanyName</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="req-party-sep">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-                    </div>
-                    <div class="req-party">
-                        <div class="req-party-av req-party-av--hr">@hrInitial</div>
-                        <div class="req-party-info">
-                            <span class="req-party-name">@r.HrName</span>
-                            <span class="req-party-meta">HR · @r.CompanyName</span>
+                }
+                else
+                {
+                    <div class="req-card-parties">
+                        <div class="req-party">
+                            <div class="req-party-av req-party-av--patient">@initial</div>
+                            <div class="req-party-info">
+                                <span class="req-party-name">@r.PatientName</span>
+                                <span class="req-party-meta">Pasien · @r.CompanyName</span>
+                            </div>
+                        </div>
+                        <div class="req-party-sep">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="req-party">
+                            <div class="req-party-av req-party-av--hr">@hrInitial</div>
+                            <div class="req-party-info">
+                                <span class="req-party-name">@r.HrName</span>
+                                <span class="req-party-meta">HR · @r.CompanyName</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
 
                 @* Proposed details *@
                 <div class="req-details">
-                    @if (isWorksheet)
+                    @if (isAssignment)
+                    {
+                        <div class="req-detail-row">
+                            <span class="req-detail-label">Jenis Permintaan</span>
+                            <span class="req-detail-val">Pasien memilih Anda sebagai psikolog</span>
+                        </div>
+                    }
+                    else if (isWorksheet)
                     {
                         <div class="req-detail-row">
                             <span class="req-detail-label">Nama Tugas</span>
@@ -230,7 +236,28 @@ else
                 </div>
 
                 @* Action area *@
-                @if (isPending)
+                @if (isPending && isAssignment)
+                {
+                    <div class="req-action-form">
+                        <div class="req-action-btns">
+                            <form asp-action="RejectAssignment" method="post" class="d-inline">
+                                <input type="hidden" name="assignmentId" value="@r.AssignmentId" />
+                                <button type="submit" class="req-btn req-btn--reject" onclick="return confirm('Tolak permintaan pasien ini?')">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    Tolak
+                                </button>
+                            </form>
+                            <form asp-action="AcceptAssignment" method="post" class="d-inline">
+                                <input type="hidden" name="assignmentId" value="@r.AssignmentId" />
+                                <button type="submit" class="req-btn req-btn--approve" onclick="return confirm('Terima permintaan pasien ini?')">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                    Terima
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else if (isPending)
                 {
                     <form asp-action="Respond" method="post" class="req-action-form">
                         @Html.AntiForgeryToken()

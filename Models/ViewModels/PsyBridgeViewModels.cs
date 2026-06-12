@@ -6,7 +6,9 @@ namespace LightenUp.Web.Models.ViewModels
     public class PsyRequestListItem
     {
         public int Id { get; set; }
-        public string RequestType { get; set; } = "";   // Worksheet / Schedule
+        /// <summary>Set when <see cref="RequestType"/> is Assignment — use for Accept/Reject actions.</summary>
+        public int? AssignmentId { get; set; }
+        public string RequestType { get; set; } = "";   // Worksheet / Schedule / Assignment
         public string PatientName { get; set; } = "";
         public string CompanyName { get; set; } = "";
         public string HrName { get; set; } = "";
@@ -23,6 +25,11 @@ namespace LightenUp.Web.Models.ViewModels
     {
         public string Tab { get; set; } = "Pending";
         public List<PsyRequestListItem> Items { get; set; } = new();
+    }
+
+    public class PsyNavBadgesViewModel
+    {
+        public int Count { get; set; }
     }
 
     public class PsyRespondViewModel

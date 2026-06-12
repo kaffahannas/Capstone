@@ -1,0 +1,91 @@
+@model LightenUp.Web.Models.Schedule
+@{
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+    var startTime = Model.SessionStart.ToString("HH:mm", idCulture);
+    var endTime = Model.SessionStart.AddMinutes(Model.DurationMinutes).ToString("HH:mm", idCulture);
+    var fullDate = Model.SessionStart.ToString("dddd, d MMMM yyyy", idCulture);
+    
+    var statusClass = Model.Status switch
+    {
+        "Completed" => "completed",
+        "Cancelled" => "cancelled",
+        _ => "scheduled"
+    };
+
+    var statusLabel = Model.Status switch
+    {
+        "Completed" => "Selesai",
+        "Cancelled" => "Dibatalkan",
+        _ => "Akan Datang"
+    };
+}
+
+<div class="modal-container sdm-modal">
+    <div class="modal-header sdm-header">
+        <h2 class="modal-title sdm-title">Detail Jadwal Konseling</h2>
+        <button class="close-btn" onclick="closeScheduleDetailModal()">&times;</button>
+    </div>
+
+    <div class="sdm-body">
+        <div class="sdm-top">
+            <div class="sdm-patient-row">
+                <div class="sdm-avatar">
+                    @(Model.Patient?.User?.FullName?.Length > 0 ? Model.Patient.User.FullName.Substring(0, 1).ToUpper() : "?")
+                </div>
+                <div>
+                    <div class="sdm-patient-name">@(Model.Patient?.User?.FullName ?? "—")</div>
+                    <div class="sdm-patient-co">@(Model.Patient?.Company?.Name ?? "Perusahaan belum diatur")</div>
+                </div>
+            </div>
+            <span class="psy-status-chip psy-status--@statusClass">@statusLabel</span>
+        </div>
+
+        <div class="sdm-meta-grid">
+            <div>
+                <div class="sdm-meta-label">Tanggal</div>
+                <div class="sdm-meta-val">@fullDate</div>
+            </div>
+            <div>
+                <div class="sdm-meta-label">Waktu & Durasi</div>
+                <div class="sdm-meta-val">@startTime - @endTime WIB (@Model.DurationMinutes mnt)</div>
+            </div>
+        </div>
+        
+        @if (!string.IsNullOrEmpty(Model.MeetingLink))
+        {
+            <div class="sdm-field">
+                <div class="sdm-field-label">Link Google Meet</div>
+                <a href="@Model.MeetingLink" target="_blank" rel="noopener" class="sdm-meet-link">@Model.MeetingLink</a>
+            </div>
+        }
+        
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div class="sdm-field">
+                <div class="sdm-field-label">Catatan Tambahan</div>
+                <div class="sdm-notes-box">
+                    @Model.Notes
+                </div>
+            </div>
+        }
+
+        <div class="sdm-actions">
+            <button type="button" class="btn-outline sdm-action-btn sdm-action-btn--close" onclick="closeScheduleDetailModal()">Tutup</button>
+            @if (Model.Status != "Cancelled" && Model.Status != "Completed")
+            {
+                <form asp-action="CancelSchedule" asp-area="Psychologist" asp-controller="Schedule" asp-route-id="@Model.ScheduleId" method="post" class="sdm-cancel-form">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-outline sdm-action-btn sdm-action-btn--cancel" onclick="return confirm('Apakah Anda yakin ingin membatalkan jadwal ini?');">
+                        Batalkan Jadwal
+                    </button>
+                </form>
+            }
+            <a href="@Url.Action("EditSchedule", "Schedule", new { id = Model.ScheduleId })" class="btn-outline sdm-action-btn sdm-action-btn--edit">
+                Edit Jadwal
+            </a>
+            <a href="@Url.Action("PatientScheduleHistory", "Schedule", new { id = Model.PatientId })" class="btn-fill sdm-action-btn">
+                Lihat Riwayat Lengkap Klien
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+.pending-card {
+    max-width: 520px;
+    margin: 80px auto;
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.pending-icon {
+    width: 80px;
+    height: 80px;
+    background: #FEF3C7;
+    color: #B45309;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-size: 36px;
+    margin: 0 auto 20px;
+}
+
+.pending-steps {
+    text-align: left;
+    margin: 24px 0;
+    padding: 16px 20px;
+    background: #F9FAFB;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.7;
+}
+
+.pending-steps strong {
+    color: #111;
+}
+
+.pending-title {
+    font-size: 24px;
+    margin: 0 0 8px;
+}
+
+.pending-desc {
+    color: #6B7280;
+    margin: 0 0 8px;
+}
+
+.pending-steps-list {
+    margin: 8px 0 0;
+    padding-left: 18px;
+}
+
+.pending-help {
+    font-size: 12px;
+    color: #9CA3AF;
+    margin: 0 0 24px;
+}
+
+.pending-help-link {
+    color: #7C3AED;
+}
+
+.pending-logout-btn {
+    padding: 12px 32px;
+    background: #7C3AED;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+}

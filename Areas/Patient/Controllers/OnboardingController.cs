@@ -418,7 +418,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 }
 
                 patient.CompanyId = division.CompanyId;
-                patient.Department = division.Name;
+                patient.DivisionId = division.DivisionId;
 
                 // Auto-claim a PendingEmployee row (HR pre-registered this email) and copy EmployeeId.
                 var user = await _userManager.GetUserAsync(User);
@@ -430,10 +430,12 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                             && pe.ClaimedByPatientId == null);
                     if (pending != null)
                     {
-                        patient.Department = pending.Department;
-                        patient.EmployeeId = pending.EmployeeId;
+                        if (pending.DivisionId != null)
+                            patient.DivisionId = pending.DivisionId;
+                        if (!string.IsNullOrWhiteSpace(pending.EmployeeId))
+                            patient.EmployeeId = pending.EmployeeId;
                         pending.ClaimedByPatientId = patient.PatientId;
-                        pending.ClaimedAt = DateTime.Now;
+                        pending.ClaimedAt = DateTime.UtcNow;
                     }
                 }
 

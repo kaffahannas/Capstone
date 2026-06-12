@@ -1,0 +1,159 @@
+@using LightenUp.Web.Models
+@using LightenUp.Web.Models.ViewModels
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Riwayat Worksheet – " + ViewBag.PatientName;
+
+    var worksheets = ViewBag.Worksheets as List<Worksheet> ?? new List<Worksheet>();
+    var patientId  = (int)(ViewBag.PatientId ?? 0);
+    var idCulture  = new System.Globalization.CultureInfo("id-ID");
+
+    var total     = worksheets.Count;
+    var completed = worksheets.Count(w => w.Status == "Completed");
+    var review    = worksheets.Count(w => w.Status == "InProgress");
+    var assigned  = worksheets.Count(w => w.Status == "Assigned");
+
+    (string Label, string Css) MapStatus(string status) => status switch
+    {
+        "Completed"  => ("Selesai",         "selesai"),
+        "InProgress" => ("Sedang Berjalan", "review"),
+        _            => ("Belum Dikerjakan","belum")
+    };
+}
+
+<a href="javascript:history.back()" class="pd-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Kembali ke Detail Pasien
+</a>
+
+@if (TempData["success"] is string successMsg)
+{
+    <div class="pwh-alert-success">@successMsg</div>
+}
+
+<div class="psh-page">
+
+    @* ── Hero ── *@
+    <div class="psh-hero pwh-hero">
+        <div class="psh-hero-bg" aria-hidden="true"></div>
+        <div class="psh-hero-inner">
+
+            <div class="psh-hero-left">
+                <p class="psh-hero-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+                    Riwayat Worksheet
+                </p>
+                <h1 class="psh-hero-name">@ViewBag.PatientName</h1>
+                <p class="psh-hero-sub">Seluruh tugas worksheet yang diberikan kepada pasien</p>
+            </div>
+
+            <div class="psh-hero-stats">
+                <div class="psh-stat">
+                    <span class="psh-stat-val">@total</span>
+                    <span class="psh-stat-lbl">Total Tugas</span>
+                </div>
+                <div class="psh-stat psh-stat--selesai">
+                    <span class="psh-stat-val">@completed</span>
+                    <span class="psh-stat-lbl">Selesai</span>
+                </div>
+                <div class="psh-stat pwh-stat--review">
+                    <span class="psh-stat-val">@review</span>
+                    <span class="psh-stat-lbl">Berjalan</span>
+                </div>
+                <div class="psh-stat pwh-stat--belum">
+                    <span class="psh-stat-val">@assigned</span>
+                    <span class="psh-stat-lbl">Belum Mulai</span>
+                </div>
+            </div>
+
+            <button type="button" class="psh-add-btn" onclick="openAddTaskModal()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Tugas
+            </button>
+
+        </div>
+    </div>
+
+    @* ── Worksheet list ── *@
+    <div class="psh-list">
+        @if (!worksheets.Any())
+        {
+            <div class="psh-empty">
+                <div class="psh-empty-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+                </div>
+                <p class="psh-empty-title">Belum ada worksheet</p>
+                <p class="psh-empty-sub">Tambahkan tugas pertama untuk pasien ini.</p>
+                <button type="button" class="psh-add-btn psh-add-btn--solid" onclick="openAddTaskModal()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Tambah Tugas
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="pwh-grid">
+                @foreach (var w in worksheets)
+                {
+                    var (lbl, css) = MapStatus(w.Status);
+                    var isOverdue  = w.Status != "Completed" && w.Deadline < DateTime.Now;
+                    <a href="@Url.Action("ReviewWorksheet", "Worksheet", new { id = w.WorksheetId })"
+                       class="pwh-card pwh-card--@css @(isOverdue ? "pwh-card--overdue" : "")">
+
+                        @* Left accent bar *@
+                        <div class="pwh-card-accent"></div>
+
+                        @* Icon *@
+                        <div class="pwh-card-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        </div>
+
+                        @* Content *@
+                        <div class="pwh-card-content">
+                            <div class="pwh-card-top">
+                                <h3 class="pwh-card-title">@w.TaskName</h3>
+                                <span class="psh-badge pwh-badge--@css">
+                                    <span class="psh-badge-dot" aria-hidden="true"></span>
+                                    @lbl
+                                </span>
+                            </div>
+
+                            <div class="pwh-card-meta">
+                                <span class="psh-meta-item @(isOverdue ? "pwh-meta--overdue" : "")">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                    Deadline: @w.Deadline.ToString("d MMMM yyyy", idCulture)
+                                    @if (isOverdue)
+                                    {
+                                        <span class="pwh-overdue-chip">Terlambat</span>
+                                    }
+                                </span>
+                                @if (w.CreatedAt != default)
+                                {
+                                    <span class="psh-meta-sep" aria-hidden="true">·</span>
+                                    <span class="psh-meta-item">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Dibuat @w.CreatedAt.ToString("d MMM yyyy", idCulture)
+                                    </span>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(w.Description))
+                            {
+                                <p class="pwh-card-desc">@w.Description</p>
+                            }
+                        </div>
+
+                        @* Arrow *@
+                        <div class="pwh-card-arrow" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </div>
+
+                    </a>
+                }
+            </div>
+        }
+    </div>
+
+</div>
+
+@await Html.PartialAsync("_AddTaskModal", ViewBag.AddTaskForm as PsyAddTaskViewModel ?? new PsyAddTaskViewModel())

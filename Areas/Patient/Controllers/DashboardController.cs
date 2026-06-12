@@ -30,6 +30,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 .Include(p => p.Schedules)
                     .ThenInclude(s => s.Psychologist)
                         .ThenInclude(psy => psy!.User)
+                .Include(p => p.Subscriptions)
+                .Include(p => p.Assignments)
                 .FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (patient == null || patient.OnboardingCompletedAt == null)
             {
@@ -156,11 +158,17 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 
             var monthName = today.ToString("MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
 
+            var isSubscribed = patient.CompanyId != null 
+                || patient.Subscriptions.Any(s => s.Status == "Active" || s.Status == "active") 
+                || patient.Assignments.Any(a => a.Status == "Active");
+
             var vm = new PatientDashboardViewModel
             {
+                IsSubscribed = isSubscribed,
                 MonthYearLabel = char.ToUpper(monthName[0]) + monthName.Substring(1),
                 Week = week,
                 TodayFeeling = todayMood?.Feeling,
+                TodayMoodData = todayMood,
                 LatestJournalId = latestJournal?.JournalId,
                 LatestJournalTitle = latestJournal?.Title,
                 LatestJournalContent = latestJournal?.Content,

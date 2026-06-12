@@ -16,6 +16,7 @@
     <meta charset="utf-8" />
     <title>Laporan_Kesehatan_Mental_@companyName.Replace(" ", "_")</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         :root {
@@ -96,15 +97,15 @@
             <h1 class="report-title">Laporan Kesehatan Mental</h1>
             <div class="report-meta">Perusahaan: <strong>@companyName</strong> &nbsp;|&nbsp; Tanggal: @now.ToString("dd MMMM yyyy, HH:mm", new System.Globalization.CultureInfo("id-ID"))</div>
         </div>
-        <div class="logo-text">LightenUp<span style="color:#A78BFA">.</span></div>
+        <div class="logo-text">LightenUp<span class="hrst-print-logo-dot">.</span></div>
     </div>
 
     <div class="kpi-container">
         <div class="chart-box">
             <canvas id="mainChart"></canvas>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                <div style="font-size: 28px; font-weight: 800; color: var(--text-main);">@total</div>
-                <div style="font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Karyawan</div>
+            <div class="hrst-print-chart-center">
+                <div class="hrst-print-chart-total">@total</div>
+                <div class="hrst-print-chart-label">Karyawan</div>
             </div>
         </div>
         
@@ -142,11 +143,11 @@
             @foreach (var r in roster)
             {
                 <tr>
-                    <td style="color:var(--text-muted); font-weight:600;">@i</td>
-                    <td style="font-weight:600; color:var(--text-main);">@r.FullName</td>
+                    <td class="hrst-print-td-num">@i</td>
+                    <td class="hrst-print-td-name">@r.FullName</td>
                     <td>@r.Email</td>
                     <td>@(r.Division ?? "—")</td>
-                    <td style="font-family: monospace;">@(r.EmployeeId ?? "—")</td>
+                    <td class="hrst-print-td-mono">@(r.EmployeeId ?? "—")</td>
                     <td><span class="badge b-@r.MentalHealthStatus.ToLowerInvariant()">@r.MentalHealthStatus</span></td>
                     <td>@r.LastCheckDate</td>
                 </tr>

@@ -1,0 +1,62 @@
+@{
+    var sehatCount = (int)(ViewBag.SehatCount ?? 0);
+    var beresikoCount = (int)(ViewBag.BeresikoCount ?? 0);
+    var bahayaCount = (int)(ViewBag.BahayaCount ?? 0);
+    var total = sehatCount + beresikoCount + bahayaCount;
+}
+
+<div class="modal-container csm-modal">
+    <div class="modal-header csm-header">
+        <div class="csm-eyebrow">Statistik Mitra</div>
+        <h2 class="modal-title csm-title">@ViewBag.CompanyName</h2>
+        <button class="close-btn" onclick="closeCompanyStatsModal()">&times;</button>
+    </div>
+
+    <div class="csm-body">
+        <div class="csm-count-row">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span class="csm-count-val">@total</span>
+            <span class="csm-count-lbl">klien ditangani</span>
+        </div>
+
+        @if (total > 0)
+        {
+            <div class="csm-chart-wrap">
+                <canvas id="companyStatsModalChart" data-sehat="@sehatCount" data-beresiko="@beresikoCount" data-bahaya="@bahayaCount"></canvas>
+            </div>
+            
+            <div class="csm-stats-grid">
+                <div class="csm-stat-card">
+                    <div class="csm-stat-emoji">✅</div>
+                    <div class="csm-stat-val csm-stat-val--sehat">@sehatCount</div>
+                    <div class="csm-stat-lbl">Sehat</div>
+                </div>
+                <div class="csm-stat-card">
+                    <div class="csm-stat-emoji">⚠️</div>
+                    <div class="csm-stat-val csm-stat-val--beresiko">@beresikoCount</div>
+                    <div class="csm-stat-lbl">Beresiko</div>
+                </div>
+                <div class="csm-stat-card">
+                    <div class="csm-stat-emoji">🔴</div>
+                    <div class="csm-stat-val csm-stat-val--bahaya">@bahayaCount</div>
+                    <div class="csm-stat-lbl">Bahaya</div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="csm-empty">
+                <p>Belum ada klien aktif dari perusahaan ini.</p>
+            </div>
+        }
+
+        <div class="csm-actions">
+            <button type="button" class="btn-outline csm-close-btn" onclick="closeCompanyStatsModal()">Tutup</button>
+        </div>
+    </div>
+</div>

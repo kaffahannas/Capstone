@@ -51,12 +51,13 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             var q = _context.Patients
                 .Include(p => p.User)
+                .Include(p => p.Division)
                 .Where(p => p.CompanyId == companyId && p.EmploymentStatus == "active");
 
             if (!string.IsNullOrWhiteSpace(search))
                 q = q.Where(p => p.User!.FullName.Contains(search));
             if (!string.IsNullOrWhiteSpace(division))
-                q = q.Where(p => p.Department == division);
+                q = q.Where(p => p.Division != null && p.Division.Name == division);
             if (!string.IsNullOrWhiteSpace(status))
                 q = q.Where(p => p.MentalHealthStatus == status);
 
@@ -86,7 +87,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                     PatientId = p.PatientId,
                     FullName = p.User?.FullName ?? "—",
                     Gender = p.Gender,
-                    Department = p.Department,
+                    Department = p.Division != null ? p.Division.Name : "Belum Diatur",
                     ProfilePicture = p.User?.ProfilePicture,
                     Status = p.MentalHealthStatus,
                     OnboardingCompletedAt = p.OnboardingCompletedAt
@@ -110,8 +111,9 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             }
 
             var divisions = await _context.Patients
-                .Where(p => p.CompanyId == companyId && p.Department != null && p.Department != "")
-                .Select(p => p.Department!)
+                .Include(p => p.Division)
+                .Where(p => p.CompanyId == companyId && p.Division != null)
+                .Select(p => p.Division!.Name)
                 .Distinct().OrderBy(d => d)
                 .ToListAsync();
 
@@ -186,7 +188,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             int total = Math.Max(1, moods.Count);
 
             var nextSession = await _context.Schedules
-                .Where(s => s.PatientId == id && s.Status == "Scheduled" && s.SessionStart > DateTime.Now)
+                .Where(s => s.PatientId == id && s.Status == "Scheduled" && s.SessionStart > DateTime.UtcNow)
                 .OrderBy(s => s.SessionStart)
                 .FirstOrDefaultAsync();
 
@@ -195,7 +197,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             var activeAssignment = await _context.Assignments
                 .Include(a => a.Psychologist).ThenInclude(psy => psy!.User)
-                .FirstOrDefaultAsync(a => a.PatientId == id && a.Status == "Active");
+                .FirstOrDefaultAsync(a => a.PatientId == id && (a.Status == "Active" || a.Status == "PendingCancellation" || a.Status == "PendingCancellationByAdmin"));
 
             ViewBag.ActiveNav = "Klien";
             return View(new HrEmployeeDetailViewModel
@@ -299,6 +301,10 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
             ViewBag.ActiveNav = "Klien";
             ViewBag.ReferralCode = hr.Company?.ReferralCode;
+            ViewBag.Divisions = await _context.CompanyDivisions
+                .Where(d => d.CompanyId == hr.CompanyId.Value)
+                .OrderBy(d => d.Name)
+                .ToListAsync();
             return View(new HrAddClientViewModel());
         }
 
@@ -309,10 +315,15 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
             var companyId = hr.CompanyId.Value;
 
+            ViewBag.ActiveNav = "Klien";
+            ViewBag.ReferralCode = hr.Company?.ReferralCode;
+            ViewBag.Divisions = await _context.CompanyDivisions
+                .Where(d => d.CompanyId == companyId)
+                .OrderBy(d => d.Name)
+                .ToListAsync();
+
             if (!ModelState.IsValid)
             {
-                ViewBag.ActiveNav = "Klien";
-                ViewBag.ReferralCode = hr.Company?.ReferralCode;
                 return View(model);
             }
 
@@ -348,9 +359,9 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 CompanyId = companyId,
                 FullName = model.FullName.Trim(),
                 Email = model.Email.Trim(),
-                Department = model.Department.Trim(),
+                DivisionId = model.DivisionId,
                 EmployeeId = model.EmployeeId?.Trim(),
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
 
@@ -389,10 +400,13 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             var hr = await GetHrAsync();
-            if (hr == null || hr.CompanyId == null) return Forbid();
+            if (hr == null || hr.CompanyId == null) return Json(new { ok = false, errors = new[] { "Sesi tidak valid." } });
 
             var patient = await _context.Patients.FirstOrDefaultAsync(p => p.PatientId == PatientId && p.CompanyId == hr.CompanyId.Value);
-            if (patient == null) return NotFound();
+            if (patient == null) return Json(new { ok = false, errors = new[] { "Karyawan tidak ditemukan." } });
+
+            var existing = await _context.HrEmployeeRemovalRequests.FirstOrDefaultAsync(r => r.PatientId == PatientId && r.Status == "Pending");
+            if (existing != null) return Json(new { ok = false, errors = new[] { "Permintaan pemberhentian sudah diajukan dan sedang menunggu persetujuan Admin." } });
 
             var req = new HrEmployeeRemovalRequest
             {
@@ -406,8 +420,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             _context.HrEmployeeRemovalRequests.Add(req);
             await _context.SaveChangesAsync();
 
-            TempData["success"] = "Permintaan pemberhentian karyawan berhasil dikirim ke Admin.";
-            return RedirectToAction(nameof(Detail), new { id = PatientId });
+            return Json(new { ok = true, message = "Permintaan pemberhentian karyawan berhasil dikirim ke Admin." });
         }
 
         // ─── Map feeling string → numeric ───

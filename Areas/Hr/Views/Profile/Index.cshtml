@@ -115,7 +115,7 @@
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                             Email
                         </span>
-                        <a href="mailto:@Model.Email" class="hrpf-field-val hrpf-field-link" style="word-break:break-all;">@Model.Email</a>
+                        <a href="mailto:@Model.Email" class="hrpf-field-val hrpf-field-link hrpf-field-link--break">@Model.Email</a>
                     </div>
                     <div class="hrpf-field">
                         <span class="hrpf-field-label">
@@ -179,7 +179,7 @@
                     <h3 class="hrpf-card-title">Langganan</h3>
                     @if (!Model.HasActiveSubscription)
                     {
-                        <a href="@Url.Action("Index", "Subscription", new { area = "Hr" })" class="hrpf-card-edit-link" style="background:#FFFBEB;color:#D97706;">
+                        <a href="@Url.Action("Index", "Subscription", new { area = "Hr" })" class="hrpf-card-edit-link hrpf-card-edit-link--amber">
                             Beli Paket
                         </a>
                     }
@@ -249,21 +249,21 @@
                     {
                         <div class="hrpf-field">
                             <span class="hrpf-field-label">Alamat</span>
-                            <span class="hrpf-field-val" style="line-height:1.5;">@Model.CompanyAddress</span>
+                            <span class="hrpf-field-val hrpf-field-val--address">@Model.CompanyAddress</span>
                         </div>
                     }
                     @if (!string.IsNullOrEmpty(Model.CompanyRegistrationNumber))
                     {
                         <div class="hrpf-field">
                             <span class="hrpf-field-label">No. Registrasi</span>
-                            <span class="hrpf-field-val" style="font-family:monospace;font-size:13px;">@Model.CompanyRegistrationNumber</span>
+                            <span class="hrpf-field-val hrpf-field-val--mono">@Model.CompanyRegistrationNumber</span>
                         </div>
                     }
                     @if (!string.IsNullOrEmpty(Model.CompanyContactEmail))
                     {
                         <div class="hrpf-field">
                             <span class="hrpf-field-label">Email Perusahaan</span>
-                            <a href="mailto:@Model.CompanyContactEmail" class="hrpf-field-val hrpf-field-link" style="font-size:13px;word-break:break-all;">@Model.CompanyContactEmail</a>
+                            <a href="mailto:@Model.CompanyContactEmail" class="hrpf-field-val hrpf-field-link hrpf-field-val--sm-break">@Model.CompanyContactEmail</a>
                         </div>
                     }
                     @if (!string.IsNullOrEmpty(Model.CompanyContactNumber))
@@ -318,10 +318,10 @@
                     </div>
                     <div class="hrpf-field">
                         <span class="hrpf-field-label">Email Login</span>
-                        <span class="hrpf-field-val" style="font-size:12.5px;word-break:break-all;">@Model.Email</span>
+                        <span class="hrpf-field-val hrpf-field-val--email-login">@Model.Email</span>
                     </div>
                 </div>
-                <button type="button" id="hrpfOpenPwd" class="hrpf-account-action" style="margin-top:14px;width:100%;text-align:left;">
+                <button type="button" id="hrpfOpenPwd" class="hrpf-account-action hrpf-account-action--pwd">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     Ganti Password
                 </button>
@@ -334,7 +334,7 @@
     <div class="hrpf-modal-overlay" id="hrpfPwdModal" role="dialog" aria-modal="true" aria-labelledby="hrpfPwdTitle">
         <div class="hrpf-modal">
             <div class="hrpf-modal-head">
-                <div class="hrpf-modal-head-icon" style="background:#ECFDF5;color:#059669" aria-hidden="true">
+                <div class="hrpf-modal-head-icon hrpf-modal-head-icon--green" aria-hidden="true">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </div>
                 <h2 class="hrpf-modal-title" id="hrpfPwdTitle">Ganti Password</h2>
@@ -345,13 +345,13 @@
             <form id="hrpfPwdForm" action="@Url.Action("ChangePassword", "Profile", new { area = "Hr" })" method="post" novalidate>
                 @Html.AntiForgeryToken()
                 <div class="hrpf-modal-body">
-                    <div id="hrpfPwdError" class="hrpf-form-error" role="alert" style="display:none;"></div>
+                    <div id="hrpfPwdError" class="hrpf-form-error hrpf-is-hidden" role="alert"></div>
 
                     <div class="hrpf-modal-field">
                         <label class="hrpf-modal-label" for="pwdCurrent">Password Saat Ini</label>
-                        <div style="position:relative;">
+                        <div class="hrpf-pwd-field-wrap">
                             <input type="password" id="pwdCurrent" name="currentPassword"
-                                   class="hrpf-modal-input" style="padding-right:38px;"
+                                   class="hrpf-modal-input hrpf-modal-input--pwd"
                                    autocomplete="current-password" placeholder="••••••••" />
                             <button type="button" class="hrpf-pwd-eye" data-target="pwdCurrent" aria-label="Tampilkan/sembunyikan password">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -361,31 +361,31 @@
 
                     <div class="hrpf-modal-field">
                         <label class="hrpf-modal-label" for="pwdNew">Password Baru</label>
-                        <div style="position:relative;">
+                        <div class="hrpf-pwd-field-wrap">
                             <input type="password" id="pwdNew" name="newPassword"
-                                   class="hrpf-modal-input" style="padding-right:38px;"
+                                   class="hrpf-modal-input hrpf-modal-input--pwd"
                                    autocomplete="new-password" placeholder="Min. 6 karakter" />
                             <button type="button" class="hrpf-pwd-eye" data-target="pwdNew" aria-label="Tampilkan/sembunyikan password">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>
                         </div>
-                        <div id="hrpfPwdStrength" style="margin-top:6px;height:4px;border-radius:4px;background:#E5E7EB;overflow:hidden;">
-                            <div id="hrpfPwdStrengthBar" style="height:100%;width:0;border-radius:4px;transition:width .25s,background .25s;"></div>
+                        <div id="hrpfPwdStrength" class="hrpf-pwd-strength">
+                            <div id="hrpfPwdStrengthBar" class="hrpf-pwd-strength-bar"></div>
                         </div>
-                        <span id="hrpfPwdStrengthLabel" style="font-size:11px;color:var(--lu-text-muted);margin-top:3px;display:block;"></span>
+                        <span id="hrpfPwdStrengthLabel" class="hrpf-pwd-strength-label"></span>
                     </div>
 
                     <div class="hrpf-modal-field">
                         <label class="hrpf-modal-label" for="pwdConfirm">Konfirmasi Password Baru</label>
-                        <div style="position:relative;">
+                        <div class="hrpf-pwd-field-wrap">
                             <input type="password" id="pwdConfirm" name="confirmPassword"
-                                   class="hrpf-modal-input" style="padding-right:38px;"
+                                   class="hrpf-modal-input hrpf-modal-input--pwd"
                                    autocomplete="new-password" placeholder="Ulangi password baru" />
                             <button type="button" class="hrpf-pwd-eye" data-target="pwdConfirm" aria-label="Tampilkan/sembunyikan password">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>
                         </div>
-                        <span id="hrpfPwdMatchLabel" style="font-size:11px;margin-top:3px;display:none;"></span>
+                        <span id="hrpfPwdMatchLabel" class="hrpf-pwd-match-label hrpf-is-hidden"></span>
                     </div>
                 </div>
                 <div class="hrpf-modal-foot">
@@ -417,14 +417,14 @@
                 @Html.AntiForgeryToken()
 
                 <div class="hrpf-modal-body">
-                    <div id="hrpfFormError" class="hrpf-form-error" role="alert" style="display:none;"></div>
+                    <div id="hrpfFormError" class="hrpf-form-error hrpf-is-hidden" role="alert"></div>
 
                     @* ── Info Pribadi ── *@
                     <p class="hrpf-modal-section-title">Info Pribadi</p>
 
                     <div class="hrpf-modal-field">
                         <label class="hrpf-modal-label" for="mFullName">
-                            Nama Lengkap <span style="color:#EF4444" aria-hidden="true">*</span>
+                            Nama Lengkap <span class="hrpf-required" aria-hidden="true">*</span>
                         </label>
                         <input type="text" id="mFullName" name="FullName" class="hrpf-modal-input"
                                value="@Model.FullName" required maxlength="100" autocomplete="name" />
@@ -445,18 +445,18 @@
                     </div>
 
                     @* ── Kepegawaian ── *@
-                    <p class="hrpf-modal-section-title" style="margin-top:22px;">
+                    <p class="hrpf-modal-section-title hrpf-modal-section-title--spaced">
                         Kepegawaian
-                        <small style="text-transform:none;font-weight:500;letter-spacing:0;color:var(--lu-text-muted);margin-left:6px;">— @Model.CompanyName</small>
+                        <small class="hrpf-modal-section-sub">— @Model.CompanyName</small>
                     </p>
 
                     <div class="hrpf-modal-grid">
-                        <div class="hrpf-modal-field" style="margin:0;">
+                        <div class="hrpf-modal-field hrpf-modal-field--flush">
                             <label class="hrpf-modal-label" for="mEmployeeId">Employee ID</label>
                             <input type="text" id="mEmployeeId" name="EmployeeId" class="hrpf-modal-input"
                                    value="@(Model.EmployeeId ?? "")" maxlength="64" placeholder="Mis. HR001" />
                         </div>
-                        <div class="hrpf-modal-field" style="margin:0;">
+                        <div class="hrpf-modal-field hrpf-modal-field--flush">
                             <label class="hrpf-modal-label" for="mDepartment">Divisi / Departemen</label>
                             <input type="text" id="mDepartment" name="Department" class="hrpf-modal-input"
                                    value="@(Model.Department ?? "")" maxlength="64" />
@@ -505,10 +505,10 @@
         pwdModal.classList.remove('is-open');
         document.body.style.overflow = '';
         pwdForm.reset();
-        pwdErrBox.style.display = 'none';
+        pwdErrBox.classList.add('hrpf-is-hidden');
         if (pwdBar)      { pwdBar.style.width = '0'; pwdBar.style.background = ''; }
         if (pwdBarLabel) pwdBarLabel.textContent = '';
-        if (pwdMatch)    { pwdMatch.style.display = 'none'; }
+        if (pwdMatch)    { pwdMatch.classList.add('hrpf-is-hidden'); }
     }
 
     document.getElementById('hrpfOpenPwd').addEventListener('click', openPwdModal);
@@ -562,8 +562,8 @@
     if (pwdConfInp && pwdMatch) {
         pwdConfInp.addEventListener('input', () => {
             const same = pwdNewInp.value === pwdConfInp.value;
-            if (!pwdConfInp.value) { pwdMatch.style.display = 'none'; return; }
-            pwdMatch.style.display = 'block';
+            if (!pwdConfInp.value) { pwdMatch.classList.add('hrpf-is-hidden'); return; }
+            pwdMatch.classList.remove('hrpf-is-hidden');
             pwdMatch.textContent   = same ? '✓ Password cocok' : '✗ Password tidak cocok';
             pwdMatch.style.color   = same ? '#059669' : '#DC2626';
             pwdMatch.style.fontWeight = '600';
@@ -573,7 +573,7 @@
     // ── AJAX submit ───────────────────────────
     pwdForm.addEventListener('submit', async e => {
         e.preventDefault();
-        pwdErrBox.style.display = 'none';
+        pwdErrBox.classList.add('hrpf-is-hidden');
 
         // Client-side quick checks
         const cur  = document.getElementById('pwdCurrent').value.trim();
@@ -612,7 +612,7 @@
 
     function showPwdError(msg) {
         pwdErrBox.textContent = msg;
-        pwdErrBox.style.display = 'block';
+        pwdErrBox.classList.remove('hrpf-is-hidden');
         pwdErrBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
@@ -644,7 +644,7 @@
 
         saveBtn.disabled = true;
         saveBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hrpf-spin"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Menyimpan...`;
-        errorBox.style.display = 'none';
+        errorBox.classList.add('hrpf-is-hidden');
 
         try {
             const res  = await fetch('/Hr/Profile/EditModal', { method: 'POST', body: new FormData(form) });
@@ -695,7 +695,7 @@
     }
     function showError(msg) {
         errorBox.textContent = msg;
-        errorBox.style.display = 'block';
+        errorBox.classList.remove('hrpf-is-hidden');
         errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     function showToast(msg) {

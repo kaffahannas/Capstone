@@ -60,12 +60,14 @@ namespace LightenUp.Web.Models.ViewModels
     {
         public const string Assigned = "Assigned";
         public const string InProgress = "InProgress";
+        public const string NeedsRevision = "NeedsRevision";
         public const string Completed = "Completed";
 
         public static string Label(string status) => status switch
         {
             Assigned => "Belum Dikerjakan",
             InProgress => "Sedang Dikerjakan",
+            NeedsRevision => "Perlu Revisi",
             Completed => "Selesai",
             _ => status
         };
@@ -74,6 +76,7 @@ namespace LightenUp.Web.Models.ViewModels
         {
             Assigned => "task-status-todo",
             InProgress => "task-status-progress",
+            NeedsRevision => "task-status-todo",
             Completed => "task-status-done",
             _ => ""
         };

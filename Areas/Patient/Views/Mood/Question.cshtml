@@ -2,19 +2,16 @@
 @using LightenUp.Web.Models.ViewModels
 @{
     var q = MoodQuestions.For(Model.QuestionStep);
-    // Mood wizard total steps: Feeling(1) + Triggers(2) + Note(3) + Q1-Q5(4-8) + Summary
-    // Show progress for questionnaire as step (3 + QuestionStep) of 8
     var overallStep = 3 + Model.QuestionStep;
     ViewBag.Step = $"{overallStep}/8";
     ViewData["Title"] = $"Kuesioner {Model.QuestionStep}";
     var currentScore = Model.CurrentQuestionScore();
 }
 
-<h2 class="mood-question" style="text-align:center; margin-bottom:6px;">@q.Question</h2>
-<p class="mood-helper" style="text-align:center;">@q.Hint</p>
+<h2 class="mood-question mq-title">@q.Question</h2>
+<p class="mood-helper mq-helper">@q.Hint</p>
 
 <form asp-action="Question" method="post">
-    @* Carry all data forward *@
     <input type="hidden" asp-for="Feeling" />
     <input type="hidden" name="triggers" value="@string.Join(",", Model.Triggers)" />
     <input type="hidden" asp-for="Note" />
@@ -25,16 +22,14 @@
     <input type="hidden" asp-for="MindLoadScore" />
     <input type="hidden" asp-for="EmotionScore" />
 
-    <span asp-validation-summary="ModelOnly" class="text-danger" style="display:block; text-align:center; margin-bottom:12px;"></span>
+    <span asp-validation-summary="ModelOnly" class="text-danger mq-validation"></span>
 
-    <!-- Labels -->
-    <div style="display:flex; justify-content:space-between; font-size:12px; color:#9CA3AF; margin-bottom:10px; padding:0 4px;">
+    <div class="mq-scale-labels">
         <span>😞 Sangat Buruk</span>
         <span>😁 Sangat Baik</span>
     </div>
 
-    <!-- 1-5 scale buttons -->
-    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:28px;" id="scaleRow">
+    <div class="mq-scale-row" id="scaleRow">
         @for (int n = 1; n <= 5; n++)
         {
             var isSelected = currentScore == n;
@@ -48,7 +43,6 @@
         }
     </div>
 
-    <!-- Nav -->
     <div class="mood-footer">
         @if (Model.QuestionStep > 1)
         {

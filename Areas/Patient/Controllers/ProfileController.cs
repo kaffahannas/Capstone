@@ -39,7 +39,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             if (user == null) return (null, null);
             var patient = await _context.Patients
                 .Include(p => p.Company)
-                .Include(p => p.NotificationPreference)
+                .Include(p => p.Division)
+
                 .FirstOrDefaultAsync(p => p.UserId == user.Id);
             return (user, patient);
         }
@@ -59,7 +60,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             var snap = await _healthService.ComputeAsync(patient.PatientId);
 
             // Sessions
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var lastSession = await _context.Schedules
                 .Where(s => s.PatientId == patient.PatientId && s.Status == "Completed")
                 .OrderByDescending(s => s.SessionStart)
@@ -100,7 +101,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 else break;
             }
 
-            var prefs = patient.NotificationPreference ?? new PatientNotificationPreference { PatientId = patient.PatientId };
+
 
             var vm = new PatientProfileViewModel
             {
@@ -109,7 +110,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 MentalHealthStatus = patient.MentalHealthStatus,
 
                 IsB2B = patient.CompanyId != null,
-                Department = patient.Department,
+                Department = patient.DivisionId == null ? "Belum Diatur" : patient.Division?.Name,
                 EmployeeId = patient.EmployeeId,
                 CompanyName = patient.Company?.Name,
 
@@ -126,10 +127,6 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 LastSessionAt = lastSession,
                 NextSessionAt = nextSession,
 
-                RemindMoodCheck = prefs.RemindMoodCheck,
-                RemindCounselingSession = prefs.RemindCounselingSession,
-                AllowHrPsychologistNotif = prefs.AllowHrPsychologistNotif,
-                ReminderTime = prefs.ReminderTime.ToString(@"hh\:mm"),
 
                 EmergencyContactEmail = patient.EmergencyContactEmail,
                 EmergencyContactPhone = patient.EmergencyContactPhone,
@@ -161,7 +158,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 FullName = user.FullName,
                 CurrentProfilePicture = user.ProfilePicture,
                 Phone = user.PhoneNumber,
-                Department = patient.Department,
+                Department = patient.DivisionId == null ? "Belum Diatur" : patient.Division?.Name,
                 EmployeeId = patient.EmployeeId,
                 DateOfBirth = patient.DateOfBirth,
                 Gender = patient.Gender,
@@ -209,8 +206,10 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             await _userManager.UpdateAsync(user);
 
             // Patient fields
-            patient.Department = model.Department;
-            patient.EmployeeId = model.EmployeeId;
+            if (model.IsAlreadyB2B)
+            {
+                patient.EmployeeId = model.EmployeeId;
+            }
             patient.DateOfBirth = model.DateOfBirth;
             patient.Gender = model.Gender;
             patient.EmergencyContactName = model.EmergencyContactName;
@@ -235,7 +234,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                         return View(model);
                     }
                     patient.CompanyId = division.CompanyId;
-                    patient.Department = division.Name;
+                    patient.DivisionId = division.DivisionId;
                 }
                 else
                 {

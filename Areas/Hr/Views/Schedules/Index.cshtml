@@ -25,11 +25,11 @@
 
 @if (TempData["error"] is string err)
 {
-    <div style="background:#FEE2E2;color:#B91C1C;padding:10px 14px;border-radius:8px;margin-bottom:16px;">@err</div>
+    <div class="hrsch-idx-alert-error">@err</div>
 }
 @if (TempData["success"] is string ok)
 {
-    <div style="background:#D1FAE5;color:#047857;padding:10px 14px;border-radius:8px;margin-bottom:16px;">@ok</div>
+    <div class="hrsch-idx-alert-success">@ok</div>
 }
 
 @section Head {
@@ -56,7 +56,7 @@
         <p class="sch-hero-eyebrow">HR · Monitoring Konseling</p>
         <h1 class="sch-hero-title">Jadwal Konseling</h1>
         <p class="sch-hero-sub">@DateTime.Today.ToString("dddd, d MMMM yyyy", idCulture) · Pantau sesi konseling karyawan</p>
-        <button onclick="openRequestModal()" class="sch-hero-btn" style="cursor:pointer;border:none;">
+        <button onclick="openRequestModal()" class="sch-hero-btn hrsch-idx-btn-reset">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Permintaan Sesi
         </button>
@@ -88,8 +88,8 @@
         <a class="sch-filter-tab @(Model.Period == "HariIni" ? "sch-filter-tab--active" : "")" asp-action="Index" asp-route-period="HariIni" asp-route-search="@Model.Search">Hari Ini</a>
         <a class="sch-filter-tab @(Model.Period == "Mingguan" ? "sch-filter-tab--active" : "")" asp-action="Index" asp-route-period="Mingguan" asp-route-search="@Model.Search">Minggu Ini</a>
     </div>
-    <form method="get" style="display:flex;align-items:center;gap:8px;">
-        <div class="psy-search-wrap" style="width:220px;">
+    <form method="get" class="hrsch-idx-search-form">
+        <div class="psy-search-wrap hrsch-idx-search-wrap">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="search" name="search" placeholder="Cari pasien..." value="@Model.Search" class="psy-search" />
         </div>
@@ -103,7 +103,7 @@
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         <p class="sch-empty-title">Tidak ada jadwal ditemukan</p>
         <p class="sch-empty-sub">Tambahkan permintaan sesi untuk mendapatkan jadwal konseling.</p>
-        <button onclick="openRequestModal()" class="sch-empty-btn" style="cursor:pointer;border:none;">
+        <button onclick="openRequestModal()" class="sch-empty-btn hrsch-idx-btn-reset">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Permintaan Sesi
         </button>
@@ -147,7 +147,7 @@ else
                         var dur   = dHour > 0 ? (dMin > 0 ? $"{dHour}j {dMin}m" : $"{dHour} jam") : $"{s.DurationMinutes} menit";
                         var initial = s.PatientName?.Length > 0 ? s.PatientName.Substring(0, 1).ToUpper() : "?";
 
-                        <div class="sch-session sch-session--@accent" onclick="openScheduleDetailModal(@s.ScheduleId)" style="cursor:pointer;">
+                        <div class="sch-session sch-session--@accent hrsch-idx-session-clickable" onclick="openScheduleDetailModal(@s.ScheduleId)">
                             <div class="sch-session-time">
                                 <span class="sch-session-hour">@s.SessionStart.ToString("HH:mm")</span>
                                 <span class="sch-session-tz">WIB</span>
@@ -157,11 +157,11 @@ else
                             <div class="sch-session-avatar sch-avatar--@accent">@initial</div>
                             <div class="sch-session-info">
                                 <span class="sch-session-name">@s.PatientName</span>
-                                <div class="sch-session-meta" style="display:flex; align-items:center; gap:8px;">
+                                <div class="sch-session-meta hrsch-idx-session-meta">
                                     <span class="sch-company-tag">@s.PsychologistName</span>
                                     @if (!string.IsNullOrEmpty(s.MeetingLink))
                                     {
-                                        <div style="font-size:12px; color:var(--primary-purple); display:flex; align-items:center; gap:4px; font-weight:600;">
+                                        <div class="hrsch-idx-meeting-link">
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                                             Link Tersedia
                                         </div>
@@ -186,7 +186,7 @@ else
             <button class="psy-modal-close" onclick="closeRequestModal()">&times;</button>
         </div>
         <div class="psy-modal-body">
-            <p style="margin:0 0 20px;color:var(--text-muted);font-size:14px;">
+            <p class="hrsch-idx-modal-intro">
                 Psikolog akan meninjau dan menetapkan jadwal yang sesuai dalam 1–2 hari kerja.
             </p>
             <form asp-action="Request" method="post" id="requestForm">
@@ -202,14 +202,14 @@ else
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Usulan Tanggal &amp; Waktu <small style="color:var(--text-muted);font-weight:400;">(opsional)</small></label>
+                    <label class="form-label">Usulan Tanggal &amp; Waktu <small class="hrsch-idx-label-opt">(opsional)</small></label>
                     <input name="ProposedSessionDate" type="datetime-local" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Catatan / Alasan <small style="color:var(--text-muted);font-weight:400;">(opsional)</small></label>
-                    <textarea name="Notes" rows="4" class="form-control" style="margin-bottom:0;" placeholder="Jelaskan alasan permintaan sesi ini..."></textarea>
+                    <label class="form-label">Catatan / Alasan <small class="hrsch-idx-label-opt">(opsional)</small></label>
+                    <textarea name="Notes" rows="4" class="form-control hrsch-idx-notes-textarea" placeholder="Jelaskan alasan permintaan sesi ini..."></textarea>
                 </div>
-                <div class="modal-footer" style="padding:0;margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
+                <div class="modal-footer hrsch-idx-modal-footer">
                     <button type="button" class="btn-outline" onclick="closeRequestModal()">Batalkan</button>
                     <button type="submit" class="btn-fill">Kirim Permintaan</button>
                 </div>

@@ -98,7 +98,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                     EmotionScore = model.EmotionScore,
                     OverallScore = model.OverallScore,
                     CheckInDate = today,
-                    RecordedAt = DateTime.Now
+                    RecordedAt = DateTime.UtcNow
                 });
             }
             else
@@ -109,7 +109,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 existing.MindLoadScore = model.MindLoadScore;
                 existing.EmotionScore = model.EmotionScore;
                 existing.OverallScore = model.OverallScore;
-                existing.RecordedAt = DateTime.Now;
+                existing.RecordedAt = DateTime.UtcNow;
             }
 
             await _context.SaveChangesAsync();
@@ -179,8 +179,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                     Title = model.Title,
                     Content = model.Content,
                     JournalDate = today,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
                 _context.Journals.Add(entry);
             }
@@ -188,7 +188,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             {
                 entry.Title = model.Title;
                 entry.Content = model.Content;
-                entry.UpdatedAt = DateTime.Now;
+                entry.UpdatedAt = DateTime.UtcNow;
             }
 
             await _context.SaveChangesAsync();

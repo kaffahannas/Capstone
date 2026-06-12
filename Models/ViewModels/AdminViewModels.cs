@@ -116,8 +116,45 @@ namespace LightenUp.Web.Models.ViewModels
         public string? CompanyName { get; set; }
         public string? Department { get; set; }
         public string? MentalHealthStatus { get; set; }
+        
+        // HR specific
+        public string? CompanyAddress { get; set; }
+        public string? CompanyRegistrationNumber { get; set; }
+        public string? SupportDocumentUrl { get; set; }
+
+        // Psychologist specific
         public string? Specialization { get; set; }
         public string? LicenseNumber { get; set; }
+        public string? SiapNumber { get; set; }
+        public string? LastDegree { get; set; }
+        public string? University { get; set; }
+        public int? ExperienceYears { get; set; }
+        public string? PracticeLocation { get; set; }
+        public string? AcademicDocumentUrl { get; set; }
+        public string? StrDocumentUrl { get; set; }
+
+        // Patient specific
+        public DateTime? DateOfBirth { get; set; }
+        public string? Gender { get; set; }
+        public string? EmergencyContactName { get; set; }
+        public string? EmergencyContactPhone { get; set; }
+    }
+
+    public class AdminUserEditViewModel
+    {
+        [Required]
+        public string UserId { get; set; } = "";
+        
+        [Required, StringLength(100)]
+        public string FullName { get; set; } = "";
+        
+        [Required, EmailAddress]
+        public string Email { get; set; } = "";
+        
+        public string? Phone { get; set; }
+        
+        [Required]
+        public string Role { get; set; } = ""; // "Admin", "HR", "Patient", "Psychologist"
     }
 
     // ─── Companies ───
@@ -126,8 +163,8 @@ namespace LightenUp.Web.Models.ViewModels
         public int CompanyId { get; set; }
         public string Name { get; set; } = "";
         public string? Address { get; set; }
-        public string? ReferralCode { get; set; }
-        public int HrCount { get; set; }
+        public int DivisionCount { get; set; }
+        public string? HrName { get; set; }
         public int PatientCount { get; set; }
         public int ActivePatientCount { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -147,30 +184,13 @@ namespace LightenUp.Web.Models.ViewModels
         public string? ContactNumber { get; set; }
         public string? ContactEmail { get; set; }
         public string? RegistrationNumber { get; set; }
-        public string? ReferralCode { get; set; }
+        public int DivisionCount { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<AdminUserItem> Hrs { get; set; } = new();
         public int TotalPatients { get; set; }
         public int SehatCount { get; set; }
         public int BeresikoCount { get; set; }
         public int BahayaCount { get; set; }
-    }
-
-    // ─── Invite Admin ───
-    public class AdminInviteViewModel
-    {
-        [Required(ErrorMessage = "Nama lengkap wajib diisi.")]
-        [StringLength(100)]
-        public string FullName { get; set; } = "";
-
-        [Required(ErrorMessage = "Email wajib diisi.")]
-        [EmailAddress]
-        [StringLength(256)]
-        public string Email { get; set; } = "";
-
-        [Required(ErrorMessage = "Kata sandi sementara wajib diisi.")]
-        [StringLength(100, MinimumLength = 8, ErrorMessage = "Minimal 8 karakter.")]
-        public string TempPassword { get; set; } = "";
     }
 
     // ─── Settings ───
@@ -195,7 +215,7 @@ namespace LightenUp.Web.Models.ViewModels
 
     public class AdminNavBadgesViewModel
     {
-        public int AssignmentBadgeCount { get; set; }
+        public int Count { get; set; }
     }
 
     public class AdminAssignmentsIndexViewModel
@@ -204,8 +224,10 @@ namespace LightenUp.Web.Models.ViewModels
         public List<PatientPsychologistAssignment> PendingAssignments { get; set; } = new();
         public List<PatientAdminAssignmentRequest> PatientAdminRequests { get; set; } = new();
         public List<PsychologistWorkloadInfo> Psychologists { get; set; } = new();
+        public List<CompanyPsychologistRequest> B2BRequests { get; set; } = new();
         public int PendingPsyCount { get; set; }
         public int PendingCancelCount { get; set; }
         public int PendingPatientRequestCount { get; set; }
+        public int PendingB2BRequestCount { get; set; }
     }
 }

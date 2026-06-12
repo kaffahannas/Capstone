@@ -1,0 +1,49 @@
+@model LightenUp.Web.Models.ViewModels.PsySettingsViewModel
+@{
+    ViewData["Title"] = "Pengaturan";
+    Layout = "_LayoutDashboard";
+}
+
+<div class="set-page">
+    @if (TempData["success"] is string ok)
+    {
+        <div class="set-alert">@ok</div>
+    }
+
+    <h1 class="set-title">Pengaturan</h1>
+    <p class="set-sub">Atur visibilitas dan preferensi akun Anda.</p>
+
+    <form method="post" class="set-form">
+        <div class="set-row">
+            <div class="set-row-text">
+                <strong>Terima kerjasama B2B</strong>
+                <p class="set-row-desc">
+                    Saat aktif, profil Anda dapat ditemukan oleh HR perusahaan di Direktori Psikolog. Mereka dapat memilih
+                    Anda sebagai mitra dan mengirimkan permintaan worksheet/sesi.
+                </p>
+            </div>
+            <label class="set-toggle-wrap">
+                <input type="checkbox" asp-for="AcceptsB2B" class="set-toggle-input" id="b2bToggle" />
+                <span id="slider" class="set-toggle-track @(Model.AcceptsB2B ? "set-toggle-track--on" : "set-toggle-track--off")">
+                    <span id="sliderThumb" class="set-toggle-thumb @(Model.AcceptsB2B ? "set-toggle-thumb--on" : "set-toggle-thumb--off")"></span>
+                </span>
+            </label>
+        </div>
+
+        <div class="set-actions">
+            <button type="submit" class="set-submit">Simpan</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const cb = document.getElementById('b2bToggle');
+    const slider = document.getElementById('slider');
+    const thumb = document.getElementById('sliderThumb');
+    cb.addEventListener('change', () => {
+        slider.classList.toggle('set-toggle-track--on', cb.checked);
+        slider.classList.toggle('set-toggle-track--off', !cb.checked);
+        thumb.classList.toggle('set-toggle-thumb--on', cb.checked);
+        thumb.classList.toggle('set-toggle-thumb--off', !cb.checked);
+    });
+</script>

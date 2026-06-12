@@ -34,7 +34,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         {
             if (s.Status == "Cancelled") return "Dibatalkan";
             if (s.Status == "Completed") return "Selesai";
-            var now = DateTime.Now;
+            if (s.Status == "NoShow") return "Mangkir / No-Show";
+            var now = DateTime.UtcNow;
             var end = s.SessionStart.AddMinutes(s.DurationMinutes);
             if (now < s.SessionStart) return "Akan Datang";
             if (now <= end) return "On Going";
@@ -98,7 +99,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 .Include(p => p.User)
                 .Where(p => p.CompanyId == companyId && p.EmploymentStatus == "active")
                 .OrderBy(p => p.User!.FullName)
-                .Select(p => new HrSimplePatient { PatientId = p.PatientId, FullName = p.User!.FullName, Department = p.Department })
+                .Select(p => new HrSimplePatient { PatientId = p.PatientId, FullName = p.User!.FullName, Department = p.Division != null ? p.Division.Name : "Belum Diatur" })
                 .ToListAsync();
 
             ViewBag.ActiveNav = "Monitoring";
@@ -179,13 +180,14 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             var patients = await _context.Patients
                 .Include(p => p.User)
+                .Include(p => p.Division)
                 .Where(p => p.CompanyId == hr.CompanyId && p.EmploymentStatus == "active")
                 .OrderBy(p => p.User!.FullName)
                 .Select(p => new HrSimplePatient
                 {
                     PatientId = p.PatientId,
                     FullName = p.User!.FullName,
-                    Department = p.Department
+                    Department = p.Division != null ? p.Division.Name : "Belum Diatur"
                 })
                 .ToListAsync();
 
@@ -225,7 +227,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 Notes = model.Notes,
                 ProposedSessionDate = model.ProposedSessionDate,
                 Status = "Pending",
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan jadwal dikirim ke psikolog terkait.";
@@ -272,7 +274,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 Notes = string.IsNullOrWhiteSpace(notes) ? null : notes,
                 ProposedSessionDate = dt,
                 Status = "Pending",
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
             return Json(new { ok = true, message = "Permintaan jadwal sesi dikirim ke psikolog." });

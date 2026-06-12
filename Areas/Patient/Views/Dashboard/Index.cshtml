@@ -68,10 +68,10 @@
             <!option value="Bulanan"  @(calView == "Bulanan"  ? "selected" : "")>Bulanan</!option>
         </select>
         <span class="db-cal-month">@calMonthLabel</span>
-        <div style="display:flex; gap:4px;">
-            <a href="?view=@calView&offset=@(calOffset-1)" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; border:1.5px solid var(--lu-border); background:#fff; text-decoration:none; color:var(--lu-text); font-size:14px; transition:all 0.2s;" title="Sebelumnya">&#8249;</a>
-            <a href="?view=@calView&offset=0" style="display:flex; align-items:center; justify-content:center; padding:0 10px; height:30px; border-radius:8px; border:1.5px solid var(--lu-border); background:#fff; text-decoration:none; color:var(--lu-text-muted); font-size:12px; font-weight:500; transition:all 0.2s;">Hari ini</a>
-            <a href="?view=@calView&offset=@(calOffset+1)" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; border:1.5px solid var(--lu-border); background:#fff; text-decoration:none; color:var(--lu-text); font-size:14px; transition:all 0.2s;" title="Berikutnya">&#8250;</a>
+        <div class="db-cal-nav">
+            <a href="?view=@calView&offset=@(calOffset-1)" class="db-cal-nav-btn" title="Sebelumnya">&#8249;</a>
+            <a href="?view=@calView&offset=0" class="db-cal-nav-today">Hari ini</a>
+            <a href="?view=@calView&offset=@(calOffset+1)" class="db-cal-nav-btn" title="Berikutnya">&#8250;</a>
         </div>
     </div>
 
@@ -102,28 +102,28 @@
                 <div class="db-cal-day @(day.IsToday ? "db-cal-day--today" : "")">
                     <span class="db-cal-day-dow">@day.DayOfWeekShort</span>
                     <span class="db-cal-day-num">@day.Date.Day</span>
-                    <div style="display:flex; gap:3px; justify-content:center; min-height:8px; margin-top:2px;">
+                    <div class="db-cal-dots">
                         @if (!string.IsNullOrEmpty(day.FeelingForDay))
                         {
                             <span class="db-cal-dot db-mood-dot--@MoodPalette.CssClass(day.FeelingForDay)" title="Mood: @MoodPalette.Label(day.FeelingForDay)"></span>
                         }
                         @if (day.HasDeadline)
                         {
-                            <span style="width:7px; height:7px; border-radius:50%; background:#F59E0B; display:inline-block;" title="Ada deadline tugas"></span>
+                            <span class="db-cal-dot--task" title="Ada deadline tugas"></span>
                         }
                         @if (day.HasKonseling)
                         {
-                            <span style="width:7px; height:7px; border-radius:50%; background:#7C3AED; display:inline-block;" title="Ada sesi konseling"></span>
+                            <span class="db-cal-dot--session" title="Ada sesi konseling"></span>
                         }
                     </div>
                 </div>
             }
         </div>
     }
-    <div style="display:flex; gap:16px; margin-top:12px; padding-top:10px; border-top:1px solid var(--lu-border); font-size:11px; color:var(--lu-text-muted);">
-        <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:#10B981; display:inline-block;"></span> Mood</span>
-        <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:#F59E0B; display:inline-block;"></span> Deadline Tugas</span>
-        <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:#7C3AED; display:inline-block;"></span> Jadwal Konseling</span>
+    <div class="db-cal-legend">
+        <span class="db-cal-legend-item"><span class="db-cal-legend-dot db-cal-legend-dot--mood"></span> Mood</span>
+        <span class="db-cal-legend-item"><span class="db-cal-legend-dot db-cal-legend-dot--task"></span> Deadline Tugas</span>
+        <span class="db-cal-legend-item"><span class="db-cal-legend-dot db-cal-legend-dot--session"></span> Jadwal Konseling</span>
     </div>
 </div>
 
@@ -142,8 +142,8 @@
             <div class="db-empty">
                 <span class="db-empty-icon" aria-hidden="true">🌸</span>
                 <p>Belum ada mood tercatat</p>
-                <div class="db-card-actions" style="margin-top: 12px; justify-content: center;">
-                    <a class="btn-pill" asp-controller="Mood" asp-action="Feeling">+ Lacak Mood</a>
+                <div class="db-card-actions db-card-actions--center-mt">
+                    <button class="btn-pill" onclick="openMoodModal()">+ Lacak Mood</button>
                 </div>
             </div>
         }
@@ -153,10 +153,10 @@
                 <span class="db-mood-emoji">@MoodPalette.Emoji(Model.TodayFeeling)</span>
                 <strong class="db-mood-label">@MoodPalette.Label(Model.TodayFeeling)</strong>
             </div>
-            <div class="db-card-actions" style="justify-content: center; margin-top: auto; padding-top: 12px;">
-                <a class="btn-pill" asp-controller="Mood" asp-action="Feeling" style="width:100%; justify-content:center; border-radius:12px;">
+            <div class="db-card-actions db-card-actions--center-auto">
+                <button class="btn-pill db-mood-edit-btn" onclick="openMoodModal()">
                     Ubah Mood &amp; Check In
-                </a>
+                </button>
             </div>
         }
     </div>
@@ -173,7 +173,7 @@
             <div class="db-empty">
                 <span class="db-empty-icon" aria-hidden="true">📖</span>
                 <p>Belum ada jurnal hari ini</p>
-                <div class="db-card-actions" style="justify-content: center; margin-top: 12px;">
+                <div class="db-card-actions db-card-actions--center-mt">
                     <button type="button" class="btn-pill" onclick="openJournalModal()">+ Tulis Jurnal</button>
                 </div>
             </div>
@@ -207,13 +207,21 @@
         {
             <div class="db-empty">
                 <span class="db-empty-icon" aria-hidden="true">🎉</span>
-                <p>Semua tugas sudah selesai!</p>
-                <a class="btn-pill" asp-controller="Tasks" asp-action="Index">Lihat Tugas</a>
+                @if (Model.IsSubscribed)
+                {
+                    <p>Semua tugas sudah selesai!</p>
+                    <a class="btn-pill" asp-controller="Tasks" asp-action="Index">Lihat Tugas</a>
+                }
+                else
+                {
+                    <p>Mulai langganan untuk menerima tugas dari Psikolog</p>
+                    <a class="btn-pill" asp-controller="Subscription" asp-action="Index">Berlangganan Sekarang</a>
+                }
             </div>
         }
         else
         {
-            <div class="db-task-list" style="flex:1;">
+            <div class="db-task-list db-task-list--grow">
                 @foreach (var w in Model.OpenWorksheets)
                 {
                     var sc = w.Status == "Assigned"   ? "new"
@@ -232,7 +240,7 @@
                     </a>
                 }
             </div>
-            <a class="btn-pill" asp-controller="Tasks" asp-action="Index" style="margin-top:auto; padding-top:16px; width:100%; justify-content:center; border-radius:12px;">Lihat Semua Tugas</a>
+            <a class="btn-pill db-link-all" asp-controller="Tasks" asp-action="Index">Lihat Semua Tugas</a>
         }
     </div>
 
@@ -247,41 +255,49 @@
         {
             <div class="db-empty">
                 <span class="db-empty-icon" aria-hidden="true">🗓️</span>
-                <p>Belum ada jadwal mendatang</p>
-                <a class="btn-pill" asp-controller="Jadwal" asp-action="Index">Lihat Jadwal</a>
+                @if (Model.IsSubscribed)
+                {
+                    <p>Belum ada jadwal mendatang</p>
+                    <a class="btn-pill" asp-controller="Jadwal" asp-action="Index">Lihat Jadwal</a>
+                }
+                else
+                {
+                    <p>Kamu belum terhubung dengan Psikolog</p>
+                    <a class="btn-pill" asp-controller="Subscription" asp-action="Index">Berlangganan Sekarang</a>
+                }
             </div>
         }
         else
         {
-            <div style="display:flex; flex-direction:column; gap:12px; flex:1;">
+            <div class="db-session-list">
                 @foreach (var s in Model.UpcomingSessions)
                 {
-                    <div style="display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; background:#F5F3FF; border:1px solid rgba(124,58,237,0.1);">
-                        <div style="background:var(--lu-primary); color:white; min-width:44px; height:44px; border-radius:10px; display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:11px; font-weight:700; line-height:1.2;">
+                    <div class="db-session-item">
+                        <div class="db-session-date">
                             <span>@s.SessionStart.ToString("MMM", cid).ToUpper()</span>
-                            <span style="font-size:18px;">@s.SessionStart.ToString("dd")</span>
+                            <span class="db-session-day">@s.SessionStart.ToString("dd")</span>
                         </div>
-                        <div style="flex:1; min-width:0;">
-                            <div style="font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@s.PsychologistName</div>
-                            <div style="font-size:12px; color:var(--lu-text-muted); margin-top:2px;">⏰ @s.SessionStart.ToString("HH:mm") · @s.DurationMinutes mnt</div>
+                        <div class="db-session-info">
+                            <div class="db-session-name">@s.PsychologistName</div>
+                            <div class="db-session-time">⏰ @s.SessionStart.ToString("HH:mm") · @s.DurationMinutes mnt</div>
                         </div>
                     </div>
                 }
             </div>
-            <a class="btn-pill" asp-controller="Jadwal" asp-action="Index" style="margin-top:auto; padding-top:16px; width:100%; justify-content:center; border-radius:12px;">Lihat Semua Jadwal</a>
+            <a class="btn-pill db-link-all" asp-controller="Jadwal" asp-action="Index">Lihat Semua Jadwal</a>
         }
     </div>
 
 <!-- ─── Journal Modal ─── -->
 <div class="hrpf-modal-overlay" id="journalModal" role="dialog" aria-modal="true" aria-labelledby="journalModalTitle">
-    <div class="hrpf-modal" style="max-width: 600px;">
+    <div class="hrpf-modal db-modal--journal">
         <div class="hrpf-modal-head">
             <div class="hrpf-modal-head-icon">📝</div>
             <h2 class="hrpf-modal-title" id="journalModalTitle">Tulis Jurnal</h2>
             <button type="button" class="hrpf-modal-close" onclick="closeJournalModal()" aria-label="Tutup">&times;</button>
         </div>
 
-        <form method="post" asp-controller="Journal" asp-action="Write" autocomplete="off" style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+        <form method="post" asp-controller="Journal" asp-action="Write" autocomplete="off" class="db-modal-form">
             @Html.AntiForgeryToken()
             <input type="hidden" name="JournalId" value="@Model.LatestJournalId" />
             
@@ -292,7 +308,7 @@
                 </div>
                 <div class="hrpf-modal-field">
                     <label class="hrpf-modal-label">Isi Jurnal</label>
-                    <textarea name="Content" class="hrpf-modal-input" rows="8" placeholder="Tuliskan apa saja yang kamu pikirkan atau rasakan hari ini..." required style="resize: vertical;">@Model.LatestJournalContent</textarea>
+                    <textarea name="Content" class="hrpf-modal-input db-modal-textarea" rows="8" placeholder="Tuliskan apa saja yang kamu pikirkan atau rasakan hari ini..." required>@Model.LatestJournalContent</textarea>
                 </div>
             </div>
             
@@ -304,6 +320,20 @@
     </div>
 </div>
 
+<!-- ─── Mood Tracker Modal (iframe) ─── -->
+<div class="hrpf-modal-overlay" id="moodModal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle">
+    <div class="hrpf-modal db-modal--mood">
+        <div class="hrpf-modal-head">
+            <div class="hrpf-modal-head-icon">😊</div>
+            <h2 class="hrpf-modal-title" id="moodModalTitle">Lacak Mood</h2>
+            <button type="button" class="hrpf-modal-close" onclick="closeMoodModal()" aria-label="Tutup">&times;</button>
+        </div>
+        <div class="hrpf-modal-body db-modal-body--iframe">
+            <iframe id="moodIframe" src="" class="db-mood-iframe"></iframe>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         function openJournalModal() {
@@ -311,6 +341,17 @@
         }
         function closeJournalModal() {
             document.getElementById('journalModal').classList.remove('is-open');
+        }
+
+        function openMoodModal() {
+            var iframe = document.getElementById('moodIframe');
+            if (!iframe.getAttribute('src')) {
+                iframe.setAttribute('src', '/Patient/Mood/Feeling');
+            }
+            document.getElementById('moodModal').classList.add('is-open');
+        }
+        function closeMoodModal() {
+            document.getElementById('moodModal').classList.remove('is-open');
         }
     </script>
 }

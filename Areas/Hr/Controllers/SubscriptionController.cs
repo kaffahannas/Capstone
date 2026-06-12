@@ -67,8 +67,8 @@ public class SubscriptionController : Controller
                     DivisionId = d.DivisionId,
                     Name = d.Name,
                     ReferralCode = d.ReferralCode,
-                    EmployeeCount = _context.Patients.Count(p => p.CompanyId == hr.CompanyId && p.Department == d.Name) +
-                                    _context.PendingEmployees.Count(p => p.CompanyId == hr.CompanyId && p.Department == d.Name)
+                    EmployeeCount = _context.Patients.Count(p => p.CompanyId == hr.CompanyId && p.DivisionId == d.DivisionId) +
+                                    _context.PendingEmployees.Count(p => p.CompanyId == hr.CompanyId && p.DivisionId == d.DivisionId)
                 })
                 .ToListAsync();
         }

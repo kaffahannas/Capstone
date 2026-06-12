@@ -1,0 +1,80 @@
+.hrpf-edit-wrap {
+    max-width: 720px;
+}
+
+.hrpf-edit-title {
+    margin: 0 0 4px;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.hrpf-edit-sub {
+    margin: 0 0 24px;
+    color: var(--text-muted);
+    font-size: 14.5px;
+}
+
+.hrpf-edit-val-summary {
+    background: #FEE2E2;
+    color: #B91C1C;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.hrpf-edit-card {
+    margin-bottom: 20px;
+}
+
+.hrpf-edit-card-icon--blue {
+    background: #EFF6FF;
+    color: #3B82F6;
+}
+
+.hrpf-edit-card-icon--purple {
+    background: #F5F3FF;
+    color: #7C3AED;
+}
+
+.hrpf-edit-file-input {
+    padding: 7px;
+    background: #F9FAFB;
+}
+
+.hrpf-edit-val-error {
+    color: #DC2626;
+    font-size: 12px;
+}
+
+.hrpf-edit-card-title-sub {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-left: 6px;
+}
+
+.hrpf-edit-card-body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.hrpf-edit-field {
+    margin: 0;
+}
+
+.hrpf-edit-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.hrpf-edit-btn-cancel {
+    flex: 1;
+    text-align: center;
+}
+
+.hrpf-edit-btn-save {
+    flex: 1;
+}

@@ -1,7 +1,10 @@
 using LightenUp.Web.Data;
 using LightenUp.Web.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +20,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddControllersWithViews(options =>
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddHttpClient();
 builder.Services.Configure<LightenUp.Web.Services.DuitkuOptions>(
     builder.Configuration.GetSection(LightenUp.Web.Services.DuitkuOptions.SectionName));
@@ -29,6 +34,22 @@ builder.Services.AddScoped<LightenUp.Web.Services.SubscriptionPricingService>();
 builder.Services.AddScoped<LightenUp.Web.Services.PsychologistWorkloadService>();
 builder.Services.AddScoped<LightenUp.Web.Services.AssignmentActivationService>();
 builder.Services.AddScoped<LightenUp.Web.Services.IEmailSender, LightenUp.Web.Services.SmtpEmailSender>();
+
+// Rate limiting for login/register endpoints
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddFixedWindowLimiter("auth", opt =>
+    {
+        opt.PermitLimit = 10;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueLimit = 0;
+    });
+});
+
+// Health checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>();
 
 var app = builder.Build();
 
@@ -56,25 +77,37 @@ using (var scope = app.Services.CreateScope())
         }
 
         // 2. Ensure default admin exists
-        const string adminEmail = "admin@lightenup.com";
-        const string adminPassword = "Admin123!";
-        var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        if (adminUser == null)
+        // Admin credentials are read from configuration (appsettings / User Secrets / env vars).
+        // NEVER hardcode credentials in source code.
+        var adminEmail = builder.Configuration["Seed:AdminEmail"] ?? "admin@lightenup.com";
+        var adminPassword = builder.Configuration["Seed:AdminPassword"];
+        if (string.IsNullOrEmpty(adminPassword))
         {
-            var newAdmin = new ApplicationUser
+            var seedLogger = services.GetRequiredService<ILogger<Program>>();
+            seedLogger.LogWarning(
+                "Seed:AdminPassword not configured. Set it via User Secrets or environment variables. " +
+                "Skipping admin seed.");
+        }
+        else
+        {
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser == null)
             {
-                UserName = adminEmail,
-                Email = adminEmail,
-                EmailConfirmed = true,
-                FullName = "System Admin",
-                RoleType = "Admin",
-                IsApprovedByAdmin = true
-            };
+                var newAdmin = new ApplicationUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    EmailConfirmed = true,
+                    FullName = "System Admin",
+                    RoleType = "Admin",
+                    IsApprovedByAdmin = true
+                };
 
-            var result = await userManager.CreateAsync(newAdmin, adminPassword);
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(newAdmin, "Admin");
+                var result = await userManager.CreateAsync(newAdmin, adminPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(newAdmin, "Admin");
+                }
             }
         }
 
@@ -104,6 +137,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseRateLimiter();
 
 // ───── Hostname-based area gating ─────
 // Customer site (Site:PatientHost) hosts Patient/Psychologist/HR. /Admin/* is BLOCKED here.
@@ -175,5 +209,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+app.MapHealthChecks("/health");
 
 app.Run();

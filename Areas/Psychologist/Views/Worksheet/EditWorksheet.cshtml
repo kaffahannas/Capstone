@@ -1,0 +1,66 @@
+@using LightenUp.Web.Controllers
+@model LightenUp.Web.Models.ViewModels.PsyWorksheetEditViewModel
+@{
+    ViewData["Title"] = "Edit Worksheet";
+    Layout = "_LayoutDashboard";
+}
+
+<a class="ew-back" asp-action="Worksheet">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Kembali ke Daftar Worksheet
+</a>
+
+<div class="tasks-hero ew-hero">
+    <div class="ew-hero-inner">
+        <h1 class="ew-hero-title">Edit Worksheet</h1>
+        <p class="ew-hero-sub">Pasien: <strong>@Model.PatientName</strong></p>
+    </div>
+    <svg class="ew-hero-deco" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon fill="currentColor" points="0,100 100,0 100,100"/></svg>
+</div>
+
+<div class="ew-wrap">
+    <form asp-action="EditWorksheet" method="post">
+        <div class="detail-card ew-card">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="WorksheetId" />
+            <input type="hidden" asp-for="PatientName" />
+            
+            <div asp-validation-summary="ModelOnly" class="ew-validation"></div>
+
+            <div class="form-group ew-field">
+                <label asp-for="TaskName" class="form-label ew-label">Nama Tugas</label>
+                <input asp-for="TaskName" class="form-control ew-input" placeholder="Masukkan nama tugas..." />
+                <span asp-validation-for="TaskName" class="ew-field-error"></span>
+            </div>
+
+            <div class="form-group ew-field">
+                <label asp-for="Description" class="form-label ew-label">Deskripsi Tugas</label>
+                <textarea asp-for="Description" rows="4" class="ew-input ew-input--textarea" placeholder="Jelaskan detail tugas yang harus dilakukan pasien..."></textarea>
+                <span asp-validation-for="Description" class="ew-field-error"></span>
+            </div>
+
+            <div class="ew-deadline-grid">
+                <div class="form-group">
+                    <label asp-for="DeadlineDate" class="form-label ew-label">Tanggal Deadline</label>
+                    <input asp-for="DeadlineDate" type="date" class="form-control ew-input" />
+                    <span asp-validation-for="DeadlineDate" class="ew-field-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DeadlineTime" class="form-label ew-label">Waktu Deadline</label>
+                    <input asp-for="DeadlineTime" type="time" class="form-control ew-input" />
+                    <span asp-validation-for="DeadlineTime" class="ew-field-error"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ew-actions">
+            <a asp-action="Worksheet" class="ew-btn-cancel">Batalkan</a>
+            <button type="submit" class="ew-btn-submit">Simpan Perubahan</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

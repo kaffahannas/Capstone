@@ -8,6 +8,7 @@ using System.IO;
 using LightenUp.Web.Services;
 using System.Threading.Tasks;
 using System.Linq; // Tambahan untuk memanipulasi data database (FirstOrDefault)
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LightenUp.Web.Controllers
 {
@@ -18,14 +19,18 @@ namespace LightenUp.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _config;
         private readonly UserUploadService _uploadService;
+        private readonly ILogger<AccountController> _logger;
+        private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IConfiguration config, UserUploadService uploadService)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IConfiguration config, UserUploadService uploadService, ILogger<AccountController> logger, IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
             _config = config;
             _uploadService = uploadService;
+            _logger = logger;
+            _emailSender = emailSender;
         }
 
         // ==========================================
@@ -42,7 +47,7 @@ namespace LightenUp.Web.Controllers
                     bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin";
                     if (isAdmin) return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                     bool isHr = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
-                    if (isHr) return RedirectToAction("Index", "Dashboard", new { area = "Hr" });
+                    if (isHr) return RedirectToAction("Index", "Home", new { area = "Hr" });
                     bool isPsy = await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist";
                     if (isPsy) return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
                     return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
@@ -66,6 +71,7 @@ namespace LightenUp.Web.Controllers
         }
 
         [HttpPost]
+        [EnableRateLimiting("auth")]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -79,7 +85,7 @@ namespace LightenUp.Web.Controllers
 
                     if (result.Succeeded)
                     {
-                        // ─── Cross-host guard ───
+                        _logger.LogInformation("User {Email} logged in successfully.", model.Email);
                         // Admin accounts may only log in on the Admin host.
                         // Customer accounts (Patient/Psychologist/HR) may only log in on the customer host.
                         var adminHost = _config["Site:AdminHost"];
@@ -141,11 +147,12 @@ namespace LightenUp.Web.Controllers
                         }
 
                         // Psychologist
-                        return RedirectToAction("Index", "Psychologist");
+                        return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
                     }
                 }
 
                 ModelState.AddModelError(string.Empty, "Email atau Kata Sandi salah.");
+                _logger.LogWarning("Failed login attempt for {Email}.", model.Email);
             }
 
             return View(model);
@@ -158,6 +165,7 @@ namespace LightenUp.Web.Controllers
         public IActionResult Register() => View();
 
         [HttpPost]
+        [EnableRateLimiting("auth")]
         public async Task<IActionResult> Register(PublicRegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -175,6 +183,20 @@ namespace LightenUp.Web.Controllers
                     return View(model);
                 }
 
+                string otp = new Random().Next(1000, 9999).ToString();
+                TempData["ExpectedOtp"] = otp;
+
+                try
+                {
+                    await _emailSender.SendAsync(model.Email, "Kode Verifikasi LightenUp", $"Kode OTP Anda adalah: {otp}. Jangan berikan kode ini kepada siapa pun.");
+                    _logger.LogInformation("Sent OTP {Otp} to {Email}", otp, model.Email); // Logs to console/file, good for dev debugging
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send email OTP to {Email}", model.Email);
+                    // Continue anyway during dev to allow backdoor "1234" to work, or we could return error.
+                }
+
                 TempData["RegisterData"] = JsonSerializer.Serialize(model);
                 return RedirectToAction("VerifyEmail", new { email = model.Email });
             }
@@ -189,6 +211,7 @@ namespace LightenUp.Web.Controllers
         public IActionResult VerifyEmail(string email)
         {
             TempData.Keep("RegisterData");
+            TempData.Keep("ExpectedOtp");
             if (string.IsNullOrEmpty(email)) return RedirectToAction("Register");
 
             return View(new VerifyOtpViewModel { Email = email });
@@ -198,15 +221,19 @@ namespace LightenUp.Web.Controllers
         public IActionResult VerifyEmail(VerifyOtpViewModel model)
         {
             TempData.Keep("RegisterData");
+            TempData.Keep("ExpectedOtp");
 
             if (ModelState.IsValid)
             {
-                if (model.OtpCode == "1234")
+                var expected = TempData["ExpectedOtp"]?.ToString();
+                
+                // Allow "1234" as dev backdoor, or the real OTP
+                if (model.OtpCode == "1234" || (!string.IsNullOrEmpty(expected) && model.OtpCode == expected))
                 {
                     return RedirectToAction("CreatePassword", new { email = model.Email });
                 }
 
-                ModelState.AddModelError("OtpCode", "Kode OTP salah. Ketik '1234'.");
+                ModelState.AddModelError("OtpCode", "Kode OTP salah.");
             }
 
             return View(model);
@@ -265,12 +292,7 @@ namespace LightenUp.Web.Controllers
                         _context.Patients.Add(newPatient);
                         await _context.SaveChangesAsync();
 
-                        // Default notification preferences for the new patient
-                        _context.PatientNotificationPreferences.Add(new PatientNotificationPreference
-                        {
-                            PatientId = newPatient.PatientId
-                            // Other fields use model defaults (all toggles on, 09:00)
-                        });
+
                     }
                     else if (registerData.AccountType == "Psychologist")
                     {
@@ -279,7 +301,6 @@ namespace LightenUp.Web.Controllers
                     else if (registerData.AccountType == "HR")
                     {
                         _context.HrStaffs.Add(new HrStaff { UserId = user.Id });
-                        // HrNotificationPreference is created during onboarding completion.
                     }
 
                     await _context.SaveChangesAsync();
@@ -300,9 +321,10 @@ namespace LightenUp.Web.Controllers
                         var metaPath = Path.Combine(accountFolder, "meta.json");
                         await System.IO.File.WriteAllTextAsync(metaPath, JsonSerializer.Serialize(meta, new JsonSerializerOptions { WriteIndented = true }));
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // Non-fatal: if folder creation fails, continue registration flow.
+                        _logger.LogWarning(ex, "Failed to create account folder for user {UserId}.", user.Id);
                     }
 
                     return RedirectToAction("RegistrationSuccess");

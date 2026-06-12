@@ -41,41 +41,45 @@
 
     <div class="pf-layout">
 
-        <!-- ─── LEFT SIDEBAR ─── -->
         <aside class="pf-aside" aria-label="Profil pengguna">
 
-            <!-- Avatar card -->
             <div class="pf-profile-card">
                 <div class="pf-profile-card-inner">
                     <div class="pf-avatar-wrap">
-                        <img class="pf-avatar"
-                             src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/lib/bootstrap-icons/icons/person-circle.svg" : Model.ProfilePicture)"
-                             alt="Foto profil @Model.FullName" />
+                        @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+                        {
+                            <img class="pf-avatar" src="@Model.ProfilePicture" alt="Foto profil @Model.FullName" />
+                        }
+                        else
+                        {
+                            <div class="pf-avatar-placeholder">
+                                @(Model.FullName?.Length > 0 ? Model.FullName[0].ToString().ToUpper() : "?")
+                            </div>
+                        }
                     </div>
                     <h1 class="pf-name">@Model.FullName</h1>
                     <span class="pf-status pf-status--@statusCss">@statusIcon @Model.MentalHealthStatus</span>
                     @if (!string.IsNullOrEmpty(Model.CompanyName))
                     {
-                        <span style="font-size:12px; color:rgba(255,255,255,0.7); margin-top:4px; display:block;">🏢 @Model.CompanyName</span>
+                        <span class="pf-company-tag">🏢 @Model.CompanyName</span>
                     }
                 </div>
             </div>
 
-            <!-- Kelengkapan profil -->
-            <div class="lu-card" style="padding:16px; margin-bottom:16px;">
-                <p style="font-size:13px; font-weight:700; margin:0 0 8px; display:flex; justify-content:space-between;">
+            <div class="lu-card pf-complete-card">
+                <p class="pf-complete-head">
                     <span>📋 Kelengkapan Profil</span>
-                    <span style="color:var(--lu-primary);">@pct%</span>
+                    <span class="pf-complete-pct">@pct%</span>
                 </p>
-                <div style="background:var(--lu-border); border-radius:99px; height:6px; margin-bottom:10px;">
-                    <div style="background:var(--lu-primary); border-radius:99px; height:6px; width:@pct%; transition:width 0.4s;"></div>
+                <div class="pf-complete-track">
+                    <div class="pf-complete-fill" style="--bar-w:@pct%;"></div>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="pf-complete-list">
                     @foreach (var item in profileItems)
                     {
-                        <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:@(item.Done ? "var(--lu-text)" : "var(--lu-text-muted)");">
-                            <span style="width:16px; height:16px; border-radius:50%; background:@(item.Done ? "#10B981" : "var(--lu-border)"); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                @if (item.Done) { <span style="color:white; font-size:9px;">✓</span> }
+                        <div class="pf-complete-item @(item.Done ? "is-done" : "")">
+                            <span class="pf-complete-dot">
+                                @if (item.Done) { <span class="pf-complete-check">✓</span> }
                             </span>
                             @item.Label
                         </div>
@@ -83,14 +87,13 @@
                 </div>
                 @if (pct < 100)
                 {
-                    <a asp-action="Edit" style="display:block; margin-top:12px; text-align:center; font-size:12px; font-weight:600; color:var(--lu-primary); text-decoration:none;">✏️ Lengkapi Sekarang →</a>
+                    <a asp-action="Edit" class="pf-complete-link">✏️ Lengkapi Sekarang →</a>
                 }
             </div>
 
-            <!-- Quick contacts -->
-            <section class="pf-help lu-card" aria-label="Bantuan darurat" style="padding:16px;">
-                <p style="font-size:13px; font-weight:700; margin:0 0 10px;">🆘 Butuh Bantuan?</p>
-                <div class="pf-help-links" style="gap:8px;">
+            <section class="pf-help lu-card" aria-label="Bantuan darurat">
+                <p class="pf-help-title">🆘 Butuh Bantuan?</p>
+                <div class="pf-help-links">
                     <a class="pf-help-link pf-help-link--purple @(string.IsNullOrEmpty(Model.EmergencyContactEmail) && string.IsNullOrEmpty(Model.EmergencyContactPhone) ? "is-disabled" : "")"
                        href="@(!string.IsNullOrEmpty(Model.EmergencyContactEmail) ? mailto(Model.EmergencyContactEmail) : tel(Model.EmergencyContactPhone))">
                         <span aria-hidden="true">🤝</span>
@@ -121,86 +124,77 @@
             </section>
         </aside>
 
-        <!-- ─── MAIN CONTENT ─── -->
         <div class="pf-profile-main">
 
-            <!-- ── Row 1: 4 KPI chips ── -->
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px;">
-                <!-- Mood Score -->
-                <div class="lu-card" style="padding:16px; text-align:center;">
-                    <div style="font-size:28px; font-weight:800; color:var(--lu-primary); line-height:1;">
+            <div class="pf-kpi-grid">
+                <div class="lu-card pf-kpi-card">
+                    <div class="pf-kpi-value pf-kpi-value--primary">
                         @(Model.TotalMoodPercent.HasValue ? $"{Model.TotalMoodPercent}%" : "—")
                     </div>
-                    <div style="font-size:11px; color:var(--lu-text-muted); margin-top:4px;">Skor Mood</div>
-                    <div style="background:var(--lu-border); border-radius:99px; height:4px; margin-top:8px;">
-                        <div style="background:@(statusCss == "sehat" ? "#10B981" : statusCss == "beresiko" ? "#F59E0B" : "#EF4444"); border-radius:99px; height:4px; width:@moodPct%;"></div>
+                    <div class="pf-kpi-label">Skor Mood</div>
+                    <div class="pf-mood-track">
+                        <div class="pf-mood-fill pf-mood-fill--@statusCss" style="--bar-w:@moodPct%;"></div>
                     </div>
                 </div>
-                <!-- Streak -->
-                <div class="lu-card" style="padding:16px; text-align:center;">
-                    <div style="font-size:28px; font-weight:800; color:#F59E0B; line-height:1;">@Model.MoodStreakDays 🔥</div>
-                    <div style="font-size:11px; color:var(--lu-text-muted); margin-top:4px;">Hari Beruntun</div>
-                    <div style="font-size:10px; color:var(--lu-text-muted); margin-top:4px;">check-in mood</div>
+                <div class="lu-card pf-kpi-card">
+                    <div class="pf-kpi-value pf-kpi-value--amber">@Model.MoodStreakDays 🔥</div>
+                    <div class="pf-kpi-label">Hari Beruntun</div>
+                    <div class="pf-kpi-sub">check-in mood</div>
                 </div>
-                <!-- Sessions Done -->
-                <div class="lu-card" style="padding:16px; text-align:center;">
-                    <div style="font-size:28px; font-weight:800; color:#7C3AED; line-height:1;">@Model.TotalSessionsDone</div>
-                    <div style="font-size:11px; color:var(--lu-text-muted); margin-top:4px;">Sesi Selesai</div>
+                <div class="lu-card pf-kpi-card">
+                    <div class="pf-kpi-value pf-kpi-value--purple">@Model.TotalSessionsDone</div>
+                    <div class="pf-kpi-label">Sesi Selesai</div>
                     @if (Model.NextSessionAt.HasValue)
                     {
-                        <div style="font-size:10px; color:#7C3AED; margin-top:4px; font-weight:600;">
+                        <div class="pf-kpi-sub pf-kpi-sub--purple">
                             Berikutnya: @Model.NextSessionAt.Value.ToString("d MMM · HH:mm", cid)
                         </div>
                     }
                     else
                     {
-                        <div style="font-size:10px; color:var(--lu-text-muted); margin-top:4px;">konseling</div>
+                        <div class="pf-kpi-sub">konseling</div>
                     }
                 </div>
-                <!-- Tasks Done -->
-                <div class="lu-card" style="padding:16px; text-align:center;">
-                    <div style="font-size:28px; font-weight:800; color:#10B981; line-height:1;">@Model.TotalTasksDone</div>
-                    <div style="font-size:11px; color:var(--lu-text-muted); margin-top:4px;">Tugas Selesai</div>
-                    <div style="font-size:10px; color:var(--lu-text-muted); margin-top:4px;">dari psikolog</div>
+                <div class="lu-card pf-kpi-card">
+                    <div class="pf-kpi-value pf-kpi-value--green">@Model.TotalTasksDone</div>
+                    <div class="pf-kpi-label">Tugas Selesai</div>
+                    <div class="pf-kpi-sub">dari psikolog</div>
                 </div>
             </div>
 
-            <!-- ── Row 2: Status mental + Tip ── -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
-                <!-- Mental health status card -->
-                <div class="lu-card" style="padding:20px; display:flex; gap:16px; align-items:center;">
-                    <div style="font-size:40px; line-height:1;">🧠</div>
-                    <div style="flex:1;">
-                        <div style="font-size:12px; color:var(--lu-text-muted); margin-bottom:2px;">Status Kesehatan Mental</div>
-                        <div style="font-size:20px; font-weight:800; color:@(statusCss == "sehat" ? "#10B981" : statusCss == "beresiko" ? "#F59E0B" : "#EF4444");">
+            <div class="pf-row2-grid">
+                <div class="lu-card pf-mental-card">
+                    <div class="pf-mental-ico">🧠</div>
+                    <div class="pf-mental-body">
+                        <div class="pf-mental-label">Status Kesehatan Mental</div>
+                        <div class="pf-mental-value pf-mental-value--@statusCss">
                             @statusIcon @Model.MentalHealthStatus
                         </div>
-                        <div style="font-size:12px; color:var(--lu-text-muted); margin-top:6px;">Check-in terakhir: <strong>@Model.LastCheckLabel</strong></div>
+                        <div class="pf-mental-checkin">Check-in terakhir: <strong>@Model.LastCheckLabel</strong></div>
                         @if (Model.NextSessionAt.HasValue)
                         {
-                            <div style="margin-top:8px; display:inline-block; background:#F5F3FF; color:#7C3AED; font-size:11px; font-weight:600; padding:4px 10px; border-radius:99px;">
+                            <div class="pf-session-badge">
                                 🗓 Konseling @Model.NextSessionAt.Value.ToString("d MMM yyyy · HH:mm", cid)
                             </div>
                         }
                         else if (Model.LastSessionAt.HasValue)
                         {
-                            <div style="font-size:11px; color:var(--lu-text-muted); margin-top:6px;">
+                            <div class="pf-last-session">
                                 Sesi terakhir: @Model.LastSessionAt.Value.ToString("d MMM yyyy", cid)
                             </div>
                         }
                     </div>
                 </div>
-                <!-- Tip card -->
-                <div class="pf-tip-card pf-tip-card--@statusCss" style="display:flex; gap:14px; align-items:flex-start;">
-                    <div style="font-size:32px; line-height:1;">@tipIcon</div>
+                <div class="pf-tip-card pf-tip-card--@statusCss pf-tip-row">
+                    <div class="pf-tip-ico-lg">@tipIcon</div>
                     <div>
-                        <p class="pf-tip-title" style="margin-bottom:6px;">
+                        <p class="pf-tip-title">
                             @(Model.MentalHealthStatus switch { "Sehat" => "Pertahankan!", "Beresiko" => "Butuh perhatian lebih", _ => "Segera cari dukungan" })
                         </p>
                         <p class="pf-tip-msg">@tipMsg</p>
                         @if (Model.MentalHealthStatus != "Sehat")
                         {
-                            <a asp-controller="Jadwal" asp-action="Index" style="display:inline-block; margin-top:10px; font-size:12px; font-weight:600; color:var(--lu-primary); text-decoration:none;">
+                            <a asp-controller="Jadwal" asp-action="Index" class="pf-tip-link">
                                 📅 Lihat Jadwal Konseling →
                             </a>
                         }
@@ -208,8 +202,7 @@
                 </div>
             </div>
 
-            <!-- ── Row 3: Data diri + Kontak darurat ── -->
-            <section class="lu-card pf-detail-card" aria-label="Informasi profil" style="margin-bottom:16px;">
+            <section class="lu-card pf-detail-card" aria-label="Informasi profil">
                 <header class="pf-detail-head">
                     <div class="pf-detail-title-wrap">
                         <span class="pf-detail-ico" aria-hidden="true">📋</span>
@@ -219,7 +212,6 @@
                 </header>
 
                 <div class="pf-detail-split">
-                    <!-- Data diri -->
                     <div class="pf-detail-section">
                         <h3 class="pf-detail-subtitle"><span aria-hidden="true">👤</span> Data Diri &amp; Pekerjaan</h3>
                         <dl class="pf-info-grid pf-info-grid--dense">
@@ -233,7 +225,7 @@
                                     @if (!string.IsNullOrEmpty(Model.Phone))
                                     { <a href="tel:@Model.Phone" class="pf-info-link">@Model.Phone</a> }
                                     else
-                                    { <span style="color:var(--lu-text-muted);">—</span> }
+                                    { <span class="pf-muted-dash">—</span> }
                                 </dd>
                             </div>
                             <div class="pf-info-item">
@@ -273,7 +265,6 @@
                         </dl>
                     </div>
 
-                    <!-- Kontak darurat -->
                     <div class="pf-detail-section pf-detail-section--emergency">
                         <h3 class="pf-detail-subtitle"><span aria-hidden="true">🆘</span> Kontak Darurat</h3>
                         <dl class="pf-info-grid pf-info-grid--dense">
@@ -306,12 +297,12 @@
                         </dl>
                         @if (!string.IsNullOrEmpty(Model.PsychologistName) || !string.IsNullOrEmpty(Model.PsychologistEmail))
                         {
-                            <div style="margin-top:12px; padding:10px 12px; background:#F5F3FF; border-radius:10px; border:1px solid rgba(124,58,237,0.12);">
-                                <div style="font-size:11px; color:var(--lu-text-muted); margin-bottom:2px;">Psikolog Anda</div>
-                                <div style="font-weight:600; font-size:14px;">@dash(Model.PsychologistName)</div>
+                            <div class="pf-psy-box">
+                                <div class="pf-psy-box-label">Psikolog Anda</div>
+                                <div class="pf-psy-box-name">@dash(Model.PsychologistName)</div>
                                 @if (!string.IsNullOrEmpty(Model.PsychologistEmail))
                                 {
-                                    <a href="mailto:@Model.PsychologistEmail" class="pf-info-link" style="font-size:12px;">@Model.PsychologistEmail</a>
+                                    <a href="mailto:@Model.PsychologistEmail" class="pf-info-link pf-psy-box-email">@Model.PsychologistEmail</a>
                                 }
                             </div>
                         }
@@ -319,36 +310,31 @@
                 </div>
             </section>
 
-            <!-- ── Row 4: Akses Cepat (horizontal 3 cards) ── -->
-            <section class="lu-card" style="padding:18px 20px;" aria-label="Akses cepat">
-                <h3 style="margin:0 0 14px; font-size:13px; font-weight:700; color:var(--lu-text-muted); text-transform:uppercase; letter-spacing:0.05em;">⚡ Akses Cepat</h3>
-                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+            <section class="lu-card pf-quick-section" aria-label="Akses cepat">
+                <h3 class="pf-quick-title">⚡ Akses Cepat</h3>
+                <div class="pf-quick-grid">
 
-                    <a asp-controller="Mood" asp-action="Feeling"
-                       style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 12px; background:linear-gradient(135deg,#F5F3FF,#EDE9FE); border-radius:12px; text-decoration:none; border:1px solid rgba(124,58,237,0.12); transition:all 0.2s; text-align:center;">
-                        <span style="font-size:28px; line-height:1;">😊</span>
-                        <div style="font-size:13px; font-weight:700; color:var(--lu-text);">Lacak Mood & Check-In</div>
-                        <div style="font-size:11px; color:var(--lu-text-muted);">Catat perasaan harianmu</div>
+                    <a asp-controller="Mood" asp-action="Feeling" class="pf-quick-card pf-quick-card--mood">
+                        <span class="pf-quick-ico">😊</span>
+                        <div class="pf-quick-label">Lacak Mood & Check-In</div>
+                        <div class="pf-quick-sub">Catat perasaan harianmu</div>
                     </a>
 
-                    <a asp-controller="Jadwal" asp-action="Index"
-                       style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 12px; background:linear-gradient(135deg,#EFF6FF,#DBEAFE); border-radius:12px; text-decoration:none; border:1px solid rgba(59,130,246,0.12); transition:all 0.2s; text-align:center;">
-                        <span style="font-size:28px; line-height:1;">📅</span>
-                        <div style="font-size:13px; font-weight:700; color:var(--lu-text);">Jadwal Konseling</div>
-                        <div style="font-size:11px; color:var(--lu-text-muted);">Lihat sesi mendatang</div>
+                    <a asp-controller="Jadwal" asp-action="Index" class="pf-quick-card pf-quick-card--jadwal">
+                        <span class="pf-quick-ico">📅</span>
+                        <div class="pf-quick-label">Jadwal Konseling</div>
+                        <div class="pf-quick-sub">Lihat sesi mendatang</div>
                     </a>
 
-                    <a asp-action="Edit"
-                       style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 12px; background:linear-gradient(135deg,#FFF7ED,#FFEDD5); border-radius:12px; text-decoration:none; border:1px solid rgba(249,115,22,0.12); transition:all 0.2s; text-align:center;">
-                        <span style="font-size:28px; line-height:1;">✏️</span>
-                        <div style="font-size:13px; font-weight:700; color:var(--lu-text);">Edit Profil</div>
-                        <div style="font-size:11px; color:var(--lu-text-muted);">Perbarui data & kontak</div>
+                    <a asp-action="Edit" class="pf-quick-card pf-quick-card--edit">
+                        <span class="pf-quick-ico">✏️</span>
+                        <div class="pf-quick-label">Edit Profil</div>
+                        <div class="pf-quick-sub">Perbarui data & kontak</div>
                     </a>
-                    </div>
-                </section>
+                </div>
+            </section>
 
-            </div>
+        </div>
 
-        </div><!-- /pf-profile-main -->
-    </div><!-- /pf-layout -->
-</div><!-- /pf-page -->
+    </div>
+</div>

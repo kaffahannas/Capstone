@@ -78,9 +78,8 @@ namespace LightenUp.Web.Models.ViewModels
 
     public class HrAddClientViewModel
     {
-        [Required(ErrorMessage = "Divisi wajib diisi.")]
-        [StringLength(64)]
-        public string Department { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Divisi wajib dipilih.")]
+        public int DivisionId { get; set; }
 
         [Required(ErrorMessage = "Nama karyawan wajib diisi.")]
         [StringLength(100)]

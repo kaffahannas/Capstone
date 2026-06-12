@@ -132,7 +132,9 @@ body {
 /* â”€â”€â”€â”€â”€ Main content area â”€â”€â”€â”€â”€ */
 .app-main {
     padding: 24px 32px;
-    min-height: 100vh;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
@@ -161,6 +163,9 @@ body {
     max-width: 100%;
     width: 100%;
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* Custom Scrollbar for inner lists */
@@ -2646,28 +2651,38 @@ body:has(.pf-page) {
 /* Stats row */
 .hrd-stats {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
+    align-items: stretch;
 }
 .hrd-stat {
-    background: rgba(255,255,255,0.13);
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 14px;
-    padding: 13px 18px;
-    text-align: center;
-    min-width: 78px;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 85px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.2s;
+}
+.hrd-stat:hover {
+    transform: translateY(-2px);
 }
 .hrd-stat-ico {
-    display: block;
-    font-size: 16px;
-    line-height: 1;
-    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 6px;
+    opacity: 0.95;
 }
 .hrd-stat-val {
     display: block;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 800;
     color: #fff;
     line-height: 1;
@@ -3472,7 +3487,7 @@ body:has(.pf-page) {
     border-radius: 50%;
     background: #fff;
     display: block;
-    margin: 0 auto 4px;
+    margin: 4px auto 10px; /* 4+10+10 = 24px total height, matching SVG 18+6 */
     animation: hrdt-pulse 2s infinite;
 }
 @keyframes hrdt-pulse {
@@ -3481,7 +3496,7 @@ body:has(.pf-page) {
 }
 .hrdt-stat-status-val {
     display: block;
-    font-size: 16px;
+    font-size: 26px;
     font-weight: 800;
     color: #fff;
     line-height: 1;
@@ -4221,7 +4236,7 @@ body:has(.pf-page) {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-width: 960px;
+    max-width: 100%;
 }
 .hr-page-wrap--wide { max-width: 1080px; }
 .hr-page-wrap--narrow { max-width: 620px; }

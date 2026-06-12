@@ -7,15 +7,15 @@
 | Role | Highlights |
 |------|------------|
 | **Patient** | Dashboard, mood wizard, journal check-in, statistics, tasks/worksheets, counseling schedule (`Jadwal`), profile, premium subscription |
-| **Psychologist** | Patient roster, scheduling, worksheets, company stats, session history |
+| **Psychologist** | Patient roster, scheduling, worksheets, session history, payroll summary |
 | **HR** | Employee management, schedule requests, worksheets, reports, division statistics, company subscription |
-| **Admin** | Dashboard KPIs, account approvals (Psychologist/HR), user & company management, invite admins, settings |
+| **Admin** | Dashboard KPIs, account approvals (Psychologist/HR), user & company management, assignments, payroll, settings |
 
 Admin runs on a **separate host/port** in development so `/Admin/*` is not exposed on the public customer site.
 
 ## Tech stack
 
-- ASP.NET Core 8 MVC (Areas: Patient, Hr, Admin, AdminAuth)
+- ASP.NET Core 8 MVC (Areas: Patient, Hr, Psychologist, Admin, AdminAuth)
 - ASP.NET Core Identity + SQL Server (LocalDB by default)
 - Entity Framework Core migrations
 - Duitku payment gateway (mock mode for local dev)
@@ -26,12 +26,6 @@ Admin runs on a **separate host/port** in development so `/Admin/*` is not expos
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - SQL Server LocalDB (Windows) or update `ConnectionStrings:DefaultConnection` in `appsettings.json`
 - [EF Core CLI](https://learn.microsoft.com/en-us/ef/core/cli/dotnet): `dotnet tool install --global dotnet-ef`
-
-## Setup guide (for teammates)
-
-**New to the project?** Use the full walkthrough:
-
-**[docs/SETUP.md](docs/SETUP.md)** — clone, `dotnet restore`, `dotnet build`, `dotnet ef database update`, `dotnet run --launch-profile https`, login accounts, and troubleshooting.
 
 ## Quick start
 
@@ -52,18 +46,80 @@ dotnet run --launch-profile https
 
 Host routing is configured in `appsettings.Development.json` (`Site:PatientHost`, `Site:AdminHost`). On the customer host, `/Admin/*` returns **404**.
 
-## Dummy / seed data (logins for testing)
+### Admin password (required for first run)
 
-Created automatically on first run. **Full reference:** [docs/SEED_DATA.md](docs/SEED_DATA.md) (all roles, bulk users, referral codes, which account to use per feature).
+Admin is **not** hardcoded in source. Set it via User Secrets before running:
 
-| Role | Email | Password | Where to log in |
-|------|-------|----------|-----------------|
-| Admin | `admin@lightenup.com` | `Admin123!` | :7041 `/AdminAuth/Login` |
-| Psychologist | `dr.dina@lightenup.com` | `Password123!` | :7040 `/Account/Login` |
-| HR | `hr@perusahaana.com` | `Password123!` | :7040 |
-| Patient | `kaffah@perusahaana.com` | `Password123!` | :7040 |
+```powershell
+dotnet user-secrets set "Seed:AdminPassword" "YourSecurePassword123!"
+```
 
-> Change these passwords before any public deployment.
+Optional override: `Seed:AdminEmail` (default `admin@lightenup.com` in `appsettings.json`).
+
+## Dummy / seed data
+
+On first startup, `Data/DummyDataSeed.cs` seeds a compact demo dataset (one company, a few users per role, sample data for every feature table). **Default password for all demo users:** `Password123!`
+
+Seed is **idempotent** — it only runs when company **PT Sasindo** does not exist yet.
+
+### Demo accounts
+
+| Role | Email | Password | Login URL |
+|------|-------|----------|-----------|
+| Admin | `admin@lightenup.com` | *(User Secrets)* | https://localhost:7041/AdminAuth/Login |
+| HR | `hr@sasindo.com` | `Password123!` | https://localhost:7040/Account/Login |
+| Psychologist | `dr.dina@lightenup.com` | `Password123!` | https://localhost:7040/Account/Login |
+| Psychologist | `dr.andi@lightenup.com` | `Password123!` | https://localhost:7040/Account/Login |
+| Psychologist (pending approval) | `dr.baru@lightenup.com` | `Password123!` | https://localhost:7040/Account/Login |
+| Patient B2B | `kaffah@sasindo.com` | `Password123!` | https://localhost:7040/Account/Login |
+| Patient B2B | `siti@sasindo.com` | `Password123!` | https://localhost:7040/Account/Login |
+| Patient B2B | `budi@sasindo.com` | `Password123!` | https://localhost:7040/Account/Login |
+| Patient B2C | `riza@gmail.com` | `Password123!` | https://localhost:7040/Account/Login |
+| Patient B2C | `maya@gmail.com` | `Password123!` | https://localhost:7040/Account/Login |
+
+### Referral codes (PT Sasindo)
+
+| Division | Code |
+|----------|------|
+| Pusat | `SAS-PUSAT` |
+| IT & Engineering | `SAS-IT-01` |
+| Human Resources | `SAS-HR-01` |
+
+### Which account to use per feature
+
+| Feature | Suggested account |
+|---------|-------------------|
+| Active assignment + completed session | `kaffah@sasindo.com` |
+| Pending cancellation (HR → admin) | `siti@sasindo.com` |
+| Pending psychologist approval (patient request) | `budi@sasindo.com` |
+| B2C subscription + schedule | `riza@gmail.com` |
+| Pending admin assignment | `maya@gmail.com` |
+| HR approvals, employees, reports | `hr@sasindo.com` |
+| Admin approval queue (new psychologist) | `dr.baru@lightenup.com` |
+| Payroll / payouts | `dr.dina@lightenup.com` |
+
+> Change all passwords before any public deployment.
+
+## Database errors & reset
+
+If you see migration errors, seed failures, stale schema, or login/data that does not match this README (e.g. old `Perusahaan A` accounts), **drop the database first**, then recreate it:
+
+```powershell
+# Stop the running app first (Ctrl+C), then:
+dotnet ef database drop -f
+dotnet ef database update
+dotnet run --launch-profile https
+```
+
+This removes `LightenUpDB` on LocalDB and applies all migrations from scratch. On the next startup, admin + demo seed run again automatically.
+
+**Common symptoms that need a DB reset:**
+
+- `dotnet ef database update` fails with column/table already exists or missing
+- Seed log errors or partial data after pulling new migrations
+- Demo emails from an older seed still in the database
+
+Alternative (SQL Server Management Studio / Azure Data Studio): delete database `LightenUpDB`, then run `dotnet ef database update`.
 
 ## Configuration
 
@@ -104,26 +160,18 @@ Migration files live under `Migrations/` and should be committed so others can a
 
 ```
 Areas/
-  Admin/          # Admin console (Dashboard, Users, Companies, Approvals, …)
+  Admin/          # Admin console (Dashboard, Users, Companies, Approvals, Payroll, …)
   AdminAuth/      # Admin login/logout
   Patient/        # Patient portal
   Hr/             # HR portal
-Controllers/      # Shared controllers (Account, Psychologist, …)
-Data/             # DbContext, seeding
+  Psychologist/   # Psychologist portal
+Controllers/      # Shared controllers (Account, …)
+Data/             # DbContext, DummyDataSeed, DbInitializer
 Models/           # Domain + view models
 Services/         # Duitku, subscriptions, uploads, email
-Views/            # Psychologist + shared views
+Views/            # Shared views (Account, onboarding)
 wwwroot/          # CSS, JS, images (uploads/ is gitignored)
-docs/             # Demo script, capstone appendix, deferred scope
 ```
-
-## Documentation
-
-- [docs/SETUP.md](docs/SETUP.md) — **first-time setup** for friends / teammates  
-- [docs/SEED_DATA.md](docs/SEED_DATA.md) — **dummy accounts**, referral codes, test flows
-- [docs/DEMO.md](docs/DEMO.md) — final demo / defense walkthrough (~20 min)
-- [docs/CAPSTONE_REPORT_APPENDIX.md](docs/CAPSTONE_REPORT_APPENDIX.md) — use cases, ERD notes, test matrix
-- [docs/DEFERRED_SCOPE.md](docs/DEFERRED_SCOPE.md) — intentionally out-of-scope items
 
 ## What is not in Git
 
@@ -132,10 +180,10 @@ See `.gitignore`. In particular:
 - `bin/`, `obj/`, `.vs/` — build and IDE output
 - `wwwroot/uploads/` — user-uploaded files
 - Local secrets (`.env`, `appsettings.*.local.json`, User Secrets)
-- Design/capstone asset folders (`Form_Capstone/`, `_figma/`)
+- IDE/AI folders (`.cursor/`, `.claude/`, `CLAUDE.md`)
+- Capstone/design drafts (`Form_Capstone/`, `Form4-*/`, `_figma/`, `*.docx.pdf`)
+- Local scratch logs (`debug-*.log`, `temp_*.css`)
 
 ## License
 
 Academic / capstone project — add your license or institution notice here if required.
-"# Capstone" 
-"# Capstone" 

@@ -9,6 +9,8 @@ public class PsychologistWorkloadInfo
     public string FullName { get; set; } = "";
     public string? Specialization { get; set; }
     public int ActiveCaseload { get; set; }
+    public int B2BCaseload { get; set; }
+    public int PublicCaseload { get; set; }
     public string WorkloadLevel { get; set; } = "normal"; // low | normal | high
 }
 
@@ -21,18 +23,30 @@ public class PsychologistWorkloadService
         _context = context;
     }
 
-    public async Task<Dictionary<int, int>> GetActiveCaseloadCountsAsync()
+    public async Task<(Dictionary<int, int> Total, Dictionary<int, int> B2B, Dictionary<int, int> Public)> GetActiveCaseloadCountsAsync()
     {
-        return await _context.Assignments
+        var assignments = await _context.Assignments
+            .Include(a => a.Patient)
             .Where(a => a.Status == "Active")
+            .ToListAsync();
+
+        var total = assignments.GroupBy(a => a.PsychologistId)
+            .ToDictionary(g => g.Key, g => g.Count());
+            
+        var b2b = assignments.Where(a => a.Patient?.CompanyId != null)
             .GroupBy(a => a.PsychologistId)
-            .Select(g => new { PsyId = g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.PsyId, x => x.Count);
+            .ToDictionary(g => g.Key, g => g.Count());
+            
+        var pub = assignments.Where(a => a.Patient?.CompanyId == null)
+            .GroupBy(a => a.PsychologistId)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        return (total, b2b, pub);
     }
 
     public async Task<List<PsychologistWorkloadInfo>> GetApprovedPsychologistsWithWorkloadAsync(bool b2bOnly = false)
     {
-        var caseloads = await GetActiveCaseloadCountsAsync();
+        var (total, b2b, pub) = await GetActiveCaseloadCountsAsync();
 
         var query = _context.Psychologists
             .Include(p => p.User)
@@ -45,13 +59,18 @@ public class PsychologistWorkloadService
 
         return psychologists.Select(p =>
         {
-            caseloads.TryGetValue(p.PsychologistId, out var count);
+            total.TryGetValue(p.PsychologistId, out var count);
+            b2b.TryGetValue(p.PsychologistId, out var countB2B);
+            pub.TryGetValue(p.PsychologistId, out var countPub);
+            
             return new PsychologistWorkloadInfo
             {
                 PsychologistId = p.PsychologistId,
                 FullName = p.User?.FullName ?? "—",
                 Specialization = p.Specialization,
                 ActiveCaseload = count,
+                B2BCaseload = countB2B,
+                PublicCaseload = countPub,
                 WorkloadLevel = count < 5 ? "low" : (count > 15 ? "high" : "normal")
             };
         }).ToList();

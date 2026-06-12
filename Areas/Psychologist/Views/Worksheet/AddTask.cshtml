@@ -1,0 +1,59 @@
+@model LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Tambah Tugas";
+}
+
+<a href="/Psychologist/Worksheet/Worksheet" class="back-link">← Kembali ke Worksheet</a>
+
+<div class="dashboard-header at-header">
+    <div>
+        <h1 class="text-header">Tambahkan Tugas</h1>
+        <p class="text-subtitle">Berikan tugas/aktivitas baru untuk salah satu pasien aktif Anda.</p>
+    </div>
+</div>
+
+<div class="at-card">
+    <form asp-action="AddTask" method="post">
+        <div asp-validation-summary="ModelOnly" class="at-validation"></div>
+
+        <div class="form-group at-field">
+            <label class="form-label">Pasien</label>
+            <select asp-for="PatientId" class="form-control at-input">
+                <option value="0">-- Pilih Pasien --</option>
+                @foreach (var p in Model.AvailablePatients)
+                {
+                    <option value="@p.PatientId">@p.FullName @(p.CompanyName != null ? "(" + p.CompanyName + ")" : "")</option>
+                }
+            </select>
+            <span asp-validation-for="PatientId" class="at-field-error"></span>
+        </div>
+
+        <div class="form-group at-field">
+            <label class="form-label">Nama Tugas</label>
+            <input asp-for="TaskName" class="form-control at-input" placeholder="Mis. Meditasi 30 Menit" />
+            <span asp-validation-for="TaskName" class="at-field-error"></span>
+        </div>
+
+        <div class="form-group at-field">
+            <label class="form-label">Deskripsi (opsional)</label>
+            <textarea asp-for="Description" rows="3" class="form-control at-input at-input--textarea" placeholder="Jelaskan tugas yang harus dikerjakan..."></textarea>
+        </div>
+
+        <div class="at-deadline-grid">
+            <div class="form-group">
+                <label class="form-label">Tanggal Deadline</label>
+                <input asp-for="DeadlineDate" type="date" class="form-control at-input" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Jam Deadline</label>
+                <input asp-for="DeadlineTime" type="time" class="form-control at-input" />
+            </div>
+        </div>
+
+        <div class="at-actions">
+            <a href="/Psychologist/Worksheet/Worksheet" class="at-btn-cancel">Batalkan</a>
+            <button type="submit" class="at-btn-submit">Simpan</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,63 @@
+@model LightenUp.Web.Models.ViewModels.EditScheduleViewModel
+@{
+    // This is loaded via AJAX into the #scheduleDetailModal container.
+}
+
+<div class="modal-container sem-modal">
+    <div class="modal-header sem-header">
+        <h2 class="modal-title sem-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="sem-title-icon" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Edit Jadwal Konseling
+        </h2>
+        <button type="button" class="close-btn" onclick="closeScheduleDetailModal()">&times;</button>
+    </div>
+
+    <form asp-action="EditSchedule" asp-area="Psychologist" asp-controller="Schedule" method="post" autocomplete="off">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ScheduleId" />
+
+        <div class="sem-body">
+            <p class="sem-intro">Ubah detail waktu atau catatan untuk sesi ini.</p>
+
+            <div asp-validation-summary="ModelOnly" class="sem-validation"></div>
+
+            <div class="sem-grid">
+                <div>
+                    <label asp-for="SessionDate" class="sem-label">Tanggal</label>
+                    <input asp-for="SessionDate" type="date" class="sem-input" />
+                    <span asp-validation-for="SessionDate" class="sem-field-error"></span>
+                </div>
+                <div>
+                    <label asp-for="SessionTime" class="sem-label">Jam</label>
+                    <input asp-for="SessionTime" type="time" class="sem-input" />
+                    <span asp-validation-for="SessionTime" class="sem-field-error"></span>
+                </div>
+            </div>
+
+            <div class="sem-field">
+                <label asp-for="DurationMinutes" class="sem-label">Durasi (menit)</label>
+                <input asp-for="DurationMinutes" type="number" min="15" max="240" class="sem-input" />
+                <span asp-validation-for="DurationMinutes" class="sem-field-error"></span>
+            </div>
+
+            <div class="sem-field">
+                <label asp-for="MeetingLink" class="sem-label">Link Meeting (Opsional)</label>
+                <input asp-for="MeetingLink" type="url" placeholder="https://meet.google.com/..." class="sem-input" />
+                <span asp-validation-for="MeetingLink" class="sem-field-error"></span>
+            </div>
+
+            <div class="sem-field">
+                <label asp-for="Notes" class="sem-label">Catatan Persiapan</label>
+                <textarea asp-for="Notes" rows="3" placeholder="Mis. General Counseling, Review Worksheet, dll." class="sem-input sem-textarea"></textarea>
+                <span asp-validation-for="Notes" class="sem-field-error"></span>
+            </div>
+
+            <div class="sem-actions">
+                <button type="button" onclick="openScheduleDetailModal(@Model.ScheduleId)" class="sem-btn-back">Kembali</button>
+                <button type="submit" class="sem-btn-save">
+                    Simpan Perubahan
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

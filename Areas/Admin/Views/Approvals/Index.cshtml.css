@@ -1,0 +1,60 @@
+.apr-page-header {
+    margin-bottom: 24px;
+}
+
+.apr-page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px;
+}
+
+.apr-page-header .adm-page-sub {
+    color: #6B7280;
+    margin: 0;
+    font-size: 15px;
+}
+
+.apr-th-review {
+    width: 90px;
+}
+
+.apr-name-primary {
+    font-weight: 600;
+    font-size: 13.5px;
+}
+
+.apr-name-secondary {
+    font-size: 12px;
+    color: var(--adm-muted);
+}
+
+.apr-td-info {
+    font-size: 13px;
+    color: var(--adm-text-secondary);
+    max-width: 220px;
+}
+
+.apr-info-sipp {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.apr-info-siap {
+    font-size: 12px;
+    color: var(--adm-muted);
+}
+
+.apr-td-date {
+    font-size: 12px;
+    color: var(--adm-muted);
+    white-space: nowrap;
+}
+
+.apr-btn-review {
+    padding: 6px 12px;
+    font-size: 12px;
+    width: 100%;
+    text-align: center;
+}

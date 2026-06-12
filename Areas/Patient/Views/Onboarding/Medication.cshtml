@@ -10,11 +10,11 @@
 
     <div class="onb-pill-row">
         <label class="onb-pill @(Model.HasMedicationHistory == true ? "selected" : "")">
-            <input type="radio" asp-for="HasMedicationHistory" value="true" style="display:none" />
+            <input type="radio" asp-for="HasMedicationHistory" value="true" class="onb-hidden-input" />
             Ada
         </label>
         <label class="onb-pill @(Model.HasMedicationHistory == false ? "selected" : "")">
-            <input type="radio" asp-for="HasMedicationHistory" value="false" style="display:none" />
+            <input type="radio" asp-for="HasMedicationHistory" value="false" class="onb-hidden-input" />
             Tidak Ada
         </label>
     </div>

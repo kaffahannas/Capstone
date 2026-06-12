@@ -33,13 +33,16 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             var items = new List<AdminCompanyItem>();
             foreach (var c in companies)
             {
+                var hrStaff = await _context.HrStaffs.Include(h => h.User).FirstOrDefaultAsync(h => h.CompanyId == c.CompanyId);
+                var divCount = await _context.CompanyDivisions.CountAsync(d => d.CompanyId == c.CompanyId);
+
                 items.Add(new AdminCompanyItem
                 {
                     CompanyId = c.CompanyId,
                     Name = c.Name,
                     Address = c.Address,
-                    ReferralCode = c.ReferralCode,
-                    HrCount = await _context.HrStaffs.CountAsync(h => h.CompanyId == c.CompanyId),
+                    DivisionCount = divCount,
+                    HrName = hrStaff?.User?.FullName ?? "—",
                     PatientCount = await _context.Patients.CountAsync(p => p.CompanyId == c.CompanyId),
                     ActivePatientCount = await _context.Patients.CountAsync(p => p.CompanyId == c.CompanyId && p.EmploymentStatus == "active"),
                     CreatedAt = c.CreatedAt
@@ -72,7 +75,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 ContactNumber = c.ContactNumber,
                 ContactEmail = c.ContactEmail,
                 RegistrationNumber = c.RegistrationNumber,
-                ReferralCode = c.ReferralCode,
+                DivisionCount = await _context.CompanyDivisions.CountAsync(d => d.CompanyId == id),
                 CreatedAt = c.CreatedAt,
                 Hrs = hrs.Select(h => new AdminUserItem
                 {

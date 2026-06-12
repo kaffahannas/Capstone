@@ -19,45 +19,43 @@
     <div class="hrd-hero">
         <div class="hrd-hero-bg" aria-hidden="true"></div>
         <div class="hrd-hero-inner">
-
             <div class="hrd-hero-left">
                 <p class="hrd-hero-eyebrow">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                    HR Dashboard · @today
+                    HR Dashboard &bull; @today
                 </p>
-                <h1 class="hrd-hero-title">@greet, @Model.HrName! 👋</h1>
+                <h1 class="hrd-hero-title">Ringkasan Aktivitas</h1>
                 <p class="hrd-hero-sub">
                     @if (!string.IsNullOrEmpty(Model.CompanyName))
                     {
                         <strong>@Model.CompanyName</strong>
-                        <span style="opacity:.7;margin:0 6px;">·</span>
+                        <span class="hrd-hero-sep">&bull;</span>
                     }
-                    <span>Pantau kesehatan mental karyawan Anda</span>
+                    <span>Pantau kesehatan mental karyawan Anda hari ini</span>
                 </p>
             </div>
-
             <div class="hrd-stats">
                 <div class="hrd-stat">
+                    <span class="hrd-stat-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
                     <span class="hrd-stat-val">@Model.ActiveCount</span>
                     <span class="hrd-stat-lbl">Total Klien</span>
                 </div>
                 <div class="hrd-stat hrd-stat--sehat">
-                    <span class="hrd-stat-ico">✅</span>
+                    <span class="hrd-stat-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>
                     <span class="hrd-stat-val">@Model.SehatCount</span>
                     <span class="hrd-stat-lbl">Sehat</span>
                 </div>
                 <div class="hrd-stat hrd-stat--beresiko">
-                    <span class="hrd-stat-ico">⚠️</span>
+                    <span class="hrd-stat-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                     <span class="hrd-stat-val">@Model.BeresikoCount</span>
                     <span class="hrd-stat-lbl">Beresiko</span>
                 </div>
                 <div class="hrd-stat hrd-stat--bahaya">
-                    <span class="hrd-stat-ico">🔴</span>
+                    <span class="hrd-stat-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
                     <span class="hrd-stat-val">@Model.BahayaCount</span>
                     <span class="hrd-stat-lbl">Bahaya</span>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -144,7 +142,7 @@
     <div class="hrd-grid">
 
         @* ── Left: Client card + Activity feed ── *@
-        <div style="display:flex;flex-direction:column;min-width:0;gap:16px;">
+        <div class="hrd-main-col">
 
             @* Client card *@
             <div class="hrd-client-card">
@@ -298,10 +296,10 @@
                                 <span class="hrd-dist-lbl-dot hrd-dist-lbl-dot--sehat" aria-hidden="true"></span>
                                 Sehat
                             </span>
-                            <span class="hrd-dist-val">@Model.SehatCount <small style="font-weight:400;color:var(--lu-text-muted);">(@sehatPct%)</small></span>
+                            <span class="hrd-dist-val">@Model.SehatCount <small class="hrd-dist-pct">(@sehatPct%)</small></span>
                         </div>
                         <div class="hrd-dist-track">
-                            <div class="hrd-dist-fill hrd-dist-fill--sehat" style="width:@sehatPct%"></div>
+                            <div class="hrd-dist-fill hrd-dist-fill--sehat" style="--bar-w:@sehatPct%"></div>
                         </div>
                     </div>
                     <div class="hrd-dist-row">
@@ -310,10 +308,10 @@
                                 <span class="hrd-dist-lbl-dot hrd-dist-lbl-dot--beresiko" aria-hidden="true"></span>
                                 Beresiko
                             </span>
-                            <span class="hrd-dist-val">@Model.BeresikoCount <small style="font-weight:400;color:var(--lu-text-muted);">(@beresikoPct%)</small></span>
+                            <span class="hrd-dist-val">@Model.BeresikoCount <small class="hrd-dist-pct">(@beresikoPct%)</small></span>
                         </div>
                         <div class="hrd-dist-track">
-                            <div class="hrd-dist-fill hrd-dist-fill--beresiko" style="width:@beresikoPct%"></div>
+                            <div class="hrd-dist-fill hrd-dist-fill--beresiko" style="--bar-w:@beresikoPct%"></div>
                         </div>
                     </div>
                     <div class="hrd-dist-row">
@@ -322,10 +320,10 @@
                                 <span class="hrd-dist-lbl-dot hrd-dist-lbl-dot--bahaya" aria-hidden="true"></span>
                                 Bahaya
                             </span>
-                            <span class="hrd-dist-val">@Model.BahayaCount <small style="font-weight:400;color:var(--lu-text-muted);">(@bahayaPct%)</small></span>
+                            <span class="hrd-dist-val">@Model.BahayaCount <small class="hrd-dist-pct">(@bahayaPct%)</small></span>
                         </div>
                         <div class="hrd-dist-track">
-                            <div class="hrd-dist-fill hrd-dist-fill--bahaya" style="width:@bahayaPct%"></div>
+                            <div class="hrd-dist-fill hrd-dist-fill--bahaya" style="--bar-w:@bahayaPct%"></div>
                         </div>
                     </div>
                 </div>
@@ -370,7 +368,7 @@
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </div>
                     <h3 class="hrd-action-card-title">Cari Psikolog</h3>
-                    <button type="button" class="hrd-psy-all-link" style="background:none;border:none;cursor:pointer;padding:0;" onclick="openBrdModal('psyModal')">Semua →</button>
+                    <button type="button" class="hrd-psy-all-link" onclick="openBrdModal('psyModal')">Semua →</button>
                 </div>
                 <div class="hrd-psy-search-wrap">
                     <svg class="hrd-psy-search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -409,12 +407,8 @@
 @Html.AntiForgeryToken()
 
 @* ── Toast ── *@
-<div class="hrpf-toast hrpf-toast--ok" id="brdToast"
-     style="opacity:0;pointer-events:none;transition:opacity .25s;position:fixed;bottom:28px;right:28px;z-index:9999;
-            background:#fff;border:1.5px solid var(--lu-border);border-radius:12px;padding:12px 18px;
-            box-shadow:0 6px 24px rgba(0,0,0,.12);display:flex;align-items:center;gap:10px;
-            font-size:13.5px;font-weight:600;color:var(--lu-text);max-width:340px;">
-    <span id="brdToastIco" style="font-size:16px;flex-shrink:0;">✅</span>
+<div class="hrd-brd-toast" id="brdToast">
+    <span class="hrd-brd-toast-ico" id="brdToastIco">✅</span>
     <span id="brdToastMsg"></span>
 </div>
 
@@ -422,9 +416,9 @@
    MODAL 1 — Buat Laporan ke Psikolog
    ═══════════════════════════════════════════ *@
 <div class="hrpf-modal-overlay" id="reportModal" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
-    <div class="hrpf-modal" style="max-width:480px;">
+    <div class="hrpf-modal hrd-modal--report">
         <div class="hrpf-modal-head">
-            <div class="hrpf-modal-head-icon" style="background:#f5f3ff;color:#7c3aed;">
+            <div class="hrpf-modal-head-icon hrpf-modal-head-icon--purple">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             </div>
             <div>
@@ -436,10 +430,10 @@
             </button>
         </div>
 
-        <form id="reportForm" style="padding:18px 20px;display:flex;flex-direction:column;gap:14px;">
+        <form id="reportForm" class="hrd-report-form">
 
             <div class="hrpf-form-group">
-                <label class="hrpf-form-label" for="reportPatientId">Pilih Karyawan <span style="color:#ef4444;">*</span></label>
+                <label class="hrpf-form-label" for="reportPatientId">Pilih Karyawan <span class="hrpf-required">*</span></label>
                 <select id="reportPatientId" name="patientId" class="hrpf-form-input" required>
                     <option value="">— Pilih karyawan —</option>
                     @foreach (var c in Model.ClientsPreview)
@@ -449,20 +443,20 @@
                 </select>
                 @if (Model.ActiveCount > Model.ClientsPreview.Count)
                 {
-                    <p style="font-size:11.5px;color:var(--lu-text-muted);margin:5px 0 0;">
+                    <p class="hrd-report-hint">
                         Menampilkan 20 karyawan pertama.
-                        <a href="@Url.Action("Index", "Employees", new { area = "Hr" })" style="color:var(--lu-primary);">Lihat semua →</a>
+                        <a href="@Url.Action("Index", "Employees", new { area = "Hr" })" class="hrd-report-hint-link">Lihat semua →</a>
                     </p>
                 }
             </div>
 
             <div class="hrpf-form-group">
-                <label class="hrpf-form-label" for="reportNotes">Catatan untuk Psikolog <span style="color:var(--lu-text-muted);font-weight:400;">(opsional)</span></label>
+                <label class="hrpf-form-label" for="reportNotes">Catatan untuk Psikolog <span class="hrpf-optional">(opsional)</span></label>
                 <textarea id="reportNotes" name="notes" class="hrpf-form-input" rows="4"
                           placeholder="Tuliskan kondisi atau kekhawatiran Anda mengenai karyawan ini..."></textarea>
             </div>
 
-            <div id="reportError" class="hrpf-form-error" style="display:none;"></div>
+            <div id="reportError" class="hrpf-form-error"></div>
 
             <input type="hidden" id="reportSendFlag" value="false" />
         </form>
@@ -487,9 +481,9 @@
    MODAL 2 — Direktori Psikolog
    ═══════════════════════════════════════════ *@
 <div class="hrpf-modal-overlay" id="psyModal" role="dialog" aria-modal="true" aria-labelledby="psyModalTitle">
-    <div class="hrpf-modal" style="max-width:520px;">
+    <div class="hrpf-modal hrd-modal--psy">
         <div class="hrpf-modal-head">
-            <div class="hrpf-modal-head-icon" style="background:#f5f3ff;color:#7c3aed;">
+            <div class="hrpf-modal-head-icon hrpf-modal-head-icon--purple">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
             <div>
@@ -501,16 +495,15 @@
             </button>
         </div>
 
-        <div style="padding:14px 18px 0;border-bottom:1.5px solid var(--lu-bg);">
-            <div class="hrd-psy-search-wrap" style="margin-bottom:14px;">
+        <div class="hrd-psy-modal-search">
+            <div class="hrd-psy-search-wrap">
                 <svg class="hrd-psy-search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <input type="text" id="psyModalSearch" class="hrd-psy-search-input"
                        placeholder="Nama atau spesialisasi..." autocomplete="off" />
             </div>
         </div>
 
-        <div id="psyModalResults" class="hrd-psy-results"
-             style="max-height:340px;overflow-y:auto;padding:6px 0;">
+        <div id="psyModalResults" class="hrd-psy-results hrd-psy-modal-results">
             @if (!string.IsNullOrEmpty(Model.PrimaryPsychologistEmail))
             {
                 <a href="mailto:@Model.PrimaryPsychologistEmail" class="hrd-psy-result-item hrd-psy-result-item--partner">
@@ -526,13 +519,13 @@
             }
             else
             {
-                <p class="hrd-psy-hint" style="padding:18px;">Ketik nama atau spesialisasi untuk mencari psikolog...</p>
+                <p class="hrd-psy-hint hrd-psy-hint--pad-lg">Ketik nama atau spesialisasi untuk mencari psikolog...</p>
             }
         </div>
 
         <div class="hrpf-modal-foot">
             <button type="button" class="hrpf-modal-cancel" onclick="closeBrdModal('psyModal')">Tutup</button>
-            <a href="@Url.Action("Index", "Psychologists", new { area = "Hr" })" class="hrpf-modal-save" style="text-decoration:none;display:flex;align-items:center;gap:7px;">
+            <a href="@Url.Action("Index", "Psychologists", new { area = "Hr" })" class="hrpf-modal-save">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 Halaman Psikolog Lengkap
             </a>
@@ -584,13 +577,11 @@
         const txt   = document.getElementById('brdToastMsg');
         ico.textContent = ok ? '✅' : '❌';
         txt.textContent = msg;
-        toast.style.borderColor = ok ? 'var(--lu-border)' : '#fca5a5';
-        toast.style.opacity = '1';
-        toast.style.pointerEvents = 'auto';
+        toast.classList.toggle('is-error', !ok);
+        toast.classList.add('is-visible');
         clearTimeout(toast._t);
         toast._t = setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.pointerEvents = 'none';
+            toast.classList.remove('is-visible', 'is-error');
         }, 3400);
     }
 
@@ -608,11 +599,11 @@
         const draftBtn  = document.getElementById('reportDraftBtn');
         const sendBtn   = document.getElementById('reportSendBtn');
 
-        errBox.style.display = 'none';
+        errBox.classList.remove('is-visible');
 
         if (!patientId) {
             errBox.textContent = 'Pilih karyawan terlebih dahulu.';
-            errBox.style.display = 'block';
+            errBox.classList.add('is-visible');
             return;
         }
 
@@ -641,11 +632,11 @@
             } else {
                 const msg = Array.isArray(data.errors) ? data.errors.join(' ') : (data.message || 'Terjadi kesalahan.');
                 errBox.textContent = msg;
-                errBox.style.display = 'block';
+                errBox.classList.add('is-visible');
             }
         } catch {
             errBox.textContent = 'Gagal terhubung ke server. Coba lagi.';
-            errBox.style.display = 'block';
+            errBox.classList.add('is-visible');
         } finally {
             draftBtn.disabled = sendBtn.disabled = false;
             draftBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Draft`;
@@ -670,12 +661,12 @@
             if (q.length < 2) { psyModalResults.innerHTML = seedHtmlModal; return; }
 
             psyModalTimer = setTimeout(async () => {
-                psyModalResults.innerHTML = '<p class="hrd-psy-hint" style="padding:14px 18px;">Mencari...</p>';
+                psyModalResults.innerHTML = '<p class="hrd-psy-hint hrd-psy-hint--pad">Mencari...</p>';
                 try {
                     const res  = await fetch('/Hr/Home/SearchPsychologists?q=' + encodeURIComponent(q));
                     const data = await res.json();
                     if (data.length === 0) {
-                        psyModalResults.innerHTML = '<p class="hrd-psy-hint" style="padding:14px 18px;">Psikolog tidak ditemukan.</p>';
+                        psyModalResults.innerHTML = '<p class="hrd-psy-hint hrd-psy-hint--pad">Psikolog tidak ditemukan.</p>';
                         return;
                     }
                     psyModalResults.innerHTML = data.map(p => {
@@ -697,7 +688,7 @@
                         </div>`;
                     }).join('');
                 } catch {
-                    psyModalResults.innerHTML = '<p class="hrd-psy-hint" style="padding:14px 18px;">Gagal memuat. Coba lagi.</p>';
+                    psyModalResults.innerHTML = '<p class="hrd-psy-hint hrd-psy-hint--pad">Gagal memuat. Coba lagi.</p>';
                 }
             }, 280);
         });
@@ -785,10 +776,10 @@
                     const statusCss = { Sehat: 'sehat', Beresiko: 'beresiko', Bahaya: 'bahaya' }[c.status] || 'unknown';
                     const initials  = (c.fullName || '?').split(' ').slice(0, 2).map(p => p[0].toUpperCase()).join('');
                     return `<a href="/Hr/Employees/Detail/${c.patientId}" class="hrd-search-result-item" role="option">
-                        <div class="hrd-client-avatar" style="width:30px;height:30px;font-size:11px;flex-shrink:0;">${initials}</div>
-                        <span style="flex:1;min-width:0;">
-                            <strong style="display:block;font-size:13px;">${c.fullName}</strong>
-                            <small style="color:var(--lu-text-muted);font-size:11.5px;">${c.department || '—'}</small>
+                        <div class="hrd-client-avatar hrd-client-avatar--sm">${initials}</div>
+                        <span class="hrd-search-result-body">
+                            <strong class="hrd-search-result-name">${c.fullName}</strong>
+                            <small class="hrd-search-result-dept">${c.department || '—'}</small>
                         </span>
                         <span class="hrd-status hrd-status--${statusCss}">
                             <span class="hrd-status-dot"></span>${c.status || '—'}
@@ -816,7 +807,7 @@
             const matchQ  = !q      || (row.dataset.name || '').includes(q) || (row.dataset.dept || '').includes(q);
             const matchD  = !div    || (row.dataset.dept || '') === div.toLowerCase();
             const matchSt = !status || (row.dataset.status || '') === status;
-            row.style.display = (matchQ && matchD && matchSt) ? '' : 'none';
+            row.classList.toggle('is-hidden', !(matchQ && matchD && matchSt));
         });
     }
 
@@ -828,9 +819,9 @@
     // ─── Animate distribution bars on load ───
     requestAnimationFrame(() => {
         document.querySelectorAll('.hrd-dist-fill').forEach(el => {
-            const target = el.style.width;
-            el.style.width = '0';
-            requestAnimationFrame(() => { el.style.width = target; });
+            const target = el.style.getPropertyValue('--bar-w');
+            el.style.setProperty('--bar-w', '0%');
+            requestAnimationFrame(() => { el.style.setProperty('--bar-w', target); });
         });
     });
 

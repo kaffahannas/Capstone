@@ -5,27 +5,27 @@
     Layout = "_LayoutPatient";
 }
 
-<div class="lu-card" style="max-width: 720px;">
-    <h2 style="margin: 0 0 16px;">@(Model.JournalId == null ? "Tulis Jurnal" : "Edit Jurnal")</h2>
+<div class="lu-card jnl-write-card">
+    <h2>@(Model.JournalId == null ? "Tulis Jurnal" : "Edit Jurnal")</h2>
 
     <form asp-action="Write" method="post">
         <input type="hidden" asp-for="JournalId" />
-        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:12px;"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger jnl-write-validation"></div>
 
-        <div style="margin-bottom:16px;">
-            <label asp-for="Title" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Judul (opsional)</label>
+        <div class="jnl-write-field">
+            <label asp-for="Title" class="jnl-write-label">Judul (opsional)</label>
             <input asp-for="Title" placeholder="Hari yang Penuh Produktivitas..."
-                   style="width:100%; padding:10px 12px; border:1px solid #E5E7EB; border-radius:8px; font-size:15px; font-family:inherit;" />
+                   class="jnl-write-input" />
             <span asp-validation-for="Title" class="text-danger"></span>
         </div>
 
-        <div style="margin-bottom:20px;">
-            <label asp-for="Content" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Tuliskan perasaanmu</label>
+        <div class="jnl-write-field jnl-write-field--content">
+            <label asp-for="Content" class="jnl-write-label">Tuliskan perasaanmu</label>
             <textarea asp-for="Content" rows="12" class="mood-textarea" placeholder="Mulai menulis..."></textarea>
             <span asp-validation-for="Content" class="text-danger"></span>
         </div>
 
-        <div style="display:flex; gap:12px;">
+        <div class="jnl-write-actions">
             <a href="/Patient/Dashboard" class="btn-secondary">Batal</a>
             <button type="submit" class="btn-primary">Simpan Jurnal</button>
         </div>

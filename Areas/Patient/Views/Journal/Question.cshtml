@@ -9,12 +9,12 @@
     var pct = (int)((double)Model.Step / 6 * 100);
 }
 
-<div style="text-align:center; margin-bottom:24px;">
-    <div style="font-size: 60px;">🧘</div>
+<div class="jnl-q-intro">
+    <div class="jnl-q-emoji">🧘</div>
 </div>
 
-<h2 class="mood-question" style="text-align:center;">@q.Question</h2>
-<p class="mood-helper" style="text-align:center;">Pilihlah skala 1 hingga 5 yang paling menggambarkan kondisimu.</p>
+<h2 class="mood-question jnl-q-title">@q.Question</h2>
+<p class="mood-helper jnl-q-helper">Pilihlah skala 1 hingga 5 yang paling menggambarkan kondisimu.</p>
 
 <form asp-action="Question" method="post">
     @* Persist accumulated scores *@
@@ -26,15 +26,14 @@
     <input type="hidden" asp-for="EmotionScore" />
     <input type="hidden" asp-for="OverallScore" />
 
-    <div style="display:flex; justify-content:space-between; font-size:12px; color:#6B7280; margin-bottom:8px;">
+    <div class="jnl-q-scale-labels">
         <span>Sangat Buruk</span>
         <span>Sangat Baik</span>
     </div>
-    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:24px;" id="scaleRow">
+    <div class="jnl-q-scale-row" id="scaleRow">
         @for (int n = 1; n <= 5; n++)
         {
-            <button type="button" class="scale-btn @(current == n ? "selected" : "")" data-value="@n"
-                    style="aspect-ratio:1; border:1.5px solid #E5E7EB; border-radius:10px; background:#fff; font-size:18px; cursor:pointer;">@n</button>
+            <button type="button" class="scale-btn @(current == n ? "selected" : "")" data-value="@n">@n</button>
         }
     </div>
     <span asp-validation-summary="ModelOnly" class="text-danger"></span>
@@ -58,7 +57,6 @@
 
 @section Scripts {
     <script>
-        // Map step number → field name on the hidden inputs
         const fieldByStep = {
             1: "FocusScore", 2: "AnxietyScore", 3: "SleepScore",
             4: "MindLoadScore", 5: "EmotionScore", 6: "OverallScore"
@@ -68,24 +66,10 @@
 
         document.querySelectorAll('.scale-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.scale-btn').forEach(b => {
-                    b.classList.remove('selected');
-                    b.style.background = '#fff';
-                    b.style.color = '#111';
-                    b.style.borderColor = '#E5E7EB';
-                });
+                document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
-                btn.style.background = '#7C3AED';
-                btn.style.color = '#fff';
-                btn.style.borderColor = '#7C3AED';
                 document.querySelector('input[name="' + fieldName + '"]').value = btn.dataset.value;
             });
-            // Initialize style for selected
-            if (btn.classList.contains('selected')) {
-                btn.style.background = '#7C3AED';
-                btn.style.color = '#fff';
-                btn.style.borderColor = '#7C3AED';
-            }
         });
     </script>
 }

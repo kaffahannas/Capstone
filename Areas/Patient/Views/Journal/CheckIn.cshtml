@@ -4,8 +4,8 @@
     ViewBag.IsCheckIn = true;
 }
 
-<div style="text-align:center; padding: 24px 0;">
-    <div style="font-size: 80px; margin-bottom: 16px;">📷</div>
+<div class="jnl-ci-intro">
+    <div class="jnl-ci-emoji">📷</div>
     <h2 class="mood-question">Yuk Cek Kondisi Harian Kamu Terlebih Dahulu!</h2>
     <p class="mood-helper">
         6 pertanyaan singkat untuk melacak fokus, kecemasan, tidur, beban pikiran, emosi, dan perasaan kamu hari ini.
@@ -13,6 +13,6 @@
 </div>
 
 <form asp-action="CheckIn" method="post">
-    <button type="submit" class="btn-primary" style="width:100%; padding:14px; margin-bottom:10px;">Lanjutkan</button>
+    <button type="submit" class="btn-primary jnl-ci-submit">Lanjutkan</button>
 </form>
-<a href="/Patient/Dashboard" class="btn-secondary" style="display:block; text-align:center; padding:14px;">Kembali</a>
+<a href="/Patient/Dashboard" class="btn-secondary jnl-ci-back">Kembali</a>

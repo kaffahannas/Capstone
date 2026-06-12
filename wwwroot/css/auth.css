@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --primary-purple: #7C3AED;
     --primary-purple-hover: #6D28D9;
     --light-purple: #EDE9FE;
@@ -43,6 +43,7 @@ body.auth-page {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 /* =======================================
@@ -104,10 +105,23 @@ body.auth-page {
 }
 
 .back-button {
-    text-decoration: none;
-    color: var(--text-dark);
-    margin-bottom: 24px;
+    position: absolute;
+    top: 24px;
+    left: 24px;
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #F3F4F6;
+    color: var(--text-dark);
+    transition: background 0.2s;
+    text-decoration: none;
+    margin-bottom: 0;
+}
+.back-button:hover {
+    background: #E5E7EB;
 }
 
 .auth-title {
@@ -456,4 +470,48 @@ select.form-control-custom {
     background-position: right 0px center;
     background-size: 20px;
     cursor: pointer;
+}
+/* =======================================
+   ONBOARDING SPECIFIC STYLES
+   ======================================= */
+.onb-step-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    gap: 12px;
+}
+.onb-step-logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+.onb-step-logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-purple);
+}
+.auth-title--step1 {
+    font-size: 24px;
+    line-height: 1.4;
+    margin-bottom: 16px;
+    text-align: center;
+}
+.onb-step-note {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    background: #F3F4F6;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+.file-input-hidden {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    z-index: -1;
+    overflow: hidden;
 }

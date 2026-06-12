@@ -9,18 +9,18 @@
     Profil Saya
 </a>
 
-<div style="max-width:720px;">
-    <h2 style="margin:0 0 4px;font-size:24px;font-weight:800;color:var(--text-dark);">Edit Profil HR</h2>
-    <p style="margin:0 0 24px;color:var(--text-muted);font-size:14.5px;">
-        Perbarui informasi kontak dan preferensi notifikasi Anda.
+<div class="hrpf-edit-wrap">
+    <h2 class="hrpf-edit-title">Edit Profil HR</h2>
+    <p class="hrpf-edit-sub">
+        Perbarui informasi kontak dan data kepegawaian Anda.
     </p>
 
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" style="background:#FEE2E2;color:#B91C1C;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:13px;"></div>
+        <div asp-validation-summary="ModelOnly" class="hrpf-edit-val-summary"></div>
 
-        <div class="pd-card pd-card--plain" style="margin-bottom:20px;">
+        <div class="pd-card pd-card--plain hrpf-edit-card">
             <div class="pd-card-head">
-                <div class="pd-card-icon" style="background:#EFF6FF;color:#3B82F6">
+                <div class="pd-card-icon hrpf-edit-card-icon--blue">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <h3 class="pd-card-title">Informasi Pribadi</h3>
@@ -28,12 +28,12 @@
             <div class="pd-card-body">
                 <div class="form-group">
                     <label asp-for="ProfilePicture" class="form-label">Foto Profil</label>
-                    <input asp-for="ProfilePicture" type="file" accept="image/*" class="form-control" style="padding:7px;background:#F9FAFB;" />
+                    <input asp-for="ProfilePicture" type="file" accept="image/*" class="form-control hrpf-edit-file-input" />
                 </div>
                 <div class="form-group">
                     <label asp-for="FullName" class="form-label">Nama Lengkap</label>
                     <input asp-for="FullName" class="form-control" />
-                    <span asp-validation-for="FullName" style="color:#DC2626;font-size:12px;"></span>
+                    <span asp-validation-for="FullName" class="hrpf-edit-val-error"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Phone" class="form-label">Nomor Telepon</label>
@@ -42,19 +42,19 @@
             </div>
         </div>
 
-        <div class="pd-card pd-card--plain" style="margin-bottom:20px;">
+        <div class="pd-card pd-card--plain hrpf-edit-card">
             <div class="pd-card-head">
-                <div class="pd-card-icon" style="background:#F5F3FF;color:#7C3AED">
+                <div class="pd-card-icon hrpf-edit-card-icon--purple">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
                 </div>
-                <h3 class="pd-card-title">Kepegawaian <small style="font-weight:400;color:var(--text-muted);font-size:13px;margin-left:6px;">— @Model.CompanyName</small></h3>
+                <h3 class="pd-card-title">Kepegawaian <small class="hrpf-edit-card-title-sub">— @Model.CompanyName</small></h3>
             </div>
-            <div class="pd-card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-                <div class="form-group" style="margin:0;">
+            <div class="pd-card-body hrpf-edit-card-body-grid">
+                <div class="form-group hrpf-edit-field">
                     <label asp-for="EmployeeId" class="form-label">Employee ID</label>
                     <input asp-for="EmployeeId" class="form-control" placeholder="Mis. HR001" />
                 </div>
-                <div class="form-group" style="margin:0;">
+                <div class="form-group hrpf-edit-field">
                     <label asp-for="Department" class="form-label">Divisi (Opsional)</label>
                     <input asp-for="Department" class="form-control" />
                 </div>
@@ -63,9 +63,9 @@
 
 
 
-        <div style="display:flex;gap:12px;">
-            <a asp-action="Index" class="btn-outline" style="flex:1;text-align:center;">Batalkan</a>
-            <button type="submit" class="btn-fill" style="flex:1;">Simpan Perubahan</button>
+        <div class="hrpf-edit-actions">
+            <a asp-action="Index" class="btn-outline hrpf-edit-btn-cancel">Batalkan</a>
+            <button type="submit" class="btn-fill hrpf-edit-btn-save">Simpan Perubahan</button>
         </div>
     </form>
 </div>

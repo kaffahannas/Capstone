@@ -7,7 +7,7 @@
 
 <h2 class="mood-question">
     <a asp-action="Feeling" asp-route-feeling="@Model.Feeling" asp-route-triggers="@string.Join(",", Model.Triggers)" asp-route-note="@Model.Note"
-       style="color:inherit; text-decoration:none; margin-right:8px;">←</a>
+       class="mood-back-link">←</a>
     Apa yang membuat kamu merasakan itu?
 </h2>
 <p class="mood-helper">Pilih kategori dibawah ini, Anda dapat memilih lebih dari satu</p>
@@ -18,19 +18,31 @@
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+    @{
+        var standardTriggers = MoodOptions.Triggers.Select(t => t.Value).ToList();
+        var customTriggers = Model.Triggers.Where(t => !standardTriggers.Contains(t)).ToList();
+        var customTriggerStr = string.Join(", ", customTriggers);
+    }
+
     <div class="trigger-chips">
         @foreach (var t in MoodOptions.Triggers)
         {
             <label class="trigger-chip @(Model.Triggers.Contains(t.Value) ? "selected" : "")">
                 <input type="checkbox" name="Triggers" value="@t.Value"
-                       checked="@(Model.Triggers.Contains(t.Value))" style="display:none" />
+                       checked="@(Model.Triggers.Contains(t.Value))" class="mood-hidden-input" />
                 @t.Label
             </label>
         }
     </div>
+    
+    <div class="mood-trig-custom-wrap">
+        <input type="text" name="Triggers" id="CustomTrigger" value="@customTriggerStr" placeholder="Atau ketik pemicu lainnya..."
+               class="mood-trig-custom-input" />
+    </div>
+    
     <span asp-validation-for="Triggers" class="text-danger"></span>
 
-    <button type="submit" class="btn-primary" style="width:100%; padding:14px;">Berikutnya</button>
+    <button type="submit" class="btn-primary mood-trig-submit">Berikutnya</button>
 </form>
 
 @section Scripts {

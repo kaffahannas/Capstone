@@ -68,15 +68,31 @@ namespace LightenUp.Web.Controllers
                 RespondedNote = r.RespondedNote
             }).ToListAsync();
 
-            // Also load pending assignment requests from patients
-            var pendingAssignments = await _context.Assignments
-                .Include(a => a.Patient).ThenInclude(p => p!.User)
-                .Include(a => a.Patient).ThenInclude(p => p!.Company)
-                .Include(a => a.RequestedBy)
-                .Where(a => a.PsychologistId == psy.PsychologistId && a.Status == "PendingPsychologistApproval")
-                .ToListAsync();
+            if (tab is "Pending" or "All")
+            {
+                var assignmentItems = await _context.Assignments
+                    .Include(a => a.Patient).ThenInclude(p => p!.User)
+                    .Include(a => a.Patient).ThenInclude(p => p!.Company)
+                    .Include(a => a.RequestedBy)
+                    .Where(a => a.PsychologistId == psy.PsychologistId && a.Status == "PendingPsychologistApproval")
+                    .OrderByDescending(a => a.AssignedAt)
+                    .Select(a => new PsyRequestListItem
+                    {
+                        Id = a.AssignmentId,
+                        AssignmentId = a.AssignmentId,
+                        RequestType = "Assignment",
+                        PatientName = a.Patient!.User!.FullName,
+                        CompanyName = a.Patient.Company != null ? a.Patient.Company.Name : "Publik (B2C)",
+                        HrName = a.RequestedBy != null ? a.RequestedBy.FullName + " (Pasien)" : "Pasien",
+                        Status = "Pending",
+                        CreatedAt = a.AssignedAt
+                    })
+                    .ToListAsync();
 
-            ViewBag.PendingAssignments = pendingAssignments;
+                items = items.Concat(assignmentItems)
+                    .OrderByDescending(i => i.CreatedAt)
+                    .ToList();
+            }
 
             return View(new PsyRequestsViewModel { Tab = tab, Items = items });
         }
@@ -154,7 +170,7 @@ namespace LightenUp.Web.Controllers
                         Description = req.Notes,
                         Deadline = req.ProposedDeadline ?? DateTime.Today.AddDays(7),
                         Status = "Assigned",
-                        CreatedAt = DateTime.Now
+                        CreatedAt = DateTime.UtcNow
                     });
                 }
                 else if (req.RequestType == "Schedule")
@@ -163,7 +179,7 @@ namespace LightenUp.Web.Controllers
                     {
                         PsychologistId = psy.PsychologistId,
                         PatientId = req.PatientId,
-                        SessionStart = req.ProposedSessionDate ?? DateTime.Now.AddDays(1),
+                        SessionStart = req.ProposedSessionDate ?? DateTime.UtcNow.AddDays(1),
                         DurationMinutes = 60,
                         Status = "Scheduled",
                         Notes = req.Notes
@@ -171,7 +187,7 @@ namespace LightenUp.Web.Controllers
                 }
 
                 req.Status = "Approved";
-                req.RespondedAt = DateTime.Now;
+                req.RespondedAt = DateTime.UtcNow;
                 req.RespondedNote = string.IsNullOrWhiteSpace(model.Note) ? null : model.Note;
                 await _context.SaveChangesAsync();
                 TempData["success"] = $"Permintaan {req.RequestType} disetujui. Row terkait sudah dibuat.";
@@ -179,7 +195,7 @@ namespace LightenUp.Web.Controllers
             else if (model.Action == "Reject")
             {
                 req.Status = "Rejected";
-                req.RespondedAt = DateTime.Now;
+                req.RespondedAt = DateTime.UtcNow;
                 req.RespondedNote = string.IsNullOrWhiteSpace(model.Note) ? "Ditolak tanpa catatan." : model.Note;
                 await _context.SaveChangesAsync();
                 TempData["success"] = "Permintaan ditolak.";

@@ -54,6 +54,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             var companyId = hr.CompanyId.Value;
 
             var patients = await _context.Patients
+                .Include(p => p.Division)
                 .Where(p => p.CompanyId == companyId && p.EmploymentStatus == "active")
                 .ToListAsync();
 
@@ -65,8 +66,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 Beresiko = patients.Count(p => p.MentalHealthStatus == "Beresiko"),
                 Bahaya = patients.Count(p => p.MentalHealthStatus == "Bahaya"),
                 Divisions = patients
-                    .Where(p => !string.IsNullOrEmpty(p.Department))
-                    .GroupBy(p => p.Department!)
+                    .GroupBy(p => p.Division != null ? p.Division.Name : "Belum Diatur")
                     .Select(g =>
                     {
                         var total = g.Count();
@@ -106,7 +106,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             var companyId = hr.CompanyId.Value;
 
             var employees = await _context.Patients
-                .Where(p => p.CompanyId == companyId && p.Department == name && p.EmploymentStatus == "active")
+                .Include(p => p.Division)
+                .Where(p => p.CompanyId == companyId && (p.Division != null ? p.Division.Name : "Belum Diatur") == name && p.EmploymentStatus == "active")
                 .ToListAsync();
             if (employees.Count == 0) return NotFound();
 
@@ -149,11 +150,11 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr == null || hr.CompanyId == null) return Unauthorized();
             var companyId = hr.CompanyId.Value;
 
-            var employees = await _context.Patients
-                .Where(p => p.CompanyId == companyId && p.Department == name && p.EmploymentStatus == "active")
+            var ids = await _context.Patients
+                .Include(p => p.Division)
+                .Where(p => p.CompanyId == companyId && (p.Division != null ? p.Division.Name : "Belum Diatur") == name && p.EmploymentStatus == "active")
+                .Select(p => p.PatientId)
                 .ToListAsync();
-
-            var ids = employees.Select(p => p.PatientId).ToList();
             var from = DateTime.Today.AddDays(-window + 1);
 
             var moods = await _context.MoodTrackers
@@ -230,7 +231,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 {
                     FullName = p.User?.FullName ?? "",
                     Email = p.User?.Email ?? "",
-                    Division = p.Department,
+                    Division = p.DivisionId == null ? "Belum Diatur" : p.Division?.Name ?? "Belum Diatur",
                     EmployeeId = p.EmployeeId,
                     MentalHealthStatus = p.MentalHealthStatus,
                     LastCheckDate = snap.LastCheckLabel,

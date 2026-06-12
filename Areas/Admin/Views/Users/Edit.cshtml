@@ -1,0 +1,55 @@
+@model LightenUp.Web.Models.ViewModels.AdminUserEditViewModel
+@{
+    ViewData["Title"] = "Edit Pengguna";
+    ViewBag.ActiveNav = "Users";
+}
+
+<a asp-action="Detail" asp-route-id="@Model.UserId" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+    </svg>
+    Kembali ke Detail
+</a>
+
+<div class="adm-card usr-edit-card">
+    <h3 class="adm-card-title-lg">Edit Data Pengguna</h3>
+    
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="UserId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger usr-validation-summary"></div>
+
+        <div class="adm-form-row">
+            <label asp-for="FullName">Nama Lengkap</label>
+            <input asp-for="FullName" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+
+        <div class="adm-form-row">
+            <label asp-for="Email">Email / Username</label>
+            <input asp-for="Email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="adm-form-row">
+            <label asp-for="Phone">Nomor Telepon</label>
+            <input asp-for="Phone" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <div class="adm-form-row">
+            <label>Peran (Role)</label>
+            <input type="text" value="@Model.Role" disabled class="usr-role-input" />
+            <input type="hidden" asp-for="Role" />
+            <div class="adm-form-hint">Peran akun bersifat permanen dan tidak dapat diubah oleh administrator demi alasan integritas data.</div>
+        </div>
+
+        <div class="adm-form-actions usr-form-actions">
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <a asp-action="Detail" asp-route-id="@Model.UserId" class="btn btn-secondary">Batal</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

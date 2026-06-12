@@ -10,21 +10,22 @@
     }
 }
 
+<div class="adm-page-header apr-page-header">
+    <h1>Manajemen Persetujuan</h1>
+    <p class="adm-page-sub">Kelola persetujuan akun pengguna dan permintaan pemberhentian karyawan dari HR.</p>
+</div>
+
+@{
+    ViewBag.ActiveTab = "Index";
+}
+<partial name="_ApprovalsTabs" />
+
 @if (TempData["success"] is string ok)
 {
     <div class="adm-alert success">✅ @ok</div>
 }
 
-<!-- ── Tab filter ── -->
-<div class="adm-tabs">
-    <a class="adm-tab @(Model.Tab == "All" ? "active" : "")" asp-action="Index" asp-route-tab="All">
-        Semua
-        @if (totalAll > 0) { <span class="nav-badge" style="position:static; margin-left:2px;">@totalAll</span> }
-    </a>
-    <a class="adm-tab @(Model.Tab == "Psychologist" ? "active" : "")" asp-action="Index" asp-route-tab="Psychologist">
-        🩺 Psikolog
-    </a>
-</div>
+
 
 @if (!Model.Items.Any())
 {
@@ -46,7 +47,7 @@ else
                     <th>Role</th>
                     <th>Info</th>
                     <th>Masuk</th>
-                    <th style="width:90px;"></th>
+                    <th class="apr-th-review"></th>
                 </tr>
             </thead>
             <tbody>
@@ -57,8 +58,8 @@ else
                             <div class="adm-user-cell">
                                 <div class="adm-avatar-sm">@Initials(item.FullName)</div>
                                 <div>
-                                    <div style="font-weight:600; font-size:13.5px;">@item.FullName</div>
-                                    <div style="font-size:12px; color:var(--adm-muted);">@item.Email</div>
+                                    <div class="apr-name-primary">@item.FullName</div>
+                                    <div class="apr-name-secondary">@item.Email</div>
                                 </div>
                             </div>
                         </td>
@@ -68,13 +69,20 @@ else
                             else
                             { <span class="badge badge-role-hr">🏢 HR</span> }
                         </td>
-                        <td style="font-size:13px; color:var(--adm-text-secondary); max-width:220px;">
+                        <td class="apr-td-info">
                             @if (item.Role == "Psychologist")
                             {
-                                <div>@(item.Specialization ?? "Spesialisasi belum diisi")</div>
                                 @if (!string.IsNullOrEmpty(item.LicenseNumber))
                                 {
-                                    <div style="font-size:12px; color:var(--adm-muted);">SIPP: @item.LicenseNumber</div>
+                                    <div class="apr-info-sipp">SIPP: @item.LicenseNumber</div>
+                                }
+                                @if (!string.IsNullOrEmpty(item.Specialization))
+                                {
+                                    <div class="apr-info-siap">SIAP: @item.Specialization</div>
+                                }
+                                @if (string.IsNullOrEmpty(item.LicenseNumber) && string.IsNullOrEmpty(item.Specialization))
+                                {
+                                    <div>Pendaftaran Baru</div>
                                 }
                             }
                             else if (item.Role == "HR")
@@ -82,11 +90,11 @@ else
                                 <div>@(item.CompanyName ?? "Tanpa perusahaan")</div>
                             }
                         </td>
-                        <td style="font-size:12px; color:var(--adm-muted); white-space:nowrap;">
+                        <td class="apr-td-date">
                             @(item.SubmittedAt.HasValue ? item.SubmittedAt.Value.ToString("d MMM yyyy") : "—")
                         </td>
                         <td>
-                            <a class="btn btn-sm btn-primary" asp-action="Detail" asp-route-id="@item.UserId">Tinjau</a>
+                            <a class="adm-btn adm-btn-sm adm-btn-primary apr-btn-review" asp-action="Detail" asp-route-id="@item.UserId">Tinjau</a>
                         </td>
                     </tr>
                 }

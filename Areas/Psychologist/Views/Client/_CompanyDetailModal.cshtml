@@ -1,0 +1,101 @@
+@using LightenUp.Web.Models
+@{
+    var patients = ViewBag.Patients as List<Patient> ?? new List<Patient>();
+    var sehat = (int)(ViewBag.SehatCount ?? 0);
+    var beresiko = (int)(ViewBag.BeresikoCount ?? 0);
+    var bahaya = (int)(ViewBag.BahayaCount ?? 0);
+    var company = ViewBag.Company as Company;
+}
+
+<div class="modal-container cdm-modal">
+    <div class="modal-header cdm-header">
+        <div>
+            <p class="cdm-eyebrow">Detail Mitra</p>
+            <h2 class="modal-title cdm-title">@ViewBag.CompanyName</h2>
+        </div>
+        <button class="close-btn" onclick="closeCompanyDetailModal()">&times;</button>
+    </div>
+
+    <div class="cdm-body">
+        <div class="cdm-count-row">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span class="cdm-count-val">@patients.Count</span>
+            <span class="cdm-count-lbl">klien ditangani</span>
+        </div>
+
+        <div class="cdm-stats-grid">
+            <div class="cdm-stat-card">
+                <div class="cdm-stat-emoji">✅</div>
+                <h3 class="cdm-stat-val cdm-stat-val--sehat">@sehat</h3>
+                <p class="cdm-stat-lbl">Sehat</p>
+            </div>
+            <div class="cdm-stat-card">
+                <div class="cdm-stat-emoji">⚠️</div>
+                <h3 class="cdm-stat-val cdm-stat-val--beresiko">@beresiko</h3>
+                <p class="cdm-stat-lbl">Beresiko</p>
+            </div>
+            <div class="cdm-stat-card">
+                <div class="cdm-stat-emoji">🔴</div>
+                <h3 class="cdm-stat-val cdm-stat-val--bahaya">@bahaya</h3>
+                <p class="cdm-stat-lbl">Bahaya</p>
+            </div>
+        </div>
+
+        @if (bahaya > 0)
+        {
+            <div class="cdm-danger-banner">
+                <div>
+                    <h3 class="cdm-danger-title">⚠️ @bahaya klien dalam kondisi bahaya</h3>
+                    <p class="cdm-danger-sub">Pantau perkembangan mereka lebih intensif.</p>
+                </div>
+            </div>
+        }
+
+        <h4 class="cdm-section-title">Daftar Klien Aktif</h4>
+        
+        @if (!patients.Any())
+        {
+            <div class="cdm-empty">
+                Belum ada klien aktif dari perusahaan ini.
+            </div>
+        }
+        else
+        {
+            <div class="cdm-client-list">
+                @foreach (var p in patients)
+                {
+                    var badgeClass = p.MentalHealthStatus switch
+                    {
+                        "Sehat" => "cdm-badge--sehat",
+                        "Beresiko" => "cdm-badge--beresiko",
+                        "Bahaya" => "cdm-badge--bahaya",
+                        _ => "cdm-badge--default"
+                    };
+                    <a href="@Url.Action("PatientDetail", "Client", new { id = p.PatientId })" class="cdm-client-link">
+                        <div class="cdm-client-main">
+                            <div class="cdm-client-av">
+                                @(p.User?.FullName?.Length > 0 ? p.User.FullName.Substring(0,1).ToUpper() : "?")
+                            </div>
+                            <div>
+                                <div class="cdm-client-name">@(p.User?.FullName ?? "—")</div>
+                                <div class="cdm-client-div">@(p.Division != null ? p.Division.Name : "Divisi belum diatur")</div>
+                            </div>
+                        </div>
+                        <span class="cdm-badge @badgeClass">@p.MentalHealthStatus</span>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+    
+    <div class="cdm-footer">
+        <a asp-area="Psychologist" asp-controller="Schedule" asp-action="ScheduleHistory" asp-route-company="@ViewBag.CompanyName" class="btn-outline cdm-footer-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Jadwal
+        </a>
+        <a asp-area="Psychologist" asp-controller="Worksheet" asp-action="WorksheetHistory" asp-route-company="@ViewBag.CompanyName" class="btn-outline cdm-footer-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"></path><path d="M14 3v5h5M16 13H8M16 17H8M10 9H8"></path></svg>
+            Worksheet
+        </a>
+    </div>
+</div>

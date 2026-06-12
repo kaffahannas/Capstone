@@ -17,21 +17,33 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _email;
         private readonly ILogger<ApprovalsController> _log;
+        private readonly AssignmentActivationService _activation;
 
         public ApprovalsController(ApplicationDbContext context,
                                    UserManager<ApplicationUser> userManager,
                                    IEmailSender email,
-                                   ILogger<ApprovalsController> log)
+                                   ILogger<ApprovalsController> log,
+                                   AssignmentActivationService activation)
         {
             _context = context;
             _userManager = userManager;
             _email = email;
             _log = log;
+            _activation = activation;
+        }
+
+        private async Task SetNavCountsAsync()
+        {
+            ViewBag.CountAccounts = await _userManager.Users.CountAsync(u => !u.IsApprovedByAdmin && u.RoleType == "Psychologist");
+            ViewBag.CountRemovals = await _context.HrEmployeeRemovalRequests.CountAsync(r => r.Status == "Pending");
+            ViewBag.CountAssignments = await _context.Assignments.CountAsync(a => a.Status == "PendingAdminApproval");
+            ViewBag.CountCancellations = await _context.Assignments.CountAsync(a => a.Status == "PendingCancellationByAdmin");
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(string tab = "All")
         {
+            await SetNavCountsAsync();
             // HR is now auto-approved at registration; only Psychologists need manual approval.
             var pending = await _userManager.Users
                 .Where(u => !u.IsApprovedByAdmin && u.RoleType == "Psychologist")
@@ -59,7 +71,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 if (u.RoleType == "Psychologist" && psyMap.TryGetValue(u.Id, out var p))
                 {
                     item.LicenseNumber = p.LicenseNumber;
-                    item.Specialization = p.Specialization;
+                    item.Specialization = p.SiapNumber; // Overriding Specialization to carry SiapNumber to UI
+                    item.SubmittedAt = p.OnboardingCompletedAt;
                 }
                 else if (u.RoleType == "HR" && hrMap.TryGetValue(u.Id, out var h))
                 {
@@ -88,7 +101,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 Phone = user.PhoneNumber,
                 Role = user.RoleType,
                 ProfilePicture = user.ProfilePicture,
-                SubmittedAt = DateTime.Now
+                SubmittedAt = DateTime.UtcNow
             };
 
             if (user.RoleType == "Psychologist")
@@ -179,6 +192,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> EmployeeRemovals()
         {
+            await SetNavCountsAsync();
             var requests = await _context.HrEmployeeRemovalRequests
                 .Include(r => r.Patient!)
                     .ThenInclude(p => p.User)
@@ -186,7 +200,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 .OrderByDescending(r => r.CreatedAt)
                 .ToListAsync();
 
-            ViewBag.ActiveNav = "EmployeeRemovals";
+            ViewBag.ActiveNav = "Approvals";
             ViewData["Title"] = "Pemberhentian Karyawan";
             return View(requests);
         }
@@ -245,6 +259,94 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan pemberhentian ditolak.";
             return RedirectToAction(nameof(EmployeeRemovals));
+        }
+
+        // --- ASSIGNMENT & CANCELLATION REQUESTS ---
+        [HttpGet]
+        public async Task<IActionResult> AssignmentRequests()
+        {
+            await SetNavCountsAsync();
+            var pendingAssignments = await _context.Assignments
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Include(a => a.Patient).ThenInclude(p => p!.Company)
+                .Include(a => a.Psychologist).ThenInclude(p => p!.User)
+                .Include(a => a.RequestedBy)
+                .Where(a => a.Status == "PendingAdminApproval")
+                .OrderByDescending(a => a.AssignedAt)
+                .ToListAsync();
+
+            ViewBag.ActiveNav = "Approvals";
+            ViewData["Title"] = "Persetujuan Penugasan";
+            return View(pendingAssignments);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CancellationRequests()
+        {
+            await SetNavCountsAsync();
+            var pendingCancellations = await _context.Assignments
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Include(a => a.Patient).ThenInclude(p => p!.Company)
+                .Include(a => a.Psychologist).ThenInclude(p => p!.User)
+                .Include(a => a.CancellationRequestedBy)
+                .Where(a => a.Status == "PendingCancellationByAdmin")
+                .OrderByDescending(a => a.AssignedAt)
+                .ToListAsync();
+
+            ViewBag.ActiveNav = "Approvals";
+            ViewData["Title"] = "Persetujuan Pembatalan HR";
+            return View(pendingCancellations);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveAssignment(int assignmentId, string? note, decimal? psychologistRevenuePercentage)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var a = await _context.Assignments.FindAsync(assignmentId);
+            if (a == null) return NotFound();
+
+            var returnAction = a.Status == "PendingCancellationByAdmin" ? nameof(CancellationRequests) : nameof(AssignmentRequests);
+
+            if (a.Status == "PendingAdminApproval")
+            {
+                await _activation.ActivateAsync(a, user?.Id, note, psychologistRevenuePercentage);
+            }
+            else if (a.Status == "PendingCancellationByAdmin")
+            {
+                a.Status = "Cancelled";
+                a.DecisionByUserId = user?.Id;
+                a.DecisionAt = DateTime.UtcNow;
+                a.DecisionNote = note;
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Permintaan disetujui.";
+            return RedirectToAction(returnAction);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectAssignment(int assignmentId, string? note)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var a = await _context.Assignments.FindAsync(assignmentId);
+            if (a == null) return NotFound();
+
+            var returnAction = a.Status == "PendingCancellationByAdmin" ? nameof(CancellationRequests) : nameof(AssignmentRequests);
+
+            if (a.Status == "PendingCancellationByAdmin")
+                a.Status = "Active";
+            else
+                a.Status = "Rejected";
+
+            a.DecisionByUserId = user?.Id;
+            a.DecisionAt = DateTime.UtcNow;
+            a.DecisionNote = note;
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Permintaan ditolak.";
+            return RedirectToAction(returnAction);
         }
     }
 }

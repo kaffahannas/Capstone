@@ -24,7 +24,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string? search, string? role, string? status, int page = 1)
         {
-            var q = _userManager.Users.AsQueryable();
+            var q = _userManager.Users.Where(u => u.RoleType != "Admin").AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
                 q = q.Where(u => u.FullName.Contains(search) || (u.Email != null && u.Email.Contains(search)));
@@ -82,12 +82,16 @@ namespace LightenUp.Web.Areas.Admin.Controllers
 
             if (user.RoleType == "Patient")
             {
-                var p = await _context.Patients.Include(p => p.Company).FirstOrDefaultAsync(p => p.UserId == user.Id);
+                var p = await _context.Patients.Include(p => p.Company).Include(p => p.Division).FirstOrDefaultAsync(p => p.UserId == user.Id);
                 if (p != null)
                 {
                     vm.CompanyName = p.Company?.Name;
-                    vm.Department = p.Department;
+                    vm.Department = p.DivisionId == null ? "Belum Diatur" : p.Division?.Name;
                     vm.MentalHealthStatus = p.MentalHealthStatus;
+                    vm.DateOfBirth = p.DateOfBirth;
+                    vm.Gender = p.Gender;
+                    vm.EmergencyContactName = p.EmergencyContactName;
+                    vm.EmergencyContactPhone = p.EmergencyContactPhone;
                 }
             }
             else if (user.RoleType == "Psychologist")
@@ -97,6 +101,13 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 {
                     vm.Specialization = psy.Specialization;
                     vm.LicenseNumber = psy.LicenseNumber;
+                    vm.SiapNumber = psy.SiapNumber;
+                    vm.LastDegree = psy.LastDegree;
+                    vm.University = psy.University;
+                    vm.ExperienceYears = psy.ExperienceYears;
+                    vm.PracticeLocation = psy.PracticeLocation;
+                    vm.AcademicDocumentUrl = psy.AcademicDocumentUrl;
+                    vm.StrDocumentUrl = psy.StrDocumentUrl;
                 }
             }
             else if (user.RoleType == "HR")
@@ -106,6 +117,12 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 {
                     vm.CompanyName = hr.Company?.Name;
                     vm.Department = hr.Department;
+                    vm.CompanyAddress = hr.Company?.Address;
+                    vm.CompanyRegistrationNumber = hr.Company?.RegistrationNumber;
+                    vm.SupportDocumentUrl = hr.SupportDocumentUrl;
+                    vm.LastDegree = hr.LastDegree;
+                    vm.University = hr.University;
+                    vm.AcademicDocumentUrl = hr.AcademicDocumentUrl;
                 }
             }
 
@@ -125,22 +142,86 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Detail), new { id });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ResetPassword(string id, string newPassword)
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
-            if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 8)
+
+            var vm = new AdminUserEditViewModel
             {
-                TempData["error"] = "Kata sandi minimal 8 karakter.";
-                return RedirectToAction(nameof(Detail), new { id });
+                UserId = user.Id,
+                FullName = user.FullName,
+                Email = user.Email ?? "",
+                Phone = user.PhoneNumber,
+                Role = user.RoleType
+            };
+
+            ViewBag.ActiveNav = "Users";
+            ViewData["Title"] = "Edit Pengguna";
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(AdminUserEditViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ActiveNav = "Users";
+                ViewData["Title"] = "Edit Pengguna";
+                return View(vm);
             }
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            var user = await _userManager.FindByIdAsync(vm.UserId);
+            if (user == null) return NotFound();
+
+            user.FullName = vm.FullName;
+            user.Email = vm.Email;
+            user.UserName = vm.Email;
+            user.PhoneNumber = vm.Phone;
+
+            // Handle role change if needed (remove old role, add new role)
+            if (user.RoleType != vm.Role)
+            {
+                var oldRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, oldRoles);
+                await _userManager.AddToRoleAsync(user, vm.Role);
+                user.RoleType = vm.Role;
+                
+                // If it's psychologist or hr, we might need to do cleanups, but for simplicity we just update the identity role.
+            }
+
+            var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
-                TempData["success"] = $"Kata sandi {user.FullName} direset.";
-            else
-                TempData["error"] = string.Join(", ", result.Errors.Select(e => e.Description));
+            {
+                TempData["success"] = "Data pengguna berhasil diperbarui.";
+                return RedirectToAction(nameof(Detail), new { id = user.Id });
+            }
+
+            foreach (var err in result.Errors) ModelState.AddModelError("", err.Description);
+            ViewBag.ActiveNav = "Users";
+            ViewData["Title"] = "Edit Pengguna";
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            // Additional logic to delete from Patient/Psychologist/HR tables if necessary.
+            // But EF Core Cascade Delete should handle it if configured, or we can just delete the identity user.
+            var result = await _userManager.DeleteAsync(user);
+            
+            if (result.Succeeded)
+            {
+                TempData["success"] = $"Pengguna {user.FullName} berhasil dihapus permanen.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["error"] = "Gagal menghapus pengguna: " + string.Join(", ", result.Errors.Select(e => e.Description));
             return RedirectToAction(nameof(Detail), new { id });
         }
     }

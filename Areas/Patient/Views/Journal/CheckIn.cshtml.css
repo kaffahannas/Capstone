@@ -1,0 +1,21 @@
+.jnl-ci-intro {
+    text-align: center;
+    padding: 24px 0;
+}
+
+.jnl-ci-emoji {
+    font-size: 80px;
+    margin-bottom: 16px;
+}
+
+.jnl-ci-submit {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 10px;
+}
+
+.jnl-ci-back {
+    display: block;
+    text-align: center;
+    padding: 14px;
+}

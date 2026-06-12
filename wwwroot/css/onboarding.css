@@ -535,6 +535,13 @@ input[type="radio"].onb-choice-input { display: none; }
     text-align: center;
     box-shadow: 0 4px 6px rgba(0,0,0,0.02);
 }
+.onb-upload-preview-new {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+}
 .onb-upload-preview[hidden] { display: none !important; }
 .onb-upload-thumb {
     max-width: 100%;
@@ -555,11 +562,34 @@ input[type="radio"].onb-choice-input { display: none; }
     margin: 12px 0 0;
 }
 .onb-file-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
     color: var(--lu-primary);
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    background: #fff;
+    padding: 16px 24px;
+    border-radius: 100px;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    word-break: break-all;
+}
+.onb-file-link:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 16px rgba(139, 92, 246, 0.25);
     text-decoration: none;
 }
-.onb-file-link:hover { text-decoration: underline; }
+.onb-file-link .file-name {
+    font-weight: 600;
+}
+.onb-file-link .file-status {
+    color: var(--lu-text-muted);
+    font-size: 13px;
+}
 
 /* ───── Small phones (≤ 479px) ───── */
 @media (max-width: 479px) {

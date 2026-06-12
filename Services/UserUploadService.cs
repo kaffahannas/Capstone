@@ -20,6 +20,10 @@ public class UserUploadService
     public static readonly string[] ProfileExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
     public static readonly string[] DocumentExtensions = { ".pdf", ".jpg", ".jpeg", ".png", ".webp" };
 
+    // Max file sizes (in bytes)
+    public const long MaxImageSizeBytes = 5 * 1024 * 1024;      // 5 MB
+    public const long MaxDocumentSizeBytes = 10 * 1024 * 1024;   // 10 MB
+
     /// <summary>Physical folder for an account (for admin cleanup / browsing).</summary>
     public string GetAccountFolderPath(string userId) =>
         Path.Combine(_env.WebRootPath, "uploads", "accounts", SanitizeSegment(userId));
@@ -29,9 +33,15 @@ public class UserUploadService
         string category,
         IFormFile file,
         string? namePrefix = null,
-        IReadOnlyCollection<string>? allowedExtensions = null)
+        IReadOnlyCollection<string>? allowedExtensions = null,
+        long? maxSizeBytes = null)
     {
         if (file.Length == 0) return null;
+
+        // Enforce maximum file size
+        var effectiveMaxSize = maxSizeBytes ?? MaxImageSizeBytes;
+        if (file.Length > effectiveMaxSize)
+            return null;
 
         var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
         if (allowedExtensions != null && !allowedExtensions.Contains(ext))
@@ -61,9 +71,10 @@ public class UserUploadService
         IFormFile file,
         string? previousWebPath,
         string? namePrefix = null,
-        IReadOnlyCollection<string>? allowedExtensions = null)
+        IReadOnlyCollection<string>? allowedExtensions = null,
+        long? maxSizeBytes = null)
     {
-        var path = await SaveAsync(userId, category, file, namePrefix, allowedExtensions);
+        var path = await SaveAsync(userId, category, file, namePrefix, allowedExtensions, maxSizeBytes);
         if (path != null)
             TryDeleteByWebPath(previousWebPath);
         return path;

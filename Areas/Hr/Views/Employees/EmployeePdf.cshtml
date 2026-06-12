@@ -29,6 +29,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Laporan Karyawan — @(patient?.User?.FullName ?? "—")</title>
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Arial, sans-serif; color: #1f2937; margin: 0; padding: 24px; font-size: 13px; background: #fff; }
@@ -61,11 +62,11 @@
 <div class="header">
     <div>
         <div class="logo">LightenUp</div>
-        <div style="color:#6b7280; font-size:12px; margin-top:4px;">Laporan Data Karyawan</div>
+        <div class="hrpdf-subtitle">Laporan Data Karyawan</div>
     </div>
-    <div style="text-align:right;">
-        <div style="font-weight:600;">@companyName</div>
-        <div style="color:#6b7280; font-size:11px;">Dibuat: @generatedAt.ToString("dd MMMM yyyy, HH:mm", idCulture)</div>
+    <div class="hrpdf-meta">
+        <div class="hrpdf-company">@companyName</div>
+        <div class="hrpdf-date">Dibuat: @generatedAt.ToString("dd MMMM yyyy, HH:mm", idCulture)</div>
     </div>
 </div>
 
@@ -90,7 +91,7 @@
     </div>
     <div class="info-item">
         <div class="info-label">Divisi</div>
-        <div class="info-value">@(patient?.Department ?? "—")</div>
+        <div class="info-value">@(patient?.DivisionId == null ? "Belum Diatur" : patient?.Division?.Name)</div>
     </div>
     <div class="info-item">
         <div class="info-label">ID Karyawan</div>
@@ -106,9 +107,9 @@
     </div>
     @if (!string.IsNullOrEmpty(patient?.Symptoms))
     {
-        <div class="info-item" style="grid-column: 1 / -1;">
+        <div class="info-item hrpdf-info-full">
             <div class="info-label">Gejala / Catatan</div>
-            <div class="info-value" style="font-weight:400;">@patient.Symptoms</div>
+            <div class="info-value hrpdf-symptoms">@patient.Symptoms</div>
         </div>
     }
 </div>
@@ -117,7 +118,7 @@
 <h2 class="no-break">📊 Riwayat Mood (30 Hari Terakhir)</h2>
 @if (!moods.Any())
 {
-    <p style="color:#9ca3af;">Belum ada data mood.</p>
+    <p class="hrpdf-empty">Belum ada data mood.</p>
 }
 else
 {
@@ -142,7 +143,7 @@ else
 <h2 class="no-break">🩺 Riwayat Sesi Konseling</h2>
 @if (!sessions.Any())
 {
-    <p style="color:#9ca3af;">Belum ada sesi konseling.</p>
+    <p class="hrpdf-empty">Belum ada sesi konseling.</p>
 }
 else
 {
@@ -168,7 +169,7 @@ else
 <h2 class="no-break">📝 Riwayat Worksheet</h2>
 @if (!worksheets.Any())
 {
-    <p style="color:#9ca3af;">Belum ada worksheet.</p>
+    <p class="hrpdf-empty">Belum ada worksheet.</p>
 }
 else
 {

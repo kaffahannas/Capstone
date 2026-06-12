@@ -13,6 +13,7 @@
     <title>@ViewData["Title"] - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
 </head>
 <body class="auth-page">
 
@@ -26,19 +27,19 @@
             </a>
 
             <!-- Logo -->
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
-                <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" style="width: 28px; height: auto;" onerror="this.style.display='none'" />
-                <span style="font-weight: 700; color: #7C3AED; font-size: 20px; letter-spacing: -0.5px;">LightenUp</span>
+            <div class="onb-step-logo">
+                <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" class="onb-step-logo-img" onerror="this.style.display='none'" />
+                <span class="onb-step-logo-text">LightenUp</span>
             </div>
 
-            <h1 class="auth-title" style="font-size: 24px;">Langkah 3: Status<br />Praktek</h1>
+            <h1 class="auth-title auth-title--step3">Langkah 3: Status<br />Praktek</h1>
             
             <!-- Indikator Progres (100% untuk Step 3) -->
-            <div class="progress-container" style="width: 100%; height: 8px; background-color: #E5E7EB; border-radius: 10px; margin-top: 12px; margin-bottom: 25px; overflow: hidden;">
-                <div class="progress-bar" style="height: 100%; background-color: var(--primary-purple); width: 100%; border-radius: 10px;"></div>
+            <div class="progress-container progress-container--step3">
+                <div class="progress-bar progress-bar--step3"></div>
             </div>
 
-            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 25px;">
+            <p class="onb-step-note">
                 Silakan masukkan informasi pendukung keabsahan praktek psikologi Anda.
             </p>
 
@@ -46,7 +47,7 @@
                 
                 <div class="form-group">
                     <label asp-for="PracticeLocation" class="form-label">Lokasi Praktek</label>
-                    <textarea asp-for="PracticeLocation" class="form-control-custom" rows="2" placeholder="Jl. Ki Hajar Dewantara, Kota Jababeka..." style="resize: none;"></textarea>
+                    <textarea asp-for="PracticeLocation" class="form-control-custom form-textarea-no-resize" rows="2" placeholder="Jl. Ki Hajar Dewantara, Kota Jababeka..."></textarea>
                     <span asp-validation-for="PracticeLocation" class="text-danger"></span>
                 </div>
 
@@ -62,24 +63,24 @@
                     <span asp-validation-for="SippNumber" class="text-danger"></span>
                 </div>
                 
-                <div style="margin-top: 25px; margin-bottom: 10px;">
+                <div class="onb-doc-label-wrap--step3">
                     <label class="form-label">Scan Dokumen Pendukung</label>
                 </div>
 
                 <!-- Area Upload Dokumen -->
-                <label class="upload-area" id="uploadArea" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; box-sizing: border-box; border: 2px dashed #D1D5DB; border-radius: 12px; padding: 40px 20px; background-color: #F9FAFB; cursor: pointer; transition: all 0.3s ease; margin-bottom: 15px;">
-                    <svg id="uploadIcon" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px; margin-bottom: 12px; transition: stroke 0.3s ease;">
+                <label class="upload-area upload-area--step3" id="uploadArea">
+                    <svg id="uploadIcon" class="upload-icon--step3 upload-icon--default" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                         <polyline points="13 2 13 9 20 9"></polyline>
                     </svg>
                     
-                    <div class="upload-text" id="uploadText" style="font-size: 14px; font-weight: 600; color: #1f2937; margin-bottom: 4px; text-align: center;">Upload file</div>
-                    <div class="upload-subtext" id="uploadSubtext" style="font-size: 12px; color: #6b7280; text-align: center;">Format JPG/PDF, maksimal 5 MB</div>
+                    <div class="upload-text" id="uploadText">Upload file</div>
+                    <div class="upload-subtext" id="uploadSubtext">Format JPG/PDF, maksimal 5 MB</div>
 
-                    <input asp-for="StrDocument" type="file" accept="image/jpeg, image/png, application/pdf" style="display: none;" id="fileInput" />
+                    <input asp-for="StrDocument" type="file" accept="image/jpeg, image/png, application/pdf" class="file-input-hidden" id="fileInput" />
                 </label>
                 
-                <div style="text-align: center; margin-bottom: 15px;">
+                <div class="validation-center-wrap">
                     <span asp-validation-for="StrDocument" class="text-danger"></span>
                 </div>
 
@@ -103,11 +104,17 @@
             function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
 
             ['dragenter', 'dragover'].forEach(eventName => { uploadArea.addEventListener(eventName, () => {
-                uploadArea.style.borderColor = '#7C3AED'; uploadArea.style.backgroundColor = '#F5F3FF'; uploadIcon.style.stroke = '#7C3AED';
+                uploadArea.classList.add('upload-area--drag');
+                uploadIcon.classList.remove('upload-icon--default');
+                uploadIcon.classList.add('upload-icon--purple');
             }, false); });
 
             ['dragleave', 'drop'].forEach(eventName => { uploadArea.addEventListener(eventName, () => {
-                if(!uploadArea.classList.contains('has-file')) { uploadArea.style.borderColor = '#D1D5DB'; uploadArea.style.backgroundColor = '#F9FAFB'; uploadIcon.style.stroke = '#9CA3AF'; }
+                if(!uploadArea.classList.contains('has-file')) {
+                    uploadArea.classList.remove('upload-area--drag');
+                    uploadIcon.classList.remove('upload-icon--purple');
+                    uploadIcon.classList.add('upload-icon--default');
+                }
             }, false); });
 
             uploadArea.addEventListener('drop', function(e) {
@@ -120,8 +127,13 @@
             });
 
             function updateUI(fileName) {
-                uploadText.textContent = fileName; uploadText.style.color = '#10B981'; uploadSubtext.textContent = 'Dokumen siap diunggah';
-                uploadArea.classList.add('has-file'); uploadArea.style.borderColor = '#10B981'; uploadArea.style.backgroundColor = '#ECFDF5'; uploadIcon.style.stroke = '#10B981';
+                uploadText.textContent = fileName;
+                uploadText.classList.add('upload-text--success');
+                uploadSubtext.textContent = 'Dokumen siap diunggah';
+                uploadArea.classList.add('has-file', 'upload-area--has-file');
+                uploadArea.classList.remove('upload-area--drag');
+                uploadIcon.classList.remove('upload-icon--default', 'upload-icon--purple');
+                uploadIcon.classList.add('upload-icon--success');
             }
     </script>
 </body>

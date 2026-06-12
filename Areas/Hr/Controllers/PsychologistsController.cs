@@ -50,6 +50,11 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 .OrderBy(p => p.User!.FullName)
                 .ToListAsync();
 
+            var pendingRequests = await _context.CompanyPsychologistRequests
+                .Where(r => r.CompanyId == hr.CompanyId.Value && r.Status == "Pending" && r.PsychologistId != null)
+                .Select(r => r.PsychologistId)
+                .ToListAsync();
+
             var vm = new HrPsychologistDirectoryViewModel
             {
                 Psychologists = psychologists.Select(p => new HrPsychologistCard
@@ -64,7 +69,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                     University = p.University,
                     LastDegree = p.LastDegree,
                     PracticeLocation = p.PracticeLocation,
-                    AlreadyPartnered = partneredIds.Contains(p.PsychologistId)
+                    AlreadyPartnered = partneredIds.Contains(p.PsychologistId),
+                    HasPendingRequest = pendingRequests.Contains(p.PsychologistId)
                 }).ToList()
             };
 
@@ -84,6 +90,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (p == null) return NotFound();
 
             var partnered = hr.Company?.PartneredPsychologists.Any(c => c.PsychologistId == id) ?? false;
+            var hasPending = await _context.CompanyPsychologistRequests.AnyAsync(r => r.CompanyId == hr.CompanyId.Value && r.PsychologistId == id && r.Status == "Pending");
 
             ViewBag.ActiveNav = "Psikolog";
             return View(new HrPsychologistProfileViewModel
@@ -98,12 +105,13 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 PracticeLocation = p.PracticeLocation,
                 ProfilePicture = p.User?.ProfilePicture,
                 Email = p.User?.Email,
-                AlreadyPartnered = partnered
+                AlreadyPartnered = partnered,
+                HasPendingRequest = hasPending
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Pick(int id)
+        public async Task<IActionResult> RequestPartnership(int id)
         {
             var hr = await GetHrAsync();
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
@@ -116,16 +124,61 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 .FirstOrDefaultAsync(c => c.CompanyId == hr.CompanyId.Value);
             if (company == null) return NotFound();
 
-            if (!company.PartneredPsychologists.Any(p => p.PsychologistId == id))
+            if (company.PartneredPsychologists.Any(p => p.PsychologistId == id))
             {
-                company.PartneredPsychologists.Add(psy);
-                await _context.SaveChangesAsync();
-                TempData["success"] = $"{psy.User?.FullName ?? "Psikolog"} ditambahkan ke daftar mitra perusahaan.";
+                TempData["info"] = "Psikolog sudah menjadi mitra perusahaan.";
+                return RedirectToAction(nameof(Index));
             }
-            else
+
+            var existingRequest = await _context.CompanyPsychologistRequests
+                .FirstOrDefaultAsync(r => r.CompanyId == company.CompanyId && r.PsychologistId == id && r.Status == "Pending");
+            
+            if (existingRequest != null)
             {
-                TempData["success"] = "Psikolog sudah menjadi mitra perusahaan.";
+                TempData["info"] = "Permintaan kemitraan sudah diajukan dan sedang menunggu persetujuan.";
+                return RedirectToAction(nameof(Index));
             }
+
+            var request = new CompanyPsychologistRequest
+            {
+                CompanyId = company.CompanyId,
+                PsychologistId = id,
+                Status = "Pending"
+            };
+
+            _context.CompanyPsychologistRequests.Add(request);
+            await _context.SaveChangesAsync();
+            TempData["success"] = $"Permintaan kemitraan kepada {psy.User?.FullName ?? "Psikolog"} berhasil dikirim.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RequestFromAdmin(string? notes)
+        {
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
+
+            var existingRequest = await _context.CompanyPsychologistRequests
+                .FirstOrDefaultAsync(r => r.CompanyId == hr.CompanyId.Value && r.PsychologistId == null && r.Status == "Pending");
+            
+            if (existingRequest != null)
+            {
+                TempData["info"] = "Permintaan psikolog ke admin sudah diajukan dan sedang menunggu proses.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var request = new CompanyPsychologistRequest
+            {
+                CompanyId = hr.CompanyId.Value,
+                PsychologistId = null,
+                Status = "Pending",
+                Notes = notes
+            };
+
+            _context.CompanyPsychologistRequests.Add(request);
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Permintaan psikolog ke admin berhasil dikirim.";
 
             return RedirectToAction(nameof(Index));
         }

@@ -1,0 +1,197 @@
+@using LightenUp.Web.Models
+@using LightenUp.Web.Services
+@model LightenUp.Web.Models.PsychologistPayrollSetting
+@{
+    ViewData["Title"] = "Transfer Payroll";
+    ViewBag.ActiveNav = "Payroll";
+    var psyName = ViewBag.PsyName as string ?? "—";
+    var payouts = ViewBag.Payouts as List<LightenUp.Web.Models.MonthlyPayout>;
+}
+
+<a class="adm-back-link" asp-action="Index">← Kembali ke Daftar Payroll</a>
+
+<div class="adm-page-header">
+    <div class="pay-transfer-hero">
+        <p class="pay-transfer-hero-label">Transfer & Pembayaran</p>
+        <h2 class="pay-transfer-hero-title">@psyName</h2>
+        <p class="pay-transfer-hero-sub">
+            Kelola bukti transfer dan lihat riwayat pembayaran untuk psikolog ini.
+        </p>
+    </div>
+</div>
+
+<div class="pay-transfer-grid">
+    
+    <!-- LEFT COLUMN: Form & Info -->
+    <div class="pay-transfer-col">
+        
+        <!-- Info Rekening -->
+        <div class="adm-card">
+            <h3 class="adm-card-title-lg pay-card-title-flex">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Informasi Rekening Bank
+            </h3>
+            
+            @if (!string.IsNullOrEmpty(Model.BankDetailsPdfPath))
+            {
+                <div class="pay-bank-success">
+                    <p class="pay-bank-success-text">Dokumen Data Rekening Psikolog telah diunggah dan siap diunduh.</p>
+                    <a href="@Model.BankDetailsPdfPath" target="_blank" class="btn btn-primary pay-btn-bank">
+                        📄 Buka Dokumen Rekening
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="pay-bank-warning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="pay-bank-warning-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <div>
+                        <strong>Belum Ada Dokumen</strong><br/>
+                        Psikolog ini belum mengunggah dokumen rekening bank mereka di pengaturan profil.
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Upload Form -->
+        <div class="adm-card">
+            <h3 class="adm-card-title-lg">Kalkulasi & Bukti Transfer</h3>
+            
+            <!-- Filter Bulan Tahun -->
+            <form method="get" id="filterForm" class="pay-filter-form">
+                <input type="hidden" name="id" value="@Model.PsychologistId" />
+                <div class="pay-filter-field">
+                    <label class="pay-filter-label">Pilih Bulan</label>
+                    <select name="month" onchange="document.getElementById('filterForm').submit()" class="form-control pay-filter-control">
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i" selected="@(ViewBag.SelectedMonth == i)">@System.Globalization.CultureInfo.GetCultureInfo("id-ID").DateTimeFormat.GetMonthName(i)</option>
+                        }
+                    </select>
+                </div>
+                <div class="pay-filter-field">
+                    <label class="pay-filter-label">Pilih Tahun</label>
+                    <input type="number" name="year" value="@ViewBag.SelectedYear" onchange="document.getElementById('filterForm').submit()" class="form-control pay-filter-control" />
+                </div>
+            </form>
+
+            <!-- Breakdown Table -->
+            <div class="pay-breakdown-section">
+                <label class="pay-breakdown-label">Rincian Sesi Selesai (Bulan @System.Globalization.CultureInfo.GetCultureInfo("id-ID").DateTimeFormat.GetMonthName(ViewBag.SelectedMonth))</label>
+                @if (ViewBag.Breakdown != null && ((IEnumerable<dynamic>)ViewBag.Breakdown).Any())
+                {
+                    <div class="pay-breakdown-wrap">
+                        <table class="adm-table pay-breakdown-table">
+                            <thead>
+                                <tr>
+                                    <th class="pay-breakdown-th">Pasien</th>
+                                    <th class="pay-breakdown-th pay-breakdown-th--right">Harga Langganan / B2B</th>
+                                    <th class="pay-breakdown-th pay-breakdown-th--center">Sesi Selesai</th>
+                                    <th class="pay-breakdown-th pay-breakdown-th--right">Nilai Sesi <small class="pay-breakdown-th-hint">(Harga/Maks)</small></th>
+                                    <th class="pay-breakdown-th pay-breakdown-th--right">Bagi Hasil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var b in ViewBag.Breakdown)
+                                {
+                                    decimal perSessionValue = Math.Round((decimal)b.SlotValue / (decimal)b.MaxSessions, 2, MidpointRounding.AwayFromZero);
+                                    <tr class="pay-breakdown-tr">
+                                        <td class="pay-breakdown-td pay-breakdown-td--name">@b.PatientName</td>
+                                        <td class="pay-breakdown-td pay-breakdown-td--right">@(((decimal)b.SlotValue).ToString("C0", new System.Globalization.CultureInfo("id-ID")))</td>
+                                        <td class="pay-breakdown-td pay-breakdown-td--center">@b.Sessions <span class="pay-breakdown-sessions-muted">dari @b.MaxSessions</span></td>
+                                        <td class="pay-breakdown-td pay-breakdown-td--right">@perSessionValue.ToString("C0", new System.Globalization.CultureInfo("id-ID"))</td>
+                                        <td class="pay-breakdown-td pay-breakdown-td--earning">
+                                            @(((decimal)b.Earning).ToString("C0", new System.Globalization.CultureInfo("id-ID"))) 
+                                            <div class="pay-breakdown-earning-detail">(@b.Percentage% x @b.Sessions sesi)</div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="pay-breakdown-empty">
+                        Tidak ada sesi selesai pada bulan ini.
+                    </div>
+                }
+            </div>
+
+            <!-- Upload Action -->
+            <form asp-action="UploadPayoutProof" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="psychologistId" value="@Model.PsychologistId" />
+                <input type="hidden" name="month" value="@ViewBag.SelectedMonth" />
+                <input type="hidden" name="year" value="@ViewBag.SelectedYear" />
+                
+                <div class="pay-upload-field">
+                    <label class="pay-upload-label">Total Transfer yang Dihitung Otomatis (Rp)</label>
+                    <div class="pay-amount-wrap">
+                        <span class="pay-amount-prefix">Rp</span>
+                        <input type="number" name="amount" value="@Math.Floor((decimal)(ViewBag.TotalCalculatedAmount ?? 0))" readonly="readonly" class="form-control pay-amount-input" />
+                    </div>
+                    <small class="pay-amount-hint">✔ Nominal otomatis dihitung berdasarkan sesi selesai di atas.</small>
+                </div>
+
+                <div class="pay-upload-field pay-upload-field--last">
+                    <label class="pay-upload-label">Dokumen Bukti Transfer</label>
+                    <input type="file" name="ProofDocument" accept=".pdf,image/*" required class="form-control pay-file-input" />
+                    <small class="pay-file-hint">Format didukung: PDF, JPG, PNG.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary pay-btn-submit" @((decimal)(ViewBag.TotalCalculatedAmount ?? 0) <= 0 ? "disabled" : "")>
+                    📤 Simpan Riwayat Pembayaran
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: History -->
+    <div class="adm-card pay-history-card">
+        <div class="pay-history-header">
+            <h3 class="pay-history-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Riwayat Transfer
+            </h3>
+        </div>
+        
+        @if (payouts != null && payouts.Any())
+        {
+            <div class="pay-history-list">
+                @foreach(var p in payouts)
+                {
+                    <div class="pay-history-item">
+                        <div>
+                            <strong class="pay-history-period">@System.Globalization.CultureInfo.GetCultureInfo("id-ID").DateTimeFormat.GetMonthName(p.Month) @p.Year</strong>
+                            <span class="pay-history-date">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                @p.PaidAt?.ToString("dd MMM yyyy HH:mm")
+                            </span>
+                        </div>
+                        <div class="pay-history-amount-wrap">
+                            <strong class="pay-history-amount">@p.TotalAmount.ToString("C0", new System.Globalization.CultureInfo("id-ID"))</strong>
+                            @if (!string.IsNullOrEmpty(p.ProofOfTransferFilePath))
+                            {
+                                <a href="@p.ProofOfTransferFilePath" target="_blank" class="pay-proof-link">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    Lihat Bukti
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="pay-history-empty">
+                <div class="pay-history-empty-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                </div>
+                <h4 class="pay-history-empty-title">Belum Ada Riwayat</h4>
+                <p class="pay-history-empty-sub">Psikolog ini belum memiliki riwayat transfer.</p>
+            </div>
+        }
+    </div>
+</div>

@@ -153,6 +153,32 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DetailModal(int id)
+        {
+            var patient = await GetPatientAsync();
+            if (patient == null) return Unauthorized();
+
+            var w = await _context.Worksheets
+                .Include(w => w.Psychologist).ThenInclude(p => p!.User)
+                .FirstOrDefaultAsync(w => w.WorksheetId == id && w.PatientId == patient.PatientId);
+            if (w == null) return NotFound();
+
+            return PartialView("_DetailModal", new TaskDetailViewModel
+            {
+                WorksheetId = w.WorksheetId,
+                TaskName = w.TaskName,
+                Description = w.Description,
+                Deadline = w.Deadline,
+                Status = w.Status,
+                StatusLabel = WorksheetStatus.Label(w.Status),
+                PsychologistName = w.Psychologist?.User?.FullName ?? "Dr. ...",
+                ProofImagePath = w.ProofImagePath,
+                Note = w.Note,
+                PsychologistFeedback = w.PsychologistFeedback
+            });
+        }
+
         [HttpPost]
         [RequestSizeLimit(20_000_000)] // 20 MB
         public async Task<IActionResult> Submit(TaskSubmitViewModel model)
@@ -192,16 +218,18 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             if (w.Status == WorksheetStatus.Assigned)
             {
                 w.Status = WorksheetStatus.InProgress;
-                w.SubmittedAt = DateTime.Now;
+                w.SubmittedAt = DateTime.UtcNow;
             }
-            else if (w.Status == WorksheetStatus.InProgress)
+            else if (w.Status == WorksheetStatus.InProgress || w.Status == WorksheetStatus.NeedsRevision)
             {
-                // Editing an existing submission — update SubmittedAt to reflect latest edit
-                w.SubmittedAt = DateTime.Now;
+                // Editing an existing submission or resubmitting revision
+                w.Status = WorksheetStatus.InProgress;
+                w.SubmittedAt = DateTime.UtcNow;
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Submitted), new { id = w.WorksheetId });
+            TempData["success"] = "Data Berhasil Disimpan!";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]

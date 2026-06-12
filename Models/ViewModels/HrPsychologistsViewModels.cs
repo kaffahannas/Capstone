@@ -13,6 +13,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? LastDegree { get; set; }
         public string? PracticeLocation { get; set; }
         public bool AlreadyPartnered { get; set; }
+        public bool HasPendingRequest { get; set; }
     }
 
     public class HrPsychologistDirectoryViewModel
@@ -33,5 +34,6 @@ namespace LightenUp.Web.Models.ViewModels
         public string? ProfilePicture { get; set; }
         public string? Email { get; set; }
         public bool AlreadyPartnered { get; set; }
+        public bool HasPendingRequest { get; set; }
     }
 }

@@ -20,6 +20,7 @@
     <title>@ViewData["Title"] - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/patient.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
 </head>
 <body class="mood-wizard-body">
 
@@ -35,15 +36,15 @@
     <!-- Progress bar -->
     @if (current > 0 && total > 0)
     {
-        <div style="width:100%; max-width:480px; margin-bottom:20px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="font-size:12px; font-weight:600; color:#7C3AED; text-transform:uppercase; letter-spacing:0.05em;">
+        <div class="mood-wizard-progress">
+            <div class="mood-wizard-progress-meta">
+                <span class="mood-wizard-progress-step">
                     Langkah @current dari @total
                 </span>
-                <span style="font-size:12px; color:#9CA3AF;">@pct%</span>
+                <span class="mood-wizard-progress-pct">@pct%</span>
             </div>
-            <div style="background:rgba(124,58,237,0.12); border-radius:99px; height:6px;">
-                <div style="background:linear-gradient(90deg,#7C3AED,#6D28D9); border-radius:99px; height:6px; width:@pct%; transition:width 0.3s;"></div>
+            <div class="mood-wizard-progress-track">
+                <div class="mood-wizard-progress-fill" style="--bar-w:@pct%;"></div>
             </div>
         </div>
     }
@@ -54,6 +55,11 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        if (window.self !== window.top) {
+            document.body.classList.add('is-popup');
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

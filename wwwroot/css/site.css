@@ -166,16 +166,16 @@ img, video, svg { max-width: 100%; height: auto; }
     color: #fff;
 }
 
-/* Main content — scrolls independently within the height-locked shell */
+/* Main column — layout only; scroll happens in .app-content / .admin-content */
 .app-main,
-.admin-main,
-.main-content {
+.main-content,
+.admin-main {
     flex: 1;
     min-width: 0;
     width: 100%;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow: hidden;
     min-height: 0;
 }
 
@@ -202,15 +202,73 @@ img, video, svg { max-width: 100%; height: auto; }
     flex-shrink: 0;
 }
 
+/* Single scroll container for page body (all Areas) */
 .app-content,
-.admin-content {
+.admin-content,
+.lu-scroll-host {
     width: 100%;
-    max-width: 75rem;
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+.app-content {
+    max-width: 75rem;
+}
+
+/* Full-width dashboard consoles */
+.hr-shell .app-content,
+.main-content .app-content,
+.admin-content {
+    max-width: none;
+}
+
+/* Standard list/index page — fills scroll host, enables inner list scroll */
+.lu-page,
+.pay-page,
+.hrem-page,
+.hrd-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: var(--lu-gap, 1rem);
+}
+
+.app-content > .lu-page,
+.app-content > .pay-page,
+.app-content > .hrem-page,
+.app-content > .hrd-page,
+.admin-content > .lu-page,
+.admin-content > .pay-page {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Scrollable list/table region (sticky header/KPI above, list scrolls below) */
+.lu-list-scroll,
+.lu-page > .adm-table-wrap,
+.lu-page > .lu-table-wrap,
+.pay-page > .adm-table-wrap,
+.pay-page > .lu-table-wrap,
+.pay-table-scroll,
+.hrem-list,
+.psy-client-list,
+.psy-company-list,
+.hrd-client-list,
+.idx-client-list,
+.patient-list-container,
+.db-session-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .greeting,
@@ -336,6 +394,46 @@ body.sidebar-open {
         width: 100%;
         max-width: 100%;
         padding: 1rem;
+    }
+
+    /* On small screens, allow document-level scroll (avoid clipped lists) */
+    .app-shell,
+    .admin-shell {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: visible;
+    }
+
+    .app-main,
+    .admin-main,
+    .main-content {
+        overflow: visible;
+        height: auto;
+    }
+
+    .app-content,
+    .admin-content,
+    .lu-scroll-host {
+        overflow: visible;
+    }
+
+    .lu-page,
+    .pay-page,
+    .hrem-page,
+    .hrd-page {
+        height: auto;
+        flex: none;
+    }
+
+    .lu-list-scroll,
+    .pay-table-scroll,
+    .hrem-list,
+    .psy-client-list,
+    .psy-company-list,
+    .hrd-client-list {
+        overflow-y: visible;
+        flex: none;
     }
 
     .app-topbar,
@@ -497,6 +595,7 @@ textarea,
 .admin-logout button {
     min-height: var(--lu-touch-min);
     font-size: 0.9375rem;
+    text-decoration: none;
 }
 
 .lu-form-actions,
@@ -527,12 +626,21 @@ textarea,
     }
 }
 
-/* Tables scroll on small screens */
+/* Tables scroll horizontally; vertical scroll via .app-content or .lu-list-scroll */
 .lu-table-wrap,
 .adm-table-wrap {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+/* When not inside a lu-page, whole page scrolls via app-content/admin-content */
+.app-content > .adm-table-wrap:not(.lu-list-scroll),
+.admin-content > .adm-table-wrap:not(.lu-list-scroll),
+.app-content > .lu-table-wrap:not(.lu-list-scroll),
+.admin-content > .lu-table-wrap:not(.lu-list-scroll) {
+    overflow-x: auto;
+    overflow-y: visible;
 }
 
 .adm-table {

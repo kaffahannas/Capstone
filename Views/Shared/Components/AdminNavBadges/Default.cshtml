@@ -1,5 +1,2 @@
 @model LightenUp.Web.Models.ViewModels.AdminNavBadgesViewModel
-@if (Model.AssignmentBadgeCount > 0)
-{
-    <span class="nav-badge">@Model.AssignmentBadgeCount</span>
-}
+<span class="nav-badge @(Model.Count == 0 ? "zero" : "")">@Model.Count</span>

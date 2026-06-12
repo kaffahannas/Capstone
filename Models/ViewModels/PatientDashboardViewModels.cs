@@ -25,11 +25,13 @@ namespace LightenUp.Web.Models.ViewModels
 
     public class PatientDashboardViewModel
     {
+        public bool IsSubscribed { get; set; }
         public string MonthYearLabel { get; set; } = string.Empty;     // "Oktober 2024"
         public List<CalendarDay> Week { get; set; } = new();
 
         // Mood card
         public string? TodayFeeling { get; set; }            // null = empty state
+        public MoodTracker? TodayMoodData { get; set; }
 
         // Journal card — show latest entry's title + content snippet (any date)
         public int? LatestJournalId { get; set; }

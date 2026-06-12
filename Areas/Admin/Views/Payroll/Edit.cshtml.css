@@ -1,0 +1,115 @@
+.pay-edit-wrap {
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+.pay-edit-hero {
+    background: linear-gradient(135deg, #312E81, #4338CA);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    color: #fff;
+}
+
+.pay-edit-hero-label {
+    margin: 0 0 4px;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.pay-edit-hero-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.pay-edit-hero-sub {
+    margin: 6px 0 0;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.pay-edit-card {
+    padding: 28px;
+}
+
+.pay-validation-summary {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.pay-form-field {
+    margin-bottom: 20px;
+}
+
+.pay-form-label {
+    font-weight: 600;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.pay-form-required {
+    color: #dc2626;
+}
+
+.pay-form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.pay-form-error {
+    color: #dc2626;
+    font-size: 12px;
+}
+
+.pay-form-hint {
+    color: #9ca3af;
+    font-size: 12px;
+    margin: 4px 0 0;
+}
+
+.pay-formula-box {
+    background: #EEF2FF;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #3730A3;
+    border: 1px solid #C7D2FE;
+}
+
+.pay-formula-code {
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.pay-edit-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.pay-btn-cancel {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    font-weight: 600;
+    color: #374151;
+    text-decoration: none;
+}
+
+.pay-btn-save {
+    flex: 2;
+    padding: 12px;
+    font-size: 15px;
+}

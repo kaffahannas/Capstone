@@ -1,0 +1,49 @@
+@model LightenUp.Web.Models.ViewModels.PsyWorksheetEditViewModel
+
+<div class="modal-container wem-modal">
+    <div class="modal-header wem-header">
+        <h2 class="modal-title wem-title">Edit Worksheet</h2>
+        <button type="button" class="close-btn" onclick="closeWorksheetDetailModal()">&times;</button>
+    </div>
+
+    <div class="wem-body">
+        <form asp-action="EditWorksheet" asp-area="Psychologist" asp-controller="Worksheet" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="WorksheetId" />
+            <input type="hidden" asp-for="PatientName" />
+
+            <div class="wem-field">
+                <label class="wem-label">Nama Pasien</label>
+                <div class="wem-readonly">
+                    @Model.PatientName
+                </div>
+            </div>
+
+            <div class="wem-field">
+                <label asp-for="TaskName" class="wem-label">Nama Tugas</label>
+                <input asp-for="TaskName" class="form-control wem-input" />
+            </div>
+
+            <div class="wem-field">
+                <label asp-for="Description" class="wem-label">Deskripsi Tugas</label>
+                <textarea asp-for="Description" rows="3" class="wem-textarea"></textarea>
+            </div>
+
+            <div class="wem-grid">
+                <div>
+                    <label asp-for="DeadlineDate" class="wem-label">Tanggal Deadline</label>
+                    <input asp-for="DeadlineDate" type="date" class="form-control wem-input" />
+                </div>
+                <div>
+                    <label asp-for="DeadlineTime" class="wem-label">Waktu Deadline</label>
+                    <input asp-for="DeadlineTime" type="time" class="form-control wem-input" />
+                </div>
+            </div>
+
+            <div class="wem-actions">
+                <button type="button" class="btn-outline wem-btn-cancel" onclick="openWorksheetDetailModal(@Model.WorksheetId)">Batal</button>
+                <button type="submit" class="wem-btn-save">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -3,6 +3,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Services;
 
+public sealed class PatientPricingResult
+{
+    public decimal SubscriptionValuePerMonth { get; set; }
+    public int MaxSessions { get; set; }
+    public bool IsB2B { get; set; }
+    /// <summary>Total company plan payment used for B2B allocation.</summary>
+    public decimal? B2BPlanAmount { get; set; }
+    /// <summary>Employee divisor: package quota or active headcount.</summary>
+    public int? B2BEmployeeCount { get; set; }
+
+    public decimal PerSessionValue => MaxSessions > 0
+        ? Math.Round(SubscriptionValuePerMonth / MaxSessions, 2, MidpointRounding.AwayFromZero)
+        : 0;
+}
+
 /// <summary>Resolves monthly subscription slot value (IDR) for payroll.</summary>
 public class SubscriptionPricingService
 {
@@ -15,47 +30,48 @@ public class SubscriptionPricingService
         _context = context;
     }
 
-    public async Task<decimal> GetSlotValueForPatientAsync(int patientId)
+    public async Task<PatientPricingResult> GetPatientPricingAsync(int patientId)
     {
         var patient = await _context.Patients
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.PatientId == patientId);
-        if (patient == null) return 0;
+        if (patient == null)
+            return new PatientPricingResult { MaxSessions = 4 };
 
         if (patient.CompanyId != null)
-            return await GetB2BSlotValueAsync(patient.CompanyId.Value);
+            return await GetB2BPricingAsync(patient.CompanyId.Value);
 
-        return await GetB2CSlotValueAsync(patientId);
+        var (slotValue, maxSessions) = await GetB2CSlotValueAsync(patientId);
+        return new PatientPricingResult
+        {
+            SubscriptionValuePerMonth = slotValue,
+            MaxSessions = maxSessions,
+            IsB2B = false
+        };
     }
 
-    public async Task<decimal> GetB2CSlotValueAsync(int patientId)
+    public async Task<(decimal SlotValue, int MaxSessions)> GetSlotValueForPatientAsync(int patientId)
     {
-        var payment = await _context.PaymentTransactions
-            .AsNoTracking()
-            .Where(p => p.PatientId == patientId && p.PaymentStatus == "paid")
-            .OrderByDescending(p => p.PaidAt ?? p.CreatedAt)
-            .FirstOrDefaultAsync();
+        var pricing = await GetPatientPricingAsync(patientId);
+        return (pricing.SubscriptionValuePerMonth, pricing.MaxSessions);
+    }
 
-        if (payment != null) return payment.Amount;
-
+    public async Task<(decimal SlotValue, int MaxSessions)> GetB2CSlotValueAsync(int patientId)
+    {
         var sub = await _context.Subscriptions
             .AsNoTracking()
             .Where(s => s.PatientId == patientId && s.Status == "Active" && s.EndDate >= DateTime.Today)
             .OrderByDescending(s => s.EndDate)
             .FirstOrDefaultAsync();
 
-        if (sub == null) return 0;
+        if (sub == null)
+            return (0, 4);
 
-        var subPayment = await _context.PaymentTransactions
-            .AsNoTracking()
-            .Where(p => p.SubscriptionId == sub.SubscriptionId && p.PaymentStatus == "paid")
-            .OrderByDescending(p => p.PaidAt ?? p.CreatedAt)
-            .FirstOrDefaultAsync();
-
-        return subPayment?.Amount ?? 0;
+        var amount = await GetLinkedPaymentAmountAsync(sub.SubscriptionId, companySubscriptionId: null);
+        return (amount, sub.MaxSessionsPerMonth);
     }
 
-    public async Task<decimal> GetB2BSlotValueAsync(int companyId)
+    public async Task<PatientPricingResult> GetB2BPricingAsync(int companyId)
     {
         var companySub = await _context.CompanySubscriptions
             .AsNoTracking()
@@ -63,21 +79,82 @@ public class SubscriptionPricingService
             .OrderByDescending(s => s.EndDate)
             .FirstOrDefaultAsync();
 
-        if (companySub == null) return 0;
+        if (companySub == null)
+            return new PatientPricingResult { MaxSessions = 4, IsB2B = true };
 
-        var payment = await _context.PaymentTransactions
-            .AsNoTracking()
-            .Where(p => p.CompanySubscriptionId == companySub.CompanySubscriptionId && p.PaymentStatus == "paid")
+        var planAmount = await GetLinkedPaymentAmountAsync(
+            subscriptionId: null,
+            companySubscriptionId: companySub.CompanySubscriptionId);
+        var employeeCount = await ResolveB2BEmployeeCountAsync(companyId, companySub.EmployeeLimit);
+
+        if (planAmount <= 0 || employeeCount <= 0)
+        {
+            return new PatientPricingResult
+            {
+                MaxSessions = companySub.MaxSessionsPerMonth,
+                IsB2B = true,
+                B2BPlanAmount = planAmount,
+                B2BEmployeeCount = employeeCount
+            };
+        }
+
+        var perEmployeeMonthly = Math.Round(planAmount / employeeCount, 2, MidpointRounding.AwayFromZero);
+        return new PatientPricingResult
+        {
+            SubscriptionValuePerMonth = perEmployeeMonthly,
+            MaxSessions = companySub.MaxSessionsPerMonth,
+            IsB2B = true,
+            B2BPlanAmount = planAmount,
+            B2BEmployeeCount = employeeCount
+        };
+    }
+
+    public async Task<(decimal SlotValue, int MaxSessions)> GetB2BSlotValueAsync(int companyId)
+    {
+        var pricing = await GetB2BPricingAsync(companyId);
+        return (pricing.SubscriptionValuePerMonth, pricing.MaxSessions);
+    }
+
+    private async Task<decimal> GetLinkedPaymentAmountAsync(int? subscriptionId, int? companySubscriptionId)
+    {
+        var query = _context.PaymentTransactions.AsNoTracking().AsQueryable();
+
+        if (subscriptionId.HasValue)
+            query = query.Where(p => p.SubscriptionId == subscriptionId.Value);
+        else if (companySubscriptionId.HasValue)
+            query = query.Where(p => p.CompanySubscriptionId == companySubscriptionId.Value);
+        else
+            return 0;
+
+        var paid = await query
+            .Where(p => p.PaymentStatus == "paid")
             .OrderByDescending(p => p.PaidAt ?? p.CreatedAt)
+            .Select(p => (decimal?)p.Amount)
             .FirstOrDefaultAsync();
 
-        var planAmount = payment?.Amount ?? 0;
-        if (planAmount <= 0) return 0;
+        if (paid.GetValueOrDefault() > 0)
+            return paid!.Value;
 
-        var limit = companySub.EmployeeLimit;
-        if (limit <= 0) limit = 1;
+        // Active subscription implies checkout completed; during local dev payment may still be "pending".
+        var linked = await query
+            .Where(p => p.Amount > 0)
+            .OrderByDescending(p => p.CreatedAt)
+            .Select(p => (decimal?)p.Amount)
+            .FirstOrDefaultAsync();
 
-        return Math.Round(planAmount / limit, 2, MidpointRounding.AwayFromZero);
+        return linked ?? 0;
+    }
+
+    private async Task<int> ResolveB2BEmployeeCountAsync(int companyId, int packageEmployeeLimit)
+    {
+        if (packageEmployeeLimit > 0)
+            return packageEmployeeLimit;
+
+        var activeEmployees = await _context.Patients.CountAsync(p =>
+            p.CompanyId == companyId && p.EmploymentStatus == "active");
+        activeEmployees += await _context.PendingEmployees.CountAsync(p => p.CompanyId == companyId);
+
+        return activeEmployees > 0 ? activeEmployees : 1;
     }
 
     public async Task<decimal> GetDefaultPsychologistPercentageAsync(int psychologistId)

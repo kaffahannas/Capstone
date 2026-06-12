@@ -9,11 +9,11 @@
 
 <a class="adm-back-link" asp-action="Index">← Daftar Payroll</a>
 
-<div style="max-width:600px; margin-top:20px;">
-    <div style="background:linear-gradient(135deg,#312E81,#4338CA);border-radius:16px;padding:24px 28px;margin-bottom:24px;color:#fff;">
-        <p style="margin:0 0 4px;font-size:13px;opacity:.8;">Pengaturan Payroll</p>
-        <h2 style="font-size:22px;font-weight:800;margin:0;">@psyName</h2>
-        <p style="margin:6px 0 0;font-size:13px;opacity:.8;">
+<div class="pay-edit-wrap">
+    <div class="pay-edit-hero">
+        <p class="pay-edit-hero-label">Pengaturan Payroll</p>
+        <h2 class="pay-edit-hero-title">@psyName</h2>
+        <p class="pay-edit-hero-sub">
             Model Sir Lukas: Bayaran dihitung per sesi selesai, bukan per bulan flat.
         </p>
     </div>
@@ -23,36 +23,35 @@
         <input type="hidden" asp-for="PsychologistId" />
         <input type="hidden" asp-for="SessionRate" value="0" />
 
-        <div class="adm-card" style="padding:28px;">
-            <div asp-validation-summary="ModelOnly" style="background:#fee2e2;color:#991b1b;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:13px;"></div>
+        <div class="adm-card pay-edit-card">
+            <div asp-validation-summary="ModelOnly" class="pay-validation-summary"></div>
 
-            <div style="margin-bottom:20px;">
-                <label asp-for="PsychologistPercentage" style="font-weight:600; font-size:14px; display:block; margin-bottom:6px;">
-                    Persentase untuk Psikolog (%) <span style="color:#dc2626;">*</span>
+            <div class="pay-form-field">
+                <label asp-for="PsychologistPercentage" class="pay-form-label">
+                    Persentase untuk Psikolog (%) <span class="pay-form-required">*</span>
                 </label>
-                <input asp-for="PsychologistPercentage" type="number" min="0" max="100" step="1"
-                       style="width:100%; padding:10px 14px; border:1.5px solid #e5e7eb; border-radius:10px; font-size:14px;" />
-                <span asp-validation-for="PsychologistPercentage" style="color:#dc2626;font-size:12px;"></span>
-                <p style="color:#9ca3af; font-size:12px; margin:4px 0 0;">
+                <input asp-for="PsychologistPercentage" type="number" min="0" max="100" step="1" class="pay-form-input" />
+                <span asp-validation-for="PsychologistPercentage" class="pay-form-error"></span>
+                <p class="pay-form-hint">
                     Standar platform: 40% psikolog, 60% LightenUp. Contoh: Masukkan 40 untuk 40%.
                 </p>
             </div>
 
-            <div style="margin-bottom:20px;">
-                <label asp-for="MaxSessionsPerMonth" style="font-weight:600; font-size:14px; display:block; margin-bottom:6px;">
-                    Jumlah Sesi per Bulan (Maks.) <span style="color:#dc2626;">*</span>
+            <div class="pay-form-field">
+                <label asp-for="AdminReason" class="pay-form-label">
+                    Alasan Perubahan Persentase (Wajib Jika Diubah)
                 </label>
-                <input asp-for="MaxSessionsPerMonth" type="number" min="1" max="100" step="1"
-                       style="width:100%; padding:10px 14px; border:1.5px solid #e5e7eb; border-radius:10px; font-size:14px;" />
-                <span asp-validation-for="MaxSessionsPerMonth" style="color:#dc2626;font-size:12px;"></span>
-                <p style="color:#9ca3af; font-size:12px; margin:4px 0 0;">
-                    Default: 4 sesi/bulan. Sesuaikan dengan skema konseling aktual.
+                <textarea asp-for="AdminReason" rows="3" class="pay-form-input"
+                          placeholder="Masukkan alasan mengapa persentase psikolog diubah (cth: tingkat kesulitan rendah)"></textarea>
+                <span asp-validation-for="AdminReason" class="pay-form-error"></span>
+                <p class="pay-form-hint">
+                    Alasan ini akan terlihat oleh psikolog jika ditanyakan.
                 </p>
             </div>
 
-            <div style="background:#EEF2FF; border-radius:12px; padding:16px; margin-bottom:8px; font-size:13px; color:#3730A3; border:1px solid #C7D2FE;">
+            <div class="pay-formula-box">
                 <strong>📊 Formula (Sir Lukas):</strong><br />
-                <span style="font-family:monospace;font-size:13px;">
+                <span class="pay-formula-code">
                     Nilai per Sesi = Slot Pasien / Jumlah Sesi per Bulan<br />
                     Bayaran Psikolog = Nilai per Sesi × % Psikolog<br /><br />
                     Contoh: Rp 1.000.000 / 4 sesi = <strong>Rp 250.000/sesi</strong>
@@ -61,16 +60,18 @@
             </div>
         </div>
 
-        <div style="display:flex; gap:12px; margin-top:16px;">
-            <a asp-action="Index" style="flex:1; text-align:center; padding:12px; border:1.5px solid #e5e7eb; border-radius:10px; font-weight:600; color:#374151; text-decoration:none;">
+        <div class="pay-edit-actions">
+            <a asp-action="Index" class="pay-btn-cancel">
                 Batal
             </a>
-            <button type="submit" class="adm-btn adm-btn-primary" style="flex:2; padding:12px; font-size:15px;">
+            <button type="submit" class="adm-btn adm-btn-primary pay-btn-save">
                 💾 Simpan Pengaturan
             </button>
         </div>
     </form>
 </div>
+
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

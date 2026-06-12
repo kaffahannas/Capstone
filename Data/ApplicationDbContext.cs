@@ -33,22 +33,23 @@ namespace LightenUp.Web.Data
         public DbSet<MoodTracker> MoodTrackers { get; set; }
         public DbSet<Journal> Journals { get; set; }
         public DbSet<JournalCheckIn> JournalCheckIns { get; set; }
-        public DbSet<PatientNotificationPreference> PatientNotificationPreferences { get; set; }
 
         // HR tables
         public DbSet<PendingEmployee> PendingEmployees { get; set; }
         public DbSet<HrEmployeeRemovalRequest> HrEmployeeRemovalRequests { get; set; }
         public DbSet<PsychologistRequest> PsychologistRequests { get; set; }
+        public DbSet<CompanyPsychologistRequest> CompanyPsychologistRequests { get; set; }
         public DbSet<Report> Reports { get; set; }
-        public DbSet<HrNotificationPreference> HrNotificationPreferences { get; set; }
 
         // Psychologist tables
-        public DbSet<PsyNotificationPreference> PsyNotificationPreferences { get; set; }
+
         public DbSet<PsychologistPayrollSetting> PayrollSettings { get; set; }
+        public DbSet<MonthlyPayout> MonthlyPayouts { get; set; }
 
         // ==========================================
         // KONFIGURASI RELASI (Fluent API)
         // ==========================================
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -217,16 +218,7 @@ namespace LightenUp.Web.Data
                 .HasForeignKey(c => c.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 9. One notification-preference row per patient (1-to-1)
-            builder.Entity<PatientNotificationPreference>()
-                .HasIndex(n => n.PatientId)
-                .IsUnique();
 
-            builder.Entity<PatientNotificationPreference>()
-                .HasOne(n => n.Patient)
-                .WithOne(p => p.NotificationPreference)
-                .HasForeignKey<PatientNotificationPreference>(n => n.PatientId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // 10. PendingEmployee: unique (CompanyId, Email)
             builder.Entity<PendingEmployee>()
@@ -317,16 +309,7 @@ namespace LightenUp.Web.Data
                 .HasForeignKey(r => r.ReportedByHrUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // 13. One notification-preference row per HR (1-to-1)
-            builder.Entity<HrNotificationPreference>()
-                .HasIndex(n => n.HrId)
-                .IsUnique();
 
-            builder.Entity<HrNotificationPreference>()
-                .HasOne(n => n.Hr)
-                .WithOne(h => h.NotificationPreference)
-                .HasForeignKey<HrNotificationPreference>(n => n.HrId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // 14. Report — the two new optional FKs (Direction = "PsyToHr" path)
             builder.Entity<Report>()
@@ -349,16 +332,7 @@ namespace LightenUp.Web.Data
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
-            // 15. One notification-preference row per psychologist (1-to-1)
-            builder.Entity<PsyNotificationPreference>()
-                .HasIndex(n => n.PsychologistId)
-                .IsUnique();
 
-            builder.Entity<PsyNotificationPreference>()
-                .HasOne(n => n.Psychologist)
-                .WithOne(p => p.NotificationPreference)
-                .HasForeignKey<PsyNotificationPreference>(n => n.PsychologistId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<PaymentTransaction>()
                 .HasIndex(p => p.MerchantOrderId)

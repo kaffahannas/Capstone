@@ -1,0 +1,13 @@
+.register-card--verify {
+    padding-bottom: 50px;
+}
+
+.auth-subtitle-email {
+    color: #1f2937;
+}
+
+.otp-resend-link {
+    color: var(--primary-purple);
+    font-weight: 600;
+    text-decoration: none;
+}

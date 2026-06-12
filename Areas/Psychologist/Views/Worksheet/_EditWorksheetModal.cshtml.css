@@ -1,0 +1,91 @@
+.wem-modal {
+    max-width: 600px;
+    padding: 0;
+}
+
+.wem-header {
+    padding: 24px 24px 10px 24px;
+}
+
+.wem-title {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-dark);
+}
+
+.wem-body {
+    padding: 24px;
+}
+
+.wem-field {
+    margin-bottom: 20px;
+}
+
+.wem-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+}
+
+.wem-readonly {
+    font-weight: 500;
+    color: #111827;
+    padding: 12px 16px;
+    background: #F9FAFB;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+}
+
+.wem-input,
+.wem-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #D1D5DB;
+    font-size: 14px;
+}
+
+.wem-textarea {
+    font-family: inherit;
+    resize: vertical;
+}
+
+.wem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.wem-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid #E5E7EB;
+}
+
+.wem-btn-cancel {
+    height: 38px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #D1D5DB;
+    color: #4B5563;
+}
+
+.wem-btn-save {
+    height: 38px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    background: #4338CA;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(67,56,202,0.2);
+}

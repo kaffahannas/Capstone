@@ -1,0 +1,364 @@
+@model LightenUp.Web.Models.ViewModels.PsychologistDashboardViewModel
+
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Dashboard Psikolog";
+    var cid = new System.Globalization.CultureInfo("id-ID");
+    var hour = DateTime.Now.Hour;
+    var greeting = hour switch {
+        >= 4 and < 11 => "Selamat pagi",
+        >= 11 and < 15 => "Selamat siang",
+        >= 15 and < 19 => "Selamat sore",
+        _ => "Selamat malam"
+    };
+    var greetIcon = hour switch {
+        >= 4 and < 11 => "🌤️",
+        >= 11 and < 15 => "☀️",
+        >= 15 and < 19 => "🌇",
+        _ => "🌙"
+    };
+    var totalCompanies   = Model.PartnerCompanies?.Count ?? 0;
+    var totalUnassigned  = Model.UnassignedPatients?.Count ?? 0;
+    var totalDanger      = Model.Patients?.Count(p => p.Status?.ToLower() == "bahaya") ?? 0;
+}
+
+@* ── Hero greeting banner ── *@
+<div class="psy-hero">
+    <div class="psy-hero-left">
+        <p class="psy-hero-greeting">@greeting, @greetIcon</p>
+        <h1 class="psy-hero-name">@Model.PsychologistName</h1>
+        <p class="psy-hero-sub">@DateTime.Now.ToString("dddd, d MMMM yyyy", cid) · Berikut ringkasan aktivitas klien Anda hari ini.</p>
+    </div>
+    <div class="psy-hero-actions">
+        <button onclick="openAddClientModal()" class="psy-btn psy-btn--primary psy-btn--pill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Klien
+        </button>
+    </div>
+</div>
+
+@* ── KPI cards ── *@
+<div class="psy-kpi-row">
+    <div class="psy-kpi psy-kpi--clients">
+        <div class="psy-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="psy-kpi-body">
+            <span class="psy-kpi-value">@Model.TotalClients</span>
+            <span class="psy-kpi-label">Klien Aktif</span>
+        </div>
+    </div>
+
+    <div class="psy-kpi psy-kpi--companies">
+        <div class="psy-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-8h6v8"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="12" y1="6" x2="12" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/></svg>
+        </div>
+        <div class="psy-kpi-body">
+            <span class="psy-kpi-value">@totalCompanies</span>
+            <span class="psy-kpi-label">Perusahaan Mitra</span>
+        </div>
+    </div>
+
+    <div class="psy-kpi psy-kpi--available">
+        <div class="psy-kpi-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        </div>
+        <div class="psy-kpi-body">
+            <span class="psy-kpi-value">@totalUnassigned</span>
+            <span class="psy-kpi-label">Klien Tersedia</span>
+        </div>
+    </div>
+
+    @if (totalDanger > 0)
+    {
+        <div class="psy-kpi psy-kpi--danger">
+            <div class="psy-kpi-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="psy-kpi-body">
+                <span class="psy-kpi-value">@totalDanger</span>
+                <span class="psy-kpi-label">Butuh Perhatian</span>
+            </div>
+        </div>
+    }
+</div>
+
+@* ── Main content grid ── *@
+<div class="psy-dashboard-grid">
+
+    @* Client list card *@
+    <section class="psy-card psy-client-card">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <h2 class="psy-card-title">Daftar Klien Aktif</h2>
+                <span class="psy-count-chip">@Model.TotalClients</span>
+            </div>
+            <div class="psy-card-tools">
+                <div class="psy-search-wrap">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="clientSearch" placeholder="Cari klien..." class="psy-search" oninput="filterClientSearch()" />
+                </div>
+                <button class="psy-btn psy-btn--ghost" onclick="openAddClientModal()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Tambah
+                </button>
+            </div>
+        </header>
+
+        <div class="psy-client-list" id="clientListView">
+            @if (Model.Patients == null || Model.Patients.Count == 0)
+            {
+                <div class="psy-empty">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <p>Belum ada klien yang ditangani</p>
+                    <button onclick="openAddClientModal()" class="psy-btn psy-btn--primary psy-btn--sm">+ Tambah Klien Pertama</button>
+                </div>
+            }
+            else
+            {
+                @foreach (var patient in Model.Patients)
+                {
+                    var statusCss = patient.Status?.ToLower() switch {
+                        "bahaya" => "bahaya",
+                        "beresiko" => "beresiko",
+                        _ => "sehat"
+                    };
+                    var initials = patient.FullName.Length > 0 ? patient.FullName.Substring(0, 1).ToUpper() : "?";
+                    <div class="psy-client-row client-searchable" data-name="@patient.FullName.ToLower()">
+                        <div class="psy-client-avatar psy-avatar--@statusCss">@initials</div>
+                        <div class="psy-client-info">
+                            <span class="psy-client-name">@patient.FullName</span>
+                            <span class="psy-client-meta">@patient.Gender · Sejak @patient.JoinedDate.ToString("d MMM yyyy", cid)</span>
+                        </div>
+                        <span class="psy-status-chip psy-status--@statusCss">@patient.Status</span>
+                        <a href="/Psychologist/Client/PatientDetail/@patient.PatientId" class="psy-btn psy-btn--ghost psy-btn--sm">Detail →</a>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+
+    </section>
+
+    @if (Model.PendingB2BRequests != null && Model.PendingB2BRequests.Any())
+    {
+        <section class="psy-card psy-company-card">
+            <header class="psy-card-head">
+                <div class="psy-card-title-wrap">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    <h2 class="psy-card-title">Permintaan Kemitraan (B2B)</h2>
+                    <span class="psy-count-chip" style="background: #FDE68A; color: #92400E;">@Model.PendingB2BRequests.Count</span>
+                </div>
+            </header>
+
+            <div class="psy-company-list">
+                @foreach (var req in Model.PendingB2BRequests)
+                {
+                    <div class="psy-company-row" style="cursor: default;">
+                        <div class="psy-company-logo">@(string.IsNullOrEmpty(req.Company?.Name) ? "?" : req.Company.Name.Substring(0, 1).ToUpper())</div>
+                        <div class="psy-company-info">
+                            <span class="psy-company-name">@req.Company?.Name</span>
+                            <span class="psy-company-sub">Mengajukan kemitraan B2B dengan Anda.</span>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <form method="post" asp-action="ApprovePartnership" style="margin:0;">
+                                <input type="hidden" name="requestId" value="@req.Id" />
+                                <button type="submit" class="psy-btn psy-btn--primary psy-btn--sm" style="background: #10B981; border: none;">Terima</button>
+                            </form>
+                            <form method="post" asp-action="RejectPartnership" style="margin:0;">
+                                <input type="hidden" name="requestId" value="@req.Id" />
+                                <button type="submit" class="psy-btn psy-btn--outline psy-btn--sm" style="border-color: #EF4444; color: #EF4444;">Tolak</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    @* Partner companies card *@
+    <section class="psy-card psy-company-card">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-8h6v8"/></svg>
+                <h2 class="psy-card-title">Perusahaan Mitra</h2>
+                <span class="psy-count-chip">@totalCompanies</span>
+            </div>
+        </header>
+
+        <div class="psy-company-list">
+            @if (Model.PartnerCompanies == null || !Model.PartnerCompanies.Any())
+            {
+                <div class="psy-empty psy-empty--sm">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-8h6v8"/></svg>
+                    <p>Belum ada perusahaan mitra</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var company in Model.PartnerCompanies)
+                {
+                    var initial = string.IsNullOrEmpty(company.Name) ? "?" : company.Name.Substring(0, 1).ToUpper();
+                    <div class="psy-company-row psy-company-row--clickable" onclick="openCompanyDetailModal('@Uri.EscapeDataString(company.Name)')">
+                        <div class="psy-company-logo">@initial</div>
+                        <div class="psy-company-info">
+                            <span class="psy-company-name">@company.Name</span>
+                            <span class="psy-company-sub">Mitra Terverifikasi</span>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+
+</div><!-- /psy-dashboard-grid -->
+
+@* ── Modals ── *@
+<div class="modal-overlay" id="companyDetailModal">
+    <!-- content injected via ajax -->
+</div>
+
+<div class="modal-overlay" id="addClientModal">
+    <div class="modal-container idx-modal--md">
+        <div class="modal-header idx-modal-header--pad">
+            <h2 class="modal-title idx-modal-title--dark">Daftar Klien Tersedia</h2>
+            <button class="close-btn" onclick="closeAddClientModal()">&times;</button>
+        </div>
+        <div class="idx-client-filter">
+            <label class="idx-filter-label">Filter berdasarkan Kategori:</label>
+            <select id="clientFilterSelect" onchange="filterClients()" class="form-control idx-filter-select">
+                <option value="all">Semua Kategori</option>
+                <option value="null">Publik (B2C)</option>
+                @if (Model.PartnerCompanies != null)
+                {
+                    @foreach (var comp in Model.PartnerCompanies)
+                    {
+                        <option value="@comp.CompanyId">Karyawan @comp.Name (B2B)</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="idx-client-list" id="clientListContainer">
+            @if (Model.UnassignedPatients != null && Model.UnassignedPatients.Any())
+            {
+                @foreach (var unassigned in Model.UnassignedPatients)
+                {
+                    <div class="unassigned-item idx-unassigned-item" data-companyid="@(unassigned.CompanyId?.ToString() ?? "null")">
+                        <div class="idx-unassigned-main">
+                            <div class="idx-unassigned-av">
+                                @(unassigned.FullName.Length > 0 ? unassigned.FullName.Substring(0, 1).ToUpper() : "?")
+                            </div>
+                            <div>
+                                <h4 class="idx-unassigned-name">@unassigned.FullName</h4>
+                                <p class="idx-unassigned-co">
+                                    <span class="idx-co-chip">@unassigned.CompanyName</span>
+                                </p>
+                            </div>
+                        </div>
+                        <form asp-action="AssignClient" asp-area="Psychologist" asp-controller="Client" method="post">
+                            <input type="hidden" name="patientId" value="@unassigned.PatientId" />
+                            <button type="submit" class="idx-assign-btn">Tambahkan</button>
+                        </form>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="idx-empty-clients">
+                    <p>Tidak ada klien yang tersedia saat ini.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.ShowPayrollAgreement == true)
+{
+<div class="modal-overlay active idx-payroll-overlay" id="payrollAgreementModal">
+    <div class="modal-container idx-modal--lg">
+        <div class="modal-header idx-modal-header--payroll">
+            <h2 class="modal-title idx-modal-title--white">Perjanjian Kemitraan & Skema Kompensasi</h2>
+            <p class="idx-modal-sub">Harap tinjau dan setujui ketentuan kompensasi standar (40%) bagi psikolog mitra baru.</p>
+        </div>
+        <div class="idx-payroll-body">
+            <div class="idx-payroll-box--green">
+                <h4 class="idx-payroll-box-title--green">Mekanisme Perhitungan Kompensasi Profesional</h4>
+                <p class="idx-payroll-text--green">
+                    Sistem <strong>LightenUp</strong> menerapkan skema bagi hasil (<em>profit sharing</em>) proporsional berbasis <strong>sesi konseling aktual</strong>:
+                </p>
+                <ul class="idx-payroll-list--green">
+                    <li class="idx-payroll-list-item">
+                        <strong>Valuasi Sesi:</strong> Dihitung berdasarkan nilai paket langganan klien dibagi dengan ekuivalen sesi bulanan (contoh: Paket Rp 500.000 untuk 4 sesi menghasilkan valuasi Rp 125.000 per sesi).
+                    </li>
+                    <li class="idx-payroll-list-item">
+                        <strong>Skema Dasar (40%):</strong> Sebagai mitra baru, kompensasi standar yang berlaku adalah 40% dari <strong>Valuasi Sesi</strong> untuk setiap sesi yang tercatat <strong>"Selesai" (Completed)</strong>.
+                    </li>
+                    <li>
+                        <strong>Akumulasi & Distribusi:</strong> Pada akhir periode penagihan (akhir bulan), sistem akan merekapitulasi total kompensasi dari seluruh penanganan klien (B2B dan B2C). Dana akan didistribusikan langsung ke rekening terdaftar Anda.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="idx-payroll-box--amber">
+                <h4 class="idx-payroll-box-title--amber">Penyesuaian Skema Kompensasi Berkala</h4>
+                <p class="idx-payroll-text--amber">
+                    Kami sangat mengapresiasi dedikasi dan kualitas pelayanan Anda. Manajemen memegang hak prerogatif untuk melakukan <strong>penyesuaian persentase kompensasi</strong> (contoh: peningkatan ke 50% atau 60%) berdasarkan evaluasi performa berkala. Anda akan menerima pemberitahuan resmi pada modul <em>Pendapatan</em> jika terjadi penyesuaian, dan ketentuan baru tersebut akan langsung berlaku secara efektif untuk jadwal konseling berikutnya.
+                </p>
+            </div>
+
+            <form asp-action="SubmitPayrollAgreement" asp-controller="Profile" asp-area="Psychologist" method="post">
+                <div class="idx-agree-row">
+                    <input type="checkbox" id="agreeCheckbox" required class="idx-agree-checkbox">
+                    <label for="agreeCheckbox" class="idx-agree-label">
+                        Dengan ini saya menyatakan telah membaca, memahami, dan menyepakati ketentuan skema bagi hasil dasar (40%), serta berkomitmen untuk melengkapi administrasi rekening bank melalui menu <strong>Profil</strong>.
+                    </label>
+                </div>
+
+                <div class="idx-agree-actions">
+                    <button type="submit" class="btn-fill idx-agree-submit">Setujui Perjanjian & Akses Dasbor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+@section Scripts {
+<script>
+    function filterClients() {
+        var sel = document.getElementById("clientFilterSelect").value;
+        document.querySelectorAll(".unassigned-item").forEach(function(item) {
+            item.style.display = (sel === "all" || item.dataset.companyid === sel) ? "flex" : "none";
+        });
+    }
+    function filterClientSearch() {
+        var q = document.getElementById("clientSearch").value.toLowerCase();
+        document.querySelectorAll(".client-searchable").forEach(function(row) {
+            row.style.display = row.dataset.name.includes(q) ? "" : "none";
+        });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        var modalClient  = document.getElementById("addClientModal");
+        window.openAddClientModal   = function() { if(modalClient)  modalClient.classList.add("active"); }
+        window.closeAddClientModal  = function() { if(modalClient)  modalClient.classList.remove("active"); }
+        
+        window.openCompanyDetailModal = async function(companyNameEscaped) {
+            try {
+                const res = await fetch(`/Psychologist/Client/CompanyDetailModal?companyName=${companyNameEscaped}`);
+                if (!res.ok) throw new Error('Failed to load');
+                const html = await res.text();
+                document.getElementById('companyDetailModal').innerHTML = html;
+                document.getElementById('companyDetailModal').classList.add('active');
+            } catch (err) {
+                console.error(err);
+                alert("Gagal memuat detail perusahaan.");
+            }
+        }
+        window.closeCompanyDetailModal = function() {
+            document.getElementById('companyDetailModal').classList.remove('active');
+        }
+    });
+</script>
+}

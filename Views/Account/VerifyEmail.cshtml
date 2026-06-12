@@ -1,4 +1,4 @@
-﻿@model LightenUp.Web.Models.ViewModels.VerifyOtpViewModel
+@model LightenUp.Web.Models.ViewModels.VerifyOtpViewModel
 
 @{
     ViewData["Title"] = "Verifikasi Email";
@@ -13,11 +13,12 @@
     <title>@ViewData["Title"] - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
 </head>
 <body class="auth-page">
 
     <div class="auth-wrapper">
-        <div class="auth-container register-card" style="padding-bottom: 50px;">
+        <div class="auth-container register-card register-card--verify">
 
             <a href="/Account/Register" class="back-button">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,7 +27,7 @@
             </a>
 
             <h1 class="auth-title">Verifikasi Email</h1>
-            <p class="auth-subtitle">Masukkan 4 digit kode OTP (Simulasi: Ketik <strong>1234</strong>) yang dikirim ke alamat email <strong style="color: #1f2937;">@Model.Email</strong></p>
+            <p class="auth-subtitle">Masukkan 4 digit kode OTP yang dikirim ke alamat email <strong class="auth-subtitle-email">@Model.Email</strong></p>
 
             <form id="otpForm" asp-action="VerifyEmail" method="post">
                 <!-- Data Asli yang akan dikirim ke Server (Disembunyikan) -->
@@ -108,7 +109,7 @@
             if (timeLeft <= 0) {
                 clearInterval(countdownInterval);
                 // Ubah teks menjadi tombol "Kirim Ulang" yang bisa diklik
-                timerContainer.innerHTML = `Waktu habis. <a href="#" style="color: var(--primary-purple); font-weight: 600; text-decoration: none;">Kirim Ulang OTP</a>`;
+                timerContainer.innerHTML = `Waktu habis. <a href="#" class="otp-resend-link">Kirim Ulang OTP</a>`;
             }
         }, 1000); // 1000 milidetik = 1 detik
     </script>

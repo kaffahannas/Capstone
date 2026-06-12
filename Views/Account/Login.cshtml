@@ -13,6 +13,7 @@
     <title>@ViewData["Title"] - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
 </head>
 <body class="auth-page login-page">
 
@@ -42,7 +43,7 @@
 
         <div class="auth-container login-card">
 
-            <h1 class="auth-title text-center" style="font-size: 22px; margin-bottom: 30px;">Masuk ke Akun Anda</h1>
+            <h1 class="auth-title text-center auth-title--login">Masuk ke Akun Anda</h1>
 
             <form asp-action="Login" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>

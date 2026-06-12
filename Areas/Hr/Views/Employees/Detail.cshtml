@@ -21,8 +21,7 @@
 }
 
 @* ── AJAX toast ── *@
-<div class="hrpf-toast hrpf-toast--ok" id="hrdtToast"
-     style="opacity:0;pointer-events:none;transition:opacity .4s;" role="alert" aria-live="polite"></div>
+<div class="hrpf-toast hrpf-toast--ok" id="hrdtToast" role="alert" aria-live="polite"></div>
 
 @* ── Back link ── *@
 <a href="@Url.Action("Index", "Employees", new { area = "Hr" })" class="pd-back hrdt-back">
@@ -80,12 +79,12 @@
                     <span class="hrd-stat-lbl">Status Mental</span>
                 </div>
                 <div class="hrd-stat">
-                    <span class="hrd-stat-ico">📋</span>
+                    <span class="hrd-stat-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
                     <span class="hrd-stat-val">@openWs</span>
                     <span class="hrd-stat-lbl">Worksheet Aktif</span>
                 </div>
                 <div class="hrd-stat hrdt-stat--mood">
-                    <span class="hrd-stat-ico">😊</span>
+                    <span class="hrd-stat-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span>
                     <span class="hrd-stat-val">@sehatPct%</span>
                     <span class="hrd-stat-lbl">Mood Sehat</span>
                 </div>
@@ -102,7 +101,7 @@
 
             @* Info Karyawan *@
             <div class="pd-card hrdt-info-card">
-                <div class="pd-card-accent" style="background:var(--primary-purple)"></div>
+                <div class="pd-card-accent hrdt-card-accent--purple"></div>
                 <div class="pd-card-head">
                     <div class="pd-card-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -132,7 +131,7 @@
             @* Sesi Berikutnya *@
             <div class="pd-card hrdt-session-card">
                 <div class="pd-card-head">
-                    <div class="pd-card-icon" style="background:#FEF3C7;color:#D97706">
+                    <div class="pd-card-icon pd-card-icon--schedule">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     </div>
                     <h3 class="pd-card-title">Sesi Berikutnya</h3>
@@ -170,20 +169,20 @@
             @* Worksheet *@
             <div class="pd-card hrdt-ws-card">
                 <div class="pd-card-head">
-                    <div class="pd-card-icon" style="background:#ECFDF5;color:#059669">
+                    <div class="pd-card-icon pd-card-icon--ws">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
                     </div>
                     <h3 class="pd-card-title">Worksheet</h3>
                 </div>
-                <div class="pd-card-body" style="align-items:center;flex-direction:row;gap:10px;flex-wrap:wrap;">
+                <div class="pd-card-body hrdt-ws-card-body">
                     @if (openWs > 0)
                     {
                         <span class="hrdt-ws-num">@openWs</span>
-                        <span style="font-size:13px;color:var(--text-muted)">worksheet aktif</span>
+                        <span class="hrdt-ws-label">worksheet aktif</span>
                     }
                     else
                     {
-                        <span style="font-size:13px;color:var(--text-muted);font-style:italic">Tidak ada worksheet aktif</span>
+                        <span class="hrdt-ws-empty">Tidak ada worksheet aktif</span>
                     }
                 </div>
             </div>
@@ -196,7 +195,7 @@
                     </div>
                     <h3 class="pd-card-title">Aksi Cepat</h3>
                 </div>
-                <div class="pd-card-body" style="gap:8px">
+                <div class="pd-card-body hrdt-actions-body">
                     <button type="button" onclick="openHrdtModal('reportModal')" class="hrdt-action-btn hrdt-action-btn--purple">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                         Laporkan ke Psikolog
@@ -210,25 +209,31 @@
                         Minta Worksheet
                     </button>
                     <a href="@Url.Action("EmployeePdf", "Employees", new { area = "Hr", id = Model.PatientId })" target="_blank" rel="noopener"
-                       class="hrdt-action-btn" style="text-decoration:none;display:flex;align-items:center;gap:8px;background:#F3F4F6;color:#374151;border:1px solid #E5E7EB;">
+                       class="hrdt-action-btn hrdt-action-btn--pdf">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                         Cetak Laporan PDF
                     </a>
-                    <button type="button" onclick="openHrdtModal('removalModal')" class="hrdt-action-btn" style="width:100%;background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;">
+                    <button type="button" onclick="openHrdtModal('removalModal')" class="hrdt-action-btn hrdt-action-btn--danger">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         Ajukan Pemberhentian Karyawan
                     </button>
                     @if (Model.ActiveAssignmentId.HasValue)
                     {
-                        <form asp-action="RequestCancelAssignment" asp-controller="Employees" asp-area="Hr" method="post" style="margin:0;"
-                              onsubmit="return confirm('Ajukan pembatalan penugasan psikolog ke Admin?');">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="assignmentId" value="@Model.ActiveAssignmentId" />
-                            <input type="hidden" name="reason" value="Permintaan HR dari halaman detail karyawan" />
-                            <button type="submit" class="hrdt-action-btn" style="width:100%;background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;">
+                        @if (Model.AssignmentStatus == "PendingCancellation" || Model.AssignmentStatus == "PendingCancellationByAdmin")
+                        {
+                            <button type="button" disabled class="hrdt-action-btn hrdt-action-btn--danger hrdt-action-btn--danger-disabled">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" class="hrdt-action-btn-icon"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                Batalkan Psikolog (@Model.AssignedPsychologistName)
+                                <span class="hrdt-pending-badge">Menunggu Persetujuan</span>
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="hrdt-action-btn hrdt-action-btn--danger" onclick="openHrdtModal('cancelAssignmentModal')">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" class="hrdt-action-btn-icon"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                                 Batalkan Psikolog (@Model.AssignedPsychologistName)
                             </button>
-                        </form>
+                        }
                     }
                 </div>
             </div>
@@ -241,7 +246,7 @@
             @* Jurnal Hari Ini *@
             <div class="pd-card pd-card--plain hrdt-journal-card">
                 <div class="pd-card-head">
-                    <div class="pd-card-icon" style="background:#EFF6FF;color:#3B82F6">
+                    <div class="pd-card-icon pd-card-icon--journal">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                     </div>
                     <h3 class="pd-card-title">Jurnal Hari Ini</h3>
@@ -269,7 +274,7 @@
             @* Catatan / Gejala HR *@
             <div class="pd-card pd-card--plain hrdt-notes-card">
                 <div class="pd-card-head">
-                    <div class="pd-card-icon" style="background:#F5F3FF;color:#7C3AED">
+                    <div class="pd-card-icon pd-card-icon--notes">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </div>
                     <h3 class="pd-card-title">Catatan HR</h3>
@@ -278,7 +283,7 @@
                         <span class="hrdt-notes-exists-chip">Ada catatan</span>
                     }
                 </div>
-                <div class="pd-card-body" style="gap:0;padding-top:0">
+                <div class="pd-card-body hrdt-notes-card-body">
                     <form asp-action="EditSymptoms" method="post" class="hrdt-notes-form">
                         <input type="hidden" name="PatientId" value="@Model.PatientId" />
                         <textarea name="Symptoms" id="hrNotesArea" class="hrdt-notes-textarea"
@@ -297,7 +302,7 @@
             @* Mood Tracker *@
             <div class="pd-card pd-card--plain pd-mood-card hrdt-mood-card">
                 <div class="pd-card-head">
-                    <div class="pd-card-icon" style="background:#F5F3FF;color:#7C3AED">
+                    <div class="pd-card-icon pd-card-icon--mood">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                     </div>
                     <h3 class="pd-card-title">Mood Tracker</h3>
@@ -309,10 +314,10 @@
                     </div>
                 </div>
                 <div class="pd-card-body">
-                    <div class="pd-chart-wrap" id="moodChartWrap" style="@(!hasMoodData ? "display:none" : "")">
+                    <div class="pd-chart-wrap @(!hasMoodData ? "pd-is-hidden" : "")" id="moodChartWrap">
                         <canvas id="moodChart"></canvas>
                     </div>
-                    <div class="pd-mood-legend" id="moodLegend" style="@(!hasMoodData ? "display:none" : "")">
+                    <div class="pd-mood-legend @(!hasMoodData ? "pd-is-hidden" : "")" id="moodLegend">
                         <div class="pd-mood-leg-item pd-mood-leg--sehat">
                             <span class="pd-mood-leg-val">@sehatPct%</span>
                             <span class="pd-mood-leg-lbl">Sehat</span>
@@ -328,7 +333,7 @@
                             <span class="pd-mood-leg-lbl">Bahaya</span>
                         </div>
                     </div>
-                    <div class="pd-empty-mood" id="moodEmpty" style="@(hasMoodData ? "display:none" : "")">
+                    <div class="pd-empty-mood @(hasMoodData ? "pd-is-hidden" : "")" id="moodEmpty">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                         <p>Belum ada data mood pada periode ini.</p>
                     </div>
@@ -343,7 +348,7 @@
     <div class="hrpf-modal-overlay" id="reportModal" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
         <div class="hrpf-modal">
             <div class="hrpf-modal-head">
-                <div class="hrpf-modal-head-icon" style="background:#F5F3FF;color:#7C3AED">
+                <div class="hrpf-modal-head-icon hrpf-modal-head-icon--purple">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 </div>
                 <h2 class="hrpf-modal-title" id="reportModalTitle">Laporkan ke Psikolog</h2>
@@ -352,7 +357,7 @@
                 </button>
             </div>
             <div class="hrpf-modal-body">
-                <p style="font-size:12.5px;color:var(--lu-text-muted);margin:0 0 14px;line-height:1.6;">
+                <p class="hrdt-modal-intro">
                     Catatan akan dikirim ke psikolog aktif karyawan ini.
                     Pilih <strong>Simpan Draft</strong> untuk menyimpan tanpa mengirim email.
                 </p>
@@ -365,7 +370,7 @@
                         <textarea name="notes" id="reportNotesInput" rows="5" class="hrpf-modal-input"
                                   placeholder="Jelaskan kondisi karyawan, kekhawatiran Anda, atau hal-hal penting yang perlu diperhatikan psikolog…"></textarea>
                     </div>
-                    <div id="reportModalErr" style="display:none;color:#B91C1C;font-size:12.5px;padding:6px 10px;background:#FEE2E2;border-radius:8px;margin-top:4px;"></div>
+                    <div id="reportModalErr" class="hrdt-modal-err hrdt-is-hidden"></div>
                 </form>
             </div>
             <div class="hrpf-modal-foot">
@@ -386,7 +391,7 @@
     <div class="hrpf-modal-overlay" id="scheduleModal" role="dialog" aria-modal="true" aria-labelledby="scheduleModalTitle">
         <div class="hrpf-modal">
             <div class="hrpf-modal-head">
-                <div class="hrpf-modal-head-icon" style="background:#EFF6FF;color:#3B82F6">
+                <div class="hrpf-modal-head-icon hrpf-modal-head-icon--blue">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 </div>
                 <h2 class="hrpf-modal-title" id="scheduleModalTitle">Minta Jadwal Sesi</h2>
@@ -395,7 +400,7 @@
                 </button>
             </div>
             <div class="hrpf-modal-body">
-                <p style="font-size:12.5px;color:var(--lu-text-muted);margin:0 0 14px;line-height:1.6;">
+                <p class="hrdt-modal-intro">
                     Permintaan akan diteruskan ke psikolog aktif karyawan ini untuk ditindaklanjuti.
                 </p>
                 <form id="scheduleForm" action="@Url.Action("RequestModal", "Schedules", new { area = "Hr" })" method="post">
@@ -410,7 +415,7 @@
                         <textarea name="notes" id="scheduleNotes" rows="3" class="hrpf-modal-input"
                                   placeholder="Topik sesi, kebutuhan khusus, preferensi waktu, dll…"></textarea>
                     </div>
-                    <div id="scheduleModalErr" style="display:none;color:#B91C1C;font-size:12.5px;padding:6px 10px;background:#FEE2E2;border-radius:8px;margin-top:4px;"></div>
+                    <div id="scheduleModalErr" class="hrdt-modal-err hrdt-is-hidden"></div>
                 </form>
             </div>
             <div class="hrpf-modal-foot">
@@ -427,7 +432,7 @@
     <div class="hrpf-modal-overlay" id="worksheetModal" role="dialog" aria-modal="true" aria-labelledby="worksheetModalTitle">
         <div class="hrpf-modal">
             <div class="hrpf-modal-head">
-                <div class="hrpf-modal-head-icon" style="background:#ECFDF5;color:#059669">
+                <div class="hrpf-modal-head-icon hrpf-modal-head-icon--green">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg>
                 </div>
                 <h2 class="hrpf-modal-title" id="worksheetModalTitle">Minta Worksheet</h2>
@@ -436,7 +441,7 @@
                 </button>
             </div>
             <div class="hrpf-modal-body">
-                <p style="font-size:12.5px;color:var(--lu-text-muted);margin:0 0 14px;line-height:1.6;">
+                <p class="hrdt-modal-intro">
                     Permintaan akan diteruskan ke psikolog aktif untuk diberikan sebagai tugas kepada karyawan.
                 </p>
                 <form id="worksheetForm" action="@Url.Action("RequestModal", "Worksheets", new { area = "Hr" })" method="post">
@@ -457,7 +462,7 @@
                         <textarea name="Notes" id="wsNotes" rows="3" class="hrpf-modal-input"
                                   placeholder="Konteks atau instruksi tambahan untuk psikolog…"></textarea>
                     </div>
-                    <div id="worksheetModalErr" style="display:none;color:#B91C1C;font-size:12.5px;padding:6px 10px;background:#FEE2E2;border-radius:8px;margin-top:4px;"></div>
+                    <div id="worksheetModalErr" class="hrdt-modal-err hrdt-is-hidden"></div>
                 </form>
             </div>
             <div class="hrpf-modal-foot">
@@ -465,6 +470,79 @@
                 <button type="button" id="worksheetSubmitBtn" class="hrpf-modal-save">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                     Kirim Permintaan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @* ══════ MODAL: Ajukan Pemberhentian Karyawan ══════ *@
+    <div class="hrpf-modal-overlay" id="removalModal" role="dialog" aria-modal="true" aria-labelledby="removalModalTitle">
+        <div class="hrpf-modal">
+            <div class="hrpf-modal-head">
+                <div class="hrpf-modal-head-icon hrpf-modal-head-icon--red">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </div>
+                <h2 class="hrpf-modal-title" id="removalModalTitle">Ajukan Pemberhentian Karyawan</h2>
+                <button class="hrpf-modal-close" type="button" onclick="closeHrdtModal('removalModal')" aria-label="Tutup">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="hrpf-modal-body">
+                <p class="hrdt-modal-intro">
+                    Pengajuan pemberhentian karyawan akan diteruskan ke Admin untuk disetujui. Setelah disetujui, karyawan tidak akan lagi memiliki akses B2B dan akan diputus dari psikolog perusahaan.
+                </p>
+                <form id="removalForm" action="@Url.Action("RequestEmployeeRemoval", "Employees", new { area = "Hr" })" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="PatientId" value="@Model.PatientId" />
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="removalReason">Alasan Pemberhentian <span class="hrdt-required">*</span></label>
+                        <textarea name="Reason" id="removalReason" rows="3" class="hrpf-modal-input" required
+                                  placeholder="Mis. Resign, Pindah Perusahaan, dll…"></textarea>
+                    </div>
+                    <div id="removalModalErr" class="hrdt-modal-err hrdt-is-hidden"></div>
+                </form>
+            </div>
+            <div class="hrpf-modal-foot">
+                <button type="button" class="hrpf-modal-cancel" onclick="closeHrdtModal('removalModal')">Batal</button>
+                <button type="button" id="removalSubmitBtn" class="hrpf-modal-save hrpf-modal-save--danger">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Ajukan Pemberhentian
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @* ══════ MODAL: Batalkan Psikolog ══════ *@
+    <div class="hrpf-modal-overlay" id="cancelAssignmentModal" role="dialog" aria-modal="true" aria-labelledby="cancelAssignmentModalTitle">
+        <div class="hrpf-modal">
+            <div class="hrpf-modal-head">
+                <div class="hrpf-modal-head-icon hrpf-modal-head-icon--red">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
+                <h2 class="hrpf-modal-title" id="cancelAssignmentModalTitle">Batalkan Penugasan Psikolog</h2>
+                <button class="hrpf-modal-close" type="button" onclick="closeHrdtModal('cancelAssignmentModal')" aria-label="Tutup">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="hrpf-modal-body">
+                <p class="hrdt-modal-intro">
+                    Pengajuan pembatalan ini akan diteruskan ke Admin untuk disetujui. Setelah disetujui, karyawan tidak akan memiliki psikolog yang mendampingi sampai Anda menugaskan psikolog baru.
+                </p>
+                <form id="cancelAssignmentForm" action="@Url.Action("RequestCancelAssignment", "Employees", new { area = "Hr" })" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="assignmentId" value="@Model.ActiveAssignmentId" />
+                    <div class="hrpf-modal-field">
+                        <label class="hrpf-modal-label" for="cancelReason">Alasan Pembatalan <span class="hrdt-required">*</span></label>
+                        <textarea name="reason" id="cancelReason" rows="3" class="hrpf-modal-input" required
+                                  placeholder="Mis. Ketidakcocokan jadwal, karyawan kurang nyaman, dll…"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="hrpf-modal-foot">
+                <button type="button" class="hrpf-modal-cancel" onclick="closeHrdtModal('cancelAssignmentModal')">Batal</button>
+                <button type="submit" form="cancelAssignmentForm" class="hrpf-modal-save hrpf-modal-save--danger">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Ajukan Pembatalan
                 </button>
             </div>
         </div>
@@ -486,7 +564,7 @@
         document.body.style.overflow = '';
         // Clear errors
         const err = document.getElementById(id.replace('Modal', 'ModalErr'));
-        if (err) { err.style.display = 'none'; err.textContent = ''; }
+        if (err) { err.classList.add('hrdt-is-hidden'); err.textContent = ''; }
     }
     window.openHrdtModal  = openHrdtModal;
     window.closeHrdtModal = closeHrdtModal;
@@ -527,7 +605,7 @@
         const token = form.querySelector('[name=__RequestVerificationToken]').value;
 
         setLoading(true);
-        errDiv.style.display = 'none';
+        errDiv.classList.add('hrdt-is-hidden');
         try {
             const res = await fetch(form.action, {
                 method: 'POST',
@@ -542,11 +620,11 @@
             } else {
                 const msgs = (data.errors || ['Terjadi kesalahan.']).join(' ');
                 errDiv.textContent = msgs;
-                errDiv.style.display = 'block';
+                errDiv.classList.remove('hrdt-is-hidden');
             }
         } catch (_) {
             errDiv.textContent = 'Terjadi kesalahan jaringan. Coba lagi.';
-            errDiv.style.display = 'block';
+            errDiv.classList.remove('hrdt-is-hidden');
         } finally {
             setLoading(false);
         }
@@ -565,10 +643,14 @@
         }
     }
     reportDraft.addEventListener('click', () => {
+        const form = document.getElementById('reportForm');
+        if (!form.reportValidity()) return;
         reportFlag.value = 'false';
         ajaxSubmit('reportForm', 'reportModal', 'reportModalErr', reportSetLoading);
     });
     reportSend.addEventListener('click', () => {
+        const form = document.getElementById('reportForm');
+        if (!form.reportValidity()) return;
         reportFlag.value = 'true';
         ajaxSubmit('reportForm', 'reportModal', 'reportModalErr', reportSetLoading);
     });
@@ -583,6 +665,8 @@
         }
     }
     scheduleBtn.addEventListener('click', () => {
+        const form = document.getElementById('scheduleForm');
+        if (!form.reportValidity()) return;
         ajaxSubmit('scheduleForm', 'scheduleModal', 'scheduleModalErr', scheduleSetLoading);
     });
 
@@ -596,6 +680,8 @@
         }
     }
     worksheetBtn.addEventListener('click', () => {
+        const form = document.getElementById('worksheetForm');
+        if (!form.reportValidity()) return;
         ajaxSubmit('worksheetForm', 'worksheetModal', 'worksheetModalErr', worksheetSetLoading);
     });
 
@@ -609,6 +695,8 @@
         }
     }
     removalBtn.addEventListener('click', () => {
+        const form = document.getElementById('removalForm');
+        if (!form.reportValidity()) return;
         ajaxSubmit('removalForm', 'removalModal', 'removalModalErr', removalSetLoading);
     });
 

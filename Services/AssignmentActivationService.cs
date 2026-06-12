@@ -22,12 +22,13 @@ public class AssignmentActivationService
         string? decisionNote = null,
         decimal? psychologistRevenuePercentage = null)
     {
-        var slotValue = await _pricing.GetSlotValueForPatientAsync(assignment.PatientId);
+        var pricingResult = await _pricing.GetSlotValueForPatientAsync(assignment.PatientId);
         var pct = psychologistRevenuePercentage
             ?? await _pricing.GetDefaultPsychologistPercentageAsync(assignment.PsychologistId);
 
         assignment.Status = "Active";
-        assignment.SlotValue = slotValue;
+        assignment.SlotValue = pricingResult.SlotValue;
+        assignment.MaxSessionsPerMonth = pricingResult.MaxSessions;
         assignment.PsychologistRevenuePercentage = pct;
 
         if (decisionByUserId != null)

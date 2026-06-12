@@ -26,7 +26,7 @@
         <div class="adm-stat-value">@Model.TotalPsychologists</div>
         @if (Model.PendingPsychologists > 0)
         {
-            <div class="adm-stat-sub" style="color: var(--adm-warning); font-weight:600;">
+            <div class="adm-stat-sub dash-stat-warning">
                 ⏳ @Model.PendingPsychologists menunggu persetujuan
             </div>
         }
@@ -38,53 +38,35 @@
 
     <div class="adm-stat-card accent-orange">
         <div class="adm-stat-icon">🏢</div>
-        <div class="adm-stat-label">HR Manager</div>
-        <div class="adm-stat-value">@Model.TotalHrs</div>
-        @if (Model.PendingHrs > 0)
-        {
-            <div class="adm-stat-sub" style="color: var(--adm-warning); font-weight:600;">
-                ⏳ @Model.PendingHrs menunggu persetujuan
-            </div>
-        }
-        else
-        {
-            <div class="adm-stat-sub">Semua terverifikasi</div>
-        }
-    </div>
-
-    <div class="adm-stat-card accent-teal">
-        <div class="adm-stat-icon">🏗️</div>
-        <div class="adm-stat-label">Perusahaan</div>
-        <div class="adm-stat-value">@Model.TotalCompanies</div>
-        <div class="adm-stat-sub">Mitra terdaftar</div>
-    </div>
-
-    <div class="adm-stat-card accent-red">
-        <div class="adm-stat-icon">🛡️</div>
-        <div class="adm-stat-label">Admin</div>
-        <div class="adm-stat-value">@Model.TotalAdmins</div>
-        <div class="adm-stat-sub">Akun administrator</div>
+        <div class="adm-stat-label">Mitra B2B</div>
+        <div class="adm-stat-value">@Model.TotalCompanies <span class="dash-stat-unit">Perusahaan</span></div>
+        <div class="adm-stat-sub">
+            Mencakup @Model.TotalHrs akun HR Manager
+            @if (Model.PendingHrs > 0)
+            {
+                <br /><span class="dash-stat-pending">⏳ @Model.PendingHrs HR menunggu persetujuan</span>
+            }
+        </div>
     </div>
 </div>
 
 <!-- ── Pending Assignments Alert ── -->
 @if (Model.PendingAssignmentsTotal > 0)
 {
-    <div class="adm-card" style="margin-bottom:24px; border-color:#C4B5FD; background:linear-gradient(135deg,#F5F3FF,#EDE9FE);">
-        <div class="adm-card-inner" style="flex-wrap:nowrap; gap:20px;">
-            <div style="display:flex; align-items:center; gap:14px; flex:1;">
-                <div style="width:48px; height:48px; background:rgba(124,58,237,0.15); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;">📋</div>
+    <div class="adm-card dash-alert-assignments">
+        <div class="adm-card-inner dash-card-inner-nowrap">
+            <div class="dash-alert-content">
+                <div class="dash-alert-icon dash-alert-icon--purple">📋</div>
                 <div>
-                    <div style="font-size:16px; font-weight:700; color:#5B21B6; margin-bottom:2px;">@Model.PendingAssignmentsTotal Permintaan Penugasan</div>
-                    <div style="font-size:13px; color:#6D28D9;">
+                    <div class="dash-alert-title--purple">@Model.PendingAssignmentsTotal Permintaan Penugasan</div>
+                    <div class="dash-alert-sub--purple">
                         @Model.PendingAdminAssignments Psy→Pasien &nbsp;·&nbsp;
                         @Model.PendingCancellationByAdmin Pembatalan HR &nbsp;·&nbsp;
                         @Model.PendingPatientAdminRequests Minta Admin
                     </div>
                 </div>
             </div>
-            <a class="btn btn-primary" asp-area="Admin" asp-controller="Assignments" asp-action="Index"
-               style="white-space:nowrap; flex-shrink:0;">
+            <a class="btn btn-primary dash-alert-action" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
                 Kelola Penugasan →
             </a>
         </div>
@@ -94,19 +76,18 @@
 <!-- ── Pending Alert ── -->
 @if (Model.PendingTotal > 0)
 {
-    <div class="adm-card" style="margin-bottom:24px; border-color:#FCD34D; background:linear-gradient(135deg,#FFFBEB,#FEF3C7);">
-        <div class="adm-card-inner" style="flex-wrap:nowrap; gap:20px;">
-            <div style="display:flex; align-items:center; gap:14px; flex:1;">
-                <div style="width:48px; height:48px; background:rgba(217,119,6,0.15); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;">⚠️</div>
+    <div class="adm-card dash-alert-pending">
+        <div class="adm-card-inner dash-card-inner-nowrap">
+            <div class="dash-alert-content">
+                <div class="dash-alert-icon dash-alert-icon--amber">⚠️</div>
                 <div>
-                    <div style="font-size:16px; font-weight:700; color:#92400E; margin-bottom:2px;">@Model.PendingTotal Akun Menunggu Persetujuan</div>
-                    <div style="font-size:13px; color:#B45309;">
+                    <div class="dash-alert-title--amber">@Model.PendingTotal Akun Menunggu Persetujuan</div>
+                    <div class="dash-alert-sub--amber">
                         @Model.PendingPsychologists Psikolog &nbsp;·&nbsp; @Model.PendingHrs HR Manager
                     </div>
                 </div>
             </div>
-            <a class="btn btn-primary" asp-area="Admin" asp-controller="Approvals" asp-action="Index"
-               style="white-space:nowrap; flex-shrink:0;">
+            <a class="btn btn-primary dash-alert-action" asp-area="Admin" asp-controller="Approvals" asp-action="Index">
                 Tinjau Sekarang →
             </a>
         </div>
@@ -121,43 +102,43 @@
     </div>
     <div class="adm-quick-grid">
         <a class="adm-quick-item" asp-area="Admin" asp-controller="Approvals" asp-action="Index">
-            <div class="adm-quick-icon" style="background:#FEF3C7;">📋</div>
+            <div class="adm-quick-icon dash-quick-icon--amber">📋</div>
             <div class="adm-quick-label">Persetujuan</div>
             <div class="adm-quick-sub">
                 @if (Model.PendingTotal > 0)
-                { <span style="color:var(--adm-warning); font-weight:700;">@Model.PendingTotal menunggu</span> }
+                { <span class="dash-quick-pending-warning">@Model.PendingTotal menunggu</span> }
                 else
                 { <text>Semua bersih</text> }
             </div>
         </a>
 
         <a class="adm-quick-item" asp-area="Admin" asp-controller="Users" asp-action="Index">
-            <div class="adm-quick-icon" style="background:#EDE9FE;">👤</div>
+            <div class="adm-quick-icon dash-quick-icon--purple">👤</div>
             <div class="adm-quick-label">Pengguna</div>
             <div class="adm-quick-sub">@Model.TotalUsers terdaftar</div>
         </a>
 
         <a class="adm-quick-item" asp-area="Admin" asp-controller="Companies" asp-action="Index">
-            <div class="adm-quick-icon" style="background:#DBEAFE;">🏢</div>
+            <div class="adm-quick-icon dash-quick-icon--blue">🏢</div>
             <div class="adm-quick-label">Perusahaan</div>
             <div class="adm-quick-sub">@Model.TotalCompanies mitra</div>
         </a>
 
         <a class="adm-quick-item" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
-            <div class="adm-quick-icon" style="background:#EDE9FE;">📋</div>
+            <div class="adm-quick-icon dash-quick-icon--purple">📋</div>
             <div class="adm-quick-label">Penugasan</div>
             <div class="adm-quick-sub">
                 @if (Model.PendingAssignmentsTotal > 0)
-                { <span style="color:var(--adm-primary); font-weight:700;">@Model.PendingAssignmentsTotal menunggu</span> }
+                { <span class="dash-quick-pending-primary">@Model.PendingAssignmentsTotal menunggu</span> }
                 else
                 { <text>Semua bersih</text> }
             </div>
         </a>
 
-        <a class="adm-quick-item" asp-area="Admin" asp-controller="Invite" asp-action="Index">
-            <div class="adm-quick-icon" style="background:#D1FAE5;">➕</div>
-            <div class="adm-quick-label">Tambah Admin</div>
-            <div class="adm-quick-sub">Undang administrator</div>
+        <a class="adm-quick-item" asp-area="Admin" asp-controller="Payroll" asp-action="Index">
+            <div class="adm-quick-icon dash-quick-icon--green">💰</div>
+            <div class="adm-quick-label">Payroll</div>
+            <div class="adm-quick-sub">Transfer psikolog</div>
         </a>
     </div>
 </div>

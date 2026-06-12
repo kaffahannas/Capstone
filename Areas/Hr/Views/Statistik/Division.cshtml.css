@@ -1,0 +1,222 @@
+.hr-page-wrap--wide {
+    max-width: 1080px;
+}
+
+.hr-page-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lu-text-muted);
+    text-decoration: none;
+    margin-bottom: 6px;
+    transition: color 0.15s;
+}
+
+.hr-page-back:hover {
+    color: var(--lu-primary);
+}
+
+.hr-page-back svg {
+    flex-shrink: 0;
+}
+
+.hr-page-actions {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+
+.hr-stat-strip {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.hr-stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--lu-border);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: box-shadow 0.18s, transform 0.15s;
+}
+
+.hr-stat-pill:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px);
+}
+
+.hr-stat-pill-ico {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.hr-stat-pill-ico--green {
+    background: #ECFDF5; color: #059669;
+}
+
+.hr-stat-pill-ico--amber {
+    background: #FFFBEB; color: #D97706;
+}
+
+.hr-stat-pill-ico--red {
+    background: #FEF2F2; color: #DC2626;
+}
+
+.hr-stat-pill-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--lu-text);
+    line-height: 1;
+}
+
+.hr-stat-pill-lbl {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--lu-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hr-page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--lu-border);
+    background: #fff;
+    color: var(--lu-text);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.hr-page-btn:hover {
+    background: var(--lu-primary-soft); border-color: var(--lu-primary); color: var(--lu-primary);
+}
+
+.hr-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 24px;
+    border: 1.5px dashed var(--lu-border);
+    border-radius: 16px;
+    background: #fafafa;
+    gap: 12px;
+}
+
+.hr-empty-title {
+    font-size: 16px; font-weight: 700; margin: 0;
+}
+
+.hr-empty-sub {
+    font-size: 13.5px; color: var(--lu-text-muted); margin: 0; max-width: 38ch;
+}
+
+.hrst-charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+@media (max-width: 640px) {
+    .hrst-charts-row { grid-template-columns: 1fr; }
+}
+
+.hrst-chart-card {
+    background: #fff;
+    border: 1px solid var(--lu-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+}
+
+.hrst-chart-card-title {
+    font-size: 14.5px; font-weight: 700; margin: 0 0 16px;
+}
+
+.hr-stat-pill-val--sehat {
+    color: #059669;
+}
+
+.hr-stat-pill-val--beresiko {
+    color: #D97706;
+}
+
+.hr-stat-pill-val--bahaya {
+    color: #DC2626;
+}
+
+.hr-empty--compact {
+    padding: 32px 16px;
+}
+
+.hr-empty-title--sm {
+    font-size: 14px;
+}
+
+.hr-empty-sub--sm {
+    font-size: 12.5px;
+}
+
+.hrst-chart-wrap {
+    max-height: 250px;
+    display: flex;
+    justify-content: center;
+}
+
+.hrst-legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    flex-wrap: wrap;
+}
+
+.hrst-legend-item--sehat {
+    color: #10B981;
+    font-weight: 600;
+}
+
+.hrst-legend-item--beresiko {
+    color: #F59E0B;
+    font-weight: 600;
+}
+
+.hrst-legend-item--bahaya {
+    color: #EF4444;
+    font-weight: 600;
+}
+
+.hrdiv-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.hrdiv-btn-back {
+    flex: 1;
+    text-align: center;
+}
+
+.hrdiv-btn-print {
+    flex: 1;
+}

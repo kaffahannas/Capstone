@@ -1,0 +1,12 @@
+.home-hero-title {
+    color: var(--lu-primary);
+}
+
+.home-feature-card {
+    border-radius: 15px;
+    border-color: #e5e7eb;
+}
+
+.home-card-title {
+    color: #7c3aed;
+}

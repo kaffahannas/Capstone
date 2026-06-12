@@ -15,12 +15,12 @@
 </a>
 
 <!-- ── Company header + info ── -->
-<div class="adm-card" style="margin-bottom:20px;">
-    <div style="display:flex; align-items:center; gap:16px; margin-bottom:22px;">
-        <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,#7C3AED,#5B21B6); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;">🏢</div>
+<div class="adm-card cmp-header-card">
+    <div class="cmp-header-row">
+        <div class="cmp-header-icon">🏢</div>
         <div>
-            <h2 style="margin:0 0 4px; font-size:22px; font-weight:700; letter-spacing:-0.4px;">@Model.Name</h2>
-            <div style="font-size:13px; color:var(--adm-muted);">
+            <h2 class="cmp-header-title">@Model.Name</h2>
+            <div class="cmp-header-meta">
                 Terdaftar sejak @Model.CreatedAt.ToString("d MMMM yyyy", cid)
             </div>
         </div>
@@ -39,7 +39,7 @@
             <span class="adm-info-label">Email Kontak</span>
             <span class="adm-info-value">
                 @if (!string.IsNullOrEmpty(Model.ContactEmail))
-                { <a href="mailto:@Model.ContactEmail" style="color:var(--adm-primary);">@Model.ContactEmail</a> }
+                { <a href="mailto:@Model.ContactEmail" class="cmp-email-link">@Model.ContactEmail</a> }
                 else
                 { <text>—</text> }
             </span>
@@ -49,66 +49,62 @@
             <span class="adm-info-value">@(Model.RegistrationNumber ?? "—")</span>
         </div>
         <div class="adm-info-row">
-            <span class="adm-info-label">Kode Referral</span>
+            <span class="adm-info-label">Jumlah Divisi</span>
             <span class="adm-info-value">
-                @if (!string.IsNullOrEmpty(Model.ReferralCode))
-                { <code>@Model.ReferralCode</code> }
-                else
-                { <text>—</text> }
+                <strong>@Model.DivisionCount</strong> divisi
             </span>
         </div>
     </div>
 </div>
 
 <!-- ── Mental health stats ── -->
-<div class="adm-mental-grid" style="margin-bottom:20px;">
-    <div class="adm-mental-card" style="border-top:3px solid #7C3AED;">
-        <div style="font-size:11px; font-weight:700; color:var(--adm-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Total Pasien</div>
-        <div class="adm-stat-value" style="color:var(--adm-primary);">@Model.TotalPatients</div>
+<div class="adm-mental-grid cmp-mental-grid-spaced">
+    <div class="adm-mental-card cmp-mental-card--total">
+        <div class="cmp-stat-label">Total Pasien</div>
+        <div class="adm-stat-value cmp-stat-value--primary">@Model.TotalPatients</div>
     </div>
-    <div class="adm-mental-card" style="border-top:3px solid #059669;">
-        <div style="font-size:11px; font-weight:700; color:var(--adm-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">✅ Sehat</div>
-        <div class="adm-stat-value" style="color:#059669;">@Model.SehatCount</div>
-        <div style="font-size:11px; color:var(--adm-muted);">@pctSehat%</div>
+    <div class="adm-mental-card cmp-mental-card--sehat">
+        <div class="cmp-stat-label">✅ Sehat</div>
+        <div class="adm-stat-value cmp-stat-value--sehat">@Model.SehatCount</div>
+        <div class="cmp-stat-pct">@pctSehat%</div>
     </div>
-    <div class="adm-mental-card" style="border-top:3px solid #D97706;">
-        <div style="font-size:11px; font-weight:700; color:var(--adm-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">⚠️ Beresiko</div>
-        <div class="adm-stat-value" style="color:#D97706;">@Model.BeresikoCount</div>
-        <div style="font-size:11px; color:var(--adm-muted);">@pctBeresiko%</div>
+    <div class="adm-mental-card cmp-mental-card--beresiko">
+        <div class="cmp-stat-label">⚠️ Beresiko</div>
+        <div class="adm-stat-value cmp-stat-value--beresiko">@Model.BeresikoCount</div>
+        <div class="cmp-stat-pct">@pctBeresiko%</div>
     </div>
-    <div class="adm-mental-card" style="border-top:3px solid #DC2626;">
-        <div style="font-size:11px; font-weight:700; color:var(--adm-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">🚨 Bahaya</div>
-        <div class="adm-stat-value" style="color:#DC2626;">@Model.BahayaCount</div>
-        <div style="font-size:11px; color:var(--adm-muted);">@pctBahaya%</div>
+    <div class="adm-mental-card cmp-mental-card--bahaya">
+        <div class="cmp-stat-label">🚨 Bahaya</div>
+        <div class="adm-stat-value cmp-stat-value--bahaya">@Model.BahayaCount</div>
+        <div class="cmp-stat-pct">@pctBahaya%</div>
     </div>
 </div>
 
 <!-- ── HR table ── -->
 <div class="adm-card">
     <div class="adm-card-header">
-        <div class="adm-card-title" style="margin-bottom:0;">
+        <div class="adm-card-title cmp-card-title-flush">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-            HR di Perusahaan Ini
+            Manajer HR
         </div>
-        <span class="badge badge-role">@Model.Hrs.Count HR</span>
     </div>
 
     @if (!Model.Hrs.Any())
     {
-        <div class="adm-empty" style="padding:32px;">
+        <div class="adm-empty cmp-empty-hr">
             <div class="adm-empty-icon">👤</div>
             <div class="adm-empty-sub">Belum ada HR terdaftar untuk perusahaan ini.</div>
         </div>
     }
     else
     {
-        <table class="adm-table" style="border:none;">
+        <table class="adm-table cmp-hr-table">
             <thead>
                 <tr>
                     <th>Nama</th>
                     <th>Email</th>
                     <th>Status</th>
-                    <th style="width:80px;"></th>
+                    <th class="cmp-th-action"></th>
                 </tr>
             </thead>
             <tbody>
@@ -116,12 +112,12 @@
                 {
                     <tr>
                         <td>
-                            <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="cmp-hr-cell">
                                 <div class="adm-avatar-sm">@string.Join("", hr.FullName.Split(' ').Take(2).Select(w => w[0])).ToUpper()</div>
                                 <strong>@hr.FullName</strong>
                             </div>
                         </td>
-                        <td style="color:var(--adm-text-secondary);">@hr.Email</td>
+                        <td class="cmp-hr-email">@hr.Email</td>
                         <td>
                             @if (!hr.IsApprovedByAdmin)
                             { <span class="badge badge-pending">⏳ Pending</span> }

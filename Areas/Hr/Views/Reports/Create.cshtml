@@ -96,7 +96,7 @@
                 </div>
             </div>
             <span class="hrpt-status-badge hrpt-status-badge--@statusCss">
-                <span style="width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.8;" aria-hidden="true"></span>
+                <span class="hrpt-status-dot" aria-hidden="true"></span>
                 @Model.PatientStatus
             </span>
         </div>
@@ -106,7 +106,7 @@
     <div class="hrpt-metrics">
         <div class="hrpt-metric hrpt-metric--@trendMod">
             <span class="hrpt-metric-label">Nilai Penugasan</span>
-            <span class="hrpt-metric-val">@Model.AssignmentScore.ToString("0.0")<span style="font-size:14px;font-weight:600;opacity:.6;">/10</span></span>
+            <span class="hrpt-metric-val">@Model.AssignmentScore.ToString("0.0")<span class="hrpt-metric-suffix">/10</span></span>
             <span class="hrpt-metric-sub">@trendIcon @Model.AssignmentTrend</span>
         </div>
         <div class="hrpt-metric hrpt-metric--@stressMod">
@@ -116,7 +116,7 @@
         </div>
         <div class="hrpt-metric">
             <span class="hrpt-metric-label">Mood Trend</span>
-            <span class="hrpt-metric-val" style="font-size:16px;">@(string.IsNullOrEmpty(Model.MoodTrendLabel) ? "—" : Model.MoodTrendLabel)</span>
+            <span class="hrpt-metric-val hrpt-metric-val--sm">@(string.IsNullOrEmpty(Model.MoodTrendLabel) ? "—" : Model.MoodTrendLabel)</span>
             <span class="hrpt-metric-sub">7 hari terakhir</span>
         </div>
     </div>
@@ -134,7 +134,7 @@
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                     </div>
                     <h3 class="hrpf-card-title">Mood Trend</h3>
-                    <span style="margin-left:auto;font-size:12px;color:var(--lu-text-muted);font-weight:600;">7 hari terakhir</span>
+                    <span class="hrpt-card-period">7 hari terakhir</span>
                 </div>
                 <div class="hrpt-chart-wrap">
                     <canvas id="trendChart"></canvas>

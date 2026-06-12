@@ -1,0 +1,115 @@
+@model LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel
+@{
+    var openOnLoad = ViewBag.OpenAddScheduleModal == true;
+}
+
+<div class="prf-modal-overlay" id="addScheduleModalOverlay" role="dialog" aria-modal="true" aria-labelledby="addScheduleModalTitle">
+    <div class="prf-modal asm-modal">
+        <div class="prf-modal-header">
+            <h2 id="addScheduleModalTitle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="asm-title-icon" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Tambah Jadwal Konseling
+            </h2>
+            <button type="button" class="prf-modal-close" onclick="closeAddScheduleModal()" aria-label="Tutup">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <form asp-action="AddSchedule" method="post" autocomplete="off">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReturnFilter" />
+            <input type="hidden" asp-for="ReturnPatientId" />
+
+            <div class="prf-modal-body">
+                <p class="asm-intro">Buat jadwal sesi baru untuk salah satu pasien aktif Anda.</p>
+
+                <div asp-validation-summary="ModelOnly" class="asm-validation"></div>
+
+                <div class="prf-form-group">
+                    <label asp-for="PatientId">Pasien</label>
+                    <select asp-for="PatientId">
+                        <option value="0">-- Pilih Pasien --</option>
+                        @foreach (var p in Model.AvailablePatients)
+                        {
+                            <option value="@p.PatientId">@p.FullName @(p.CompanyName != null ? "(" + p.CompanyName + ")" : "")</option>
+                        }
+                    </select>
+                    <span asp-validation-for="PatientId" class="asm-field-error"></span>
+                </div>
+
+                <div class="prf-form-row">
+                    <div class="prf-form-group">
+                        <label asp-for="SessionDate">Tanggal</label>
+                        <input asp-for="SessionDate" type="date" />
+                        <span asp-validation-for="SessionDate" class="asm-field-error"></span>
+                    </div>
+                    <div class="prf-form-group">
+                        <label asp-for="SessionTime">Jam</label>
+                        <input asp-for="SessionTime" type="time" />
+                        <span asp-validation-for="SessionTime" class="asm-field-error"></span>
+                    </div>
+                </div>
+
+                <div class="prf-form-group">
+                    <label asp-for="DurationMinutes">Durasi (menit)</label>
+                    <input asp-for="DurationMinutes" type="number" min="15" max="240" />
+                </div>
+
+                <div class="prf-form-group">
+                    <label asp-for="Notes">Deskripsi kegiatan</label>
+                    <textarea asp-for="Notes" rows="3" placeholder="Mis. General Counseling, Review Worksheet, dll."></textarea>
+                </div>
+                
+                <div class="prf-form-group">
+                    <label asp-for="MeetingLink">Link Meeting (Opsional)</label>
+                    <input asp-for="MeetingLink" type="url" placeholder="https://meet.google.com/..." />
+                    <span asp-validation-for="MeetingLink" class="asm-field-error"></span>
+                </div>
+            </div>
+
+            <div class="prf-modal-footer">
+                <button type="button" class="prf-modal-btn prf-modal-btn--cancel" onclick="closeAddScheduleModal()">Batalkan</button>
+                <button type="submit" class="prf-modal-btn prf-modal-btn--save">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="asm-save-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    function openAddScheduleModal() {
+        var overlay = document.getElementById('addScheduleModalOverlay');
+        if (!overlay) return;
+        overlay.classList.add('prf-modal--open');
+        document.body.style.overflow = 'hidden';
+        var first = overlay.querySelector('select, input:not([type=hidden])');
+        if (first) setTimeout(function () { first.focus(); }, 60);
+    }
+    function closeAddScheduleModal() {
+        var overlay = document.getElementById('addScheduleModalOverlay');
+        if (!overlay) return;
+        overlay.classList.remove('prf-modal--open');
+        document.body.style.overflow = '';
+    }
+    window.openAddScheduleModal = openAddScheduleModal;
+    window.closeAddScheduleModal = closeAddScheduleModal;
+
+    var overlay = document.getElementById('addScheduleModalOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeAddScheduleModal();
+        });
+    }
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAddScheduleModal();
+    });
+
+    @if (openOnLoad)
+    {
+        <text>document.addEventListener('DOMContentLoaded', openAddScheduleModal);</text>
+    }
+})();
+</script>

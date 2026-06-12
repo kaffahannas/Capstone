@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/patient.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
@@ -115,7 +116,7 @@
                 </div>
             </header>
 
-            <div class="app-content">
+            <div class="app-content lu-scroll-host">
                 @RenderBody()
             </div>
         </div>

@@ -5,6 +5,7 @@ using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PsychologistModel = LightenUp.Web.Models.Psychologist;
 using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Areas.Patient.Controllers
@@ -51,7 +52,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 .AnyAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
 
             // All available psychologists (approved, accepting B2B if employee; any if B2C)
-            IQueryable<Psychologist> query = _context.Psychologists
+            IQueryable<PsychologistModel> query = _context.Psychologists
                 .Include(p => p.User)
                 .Where(p => p.User != null && p.User.IsApprovedByAdmin);
 
@@ -97,7 +98,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 PatientId = patient.PatientId,
                 PsychologistId = psychologistId,
                 Status = "PendingPsychologistApproval",
-                AssignedAt = DateTime.Now,
+                AssignedAt = DateTime.UtcNow,
                 RequestedByUserId = user.Id,
                 RequestedByRole = "Patient"
             };

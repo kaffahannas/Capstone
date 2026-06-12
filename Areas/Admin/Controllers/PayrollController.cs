@@ -14,11 +14,19 @@ namespace LightenUp.Web.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserUploadService _uploads;
+        private readonly SubscriptionPricingService _pricing;
 
-        public PayrollController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public PayrollController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            UserUploadService uploads,
+            SubscriptionPricingService pricing)
         {
             _context = context;
             _userManager = userManager;
+            _uploads = uploads;
+            _pricing = pricing;
         }
 
         [HttpGet]
@@ -33,40 +41,71 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 .ToDictionaryAsync(s => s.PsychologistId);
 
             var activeAssignments = await _context.Assignments
-                .Where(a => a.Status == "Active" && a.SlotValue != null && a.PsychologistRevenuePercentage != null)
+                .Where(a => a.Status == "Active")
                 .ToListAsync();
 
-            // Count completed sessions this calendar month for each psychologist
+            // Count completed sessions and calculate earnings this calendar month for each psychologist
             var firstOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
             var nextMonth = firstOfMonth.AddMonths(1);
 
-            var completedSessionsThisMonth = await _context.Schedules
+            var schedulesThisMonth = await _context.Schedules
                 .Where(s => s.Status == "Completed" &&
                             s.SessionStart >= firstOfMonth &&
                             s.SessionStart < nextMonth)
-                .GroupBy(s => s.PsychologistId)
-                .Select(g => new { PsyId = g.Key, Count = g.Count() })
-                .ToDictionaryAsync(x => x.PsyId, x => x.Count);
+                .ToListAsync();
+
+            var assignmentsList = activeAssignments;
+
+            var patientIds = assignmentsList.Select(a => a.PatientId)
+                .Concat(schedulesThisMonth.Select(s => s.PatientId))
+                .Distinct()
+                .ToList();
+
+            var pricingCache = new Dictionary<int, PatientPricingResult>();
+            foreach (var patientId in patientIds)
+                pricingCache[patientId] = await _pricing.GetPatientPricingAsync(patientId);
+
+            var earningsMap = new Dictionary<int, decimal>();
+            var countMap = new Dictionary<int, int>();
+
+            foreach (var p in psychologists)
+            {
+                earningsMap[p.PsychologistId] = 0;
+                countMap[p.PsychologistId] = 0;
+            }
+
+            foreach (var sched in schedulesThisMonth)
+            {
+                if (!earningsMap.ContainsKey(sched.PsychologistId)) continue;
+
+                countMap[sched.PsychologistId]++;
+
+                var assignment = assignmentsList.FirstOrDefault(a =>
+                    a.PatientId == sched.PatientId && a.PsychologistId == sched.PsychologistId);
+                var (subscriptionValue, maxSessions) = ResolvePatientSlot(
+                    sched.PatientId, assignment, pricingCache);
+                var pct = sched.AppliedPercentage
+                    ?? assignment?.PsychologistRevenuePercentage
+                    ?? SubscriptionPricingService.DefaultPsychologistRevenuePercentage;
+
+                if (subscriptionValue > 0 && maxSessions > 0)
+                {
+                    var perSessionValue = Math.Round(subscriptionValue / maxSessions, 2, MidpointRounding.AwayFromZero);
+                    earningsMap[sched.PsychologistId] += perSessionValue * pct / 100;
+                }
+            }
 
             var rows = psychologists.Select(p =>
             {
                 settingsMap.TryGetValue(p.PsychologistId, out var settings);
                 var mine = activeAssignments.Where(a => a.PsychologistId == p.PsychologistId).ToList();
-                var grossTotal = mine.Sum(a => a.SlotValue ?? 0);
-
-                // Per-session model (Sir Lukas): SlotValue / MaxSessions * PsyPercentage%
-                var maxSessions = settings?.MaxSessionsPerMonth > 0 ? settings.MaxSessionsPerMonth : 4;
-                var psyPct = settings?.PsychologistPercentage ?? SubscriptionPricingService.DefaultPsychologistRevenuePercentage;
-
-                var perSessionValue = mine.Sum(a =>
+                var grossTotal = mine.Sum(a =>
                 {
-                    var slotVal = a.SlotValue ?? 0;
-                    if (slotVal <= 0) return 0m;
-                    return Math.Round(slotVal / maxSessions, 2, MidpointRounding.AwayFromZero);
+                    var (subscriptionValue, _) = ResolvePatientSlot(a.PatientId, a, pricingCache);
+                    return subscriptionValue;
                 });
 
-                completedSessionsThisMonth.TryGetValue(p.PsychologistId, out var completedSessions);
-                var psyEarningsThisMonth = perSessionValue * completedSessions * psyPct / 100;
+                var psyPct = settings?.PsychologistPercentage ?? SubscriptionPricingService.DefaultPsychologistRevenuePercentage;
 
                 return new AdminPayrollRow
                 {
@@ -74,12 +113,12 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                     FullName = p.User?.FullName ?? "—",
                     Email = p.User?.Email ?? "—",
                     DefaultPsychologistPercentage = psyPct,
-                    MaxSessionsPerMonth = maxSessions,
+                    MaxSessionsPerMonth = 4,
                     ActivePatients = mine.Count,
-                    CompletedSessionsThisMonth = completedSessions,
+                    CompletedSessionsThisMonth = countMap[p.PsychologistId],
                     GrossMonthly = grossTotal,
-                    PerSessionValueTotal = perSessionValue,
-                    PsyShareMonthly = psyEarningsThisMonth
+                    PsyShareMonthly = earningsMap[p.PsychologistId],
+                    Status = settings?.Status ?? "Belum Diatur"
                 };
             }).ToList();
 
@@ -103,8 +142,15 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                     PsychologistPercentage = SubscriptionPricingService.DefaultPsychologistRevenuePercentage
                 };
 
+            var payouts = await _context.MonthlyPayouts
+                .Where(p => p.PsychologistId == id)
+                .OrderByDescending(p => p.Year)
+                .ThenByDescending(p => p.Month)
+                .ToListAsync();
+
             ViewBag.PsyName = psy.User?.FullName ?? "—";
             ViewBag.ActiveNav = "Payroll";
+            ViewBag.Payouts = payouts;
             return View(setting);
         }
 
@@ -132,14 +178,167 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 _context.PayrollSettings.Add(existing);
             }
 
-            existing.PsychologistPercentage = model.PsychologistPercentage;
-            existing.MaxSessionsPerMonth = model.MaxSessionsPerMonth > 0 ? model.MaxSessionsPerMonth : 4;
+            if (existing.PsychologistPercentage != model.PsychologistPercentage && string.IsNullOrWhiteSpace(model.AdminReason))
+            {
+                ModelState.AddModelError("AdminReason", "Alasan wajib diisi jika persentase diubah.");
+                var psy = await _context.Psychologists.Include(p => p.User)
+                    .FirstOrDefaultAsync(p => p.PsychologistId == model.PsychologistId);
+                ViewBag.PsyName = psy?.User?.FullName ?? "—";
+                ViewBag.ActiveNav = "Payroll";
+                return View(model);
+            }
+
+            if (existing.PsychologistPercentage != model.PsychologistPercentage)
+            {
+                // Absolute admin power: apply directly, reset proposal state
+                existing.PsychologistPercentage = model.PsychologistPercentage;
+                existing.ProposedPercentage = null;
+                existing.Status = "Active";
+            }
+            
+            existing.AdminReason = model.AdminReason;
             existing.UpdatedByAdminUserId = user?.Id;
             existing.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             TempData["success"] = "Pengaturan default persentase disimpan.";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Transfer(int id, int? month, int? year)
+        {
+            var psy = await _context.Psychologists.Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.PsychologistId == id);
+            if (psy == null) return NotFound();
+
+            var setting = await _context.PayrollSettings
+                .FirstOrDefaultAsync(s => s.PsychologistId == id);
+
+            var payouts = await _context.MonthlyPayouts
+                .Where(p => p.PsychologistId == id)
+                .OrderByDescending(p => p.Year)
+                .ThenByDescending(p => p.Month)
+                .ToListAsync();
+
+            // Calculate Breakdown for Selected Month & Year
+            int selectedMonth = month ?? DateTime.Now.Month;
+            int selectedYear = year ?? DateTime.Now.Year;
+
+            var firstOfMonth = new DateTime(selectedYear, selectedMonth, 1);
+            var nextMonth = firstOfMonth.AddMonths(1);
+
+            var schedules = await _context.Schedules
+                .Include(s => s.Patient).ThenInclude(p => p!.User)
+                .Where(s => s.PsychologistId == id && 
+                            s.Status == "Completed" &&
+                            s.SessionStart >= firstOfMonth &&
+                            s.SessionStart < nextMonth)
+                .ToListAsync();
+
+            var assignmentsList = await _context.Assignments
+                .Where(a => a.PsychologistId == id && a.Status == "Active")
+                .ToListAsync();
+
+            var pricingCache = new Dictionary<int, PatientPricingResult>();
+            foreach (var patientId in schedules.Select(s => s.PatientId).Distinct())
+                pricingCache[patientId] = await _pricing.GetPatientPricingAsync(patientId);
+
+            var breakdown = new List<dynamic>();
+            decimal totalCalculatedAmount = 0;
+
+            var grouped = schedules.GroupBy(s => s.PatientId);
+            foreach (var g in grouped)
+            {
+                var schedCount = g.Count();
+                var firstSched = g.First();
+
+                var assignment = assignmentsList.FirstOrDefault(a => a.PatientId == g.Key);
+                var (subscriptionValue, maxSessions) = ResolvePatientSlot(g.Key, assignment, pricingCache);
+                var pct = firstSched.AppliedPercentage
+                    ?? assignment?.PsychologistRevenuePercentage
+                    ?? SubscriptionPricingService.DefaultPsychologistRevenuePercentage;
+
+                decimal patientTotalEarning = 0;
+                if (subscriptionValue > 0 && maxSessions > 0)
+                {
+                    var perSessionValue = Math.Round(subscriptionValue / maxSessions, 2, MidpointRounding.AwayFromZero);
+                    patientTotalEarning = perSessionValue * pct / 100 * schedCount;
+                    totalCalculatedAmount += patientTotalEarning;
+                }
+
+                breakdown.Add(new {
+                    PatientName = firstSched.Patient?.User?.FullName ?? "Unknown",
+                    Sessions = schedCount,
+                    SlotValue = subscriptionValue,
+                    MaxSessions = maxSessions,
+                    Percentage = pct,
+                    Earning = patientTotalEarning
+                });
+            }
+
+            ViewBag.PsyName = psy.User?.FullName ?? "—";
+            ViewBag.ActiveNav = "Payroll";
+            ViewBag.Payouts = payouts;
+            ViewBag.SelectedMonth = selectedMonth;
+            ViewBag.SelectedYear = selectedYear;
+            ViewBag.Breakdown = breakdown;
+            ViewBag.TotalCalculatedAmount = totalCalculatedAmount;
+            
+            return View(setting ?? new PsychologistPayrollSetting { PsychologistId = id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadPayoutProof(int psychologistId, int month, int year, decimal amount, Microsoft.AspNetCore.Http.IFormFile ProofDocument)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var psy = await _context.Psychologists.Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.PsychologistId == psychologistId);
+            if (psy == null || psy.UserId == null) return NotFound();
+
+            if (ProofDocument != null && ProofDocument.Length > 0)
+            {
+                string path = await _uploads.SaveAsync(psy.UserId, "payouts", ProofDocument);
+                
+                var payout = new MonthlyPayout
+                {
+                    PsychologistId = psychologistId,
+                    Month = month,
+                    Year = year,
+                    TotalAmount = amount,
+                    ProofOfTransferFilePath = path,
+                    Status = "Paid",
+                    PaidAt = DateTime.UtcNow
+                };
+
+                _context.MonthlyPayouts.Add(payout);
+                await _context.SaveChangesAsync();
+                
+                TempData["success"] = $"Bukti transfer bulan {month}/{year} berhasil diunggah.";
+            }
+
+            return RedirectToAction(nameof(Transfer), new { id = psychologistId });
+        }
+
+        private static (decimal SubscriptionValue, int MaxSessions) ResolvePatientSlot(
+            int patientId,
+            PatientPsychologistAssignment? assignment,
+            IReadOnlyDictionary<int, PatientPricingResult> pricingCache)
+        {
+            if (pricingCache.TryGetValue(patientId, out var pricing) && pricing.SubscriptionValuePerMonth > 0)
+                return (pricing.SubscriptionValuePerMonth, pricing.MaxSessions);
+
+            if (assignment?.SlotValue is > 0)
+            {
+                return (
+                    assignment.SlotValue.Value,
+                    assignment.MaxSessionsPerMonth ?? 4);
+            }
+
+            return (0, pricingCache.TryGetValue(patientId, out var fallback) ? fallback.MaxSessions : 4);
         }
     }
 
@@ -155,5 +354,6 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         public decimal GrossMonthly { get; set; }
         public decimal PerSessionValueTotal { get; set; }
         public decimal PsyShareMonthly { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }

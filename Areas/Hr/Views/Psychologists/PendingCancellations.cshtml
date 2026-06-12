@@ -8,7 +8,7 @@
 <div class="hr-page-wrap">
     @if (TempData["success"] is string ok)
     {
-        <div class="lu-alert-success" style="display:flex; align-items:center; gap:8px;">
+        <div class="lu-alert-success hpcan-alert-success">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             @ok
         </div>
@@ -23,72 +23,72 @@
 
     @if (!Model.Any())
     {
-        <div class="lu-empty-state" style="background:var(--lu-card); border-radius:var(--lu-radius-lg); border:1px solid var(--lu-border); padding:4rem 2rem;">
-            <div style="width:64px; height:64px; background:#F3F4F6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#9CA3AF;">
+        <div class="lu-empty-state hpcan-empty-state">
+            <div class="hpcan-empty-icon">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
             </div>
-            <h3 style="font-size:1.125rem; font-weight:600; color:var(--lu-text); margin:0 0 0.5rem;">Tidak Ada Permintaan Baru</h3>
-            <p style="color:var(--lu-text-muted); margin:0 0 1.5rem;">Semua kemitraan berjalan lancar. Tidak ada pembatalan yang menunggu persetujuan Anda.</p>
-            <a asp-controller="Psychologists" asp-action="Index" class="btn-primary" style="display:inline-flex; align-items:center; gap:0.5rem; text-decoration:none;">
+            <h3 class="hpcan-empty-title">Tidak Ada Permintaan Baru</h3>
+            <p class="hpcan-empty-sub">Semua kemitraan berjalan lancar. Tidak ada pembatalan yang menunggu persetujuan Anda.</p>
+            <a asp-controller="Psychologists" asp-action="Index" class="btn-primary hpcan-back-link">
                 Kembali ke Daftar Psikolog
             </a>
         </div>
     }
     else
     {
-        <div class="lu-card" style="padding:0; overflow:hidden;">
+        <div class="lu-card hpcan-card">
             <div class="lu-table-wrap">
                 <table class="adm-table">
                     <thead>
                         <tr>
-                            <th style="padding-left:1.5rem;">Karyawan (Pasien)</th>
+                            <th class="hpcan-th-start">Karyawan (Pasien)</th>
                             <th>Psikolog</th>
                             <th>Alasan Pembatalan</th>
                             <th>Diminta Pada</th>
-                            <th style="padding-right:1.5rem; text-align:right;">Aksi</th>
+                            <th class="hpcan-th-end">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var a in Model)
                         {
                             <tr>
-                                <td style="padding-left:1.5rem;">
-                                    <div style="display:flex; align-items:center; gap:0.75rem;">
-                                        <div style="width:36px; height:36px; border-radius:50%; background:var(--lu-primary-soft); color:var(--lu-primary); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px;">
+                                <td class="hpcan-td-start">
+                                    <div class="hpcan-patient-row">
+                                        <div class="hpcan-patient-avatar">
                                             @(a.Patient?.User?.FullName?.Substring(0, 1).ToUpper() ?? "?")
                                         </div>
-                                        <div style="font-weight:500; color:var(--lu-text);">
+                                        <div class="hpcan-patient-name">
                                             @(a.Patient?.User?.FullName ?? "—")
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                                    <div class="hpcan-psy-row">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                         @(a.Psychologist?.User?.FullName ?? "—")
                                     </div>
                                 </td>
                                 <td>
-                                    <div style="max-width:240px; font-size:0.875rem; color:var(--lu-text-muted); line-height:1.4;">
+                                    <div class="hpcan-reason">
                                         @(a.CancellationReason ?? "—")
                                     </div>
                                 </td>
                                 <td>
-                                    <span style="font-size:0.875rem; font-weight:500; background:#F3F4F6; padding:4px 8px; border-radius:6px;">
+                                    <span class="hpcan-date-badge">
                                         @(a.CancellationRequestedAt?.ToString("dd MMM yyyy") ?? "—")
                                     </span>
                                 </td>
-                                <td style="padding-right:1.5rem;">
-                                    <div style="display:flex; align-items:center; justify-content:flex-end; gap:0.5rem;">
-                                        <form asp-action="ApproveCancellation" method="post" style="margin:0;">
+                                <td class="hpcan-td-end">
+                                    <div class="hpcan-actions">
+                                        <form asp-action="ApproveCancellation" method="post" class="hpcan-form-inline">
                                             <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
-                                            <button type="submit" style="background:#FEE2E2; color:#B91C1C; border:1px solid #FECACA; padding:6px 12px; border-radius:6px; font-size:0.875rem; font-weight:600; cursor:pointer;" onclick="return confirm('Apakah Anda yakin ingin menyetujui pembatalan kemitraan ini?')">
+                                            <button type="submit" class="hpcan-btn-approve" onclick="return confirm('Apakah Anda yakin ingin menyetujui pembatalan kemitraan ini?')">
                                                 Setujui
                                             </button>
                                         </form>
-                                        <form asp-action="RejectCancellation" method="post" style="margin:0;">
+                                        <form asp-action="RejectCancellation" method="post" class="hpcan-form-inline">
                                             <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
-                                            <button type="submit" class="btn-outline" style="padding:6px 12px; border-radius:6px; font-size:0.875rem; font-weight:500;" onclick="return confirm('Tolak permintaan pembatalan ini?')">
+                                            <button type="submit" class="btn-outline hpcan-btn-reject" onclick="return confirm('Tolak permintaan pembatalan ini?')">
                                                 Tolak
                                             </button>
                                         </form>

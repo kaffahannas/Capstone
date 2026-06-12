@@ -33,9 +33,9 @@
         </ul>
     </div>
 
-    <div style="margin-top: 16px;">
-        <label style="display:flex; gap:10px; align-items:flex-start; font-size:13px;">
-            <input type="checkbox" asp-for="Accepted" style="margin-top:3px;" />
+    <div class="onb-terms-accept">
+        <label>
+            <input type="checkbox" asp-for="Accepted" />
             <span>Saya telah membaca dan menyetujui Syarat &amp; Ketentuan di atas.</span>
         </label>
         <span asp-validation-for="Accepted" class="text-danger"></span>

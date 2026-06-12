@@ -1,0 +1,127 @@
+.adm-profile-hero {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--adm-border);
+}
+
+.adm-profile-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: var(--adm-radius-pill);
+    object-fit: cover;
+    background: var(--adm-primary-soft);
+    flex-shrink: 0;
+    border: 3px solid var(--adm-primary-soft);
+}
+
+.adm-profile-name {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+}
+
+.adm-profile-email {
+    font-size: 13px;
+    color: var(--adm-muted);
+    margin-bottom: 10px;
+}
+
+.adm-profile-badges {
+    display: flex; gap: 6px; flex-wrap: wrap;
+}
+
+.usr-detail-grid {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.usr-detail-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.usr-avatar-fallback {
+    font-size: 28px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--adm-primary-soft);
+    color: var(--adm-primary);
+}
+
+.usr-profile-meta {
+    flex: 1;
+}
+
+.usr-emergency-phone {
+    color: var(--adm-muted);
+}
+
+.usr-doc-links {
+    display: flex;
+    gap: 8px;
+}
+
+.usr-doc-link {
+    color: var(--adm-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.usr-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.usr-card-desc {
+    font-size: 13px;
+    color: var(--adm-text-secondary);
+    margin: 0 0 14px;
+    line-height: 1.6;
+}
+
+.usr-btn-full {
+    width: 100%;
+}
+
+.usr-btn-toggle {
+    width: 100%;
+    border: none;
+    color: white;
+}
+
+.usr-btn-toggle--active {
+    background: #F59E0B;
+}
+
+.usr-delete-card {
+    border-color: #FCA5A5;
+    background: #FEF2F2;
+}
+
+.usr-delete-title {
+    color: #DC2626;
+}
+
+.usr-delete-desc {
+    font-size: 13px;
+    color: #991B1B;
+    margin: 0 0 14px;
+    line-height: 1.6;
+}
+
+.usr-btn-delete {
+    width: 100%;
+    background: #DC2626;
+    color: white;
+    border: none;
+}

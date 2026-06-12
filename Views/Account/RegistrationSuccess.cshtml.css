@@ -1,0 +1,22 @@
+.register-card--success {
+    text-align: center;
+    padding: 60px 30px;
+}
+
+.reg-success-icon {
+    margin: 0 auto 20px auto;
+}
+
+.auth-title--reg-success {
+    font-size: 24px;
+}
+
+.auth-subtitle--reg-success {
+    margin-bottom: 40px;
+}
+
+.btn-submit--link {
+    text-decoration: none;
+    display: inline-block;
+    box-sizing: border-box;
+}

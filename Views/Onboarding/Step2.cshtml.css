@@ -1,0 +1,132 @@
+.onb-step-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.onb-step-logo-img {
+    width: 28px;
+    height: auto;
+}
+
+.onb-step-logo-text {
+    font-weight: 700;
+    color: #7C3AED;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+}
+
+.auth-title--step2 {
+    font-size: 24px;
+}
+
+.progress-container--step2 {
+    width: 100%;
+    height: 8px;
+    background-color: #E5E7EB;
+    border-radius: 10px;
+    margin-top: 12px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.progress-bar--step2 {
+    height: 100%;
+    background-color: var(--primary-purple);
+    width: 66.66%;
+    border-radius: 10px;
+}
+
+.onb-step-note {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.form-select-custom {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M6 9L12 15L18 9\' stroke=\'%236B7280\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0px center;
+    background-size: 20px;
+    cursor: pointer;
+}
+
+.onb-doc-label-wrap {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.upload-area--step2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px dashed #D1D5DB;
+    border-radius: 12px;
+    padding: 40px 20px;
+    background-color: #F9FAFB;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.upload-icon--step2 {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+    transition: stroke 0.3s ease;
+}
+
+.upload-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.upload-subtext {
+    font-size: 12px;
+    color: #6b7280;
+    text-align: center;
+}
+
+.file-input-hidden {
+    display: none;
+}
+
+.validation-center-wrap {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.upload-text--success {
+    color: #10B981;
+}
+
+.upload-area--drag {
+    border-color: #7C3AED;
+    background-color: #F5F3FF;
+}
+
+.upload-area--has-file {
+    border-color: #10B981;
+    background-color: #ECFDF5;
+}
+
+.upload-icon--purple {
+    stroke: #7C3AED;
+}
+
+.upload-icon--success {
+    stroke: #10B981;
+}
+
+.upload-icon--default {
+    stroke: #9CA3AF;
+}

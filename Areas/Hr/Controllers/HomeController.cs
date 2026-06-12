@@ -42,6 +42,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             // ─── Company-scoped queries ───
             var patientsQ = _context.Patients
                 .Include(p => p.User)
+                .Include(p => p.Division)
                 .Where(p => p.CompanyId == companyId && p.EmploymentStatus == "active");
 
             var activeCount = await patientsQ.CountAsync();
@@ -49,9 +50,10 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             var beresiko    = await patientsQ.CountAsync(p => p.MentalHealthStatus == "Beresiko");
             var bahaya      = await patientsQ.CountAsync(p => p.MentalHealthStatus == "Bahaya");
 
-            var divisions = await patientsQ
-                .Where(p => p.Department != null && p.Department != "")
-                .Select(p => p.Department!)
+            var divisions = await _context.Patients
+                .Include(p => p.Division)
+                .Where(p => p.CompanyId == companyId && p.Division != null)
+                .Select(p => p.Division!.Name)
                 .Distinct()
                 .OrderBy(d => d)
                 .ToListAsync();
@@ -63,7 +65,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 {
                     PatientId  = p.PatientId,
                     FullName   = p.User!.FullName,
-                    Department = p.Department,
+                    Department = p.Division != null ? p.Division.Name : "Belum Diatur",
                     Status     = p.MentalHealthStatus
                 })
                 .ToListAsync();

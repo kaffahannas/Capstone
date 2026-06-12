@@ -101,6 +101,10 @@ else if (Model.IsB2B)
                 {
                     <span class="sub-plan-active">✓ Sedang Aktif</span>
                 }
+                else if (Model.IsB2B && Model.CompanySponsors)
+                {
+                    <span class="sub-plan-active sub-plan-sponsored">✓ Ditanggung Perusahaan</span>
+                }
                 else
                 {
                     <form asp-action="Checkout" method="post">
@@ -141,6 +145,10 @@ else if (Model.IsB2B)
                 @if (yearlyIsActive)
                 {
                     <span class="sub-plan-active">✓ Sedang Aktif</span>
+                }
+                else if (Model.IsB2B && Model.CompanySponsors)
+                {
+                    <span class="sub-plan-active sub-plan-sponsored">✓ Ditanggung Perusahaan</span>
                 }
                 else
                 {

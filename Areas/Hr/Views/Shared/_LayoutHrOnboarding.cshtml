@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/onboarding.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
     <div class="onb-wrapper">
@@ -27,7 +28,7 @@
             {
                 <div class="onb-progress-label">Langkah @progress.Current dari @progress.Total</div>
                 <div class="onb-progress">
-                    <div class="onb-progress-bar" style="width: @(progress.Percent)%;"></div>
+                    <div class="onb-progress-bar" style="--bar-w: @(progress.Percent)%;"></div>
                 </div>
             }
         }
@@ -44,11 +45,28 @@
             input.addEventListener('change', () => {
                 const previewId = input.dataset.preview;
                 const preview = previewId ? document.getElementById(previewId) : null;
-                if (!preview || !input.files?.length) return;
+                const placeholder = input.closest('.onb-upload-zone').querySelector('.onb-upload-placeholder');
+                if (!preview || !input.files?.length) {
+                    if (placeholder) placeholder.style.display = 'flex';
+                    if (preview) preview.hidden = true;
+                    return;
+                }
                 const file = input.files[0];
                 preview.hidden = false;
+                if (placeholder) placeholder.style.display = 'none';
                 if (file.type === 'application/pdf') {
-                    preview.innerHTML = '<p class="onb-file-link">📄 ' + file.name + ' (siap diunggah)</p>';
+                    preview.innerHTML = `
+                        <a href="javascript:void(0)" class="onb-file-link">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <span class="file-name">${file.name}</span>
+                            <span class="file-status">(Siap diunggah)</span>
+                        </a>`;
                 } else if (file.type.startsWith('image/')) {
                     const img = document.createElement('img');
                     img.className = 'onb-upload-thumb';

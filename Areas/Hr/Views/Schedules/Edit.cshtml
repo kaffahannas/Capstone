@@ -9,27 +9,27 @@
     Riwayat Jadwal
 </a>
 
-<div style="max-width:640px;">
-    <h2 style="margin:0 0 4px;font-size:22px;font-weight:800;color:var(--text-dark);">Edit Jadwal Konseling</h2>
-    <p style="margin:0 0 20px;color:var(--text-muted);font-size:14px;">
+<div class="hrsch-edit-wrap">
+    <h2 class="hrsch-edit-title">Edit Jadwal Konseling</h2>
+    <p class="hrsch-edit-sub">
         Pasien: <strong>@Model.PatientName</strong> · Psikolog: <strong>@Model.PsychologistName</strong>
     </p>
 
     <form asp-action="Edit" method="post">
         <div class="detail-card">
             <input type="hidden" asp-for="ScheduleId" />
-            <div asp-validation-summary="ModelOnly" style="background:#FEE2E2;color:#B91C1C;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:13px;"></div>
+            <div asp-validation-summary="ModelOnly" class="hrsch-edit-val-summary"></div>
 
             <div class="form-group">
                 <label asp-for="SessionStart" class="form-label">Waktu Mulai</label>
                 <input asp-for="SessionStart" type="datetime-local" class="form-control" />
-                <span asp-validation-for="SessionStart" style="color:#DC2626;font-size:12px;"></span>
+                <span asp-validation-for="SessionStart" class="hrsch-edit-val-error"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="DurationMinutes" class="form-label">Durasi (menit)</label>
                 <input asp-for="DurationMinutes" type="number" min="15" max="240" class="form-control" />
-                <span asp-validation-for="DurationMinutes" style="color:#DC2626;font-size:12px;"></span>
+                <span asp-validation-for="DurationMinutes" class="hrsch-edit-val-error"></span>
             </div>
 
             <div class="form-group">
@@ -42,12 +42,12 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Notes" class="form-label">Catatan <small style="color:var(--text-muted);font-weight:400;">(opsional)</small></label>
-                <textarea asp-for="Notes" rows="4" class="note-textarea" style="margin-bottom:0;" placeholder="Tambahkan catatan..."></textarea>
+                <label asp-for="Notes" class="form-label">Catatan <small class="hrsch-edit-label-opt">(opsional)</small></label>
+                <textarea asp-for="Notes" rows="4" class="note-textarea hrsch-edit-textarea" placeholder="Tambahkan catatan..."></textarea>
             </div>
         </div>
 
-        <div class="modal-footer" style="padding:0;margin-top:16px;">
+        <div class="modal-footer hrsch-edit-footer">
             <a asp-action="Index" class="btn-outline">Batalkan</a>
             <button type="submit" class="btn-fill">Simpan Perubahan</button>
         </div>

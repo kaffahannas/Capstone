@@ -19,37 +19,44 @@
     };
 }
 
-<div style="display: flex; flex-direction: column; height: calc(100vh - 120px);">
+<div class="tasks-page">
 
-<div class="tasks-hero" style="flex-shrink: 0; background: linear-gradient(135deg, var(--lu-primary) 0%, #A78BFA 100%); color: white; padding: 32px; border-radius: 20px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2); position: relative; overflow: hidden;">
-    <div style="position: absolute; right: -20px; top: -40px; opacity: 0.1; font-size: 150px; user-select: none;">📝</div>
-    <div style="position: relative; z-index: 1;">
-        <h1 style="margin: 0 0 8px; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-            <span style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 8px; font-size: 24px; line-height: 1;">✏️</span>
+<div class="tasks-hero">
+    <div class="tasks-hero-deco">📝</div>
+    <div class="tasks-hero-inner">
+        <h1 class="tasks-hero-title">
+            <span class="tasks-hero-icon">✏️</span>
             Tugas Kamu
         </h1>
-        <p style="margin: 0; font-size: 15px; opacity: 0.9;">Selesaikan tugas-tugas dari Psikolog untuk memantau perkembanganmu.</p>
+        <p class="tasks-hero-sub">Selesaikan tugas-tugas dari Psikolog untuk memantau perkembanganmu.</p>
     </div>
 </div>
 
-<div class="tasks-container" style="flex: 1; min-height: 0; background: #ffffff; border-radius: 24px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
-    <form method="get" id="filterForm" style="display: block; margin-bottom: 20px;">
-        <div class="tasks-toolbar" style="margin-bottom: 16px; display: block;">
-            <label class="task-search" style="display: flex; align-items: center; background: #F9FAFB; padding: 0; border-radius: 999px; border: 1.5px solid var(--lu-border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); cursor: text; transition: all 0.2s ease; width: 100%; max-width: 400px; overflow: hidden;">
-                <span class="icon" style="font-size: 18px; color: var(--lu-text-muted); margin-left: 16px;">🔍</span>
-                <input type="search" name="search" placeholder="Cari Tugas..." value="@Model.Search" style="border: none; background: transparent; flex: 1; outline: none; padding: 10px 16px; font-size: 14px; color: var(--lu-text);" />
+<div class="tasks-container">
+    @if (TempData["success"] is string s)
+    {
+        <div class="tasks-success">
+            ✔️ @s
+        </div>
+    }
+
+    <form method="get" id="filterForm" class="tasks-filter-form">
+        <div class="tasks-toolbar">
+            <label class="task-search tasks-search-label">
+                <span class="icon">🔍</span>
+                <input type="search" name="search" placeholder="Cari Tugas..." value="@Model.Search" class="tasks-search-input" />
             </label>
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; gap: 32px; margin-bottom: 20px;">
+        <div class="tasks-filter-row">
             <div>
-                <p class="onb-subtitle" style="margin: 0 0 8px; font-size: 12px; font-weight: 600; color: var(--lu-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Status Tugas</p>
-                <div class="task-chips" style="margin-bottom: 0;">
+                <p class="tasks-filter-group-label">Status Tugas</p>
+                <div class="task-chips tasks-chips--flat">
                     @foreach (var c in statusChips)
                     {
                         var selected = Model.Statuses.Contains(c.Item1);
                         <label class="task-chip @(selected ? "selected" : "")">
-                            <input type="checkbox" name="status" value="@c.Item1" checked="@selected" style="display:none" onchange="document.getElementById('filterForm').submit()" />
+                            <input type="checkbox" name="status" value="@c.Item1" checked="@selected" onchange="document.getElementById('filterForm').submit()" />
                             @c.Item2
                         </label>
                     }
@@ -57,13 +64,13 @@
             </div>
             
             <div>
-                <p class="onb-subtitle" style="margin: 0 0 8px; font-size: 12px; font-weight: 600; color: var(--lu-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Tenggat Waktu</p>
-                <div class="task-chips" style="margin-bottom: 0;">
+                <p class="tasks-filter-group-label">Tenggat Waktu</p>
+                <div class="task-chips tasks-chips--flat">
                     @foreach (var c in periodChips)
                     {
                         var selected = Model.Periods.Contains(c.Item1);
                         <label class="task-chip @(selected ? "selected" : "")">
-                            <input type="checkbox" name="period" value="@c.Item1" checked="@selected" style="display:none" onchange="document.getElementById('filterForm').submit()" />
+                            <input type="checkbox" name="period" value="@c.Item1" checked="@selected" onchange="document.getElementById('filterForm').submit()" />
                             @c.Item2
                         </label>
                     }
@@ -80,16 +87,16 @@
 }
 else
 {
-    <div class="custom-scroll" style="flex: 1; overflow-y: auto; padding-right: 12px; margin-right: -4px; padding-bottom: 20px;">
+    <div class="custom-scroll tasks-list-scroll">
         @foreach (var t in Model.Items)
         {
-            <a class="task-card @WorksheetStatus.CssClass(t.Status)" asp-action="Detail" asp-route-id="@t.WorksheetId">
+            <a href="javascript:void(0)" class="task-card @WorksheetStatus.CssClass(t.Status)" onclick="openTaskModal(@t.WorksheetId)">
                 <div>
                     <h4>@t.TaskName</h4>
                     <p class="desc">@t.Description</p>
                     <div class="meta">
                         <span>Status: <strong>@t.StatusLabel</strong></span>
-                        <span style="margin-left: 8px;">• @t.PsychologistName</span>
+                        <span class="tasks-meta-sep">• @t.PsychologistName</span>
                     </div>
                 </div>
                 <div class="right">
@@ -104,7 +111,7 @@ else
 
     @if (Model.HasMore)
     {
-        <div style="text-align:right; margin-top:16px;">
+        <div class="tasks-load-more">
             <a class="btn-pill ghost"
                asp-action="Index"
                asp-route-search="@Model.Search"
@@ -119,4 +126,33 @@ else
 </div>
 </div>
 
+<div class="hrpf-modal-overlay" id="taskModalOverlay">
+    <div class="hrpf-modal tasks-modal" id="taskModalContainer">
+        <!-- Modal content loaded via AJAX -->
+    </div>
+</div>
 
+@section Scripts {
+    <script>
+        async function openTaskModal(id) {
+            try {
+                const res = await fetch(`/Patient/Tasks/DetailModal/${id}`);
+                if (!res.ok) throw new Error('Network error');
+                const html = await res.text();
+                document.getElementById('taskModalContainer').innerHTML = html;
+                document.getElementById('taskModalOverlay').classList.add('is-open');
+                
+                const scripts = document.getElementById('taskModalContainer').getElementsByTagName('script');
+                for (let i = 0; i < scripts.length; i++) {
+                    eval(scripts[i].innerText);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Gagal memuat detail tugas.");
+            }
+        }
+        function closeTaskModal() {
+            document.getElementById('taskModalOverlay').classList.remove('is-open');
+        }
+    </script>
+}

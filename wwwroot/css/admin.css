@@ -395,7 +395,7 @@ body {
     border: 1px solid var(--adm-border);
     border-radius: var(--adm-radius);
     box-shadow: var(--adm-shadow-sm);
-    overflow: hidden;
+    overflow-x: auto;
 }
 .adm-table {
     width: 100%;
@@ -424,8 +424,8 @@ body {
     transition: background 0.12s;
 }
 .adm-table tbody tr:hover { background: #F8FAFC; }
-.adm-table a { color: var(--adm-primary); text-decoration: none; font-weight: 500; }
-.adm-table a:hover { text-decoration: underline; }
+.adm-table a:not(.btn) { color: var(--adm-primary); text-decoration: none; font-weight: 500; }
+.adm-table a:not(.btn):hover { text-decoration: underline; }
 
 /* User row with avatar */
 .adm-user-cell {
@@ -671,31 +671,35 @@ body {
    ═══════════════════════════════════════ */
 .adm-tabs {
     display: flex;
-    gap: 4px;
-    padding: 4px;
-    background: var(--adm-bg);
-    border-radius: var(--adm-radius-sm);
-    border: 1px solid var(--adm-border);
+    flex-wrap: wrap;
+    gap: 8px;
     width: fit-content;
     margin-bottom: 20px;
 }
 .adm-tab {
-    padding: 7px 18px;
-    border-radius: 6px;
+    padding: 8px 18px;
+    border-radius: var(--adm-radius-pill);
     font-size: 13px;
     font-weight: 600;
     color: var(--adm-text-secondary);
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
     text-decoration: none;
-    transition: background 0.15s, color 0.15s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     gap: 6px;
 }
-.adm-tab:hover { background: white; color: var(--adm-text); }
-.adm-tab.active {
-    background: white;
+.adm-tab:hover {
+    border-color: var(--adm-primary);
     color: var(--adm-primary);
-    box-shadow: var(--adm-shadow-sm);
+    background: var(--adm-card);
+}
+.adm-tab.active {
+    background: var(--adm-primary);
+    color: white;
+    border-color: var(--adm-primary);
+    box-shadow: 0 4px 12px var(--adm-primary-glow);
 }
 
 /* ═══════════════════════════════════════

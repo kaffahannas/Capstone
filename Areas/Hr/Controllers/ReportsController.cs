@@ -6,6 +6,7 @@ using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PsychologistModel = LightenUp.Web.Models.Psychologist;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -85,7 +86,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             var hr = await GetHrAsync();
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
 
-            var patient = await _context.Patients.Include(p => p.User)
+            var patient = await _context.Patients.Include(p => p.User).Include(p => p.Division)
                 .FirstOrDefaultAsync(p => p.PatientId == patientId && p.CompanyId == hr.CompanyId);
             if (patient == null) return NotFound();
 
@@ -160,7 +161,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
             var user = await _userManager.GetUserAsync(User);
 
-            var patient = await _context.Patients.Include(p => p.User)
+            var patient = await _context.Patients.Include(x => x.User).Include(x => x.Division)
                 .FirstOrDefaultAsync(p => p.PatientId == model.PatientId && p.CompanyId == hr.CompanyId);
             if (patient == null) return NotFound();
             var psy = await _context.Psychologists.Include(p => p.User)
@@ -183,7 +184,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                     ReportedByHrUserId = user!.Id,
                     PatientId = patient.PatientId,
                     PsychologistId = psy.PsychologistId,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow
                 };
                 _context.Reports.Add(report);
             }
@@ -246,7 +247,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (hr == null || hr.CompanyId == null)
                 return Json(new { ok = false, errors = new[] { "Sesi tidak valid. Silakan login ulang." } });
 
-            var patient = await _context.Patients.Include(p => p.User)
+            var patient = await _context.Patients.Include(p => p.User).Include(p => p.Division)
                 .FirstOrDefaultAsync(p => p.PatientId == patientId && p.CompanyId == hr.CompanyId);
             if (patient == null)
                 return Json(new { ok = false, errors = new[] { "Karyawan tidak ditemukan." } });
@@ -285,7 +286,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 {
                     await _emailSender.SendAsync(psyEmail, vm.PreviewEmailSubject, vm.PreviewEmailBody);
                     report.Status = "Sent";
-                    report.EmailSentAt = DateTime.Now;
+                    report.EmailSentAt = DateTime.UtcNow;
                 }
                 catch (Exception ex)
                 {
@@ -313,7 +314,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         //  Helpers
         // ═════════════════════════════════════════
         private async Task<HrReportCreateViewModel> BuildCreateViewModel(LightenUp.Web.Models.Patient patient,
-            Psychologist psy, HrStaff hr, string? notes)
+            PsychologistModel psy, HrStaff hr, string? notes)
         {
             var today = DateTime.Today;
             var from7 = today.AddDays(-6);
@@ -365,7 +366,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             sb.AppendLine($"Halo Dr. {psy.User?.FullName ?? "Psikolog"},");
             sb.AppendLine();
             sb.AppendLine($"Laporan dari {(await _userManager.GetUserAsync(User))?.FullName ?? "HR"} ({hr.Company?.Name}) ");
-            sb.AppendLine($"mengenai karyawan {patient.User?.FullName} ({patient.Department ?? "—"}) ");
+            sb.AppendLine($"mengenai karyawan {patient.User?.FullName} ({(patient.DivisionId == null ? "Belum Diatur" : patient.Division?.Name ?? "Belum Diatur")}) ");
             sb.AppendLine($"per {DateTime.Now:d MMMM yyyy}.");
             sb.AppendLine();
             sb.AppendLine($"• Status mental: {patient.MentalHealthStatus}");
@@ -385,7 +386,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             {
                 PatientId = patient.PatientId,
                 PatientName = patient.User?.FullName ?? "—",
-                PatientDepartment = patient.Department,
+                PatientDepartment = patient.DivisionId == null ? "Belum Diatur" : patient.Division?.Name ?? "Belum Diatur",
                 PatientStatus = patient.MentalHealthStatus,
                 PsychologistId = psy.PsychologistId,
                 PsychologistName = psy.User?.FullName ?? "—",

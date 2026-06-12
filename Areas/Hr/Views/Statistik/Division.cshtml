@@ -71,21 +71,21 @@
         <div class="hr-stat-pill">
             <div class="hr-stat-pill-ico hr-stat-pill-ico--green">✅</div>
             <div>
-                <div class="hr-stat-pill-val" style="color:#059669;">@Model.Sehat</div>
+                <div class="hr-stat-pill-val hr-stat-pill-val--sehat">@Model.Sehat</div>
                 <div class="hr-stat-pill-lbl">Sehat</div>
             </div>
         </div>
         <div class="hr-stat-pill">
             <div class="hr-stat-pill-ico hr-stat-pill-ico--amber">⚠️</div>
             <div>
-                <div class="hr-stat-pill-val" style="color:#D97706;">@Model.Beresiko</div>
+                <div class="hr-stat-pill-val hr-stat-pill-val--beresiko">@Model.Beresiko</div>
                 <div class="hr-stat-pill-lbl">Beresiko</div>
             </div>
         </div>
         <div class="hr-stat-pill">
             <div class="hr-stat-pill-ico hr-stat-pill-ico--red">🔴</div>
             <div>
-                <div class="hr-stat-pill-val" style="color:#DC2626;">@Model.Bahaya</div>
+                <div class="hr-stat-pill-val hr-stat-pill-val--bahaya">@Model.Bahaya</div>
                 <div class="hr-stat-pill-lbl">Bahaya</div>
             </div>
         </div>
@@ -97,9 +97,9 @@
             <h2 class="hrst-chart-card-title">Perubahan Mood dari Waktu ke Waktu</h2>
             @if (Model.AvgScores.Sum() == 0)
             {
-                <div class="hr-empty" style="padding:32px 16px;">
-                    <p class="hr-empty-title" style="font-size:14px;">Belum ada data mood</p>
-                    <p class="hr-empty-sub" style="font-size:12.5px;">Belum ada data mood untuk divisi ini pada periode ini.</p>
+                <div class="hr-empty hr-empty--compact">
+                    <p class="hr-empty-title hr-empty-title--sm">Belum ada data mood</p>
+                    <p class="hr-empty-sub hr-empty-sub--sm">Belum ada data mood untuk divisi ini pada periode ini.</p>
                 </div>
             }
             else
@@ -111,21 +111,21 @@
         @* ── Status doughnut ── *@
         <div class="hrst-chart-card">
             <h2 class="hrst-chart-card-title">Distribusi Status Karyawan</h2>
-            <div style="max-height: 250px; display: flex; justify-content: center;">
+            <div class="hrst-chart-wrap">
                 <canvas id="statusChart" height="200"></canvas>
             </div>
-            <div style="display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:13px;flex-wrap:wrap;">
-                <span style="color:#10B981;font-weight:600;">● Sehat (@Model.Sehat)</span>
-                <span style="color:#F59E0B;font-weight:600;">● Beresiko (@Model.Beresiko)</span>
-                <span style="color:#EF4444;font-weight:600;">● Bahaya (@Model.Bahaya)</span>
+            <div class="hrst-legend">
+                <span class="hrst-legend-item--sehat">● Sehat (@Model.Sehat)</span>
+                <span class="hrst-legend-item--beresiko">● Beresiko (@Model.Beresiko)</span>
+                <span class="hrst-legend-item--bahaya">● Bahaya (@Model.Bahaya)</span>
             </div>
         </div>
     </div>
 
     @* ── Actions ── *@
-    <div style="display:flex;gap:12px;" class="no-print">
-        <a asp-action="Index" class="btn-secondary" style="flex:1;text-align:center;">← Kembali ke Statistik</a>
-        <button type="button" class="btn-primary" style="flex:1;" onclick="window.print()">🖨️ Simpan (PDF/Image)</button>
+    <div class="hrdiv-actions no-print">
+        <a asp-action="Index" class="btn-secondary hrdiv-btn-back">← Kembali ke Statistik</a>
+        <button type="button" class="btn-primary hrdiv-btn-print" onclick="window.print()">🖨️ Simpan (PDF/Image)</button>
     </div>
 
 </div>

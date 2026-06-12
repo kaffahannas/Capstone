@@ -1,0 +1,100 @@
+@model LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel
+@{
+    var statusClass = Model.Status switch
+    {
+        "Completed" => "completed",
+        "InProgress" => "review",
+        "Assigned" => "assigned",
+        _ => "assigned"
+    };
+
+    var statusLabel = Model.Status switch
+    {
+        "Completed" => "Selesai",
+        "InProgress" => "Review",
+        "Assigned" => "Belum Dikerjakan",
+        _ => "Belum Dikerjakan"
+    };
+}
+
+<div class="modal-container wdm-modal">
+    <div class="modal-header wdm-header">
+        <h2 class="modal-title wdm-title">Tinjau Worksheet</h2>
+        <button class="close-btn" onclick="closeWorksheetDetailModal()">&times;</button>
+    </div>
+
+    <div class="wdm-body">
+        <div class="wdm-top">
+            <div class="wdm-patient-row">
+                <div class="wdm-avatar">
+                    @(Model.PatientName?.Length > 0 ? Model.PatientName.Substring(0, 1).ToUpper() : "?")
+                </div>
+                <div>
+                    <div class="wdm-patient-name">@(Model.PatientName ?? "—")</div>
+                    <div class="wdm-patient-role">Pasien Klien</div>
+                </div>
+            </div>
+            <span class="psy-status-chip psy-status--@statusClass">@statusLabel</span>
+        </div>
+
+        <div class="wdm-details">
+            <div class="wdm-field">
+                <div class="wdm-field-label">Nama Tugas</div>
+                <div class="wdm-field-val">@Model.TaskName</div>
+            </div>
+            <div class="wdm-field">
+                <div class="wdm-field-label">Deskripsi</div>
+                <div class="wdm-field-text">@(Model.Description ?? "—")</div>
+            </div>
+            
+            <div class="wdm-field">
+                <div class="wdm-field-label">Catatan Pasien</div>
+                <div class="wdm-note-box">
+                    @(string.IsNullOrEmpty(Model.PatientNote) ? "—" : Model.PatientNote)
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ProofImagePath))
+            {
+                <div class="wdm-field">
+                    <div class="wdm-proof-label">Bukti Pengerjaan</div>
+                    <img src="@Model.ProofImagePath" class="wdm-proof-img" alt="bukti" />
+                </div>
+            }
+        </div>
+
+        <form method="post" action="/Psychologist/Worksheet/ReviewWorksheet" class="wdm-feedback-form">
+            <input type="hidden" name="WorksheetId" value="@Model.WorksheetId" />
+            <input type="hidden" name="TaskName" value="@Model.TaskName" />
+            <input type="hidden" name="PatientName" value="@Model.PatientName" />
+            <input type="hidden" name="Status" value="@Model.Status" />
+            <div class="wdm-feedback-title">Umpan Balik Anda</div>
+            <textarea name="PsychologistFeedback" rows="3" class="wdm-feedback-input">@Model.PsychologistFeedback</textarea>
+            
+            <div class="wdm-form-actions">
+                <button type="submit" name="submitAction" value="SaveNote" class="btn-outline wdm-action-btn">
+                    Simpan Catatan
+                </button>
+                @if (Model.Status == "Completed")
+                {
+                    <button type="submit" name="submitAction" value="Reopen" class="btn-fill wdm-action-btn wdm-action-btn--reopen">
+                        Buka Kembali
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" name="submitAction" value="Complete" class="btn-fill wdm-action-btn">
+                        Tandai Selesai
+                    </button>
+                }
+            </div>
+        </form>
+
+        <div class="wdm-footer">
+            <button type="button" class="btn-outline wdm-footer-btn wdm-footer-btn--edit" onclick="openEditWorksheetModal(@Model.WorksheetId)">
+                Edit Worksheet
+            </button>
+            <button type="button" class="btn-outline wdm-footer-btn wdm-footer-btn--close" onclick="closeWorksheetDetailModal()">Tutup</button>
+        </div>
+    </div>
+</div>

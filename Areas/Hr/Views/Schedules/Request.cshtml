@@ -9,16 +9,16 @@
     Riwayat Jadwal
 </a>
 
-<div style="max-width:640px;">
-    <h2 style="margin:0 0 4px;font-size:22px;font-weight:800;color:var(--text-dark);">Permintaan Jadwal Sesi</h2>
-    <p style="margin:0 0 20px;color:var(--text-muted);font-size:14px;">
+<div class="hrsch-req-wrap">
+    <h2 class="hrsch-req-title">Permintaan Jadwal Sesi</h2>
+    <p class="hrsch-req-sub">
         Psikolog akan meninjau dan menetapkan jadwal yang sesuai dalam 1–2 hari kerja.
     </p>
 
     <form asp-action="Request" method="post">
         <div class="detail-card">
             <input type="hidden" asp-for="RequestType" />
-            <div asp-validation-summary="ModelOnly" style="background:#FEE2E2;color:#B91C1C;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:13px;"></div>
+            <div asp-validation-summary="ModelOnly" class="hrsch-req-val-summary"></div>
 
             <div class="form-group">
                 <label asp-for="PatientId" class="form-label">Untuk Pasien</label>
@@ -29,21 +29,21 @@
                         <option value="@p.PatientId">@p.FullName @(p.Department != null ? $"({p.Department})" : "")</option>
                     }
                 </select>
-                <span asp-validation-for="PatientId" style="color:#DC2626;font-size:12px;"></span>
+                <span asp-validation-for="PatientId" class="hrsch-req-val-error"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="ProposedSessionDate" class="form-label">Usulan Tanggal &amp; Waktu <small style="color:var(--text-muted);font-weight:400;">(opsional)</small></label>
+                <label asp-for="ProposedSessionDate" class="form-label">Usulan Tanggal &amp; Waktu <small class="hrsch-req-label-opt">(opsional)</small></label>
                 <input asp-for="ProposedSessionDate" type="datetime-local" class="form-control" />
             </div>
 
             <div class="form-group">
-                <label asp-for="Notes" class="form-label">Catatan / Alasan <small style="color:var(--text-muted);font-weight:400;">(opsional)</small></label>
-                <textarea asp-for="Notes" rows="4" class="note-textarea" style="margin-bottom:0;" placeholder="Jelaskan alasan permintaan sesi ini..."></textarea>
+                <label asp-for="Notes" class="form-label">Catatan / Alasan <small class="hrsch-req-label-opt">(opsional)</small></label>
+                <textarea asp-for="Notes" rows="4" class="note-textarea hrsch-req-textarea" placeholder="Jelaskan alasan permintaan sesi ini..."></textarea>
             </div>
         </div>
 
-        <div class="modal-footer" style="padding:0;margin-top:16px;">
+        <div class="modal-footer hrsch-req-footer">
             <a asp-action="Index" class="btn-outline">Batalkan</a>
             <button type="submit" class="btn-fill">Kirim Permintaan</button>
         </div>

@@ -1,0 +1,112 @@
+/* Register page header — back button no longer overlaps title */
+.register-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.register-back {
+    position: static;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.register-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.register-title {
+    margin: 0 0 6px;
+    font-size: 24px;
+    line-height: 1.25;
+}
+
+.register-subtitle {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.45;
+}
+
+/* Tighter label ↔ input spacing */
+.register-card .form-group {
+    margin-bottom: 20px;
+}
+
+.register-card .form-label {
+    margin-bottom: 4px;
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+}
+
+.register-card .form-control-custom {
+    padding: 6px 0 10px;
+    font-size: 15px;
+}
+
+.register-card .form-control-custom::placeholder {
+    color: #9CA3AF;
+}
+
+/* Role selection */
+.register-card .role-selection-group {
+    margin-top: 8px;
+    margin-bottom: 28px;
+}
+
+.register-role-cards {
+    gap: 10px;
+}
+
+.register-role-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 14px 10px;
+    border: 2px solid #E5E7EB;
+    border-radius: 14px;
+    background: #FAFAFA;
+    font-size: 14px;
+    font-weight: 600;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.register-role-card:hover {
+    border-color: #C4B5FD;
+    background: #F5F3FF;
+}
+
+.role-card-input:checked + .register-role-card {
+    border-color: #7C3AED;
+    background: #EDE9FE;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    color: #6D28D9;
+    font-weight: 600;
+}
+
+.role-note {
+    display: block;
+    margin-top: 12px;
+    font-size: 11.5px;
+    color: #6B7280;
+    line-height: 1.45;
+}
+
+.auth-footer--register {
+    margin-top: 24px;
+    padding-top: 4px;
+}
+
+@media (max-width: 575.98px) {
+    .register-role-cards {
+        gap: 8px;
+    }
+
+    .register-role-card {
+        min-height: 44px;
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+}

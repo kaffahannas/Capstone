@@ -31,10 +31,10 @@
 @if (TempData["success"] is string ok)  { <div class="adm-alert success">✅ @ok</div> }
 @if (TempData["error"]   is string err) { <div class="adm-alert error">⚠️ @err</div> }
 
-<div style="display:grid; grid-template-columns:2fr 1fr; gap:20px; align-items:start;">
+<div class="usr-detail-grid">
 
     <!-- Left column: profile + info -->
-    <div style="display:flex; flex-direction:column; gap:16px;">
+    <div class="usr-detail-main">
 
         <!-- Profile hero -->
         <div class="adm-card">
@@ -45,9 +45,9 @@
                 }
                 else
                 {
-                    <div class="adm-profile-avatar" style="font-size:28px; font-weight:800; display:flex; align-items:center; justify-content:center; background:var(--adm-primary-soft); color:var(--adm-primary);">@Initials(Model.FullName)</div>
+                    <div class="adm-profile-avatar usr-avatar-fallback">@Initials(Model.FullName)</div>
                 }
-                <div style="flex:1;">
+                <div class="usr-profile-meta">
                     <h2 class="adm-profile-name">@Model.FullName</h2>
                     <div class="adm-profile-email">@Model.Email</div>
                     <div class="adm-profile-badges">
@@ -82,38 +82,140 @@
                         <span class="adm-info-value">@Model.Department</span>
                     </div>
                 }
-                @if (!string.IsNullOrEmpty(Model.MentalHealthStatus))
+
+                @if (Model.Role == "Patient")
                 {
                     <div class="adm-info-row">
-                        <span class="adm-info-label">Status Mental</span>
+                        <span class="adm-info-label">Tanggal Lahir</span>
+                        <span class="adm-info-value">@(Model.DateOfBirth?.ToString("dd MMMM yyyy") ?? "—")</span>
+                    </div>
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">Jenis Kelamin</span>
+                        <span class="adm-info-value">@(Model.Gender ?? "—")</span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.CompanyName))
+                    {
+                        <div class="adm-info-row">
+                            <span class="adm-info-label">Perusahaan</span>
+                            <span class="adm-info-value">@Model.CompanyName @(string.IsNullOrEmpty(Model.Department) ? "" : $" ({Model.Department})")</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.MentalHealthStatus))
+                    {
+                        <div class="adm-info-row">
+                            <span class="adm-info-label">Status Mental</span>
+                            <span class="adm-info-value">@Model.MentalHealthStatus</span>
+                        </div>
+                    }
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">Kontak Darurat</span>
                         <span class="adm-info-value">
-                            @{
-                                var mIcon = Model.MentalHealthStatus switch { "Sehat" => "✅", "Beresiko" => "⚠️", _ => "🚨" };
-                            }
-                            @mIcon @Model.MentalHealthStatus
+                            @(Model.EmergencyContactName ?? "—")
+                            @if (!string.IsNullOrEmpty(Model.EmergencyContactPhone)) { <br/><small class="usr-emergency-phone">@Model.EmergencyContactPhone</small> }
                         </span>
                     </div>
                 }
-                @if (!string.IsNullOrEmpty(Model.Specialization))
+
+                @if (Model.Role == "Psychologist")
                 {
+                    @if (!string.IsNullOrEmpty(Model.Specialization))
+                    {
+                        <div class="adm-info-row">
+                            <span class="adm-info-label">Spesialisasi</span>
+                            <span class="adm-info-value">@Model.Specialization</span>
+                        </div>
+                    }
                     <div class="adm-info-row">
-                        <span class="adm-info-label">Spesialisasi</span>
-                        <span class="adm-info-value">@Model.Specialization</span>
+                        <span class="adm-info-label">Pendidikan Terakhir</span>
+                        <span class="adm-info-value">@(Model.LastDegree ?? "—") @(string.IsNullOrEmpty(Model.University) ? "" : $" - {Model.University}")</span>
                     </div>
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">Pengalaman Praktik</span>
+                        <span class="adm-info-value">@(Model.ExperienceYears.HasValue ? $"{Model.ExperienceYears} tahun" : "—")</span>
+                    </div>
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">Lokasi Praktik</span>
+                        <span class="adm-info-value">@(Model.PracticeLocation ?? "—")</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.LicenseNumber))
+                    {
+                        <div class="adm-info-row">
+                            <span class="adm-info-label">SIPP</span>
+                            <span class="adm-info-value"><code>@Model.LicenseNumber</code></span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.SiapNumber))
+                    {
+                        <div class="adm-info-row">
+                            <span class="adm-info-label">Nomor SIAP</span>
+                            <span class="adm-info-value"><code>@Model.SiapNumber</code></span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.AcademicDocumentUrl) || !string.IsNullOrEmpty(Model.StrDocumentUrl))
+                    {
+                        <div class="adm-info-row">
+                            <span class="adm-info-label">Dokumen</span>
+                            <span class="adm-info-value usr-doc-links">
+                                @if (!string.IsNullOrEmpty(Model.AcademicDocumentUrl)) { <a href="@Model.AcademicDocumentUrl" target="_blank" class="usr-doc-link">📄 Ijazah</a> }
+                                @if (!string.IsNullOrEmpty(Model.StrDocumentUrl)) { <a href="@Model.StrDocumentUrl" target="_blank" class="usr-doc-link">📄 STR</a> }
+                            </span>
+                        </div>
+                    }
                 }
-                @if (!string.IsNullOrEmpty(Model.LicenseNumber))
+
+                @if (Model.Role == "HR")
                 {
                     <div class="adm-info-row">
-                        <span class="adm-info-label">Nomor License</span>
-                        <span class="adm-info-value"><code>@Model.LicenseNumber</code></span>
+                        <span class="adm-info-label">Perusahaan</span>
+                        <span class="adm-info-value">@(Model.CompanyName ?? "—")</span>
                     </div>
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">Departemen</span>
+                        <span class="adm-info-value">@(Model.Department ?? "—")</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.CompanyRegistrationNumber))
+                    {
+                        <div class="adm-info-row">
+                            <span class="adm-info-label">NIB/SIUP Perusahaan</span>
+                            <span class="adm-info-value"><code>@Model.CompanyRegistrationNumber</code></span>
+                        </div>
+                    }
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">Pendidikan HR</span>
+                        <span class="adm-info-value">@(Model.LastDegree ?? "—") @(string.IsNullOrEmpty(Model.University) ? "" : $" - {Model.University}")</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.SupportDocumentUrl) || !string.IsNullOrEmpty(Model.AcademicDocumentUrl))
+                    {
+                        <div class="adm-info-row">
+                            <span class="adm-info-label">Dokumen Verifikasi</span>
+                            <span class="adm-info-value usr-doc-links">
+                                @if (!string.IsNullOrEmpty(Model.AcademicDocumentUrl)) { <a href="@Model.AcademicDocumentUrl" target="_blank" class="usr-doc-link">📄 Ijazah</a> }
+                                @if (!string.IsNullOrEmpty(Model.SupportDocumentUrl)) { <a href="@Model.SupportDocumentUrl" target="_blank" class="usr-doc-link">📄 Dokumen Bukti</a> }
+                            </span>
+                        </div>
+                    }
                 }
             </div>
         </div>
     </div>
 
     <!-- Right column: actions -->
-    <div style="display:flex; flex-direction:column; gap:16px;">
+    <div class="usr-sidebar">
+    
+        <!-- Edit Profile -->
+        <div class="adm-card">
+            <div class="adm-card-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Edit Data Pengguna
+            </div>
+            <p class="usr-card-desc">
+                Ubah informasi profil atau kontak pengguna ini.
+            </p>
+            <a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-primary btn-sm usr-btn-full">
+                ✏️ Edit Profil
+            </a>
+        </div>
 
         <!-- Toggle active -->
         <div class="adm-card">
@@ -121,35 +223,33 @@
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 Status Akun
             </div>
-            <p style="font-size:13px; color:var(--adm-text-secondary); margin:0 0 14px; line-height:1.6;">
+            <p class="usr-card-desc">
                 @(Model.IsActive ? "Akun ini sedang aktif. Nonaktifkan untuk mencabut akses login." : "Akun ini nonaktif. Aktifkan untuk memulihkan akses login.")
             </p>
             <form asp-action="ToggleActive" method="post">
                 <input type="hidden" name="id" value="@Model.UserId" />
                 <button type="submit"
-                        class="btn @(Model.IsActive ? "btn-danger" : "btn-success") btn-sm"
-                        style="width:100%;"
+                        class="btn @(Model.IsActive ? "btn-warning usr-btn-toggle usr-btn-toggle--active" : "btn-success usr-btn-toggle") btn-sm"
                         onclick="return confirm('@(Model.IsActive ? "Nonaktifkan" : "Aktifkan") akun ini?');">
                     @(Model.IsActive ? "🔒 Nonaktifkan Akun" : "🔓 Aktifkan Akun")
                 </button>
             </form>
         </div>
-
-        <!-- Reset password -->
-        <div class="adm-card">
-            <div class="adm-card-title">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Reset Kata Sandi
+        
+        <!-- Delete User -->
+        <div class="adm-card usr-delete-card">
+            <div class="adm-card-title usr-delete-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                Hapus Permanen
             </div>
-            <form asp-action="ResetPassword" method="post">
+            <p class="usr-delete-desc">
+                Peringatan: Tindakan ini tidak dapat dibatalkan. Semua data terkait pengguna ini akan dihapus.
+            </p>
+            <form asp-action="Delete" method="post">
                 <input type="hidden" name="id" value="@Model.UserId" />
-                <div class="adm-form-row" style="margin-bottom:12px;">
-                    <label>Kata sandi baru <small style="color:var(--adm-muted);">(min. 8 karakter)</small></label>
-                    <input type="text" name="newPassword" required minlength="8" placeholder="Masukkan kata sandi baru" />
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm" style="width:100%;"
-                        onclick="return confirm('Reset kata sandi pengguna ini?');">
-                    🔑 Reset Password
+                <button type="submit" class="btn btn-sm usr-btn-delete"
+                        onclick="return confirm('APAKAH ANDA YAKIN INGIN MENGHAPUS PENGGUNA INI SECARA PERMANEN?');">
+                    🗑️ Hapus Pengguna
                 </button>
             </form>
         </div>

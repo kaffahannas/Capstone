@@ -1,7 +1,7 @@
 @model IEnumerable<LightenUp.Web.Models.HrEmployeeRemovalRequest>
 @{
     ViewData["Title"] = "Pemberhentian Karyawan";
-    ViewBag.ActiveNav = "EmployeeRemovals";
+    ViewBag.ActiveNav = "Approvals";
 
     int totalAll = Model.Count();
 }
@@ -11,15 +11,29 @@
     <div class="adm-alert success">✅ @ok</div>
 }
 
-<div class="adm-tabs">
-    <a class="adm-tab" asp-action="Index" asp-route-tab="All">
-        Persetujuan Akun
-    </a>
-    <a class="adm-tab active" asp-action="EmployeeRemovals">
-        Pemberhentian Karyawan
-        @if (totalAll > 0) { <span class="nav-badge" style="position:static; margin-left:2px;">@totalAll</span> }
-    </a>
+<div class="adm-page-header apr-page-header">
+    <h1>Manajemen Persetujuan</h1>
+    <p class="adm-page-sub">Kelola persetujuan akun pengguna dan permintaan pemberhentian karyawan dari HR.</p>
 </div>
+
+<script>
+    function submitWithReason(form, promptMsg) {
+        var reason = prompt(promptMsg);
+        if (reason === null) return false; // Cancelled
+        if (!reason.trim()) { alert('Alasan wajib diisi.'); return false; }
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'note';
+        input.value = reason;
+        form.appendChild(input);
+        return true;
+    }
+</script>
+
+@{
+    ViewBag.ActiveTab = "EmployeeRemovals";
+}
+<partial name="_ApprovalsTabs" />
 
 @if (!Model.Any())
 {
@@ -42,51 +56,51 @@ else
                     <th>Diminta Oleh HR</th>
                     <th>Alasan</th>
                     <th>Status</th>
-                    <th style="width:140px;">Aksi</th>
+                    <th class="apr-th-actions">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td style="font-size:12px; color:var(--adm-muted); white-space:nowrap;">
+                        <td class="apr-td-time">
                             @item.CreatedAt.ToString("d MMM yyyy HH:mm")
                         </td>
                         <td>
-                            <div style="font-weight:600; font-size:13.5px;">@(item.Patient?.User?.FullName ?? "-")</div>
-                            <div style="font-size:12px; color:var(--adm-muted);">@(item.Patient?.User?.Email ?? "-")</div>
+                            <div class="apr-name-primary">@(item.Patient?.User?.FullName ?? "-")</div>
+                            <div class="apr-name-secondary">@(item.Patient?.User?.Email ?? "-")</div>
                         </td>
                         <td>
-                            <div style="font-size:13px; color:var(--adm-text-secondary);">@(item.RequestedByHr?.FullName ?? "-")</div>
+                            <div class="apr-td-secondary">@(item.RequestedByHr?.FullName ?? "-")</div>
                         </td>
-                        <td style="font-size:13px; color:var(--adm-text-secondary); max-width:250px;">
+                        <td class="apr-td-reason">
                             @item.Reason
                         </td>
                         <td>
                             @if (item.Status == "Approved")
-                            { <span class="badge badge-role-psy" style="background:#ECFDF5;color:#065F46">Disetujui</span> }
+                            { <span class="badge badge-role-psy apr-badge-approved">Disetujui</span> }
                             else if (item.Status == "Rejected")
-                            { <span class="badge badge-role-hr" style="background:#FEF2F2;color:#991B1B">Ditolak</span> }
+                            { <span class="badge badge-role-hr apr-badge-rejected">Ditolak</span> }
                             else
-                            { <span class="badge" style="background:#FFFBEB;color:#92400E">Menunggu</span> }
+                            { <span class="badge apr-badge-pending">Menunggu</span> }
                         </td>
                         <td>
                             @if (item.Status == "Pending")
                             {
-                                <div style="display:flex; gap:6px;">
-                                    <form asp-action="ApproveEmployeeRemoval" method="post" style="margin:0;">
+                                <div class="apr-action-row">
+                                    <form asp-action="ApproveEmployeeRemoval" method="post" class="apr-action-form" onsubmit="return submitWithReason(this, 'Berikan alasan atau catatan (opsional namun disarankan):');">
                                         <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" class="btn btn-sm btn-primary" style="background:#10B981; border:none;" onclick="return confirm('Yakin setujui pemberhentian karyawan ini?');">Terima</button>
+                                        <button type="submit" class="btn btn-sm apr-btn-approve">Setujui</button>
                                     </form>
-                                    <form asp-action="RejectEmployeeRemoval" method="post" style="margin:0;">
+                                    <form asp-action="RejectEmployeeRemoval" method="post" class="apr-action-form" onsubmit="return submitWithReason(this, 'Berikan alasan penolakan (wajib):');">
                                         <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" class="btn btn-sm btn-outline" style="color:#DC2626; border-color:#DC2626;" onclick="return confirm('Tolak permohonan ini?');">Tolak</button>
+                                        <button type="submit" class="btn btn-sm apr-btn-reject">Tolak</button>
                                     </form>
                                 </div>
                             }
                             else
                             {
-                                <span style="font-size:12px; color:var(--adm-muted);">@item.DecisionAt?.ToString("d MMM yyyy")</span>
+                                <span class="apr-decision-date">@item.DecisionAt?.ToString("d MMM yyyy")</span>
                             }
                         </td>
                     </tr>

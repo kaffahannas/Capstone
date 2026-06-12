@@ -1,0 +1,100 @@
+@model LightenUp.Web.Models.ViewModels.TaskDetailViewModel
+@using LightenUp.Web.Models.ViewModels
+
+@{
+    var indoDeadline = Model.Deadline.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
+}
+
+<div class="hrpf-modal-head">
+    <div class="hrpf-modal-title">@Model.TaskName</div>
+    <button type="button" class="hrpf-modal-close" onclick="closeTaskModal()">&times;</button>
+</div>
+
+<div class="hrpf-modal-body tsk-modal-body">
+    @if (TempData["error"] is string err)
+    {
+        <div class="tsk-modal-error">@err</div>
+    }
+
+    <div class="task-summary-card">
+        <h2 class="tsk-modal-summary-title">@Model.TaskName</h2>
+        <p class="tsk-modal-summary-desc">@Model.Description</p>
+        <div class="tsk-modal-summary-meta">
+            Status: <strong class="@WorksheetStatus.CssClass(Model.Status)">@Model.StatusLabel</strong>
+            &middot; Deadline: <strong>@indoDeadline</strong>
+            &middot; Oleh: <strong>@Model.PsychologistName</strong>
+        </div>
+    </div>
+
+    @if (Model.IsLocked)
+    {
+        <div class="lu-card">
+            <h3 class="lu-card-title">Foto Kegiatan</h3>
+            @if (!string.IsNullOrEmpty(Model.ProofImagePath))
+            {
+                <img src="@Model.ProofImagePath" alt="Bukti" class="tsk-modal-proof" />
+            }
+            else
+            {
+                <p class="tsk-modal-empty">Tidak ada foto.</p>
+            }
+
+            <h3 class="lu-card-title tsk-modal-section-title">Catatan Kamu</h3>
+            <p>@(Model.Note ?? "—")</p>
+
+            @if (!string.IsNullOrEmpty(Model.PsychologistFeedback))
+            {
+                <h3 class="lu-card-title tsk-modal-section-title">Umpan Balik Psikolog</h3>
+                <p>@Model.PsychologistFeedback</p>
+            }
+        </div>
+    }
+    else
+    {
+        <form asp-action="Submit" method="post" enctype="multipart/form-data" class="task-submit-panel">
+            <input type="hidden" name="WorksheetId" value="@Model.WorksheetId" />
+
+            <h3>Upload Foto Kegiatanmu Disini!</h3>
+            <label class="upload-dropzone" id="dropzone">
+                <input type="file" name="Photo" accept="image/*" id="photoInput" />
+                @if (!string.IsNullOrEmpty(Model.ProofImagePath))
+                {
+                    <img src="@Model.ProofImagePath" alt="Foto" id="preview" />
+                    <p class="tsk-modal-upload-hint">Klik untuk mengganti foto.</p>
+                }
+                else
+                {
+                    <div class="placeholder" id="placeholder">
+                        <div class="tsk-modal-upload-ico">📷</div>
+                        <p>Klik untuk memilih foto<br/><small>JPG, PNG, WEBP, GIF — max 20MB</small></p>
+                    </div>
+                    <img id="preview" class="tsk-modal-preview-hidden" alt="Foto" />
+                }
+            </label>
+
+            <h3 class="tsk-modal-note-heading">Deskripsikan Perasaanmu</h3>
+            <textarea name="Note" class="mood-textarea tsk-modal-textarea" placeholder="Ceritakan bagaimana perasaanmu setelah mengerjakan tugas ini...">@Model.Note</textarea>
+
+            <div class="tsk-modal-submit-wrap">
+                <button type="submit" class="btn-primary tsk-modal-submit-btn">Simpan</button>
+            </div>
+        </form>
+    }
+</div>
+
+<script>
+    var photoInput = document.getElementById('photoInput');
+    if (photoInput) {
+        photoInput.addEventListener('change', e => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            const img = document.getElementById('preview');
+            img.src = url;
+            img.style.display = '';
+            img.classList.remove('tsk-modal-preview-hidden');
+            const ph = document.getElementById('placeholder');
+            if (ph) ph.style.display = 'none';
+        });
+    }
+</script>

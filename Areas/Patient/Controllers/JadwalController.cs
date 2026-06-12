@@ -55,7 +55,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 .OrderBy(s => s.SessionStart)
                 .ToList();
 
-            var today = DateTime.Now;
+            var today = DateTime.UtcNow;
 
             vm.UpcomingSessions = allSchedules.Where(s => s.SessionStart >= today || s.Status == "Scheduled").ToList();
             vm.PastSessions = allSchedules.Where(s => s.SessionStart < today && s.Status != "Scheduled").OrderByDescending(s => s.SessionStart).ToList();
@@ -147,7 +147,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 ProposedSessionDate = proposedDate,
                 Notes = notes,
                 Status = "Pending",
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             });
 
             await _context.SaveChangesAsync();

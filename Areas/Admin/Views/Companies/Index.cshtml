@@ -32,7 +32,7 @@
 }
 else
 {
-    <div class="adm-count-label" style="margin-bottom:14px;">
+    <div class="adm-count-label cmp-count-label">
         <strong>@Model.Items.Count</strong> perusahaan ditemukan
     </div>
 
@@ -40,12 +40,12 @@ else
         <table class="adm-table">
             <thead>
                 <tr>
-                    <th>Perusahaan</th>
-                    <th>Kode Referral</th>
-                    <th style="text-align:center;">HR</th>
-                    <th style="text-align:center;">Pasien Aktif</th>
+                    <th class="cmp-th-company">Perusahaan</th>
+                    <th class="cmp-th-center">Divisi</th>
+                    <th class="cmp-th-center">Nama HR</th>
+                    <th class="cmp-th-center">Pasien Aktif</th>
                     <th>Terdaftar</th>
-                    <th style="width:80px;"></th>
+                    <th class="cmp-th-action"></th>
                 </tr>
             </thead>
             <tbody>
@@ -53,35 +53,28 @@ else
                 {
                     <tr>
                         <td>
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,#EDE9FE,#DDD6FE); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🏢</div>
+                            <div class="cmp-company-cell">
+                                <div class="cmp-company-icon">🏢</div>
                                 <div>
-                                    <div style="font-weight:600; font-size:13.5px;">@c.Name</div>
+                                    <div class="cmp-company-name">@c.Name</div>
                                     @if (!string.IsNullOrEmpty(c.Address))
                                     {
-                                        <div style="font-size:12px; color:var(--adm-muted);">📍 @c.Address</div>
+                                        <div class="cmp-company-address">📍 @c.Address</div>
                                     }
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(c.ReferralCode))
-                            {
-                                <code style="background:var(--adm-bg); padding:3px 9px; border-radius:5px; font-size:12px; color:var(--adm-primary); font-weight:700; letter-spacing:0.5px; border:1px solid var(--adm-border);">@c.ReferralCode</code>
-                            }
-                            else
-                            {
-                                <span style="color:var(--adm-muted);">—</span>
-                            }
+                        <td class="cmp-th-center">
+                            <span class="cmp-stat-value">@c.DivisionCount</span>
                         </td>
-                        <td style="text-align:center;">
-                            <span style="font-size:14px; font-weight:600;">@c.HrCount</span>
+                        <td class="cmp-th-center">
+                            <span class="cmp-hr-name">@c.HrName</span>
                         </td>
-                        <td style="text-align:center;">
-                            <span style="font-size:14px; font-weight:600; color:var(--adm-success);">@c.ActivePatientCount</span>
-                            <span style="font-size:12px; color:var(--adm-muted);"> / @c.PatientCount</span>
+                        <td class="cmp-th-center">
+                            <span class="cmp-stat-value cmp-stat-value--success">@c.ActivePatientCount</span>
+                            <span class="cmp-stat-muted"> / @c.PatientCount</span>
                         </td>
-                        <td style="font-size:12px; color:var(--adm-muted);">
+                        <td class="cmp-td-date">
                             @c.CreatedAt.ToString("d MMM yyyy")
                         </td>
                         <td>

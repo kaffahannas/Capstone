@@ -1,0 +1,79 @@
+@using LightenUp.Web.Models
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Riwayat Jadwal";
+
+    var sessions = ViewBag.Sessions as List<Schedule> ?? new List<Schedule>();
+    string? companyName = Context.Request.Query["company"].FirstOrDefault();
+    string backUrl = string.IsNullOrEmpty(companyName) ? "/Psychologist/Index" : $"/Psychologist/CompanyDetail?companyName={Uri.EscapeDataString(companyName!)}";
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+}
+
+<a href="@backUrl" class="back-link">← Kembali ke @(string.IsNullOrEmpty(companyName) ? "Beranda" : "Detail Perusahaan")</a>
+
+<div class="dashboard-header sh-header">
+    <div>
+        <h1 class="text-header">Riwayat Jadwal Konseling</h1>
+        <p class="text-subtitle">Pantau seluruh riwayat dan jadwal konseling client@(string.IsNullOrEmpty(companyName) ? "" : " dari " + companyName).</p>
+    </div>
+</div>
+
+@if (TempData["success"] is string ok)
+{
+    <div class="lu-alert-success">@ok</div>
+}
+
+<div class="patient-list-container">
+    <div class="sh-toolbar">
+        <div class="sh-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-purple)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="schSearch" placeholder="Cari berdasarkan nama pasien..." class="sh-search-input" />
+        </div>
+        <a href="@Url.Action("Scheduling", "Schedule", new { add = true })" class="sh-add-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Tambah Jadwal
+        </a>
+    </div>
+
+    @if (!sessions.Any())
+    {
+        <div class="sh-empty">
+            Belum ada riwayat jadwal konseling.
+        </div>
+    }
+    else
+    {
+        <div id="schList" class="sh-list">
+            @{ int idx = 0; }
+            @foreach (var s in sessions)
+            {
+                idx++;
+                var displayStatus = s.Status == "Cancelled" ? "Dibatalkan"
+                                  : s.Status == "Completed" ? "Selesai"
+                                  : (DateTime.Now < s.SessionStart ? "Akan Datang"
+                                  : (DateTime.Now <= s.SessionStart.AddMinutes(s.DurationMinutes) ? "On Going" : "Selesai"));
+                <div class="history-card" data-name="@(s.Patient?.User?.FullName?.ToLowerInvariant() ?? "")">
+                    <div>
+                        <h3>Jadwal Konseling @idx - @displayStatus</h3>
+                        <p>@s.SessionStart.ToString("d MMMM yyyy", idCulture) · @(s.Patient?.User?.FullName ?? "—")</p>
+                        <p>@s.SessionStart.ToString("HH.mm") - @s.SessionStart.AddMinutes(s.DurationMinutes).ToString("HH.mm")</p>
+                        @if (!string.IsNullOrEmpty(s.Notes))
+                        {
+                            <p class="sh-notes">@s.Notes</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    const input = document.getElementById('schSearch');
+    if (input) input.addEventListener('input', () => {
+        const q = input.value.trim().toLowerCase();
+        document.querySelectorAll('#schList .history-card').forEach(c => {
+            c.style.display = c.dataset.name.includes(q) ? '' : 'none';
+        });
+    });
+</script>
