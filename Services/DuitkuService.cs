@@ -63,7 +63,7 @@ public class DuitkuService
                 Success = true,
                 IsMock = true,
                 Reference = "MOCK-" + request.MerchantOrderId,
-                PaymentUrl = request.ReturnUrl + (request.ReturnUrl.Contains('?') ? "&" : "?") + "mock=1&orderId=" + Uri.EscapeDataString(request.MerchantOrderId)
+                PaymentUrl = request.ReturnUrl + (request.ReturnUrl.Contains('?') ? "&" : "?") + "mock=true&orderId=" + Uri.EscapeDataString(request.MerchantOrderId)
             };
         }
 

@@ -196,7 +196,8 @@ namespace LightenUp.Web.Controllers
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Failed to send email OTP to {Email}", model.Email);
-                    // Continue anyway during dev to allow backdoor "1234" to work, or we could return error.
+                    ModelState.AddModelError(string.Empty, "Gagal mengirim email OTP. Sistem sedang sibuk atau email tidak valid.");
+                    return View(model);
                 }
 
                 TempData["RegisterData"] = JsonSerializer.Serialize(model);
@@ -229,8 +230,7 @@ namespace LightenUp.Web.Controllers
             {
                 var expected = TempData["ExpectedOtp"]?.ToString();
                 
-                // Allow "1234" as dev backdoor, or the real OTP
-                if (model.OtpCode == "1234" || (!string.IsNullOrEmpty(expected) && model.OtpCode == expected))
+                if (!string.IsNullOrEmpty(expected) && model.OtpCode == expected)
                 {
                     return RedirectToAction("CreatePassword", new { email = model.Email });
                 }
