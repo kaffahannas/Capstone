@@ -15,6 +15,7 @@ public class SubscriptionController : Controller
 {
     private static readonly List<SubscriptionPlanViewModel> Plans =
     [
+        new() { PlanId = "patient-test", Name = "Paket Test (Rp 10.000)", Price = 10000, DurationMonths = 1, Description = "Paket khusus simulasi pembayaran. Durasi 1 bulan." },
         new() { PlanId = "basic-monthly", Name = "Basic Bulanan", Price = 99000, DurationMonths = 1, Description = "Mood tracking, jurnal, dan statistik dasar." },
         new() { PlanId = "premium-monthly", Name = "Premium Bulanan", Price = 199000, DurationMonths = 1, Description = "Semua fitur Basic + prioritas worksheet dan laporan lanjutan." },
         new() { PlanId = "premium-yearly", Name = "Premium Tahunan", Price = 1990000, DurationMonths = 12, Description = "Premium 12 bulan (hemat ~17%)." }

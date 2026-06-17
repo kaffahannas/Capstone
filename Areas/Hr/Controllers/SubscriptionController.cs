@@ -16,6 +16,7 @@ public class SubscriptionController : Controller
 {
     private static readonly List<SubscriptionPlanViewModel> Plans =
     [
+        new() { PlanId = "company-test", Name = "Paket Test (Rp 10.000)", Price = 10000, DurationMonths = 1, EmployeeLimit = 1, Description = "Paket khusus simulasi pembayaran. 1 slot karyawan, durasi 1 bulan." },
         new() { PlanId = "company-10", Name = "Perusahaan 10 Karyawan", Price = 4500000, DurationMonths = 12, EmployeeLimit = 10, Description = "Hingga 10 karyawan terdaftar. Nilai slot payroll: Rp 450.000/karyawan/bulan." },
         new() { PlanId = "company-25", Name = "Perusahaan 25 Karyawan", Price = 10000000, DurationMonths = 12, EmployeeLimit = 25, Description = "Hingga 25 karyawan terdaftar. Nilai slot payroll: Rp 400.000/karyawan/bulan." },
         new() { PlanId = "company-50", Name = "Perusahaan 50 Karyawan", Price = 18000000, DurationMonths = 12, EmployeeLimit = 50, Description = "Hingga 50 karyawan terdaftar. Nilai slot payroll: Rp 360.000/karyawan/bulan." }
