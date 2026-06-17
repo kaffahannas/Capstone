@@ -117,7 +117,7 @@ public class SubscriptionController : Controller
         await _context.SaveChangesAsync();
 
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
-        var callbackUrl = $"{baseUrl}/api/payment/duitku/callback";
+        var callbackUrl = $"{baseUrl}/dk/cb";
         var returnUrl = Url.Action(nameof(Return), "Subscription", new { area = "Patient", orderId }, Request.Scheme)!;
 
         var result = await _duitku.CreatePaymentAsync(new DuitkuCreatePaymentRequest

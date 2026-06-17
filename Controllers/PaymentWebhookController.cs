@@ -8,7 +8,7 @@ namespace LightenUp.Web.Controllers;
 
 [ApiController]
 [IgnoreAntiforgeryToken]
-[Route("api/payment/duitku")]
+[Route("dk")]
 public class PaymentWebhookController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -22,7 +22,7 @@ public class PaymentWebhookController : ControllerBase
         _log = log;
     }
 
-    [HttpPost("callback")]
+    [HttpPost("cb")]
     public async Task<IActionResult> Callback([FromForm] DuitkuCallbackForm form)
     {
         var payloadJson = JsonSerializer.Serialize(form);
