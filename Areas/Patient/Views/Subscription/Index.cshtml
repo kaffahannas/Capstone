@@ -5,6 +5,7 @@
 
     var monthly = Model.Plans.FirstOrDefault(p => p.PlanId.Contains("monthly"));
     var yearly  = Model.Plans.FirstOrDefault(p => p.PlanId.Contains("yearly"));
+    var testPlan = Model.Plans.FirstOrDefault(p => p.PlanId == "patient-test");
     var cid     = new System.Globalization.CultureInfo("id-ID");
 }
 
@@ -77,6 +78,40 @@ else if (Model.IsB2B)
             <span class="sub-plan-current">Paket dasar kamu</span>
         </div>
     </div>
+
+    <!-- ── TEST PLAN ── -->
+    @if (testPlan != null)
+    {
+        var testIsActive = Model.HasActiveSubscription && Model.ActivePlanName?.Contains("Test") == true;
+        <div class="sub-plan">
+            <div class="sub-plan-icon">🧪</div>
+            <h3 class="sub-plan-name">Uji Coba</h3>
+            <div class="sub-plan-price">
+                <span class="sub-price-amount">Rp @testPlan.Price.ToString("N0", cid)</span>
+                <span class="sub-price-period">/sekali</span>
+            </div>
+            <ul class="sub-features">
+                <li class="sub-feat sub-feat--ok">Simulasi Pembayaran Duitku</li>
+                <li class="sub-feat sub-feat--ok">Mood tracking harian</li>
+                <li class="sub-feat sub-feat--ok">Jurnal pribadi &amp; statistik</li>
+                <li class="sub-feat sub-feat--ok">Worksheet &amp; check-in</li>
+            </ul>
+            <div class="sub-plan-footer">
+                @if (testIsActive)
+                {
+                    <span class="sub-plan-active">✓ Sedang Aktif</span>
+                }
+                else
+                {
+                    <form asp-action="Checkout" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="planId" value="@testPlan.PlanId" />
+                        <button type="submit" class="sub-cta-btn">Mulai Test</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
 
     <!-- ── BULANAN (featured) ── -->
     @if (monthly != null)
