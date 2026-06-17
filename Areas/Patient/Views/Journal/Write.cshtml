@@ -5,6 +5,10 @@
     Layout = "_LayoutPatient";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/journal-write.css" asp-append-version="true" />
+}
+
 <div class="lu-card jnl-write-card">
     <h2>@(Model.JournalId == null ? "Tulis Jurnal" : "Edit Jurnal")</h2>
 

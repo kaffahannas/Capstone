@@ -4,6 +4,10 @@
     Layout = "_LayoutDashboard";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/profile-settings.css" asp-append-version="true" />
+}
+
 <div class="set-page">
     @if (TempData["success"] is string ok)
     {

@@ -165,7 +165,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             s.Status = model.Status;
             s.Notes = string.IsNullOrWhiteSpace(model.Notes) ? null : model.Notes;
             await _context.SaveChangesAsync();
-            TempData["success"] = "Jadwal diperbarui.";
+            TempData["SchedulesSuccess"] = "Jadwal diperbarui.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -230,7 +230,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 CreatedAt = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
-            TempData["success"] = "Permintaan jadwal dikirim ke psikolog terkait.";
+            TempData["SchedulesSuccess"] = "Permintaan jadwal dikirim ke psikolog terkait.";
             return RedirectToAction(nameof(Index));
         }
 

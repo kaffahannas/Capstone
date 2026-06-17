@@ -9,6 +9,12 @@
     var idCulture = new System.Globalization.CultureInfo("id-ID");
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/schedule-schedule-history.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-edit-schedule-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-schedule-detail-modal.css" asp-append-version="true" />
+}
+
 <a href="@backUrl" class="back-link">← Kembali ke @(string.IsNullOrEmpty(companyName) ? "Beranda" : "Detail Perusahaan")</a>
 
 <div class="dashboard-header sh-header">
@@ -73,7 +79,7 @@
     if (input) input.addEventListener('input', () => {
         const q = input.value.trim().toLowerCase();
         document.querySelectorAll('#schList .history-card').forEach(c => {
-            c.style.display = c.dataset.name.includes(q) ? '' : 'none';
+            c.classList.toggle('is-hidden', !c.dataset.name.includes(q));
         });
     });
 </script>

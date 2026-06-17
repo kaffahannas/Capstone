@@ -1,6 +1,7 @@
 using LightenUp.Web.Data;
 using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
+using LightenUp.Web.Models.Constants;
 using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -83,13 +84,32 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             var psy = await _context.Psychologists.FindAsync(psychologistId);
             if (psy == null) return NotFound();
 
-            // Prevent duplicate
-            var existing = await _context.Assignments.AnyAsync(a =>
+            // Prevent duplicate / handle undo of pending cancellation to same psychologist
+            var pendingCancelSamePsych = await _context.Assignments.FirstOrDefaultAsync(a =>
                 a.PatientId == patient.PatientId &&
-                (a.Status == "Active" || a.Status == "PendingPsychologistApproval" || a.Status == "PendingAdminApproval"));
-            if (existing)
+                a.PsychologistId == psychologistId &&
+                (a.Status == AssignmentStatus.PendingCancellationByHr ||
+                 a.Status == AssignmentStatus.PendingCancellationByAdmin));
+            if (pendingCancelSamePsych != null)
+            {
+                pendingCancelSamePsych.Status = AssignmentStatus.Active;
+                pendingCancelSamePsych.CancellationRequestedByUserId = null;
+                pendingCancelSamePsych.CancellationReason = null;
+                pendingCancelSamePsych.CancellationRequestedAt = null;
+                await _context.SaveChangesAsync();
+                TempData["success"] = "Permintaan pembatalan dibatalkan. Psikolog Anda tetap aktif.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (await _activation.PatientHasBlockingAssignmentAsync(patient.PatientId))
             {
                 TempData["error"] = "Anda sudah memiliki psikolog aktif atau permintaan yang sedang diproses.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (await _activation.HasLiveAssignmentForPairAsync(patient.PatientId, psychologistId))
+            {
+                TempData["error"] = "Permintaan untuk psikolog ini sudah ada atau sedang diproses.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -97,7 +117,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             {
                 PatientId = patient.PatientId,
                 PsychologistId = psychologistId,
-                Status = "PendingPsychologistApproval",
+                Status = AssignmentStatus.PendingPsychologistApproval,
                 AssignedAt = DateTime.UtcNow,
                 RequestedByUserId = user.Id,
                 RequestedByRole = "Patient"

@@ -27,28 +27,18 @@
 {
     <div class="hrsch-idx-alert-error">@err</div>
 }
-@if (TempData["success"] is string ok)
+@if (TempData["SchedulesSuccess"] is string ok)
 {
-    <div class="hrsch-idx-alert-success">@ok</div>
+    <div class="hrsch-idx-alert-success" id="hrschSuccessAlert" role="alert">@ok</div>
 }
 
 @section Head {
-    <style>
-        .psy-modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .psy-modal-overlay.open { opacity: 1; pointer-events: auto; }
-        .psy-modal { background: #fff; width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; display: flex; flex-direction: column; }
-        .psy-modal-overlay.open .psy-modal { transform: scale(1) translateY(0); }
-        .psy-modal-header { padding: 20px 24px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; }
-        .psy-modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #111827; }
-        .psy-modal-close { background: transparent; border: none; font-size: 24px; line-height: 1; color: #6B7280; cursor: pointer; border-radius: 8px; padding: 4px 8px; transition: all 0.2s; }
-        .psy-modal-close:hover { background: #F3F4F6; color: #111827; }
-        .psy-modal-body { padding: 24px; }
-        .btn-outline { padding:10px 18px; border:1px solid #E5E7EB; background:transparent; border-radius:8px; font-weight:600; cursor:pointer; color:#374151; }
-        .btn-outline:hover { background:#F9FAFB; }
-        .btn-fill { padding:10px 18px; border:none; background:#7C3AED; color:#fff; border-radius:8px; font-weight:600; cursor:pointer; }
-        .btn-fill:hover { background:#6D28D9; }
-    </style>
+    <link rel="stylesheet" href="~/css/shared/components-schedule-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/schedules-schedule-detail-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/schedules-index.css" asp-append-version="true" />
 }
+
+<div class="hrsch-page-wrap">
 
 @* ── Hero (same sch-hero pattern) ── *@
 <div class="sch-hero">
@@ -177,6 +167,7 @@ else
     </div>
 }
 
+</div>@* /hrsch-page-wrap *@
 
 @* ── Modal Permintaan Sesi ── *@
 <div id="requestModal" class="psy-modal-overlay">
@@ -218,31 +209,95 @@ else
     </div>
 </div>
 
-<div class="psy-modal-overlay" id="scheduleDetailModal">
+<div class="psy-modal-overlay" id="scheduleDetailModal" aria-hidden="true">
     <!-- content injected via ajax -->
 </div>
 
+@section Scripts {
 <script>
+(function () {
+    const reqModal = document.getElementById('requestModal');
+    if (reqModal && reqModal.parentElement !== document.body) {
+        document.body.appendChild(reqModal);
+    }
+})();
+
 function openRequestModal() {
-    document.getElementById('requestModal').classList.add('open');
+    var modal = document.getElementById('requestModal');
+    modal.classList.add('is-open');
+    requestAnimationFrame(function () {
+        modal.classList.add('is-active');
+    });
+    document.body.classList.add('lu-scroll-lock');
 }
 function closeRequestModal() {
-    document.getElementById('requestModal').classList.remove('open');
+    var modal = document.getElementById('requestModal');
+    modal.classList.remove('is-active');
+    document.body.classList.remove('lu-scroll-lock');
+    setTimeout(function () {
+        modal.classList.remove('is-open');
+    }, 300);
 }
+
+function getScheduleDetailOverlay() {
+    let el = document.getElementById('scheduleDetailModal');
+    if (!el) return null;
+    if (el.parentElement !== document.body) {
+        document.body.appendChild(el);
+    }
+    return el;
+}
+
+window.closeScheduleDetailModal = function() {
+    const overlay = getScheduleDetailOverlay();
+    if (!overlay) return;
+    overlay.classList.remove('is-active');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lu-scroll-lock');
+    setTimeout(function () {
+        overlay.classList.remove('is-open');
+        overlay.innerHTML = '';
+    }, 280);
+};
 
 async function openScheduleDetailModal(id) {
     try {
         const res = await fetch(`/Hr/Schedules/ScheduleDetailModal/${id}`);
         if (!res.ok) throw new Error('Failed to load');
         const html = await res.text();
-        document.getElementById('scheduleDetailModal').innerHTML = html;
-        document.getElementById('scheduleDetailModal').classList.add('open');
+        const overlay = getScheduleDetailOverlay();
+        overlay.innerHTML = html;
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(function () {
+            overlay.classList.add('is-active');
+        });
+        document.body.classList.add('lu-scroll-lock');
     } catch (err) {
         console.error(err);
         alert("Gagal memuat detail jadwal.");
     }
 }
-window.closeScheduleDetailModal = function() {
-    document.getElementById('scheduleDetailModal').classList.remove('open');
-}
+
+document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-sch-detail-close]')) {
+        e.preventDefault();
+        closeScheduleDetailModal();
+        return;
+    }
+    const overlay = document.getElementById('scheduleDetailModal');
+    if (overlay && overlay.classList.contains('is-active') && e.target === overlay) {
+        closeScheduleDetailModal();
+    }
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeScheduleDetailModal();
+});
+
+(function () {
+    const alert = document.getElementById('hrschSuccessAlert');
+    if (alert) setTimeout(function () { alert.classList.add('is-dismissing'); }, 4500);
+})();
 </script>
+}

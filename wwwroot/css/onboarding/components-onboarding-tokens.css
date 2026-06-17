@@ -1,0 +1,11 @@
+﻿/* Onboarding tokens (Patient + HR) */
+:root {
+    --lu-primary: #7C3AED;
+    --lu-primary-hover: #6D28D9;
+    --lu-primary-soft: rgba(124, 58, 237, 0.1);
+    --lu-text: #1E293B;
+    --lu-text-muted: #64748B;
+    --lu-border: rgba(226, 232, 240, 0.8);
+    --lu-bg: #F8FAFC;
+    --lu-error: #EF4444;
+}

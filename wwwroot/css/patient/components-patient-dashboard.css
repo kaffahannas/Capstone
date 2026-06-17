@@ -1,0 +1,594 @@
+﻿/* Patient dashboard (db-*) — Beranda */
+/* =============================================================================
+   PATIENT DASHBOARD (db-*) + shared modals (hrpf-*)
+   Global: reliable without scoped bundle; Index.cshtml.css intentionally empty
+   ============================================================================= */
+.db-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 24px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    padding: 20px 22px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 55%, #8B5CF6 100%);
+    color: #fff;
+    box-shadow: 0 8px 28px rgba(124, 58, 237, 0.22);
+}
+
+.db-hero-date {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+    margin-bottom: 6px;
+}
+
+.db-hero-tagline {
+    margin: 0;
+    font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.db-hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.db-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(6px);
+}
+
+.db-chip-info strong {
+    display: block;
+    font-size: 17px;
+    line-height: 1.1;
+}
+
+.db-chip-info span {
+    font-size: 11px;
+    opacity: 0.88;
+}
+
+.db-cal {
+    margin-bottom: 20px; padding: 16px 18px !important;
+}
+
+.db-cal-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.db-cal-select {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--lu-border);
+    background: var(--lu-primary-soft);
+    color: var(--lu-primary);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.db-cal-month {
+    flex: 1;
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.db-cal-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.db-cal-day {
+    text-align: center;
+    padding: 10px 4px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+}
+
+.db-cal-day-dow {
+    display: block;
+    font-size: 11px;
+    color: var(--lu-text-muted);
+    margin-bottom: 4px;
+}
+
+.db-cal-day-num {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.db-cal-dot {
+    display: block;
+    width: 10px;
+    height: 10px;
+    margin: 0 auto;
+    border-radius: 999px;
+    background: var(--lu-border);
+}
+
+.db-cal-daily {
+    text-align: center;
+    padding: 20px 16px;
+    border-radius: 14px;
+    background: var(--lu-bg);
+    border: 1px dashed var(--lu-border);
+}
+
+.db-cal-daily-dow {
+    font-size: 12px;
+    color: var(--lu-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.db-cal-daily-num {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--lu-primary);
+    line-height: 1.1;
+    margin: 4px 0 12px;
+}
+
+.db-cal-daily-mood {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.db-cal-daily-empty {
+    margin: 0;
+    font-size: 13px;
+    color: var(--lu-text-muted);
+}
+
+.db-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 220px;
+}
+
+.db-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.db-card-icon {
+    font-size: 22px; line-height: 1;
+}
+
+.db-card-title {
+    margin: 0;
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.db-task-badge {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--lu-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+}
+
+.db-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+    padding: 16px 8px;
+    color: var(--lu-text-muted);
+    border: 1px dashed var(--lu-border);
+    border-radius: 12px;
+    background: var(--lu-bg);
+}
+
+.db-empty p {
+    margin: 0; font-size: 13px;
+}
+
+.db-empty-icon {
+    font-size: 36px; line-height: 1;
+}
+
+.db-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.db-mood-display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 20px 12px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.db-mood-emoji {
+    font-size: 44px; line-height: 1;
+}
+
+.db-mood-label {
+    font-size: 16px; font-weight: 700;
+}
+
+.db-journal-link {
+    flex: 1;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 12px;
+    border: 1px solid var(--lu-primary-soft);
+    padding: 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.db-journal-link:hover {
+    border-color: var(--lu-primary);
+    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.1);
+}
+
+.db-journal-preview h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.db-journal-preview p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--lu-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.db-task-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.db-task-item {
+    display: block;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--lu-border);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s;
+}
+
+.db-task-item:hover {
+    border-color: var(--lu-primary);
+}
+
+.db-task-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.db-task-name {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.db-task-status {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+
+.db-task-meta {
+    font-size: 12px;
+    color: var(--lu-text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+/* Inline styles migrated — appearance unchanged */
+.db-cal-nav {
+    display: flex;
+    gap: 4px;
+}
+
+.db-cal-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1.5px solid var(--lu-border);
+    background: #fff;
+    text-decoration: none;
+    color: var(--lu-text);
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.db-cal-nav-today {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1.5px solid var(--lu-border);
+    background: #fff;
+    text-decoration: none;
+    color: var(--lu-text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.db-cal-dots {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    min-height: 8px;
+    margin-top: 2px;
+}
+
+.db-cal-dot--task {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #F59E0B;
+    display: inline-block;
+}
+
+.db-cal-dot--session {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #7C3AED;
+    display: inline-block;
+}
+
+.db-cal-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--lu-border);
+    font-size: 11px;
+    color: var(--lu-text-muted);
+}
+
+.db-cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.db-cal-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.db-cal-legend-dot--mood { background: #10B981; }
+.db-cal-legend-dot--task { background: #F59E0B; }
+.db-cal-legend-dot--session { background: #7C3AED; }
+
+.db-card-actions--center-mt {
+    margin-top: 12px;
+    justify-content: center;
+}
+
+.db-card-actions--center-auto {
+    justify-content: center;
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+.db-mood-edit-btn {
+    width: 100%;
+    justify-content: center;
+    border-radius: 12px;
+    border: none;
+    background: #F1F5F9;
+    color: #334155;
+    font-weight: 600;
+    padding: 8px 16px;
+}
+
+.db-task-list--grow {
+    flex: 1;
+}
+
+.db-link-all {
+    margin-top: auto;
+    padding-top: 16px;
+    width: 100%;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.db-session-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.db-session-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    background: #F5F3FF;
+    border: 1px solid rgba(124,58,237,0.1);
+}
+
+.db-session-date {
+    background: var(--lu-primary);
+    color: white;
+    min-width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.db-session-day {
+    font-size: 18px;
+}
+
+.db-session-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.db-session-name {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.db-session-time {
+    font-size: 12px;
+    color: var(--lu-text-muted);
+    margin-top: 2px;
+}
+
+.db-modal--journal {
+    max-width: 600px;
+}
+
+.db-modal-form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+}
+
+.db-modal-textarea {
+    resize: vertical;
+}
+
+.db-modal--mood {
+    max-width: 480px;
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.db-modal-body--iframe {
+    flex: 0 0 auto;
+    padding: 0;
+    overflow: hidden;
+    background: #fff;
+}
+
+.db-mood-iframe {
+    width: 100%;
+    height: 480px;
+    border: none;
+    display: block;
+    overflow: hidden;
+    background: #fff;
+}
+
+@media (max-width: 1024px) {
+    .db-hero { flex-direction: column; align-items: stretch; }
+    .db-hero-chips { justify-content: flex-start; }
+}
+
+
+.db-cal-day--today {
+    border-color: var(--lu-primary);
+    background: var(--lu-primary-soft);
+}
+.db-mood-dot--overjoyed { background: var(--mood-overjoyed); }
+.db-mood-dot--happy { background: var(--mood-happy); }
+.db-mood-dot--calm { background: var(--mood-calm); }
+.db-mood-dot--neutral { background: var(--lu-border); }
+.db-mood-dot--disappointed { background: var(--mood-disappointed); }
+.db-mood-dot--angry { background: var(--mood-angry); }
+.db-mood-display.overjoyed { background: var(--mood-overjoyed); }
+.db-mood-display.happy { background: var(--mood-happy); }
+.db-mood-display.calm { background: var(--mood-calm); }
+.db-mood-display.neutral { background: var(--mood-neutral); }
+.db-mood-display.disappointed { background: var(--mood-disappointed); }
+.db-mood-display.angry { background: var(--mood-angry); }
+.db-cal-daily-mood.overjoyed { background: var(--mood-overjoyed); }
+.db-cal-daily-mood.happy { background: var(--mood-happy); }
+.db-cal-daily-mood.calm { background: var(--mood-calm); }
+.db-cal-daily-mood.neutral { background: var(--mood-neutral); }
+.db-cal-daily-mood.disappointed { background: var(--mood-disappointed); }
+.db-cal-daily-mood.angry { background: var(--mood-angry); }
+.db-task-status--new { background: #FEE2E2; color: #B91C1C; }
+.db-task-status--progress { background: #FEF3C7; color: #B45309; }
+.db-task-status--other { background: #E5E7EB; color: #4B5563; }
+

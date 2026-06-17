@@ -20,6 +20,18 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// External login providers (Google, Facebook) — only registered when credentials are configured.
+var authBuilder = builder.Services.AddAuthentication();
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+if (!string.IsNullOrWhiteSpace(googleClientId))
+{
+    authBuilder.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
+    });
+}
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -112,7 +124,10 @@ using (var scope = app.Services.CreateScope())
         }
 
         // 3. Seed domain data (Companies, Psychologists, Patients, Schedules, ...)
-        await DbInitializer.SeedAsync(context, userManager);
+        if (app.Environment.IsDevelopment())
+        {
+            await DbInitializer.SeedAsync(context, userManager);
+        }
     }
     catch (Exception ex)
     {

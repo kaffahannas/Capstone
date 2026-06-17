@@ -1,0 +1,390 @@
+﻿/* HR Beranda — page-specific overrides (shared styles in components-hr-*) */
+
+.hrd-psy-card {
+    display: flex; flex-direction: column; gap: 0;
+}
+
+.hrd-psy-card .hrd-action-card-head {
+    margin-bottom: 10px;
+}
+
+.hrd-psy-all-link {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--lu-primary);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--lu-primary-soft);
+    transition: background 0.15s;
+}
+
+.hrd-psy-all-link:hover {
+    background: #DDD6FE;
+}
+
+.hrd-psy-search-wrap {
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.hrd-psy-search-ico {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--lu-text-muted);
+    pointer-events: none;
+}
+
+.hrd-psy-search-input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px 8px 32px;
+    border: 1.5px solid var(--lu-border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--lu-text);
+    background: var(--lu-bg);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.hrd-psy-search-input:focus {
+    border-color: var(--lu-primary); background: #fff;
+}
+
+.hrd-psy-search-input::placeholder {
+    color: var(--lu-text-muted);
+}
+
+.hrd-psy-results {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 36px;
+}
+
+.hrd-psy-hint {
+    font-size: 12.5px;
+    color: var(--lu-text-muted);
+    text-align: center;
+    padding: 8px 0;
+    margin: 0;
+}
+
+.hrd-psy-hint--loading {
+    opacity: 0.6;
+}
+
+.hrd-psy-result-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 8px;
+    border-radius: 8px;
+    background: var(--lu-bg);
+    border: 1px solid var(--lu-border);
+    text-decoration: none;
+    color: var(--lu-text);
+    transition: background 0.13s, border-color 0.13s;
+    cursor: default;
+}
+
+.hrd-psy-result-item--partner {
+    border-color: #A7F3D0;
+    background: #F0FDF4;
+    cursor: pointer;
+}
+
+.hrd-psy-result-item--partner:hover {
+    background: #D1FAE5; border-color: #6EE7B7;
+}
+
+.hrd-psy-result-av {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--lu-primary-soft);
+    color: var(--lu-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.hrd-psy-result-av--text {
+    font-size: 11.5px;
+    font-weight: 700;
+    background: var(--lu-primary-soft);
+    color: var(--lu-primary);
+}
+
+.hrd-psy-result-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.hrd-psy-result-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lu-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hrd-psy-result-spec {
+    font-size: 11.5px;
+    color: var(--lu-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hrd-psy-partner-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #059669;
+    background: #D1FAE5;
+    border-radius: 999px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.hrd-psy-contact-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--lu-primary-soft);
+    color: var(--lu-primary);
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: background 0.13s;
+}
+
+.hrd-psy-contact-link:hover {
+    background: #DDD6FE;
+}
+
+.hrd-stat--sehat {
+    border-color: rgba(134, 239, 172, 0.35);
+    background: rgba(134, 239, 172, 0.15);
+}
+
+.hrd-stat--sehat .hrd-stat-val {
+    color: #BBF7D0;
+}
+
+.hrd-stat--beresiko {
+    border-color: rgba(252, 211, 77, 0.35);
+    background: rgba(252, 211, 77, 0.13);
+}
+
+.hrd-stat--beresiko .hrd-stat-val {
+    color: #FDE68A;
+}
+
+.hrd-stat--bahaya {
+    border-color: rgba(252, 165, 165, 0.35);
+    background: rgba(252, 165, 165, 0.13);
+}
+
+.hrd-stat--bahaya .hrd-stat-val {
+    color: #FCA5A5;
+}
+
+.hrd-main-col,
+.hrd-side {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.hrd-main-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 16px;
+}
+
+.hrd-search-results.is-open {
+    display: block;
+}
+
+.hrd-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.hrd-status--sehat {
+    background: #DCFCE7;
+    color: #166534;
+}
+
+.hrd-status--beresiko {
+    background: #FEF9C3;
+    color: #854D0E;
+}
+
+.hrd-status--bahaya {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.hrd-status--unknown {
+    background: #F3F4F6;
+    color: #6B7280;
+}
+
+.hrd-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.75;
+    flex-shrink: 0;
+}
+
+.hrd-dist-pct {
+    font-weight: 400;
+    color: var(--lu-text-muted);
+}
+
+.hrd-client-row.is-hidden {
+    display: none;
+}
+
+button.hrd-psy-all-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.hrd-client-avatar--sm {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.hrd-search-result-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.hrd-search-result-name {
+    display: block;
+    font-size: 13px;
+}
+
+.hrd-search-result-dept {
+    color: var(--lu-text-muted);
+    font-size: 11.5px;
+}
+
+.hrd-modal--report {
+    max-width: 480px;
+}
+
+.hrd-modal--psy {
+    max-width: 520px;
+}
+
+.hrd-report-form {
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.hrpf-form-group {
+    margin-bottom: 0;
+}
+
+.hrpf-form-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--lu-text);
+    margin-bottom: 5px;
+}
+
+.hrpf-form-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--lu-border);
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--lu-text);
+    background: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.hrpf-form-input:focus {
+    border-color: var(--lu-primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, .12);
+}
+
+.hrpf-required {
+    color: #ef4444;
+}
+
+.hrpf-optional {
+    color: var(--lu-text-muted);
+    font-weight: 400;
+}
+
+.hrd-report-hint {
+    font-size: 11.5px;
+    color: var(--lu-text-muted);
+    margin: 5px 0 0;
+}
+
+.hrd-report-hint-link {
+    color: var(--lu-primary);
+}
+
+.hrd-psy-modal-search {
+    padding: 14px 18px 0;
+    border-bottom: 1.5px solid var(--lu-bg);
+}
+
+.hrd-psy-modal-search .hrd-psy-search-wrap {
+    margin-bottom: 14px;
+}
+
+.hrd-psy-modal-results {
+    max-height: 340px;
+    overflow-y: auto;
+    padding: 6px 0;
+}
+
+.hrd-psy-hint--pad {
+    padding: 14px 18px;
+}
+
+.hrd-psy-hint--pad-lg {
+    padding: 18px;
+}

@@ -9,6 +9,7 @@
 <p class="mood-helper">Pilih kategori dibawah ini...</p>
 
 <form asp-action="Feeling" method="post">
+    @await Html.PartialAsync("_SessionHiddenFields", Model)
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="mood-grid">

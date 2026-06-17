@@ -12,9 +12,10 @@ using System;
 
 namespace LightenUp.Web.Areas.Patient.Controllers
 {
-    [Area("Patient")]
-    [Authorize(Roles = "Patient")]
-    public class JadwalController : Controller
+[Area("Patient")]
+[Authorize(Roles = "Patient")]
+[RequiresPatientPremium]
+public class JadwalController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -79,7 +80,6 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 
         // ─── Pasien meminta jadwal sesi konseling (gated: premium) ───
         [HttpGet]
-        [RequiresPatientPremium]
         public async Task<IActionResult> RequestSession()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -106,7 +106,6 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         [HttpPost]
-        [RequiresPatientPremium]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RequestSession(DateTime proposedDate, string? notes)
         {

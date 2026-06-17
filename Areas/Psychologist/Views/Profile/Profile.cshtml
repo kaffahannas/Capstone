@@ -14,6 +14,10 @@
     <div class="lu-alert-success" role="status">@ok</div>
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/profile-profile.css" asp-append-version="true" />
+}
+
 <div class="prf-page">
 
 @* ── Hero profile banner ── *@
@@ -199,9 +203,9 @@
                 <h3 class="prf-card-title">Terima Kerjasama B2B</h3>
             </div>
             <div class="prf-card-body">
-                <p style="margin: 0 0 16px 0; font-size: 13px; color: var(--text-muted); line-height: 1.5;">Saat aktif, profil Anda dapat ditemukan HR perusahaan di Direktori Psikolog.</p>
-                <div class="prf-field" style="flex-direction: row; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: auto;">
-                    <span class="prf-field-label" style="margin:0; font-size: 12px; font-weight: 600; color: var(--text-dark); text-transform: none; letter-spacing: normal;">Status Kerjasama</span>
+                <p class="prf-card-desc">Saat aktif, profil Anda dapat ditemukan HR perusahaan di Direktori Psikolog.</p>
+                <div class="prf-field prf-field--b2b-toggle">
+                    <span class="prf-field-label prf-field-label--plain">Status Kerjasama</span>
                     <label class="prf-toggle prf-toggle--inline" title="@(Model.AcceptsB2B ? "Aktif — klik untuk nonaktifkan" : "Tidak aktif — klik untuk aktifkan")">
                         <input type="checkbox" name="AcceptsB2B" id="b2bToggle" value="true" @(Model.AcceptsB2B ? "checked" : "") onchange="this.form.submit()" />
                         <span class="prf-toggle-track"><span class="prf-toggle-thumb"></span></span>
@@ -210,6 +214,20 @@
                 </div>
             </div>
         </form>
+
+        @* Pengaturan Keamanan *@
+        <div class="prf-card prf-card--auto" style="border: 1px solid #e2e8f0; background: #f8fafc; cursor: pointer; transition: all 0.2s; text-decoration: none;" onclick="window.location.href='/Account/ChangePassword'">
+            <div class="prf-card-accent" aria-hidden="true" style="background: #94a3b8;"></div>
+            <div class="prf-card-head" style="margin-bottom: 0;">
+                <div class="prf-card-icon" style="background: #e2e8f0; color: #475569;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div>
+                    <h3 class="prf-card-title" style="margin-bottom: 4px; color: #1e293b;">Pengaturan Keamanan</h3>
+                    <p style="margin: 0; font-size: 13px; color: #64748b;">Atur atau ubah password akun Anda</p>
+                </div>
+            </div>
+        </div>
         
     </div>
 </div>
@@ -364,13 +382,13 @@
 function openEditModal() {
     var overlay = document.getElementById('prfModalOverlay');
     overlay.classList.add('prf-modal--open');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('lu-scroll-lock');
     var first = overlay.querySelector('input:not([type=file])');
     if (first) setTimeout(function() { first.focus(); }, 60);
 }
 function closeEditModal() {
     document.getElementById('prfModalOverlay').classList.remove('prf-modal--open');
-    document.body.style.overflow = '';
+    document.body.classList.remove('lu-scroll-lock');
 }
 document.getElementById('prfModalOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeEditModal();
@@ -398,8 +416,8 @@ function prfHandleFile(file) {
         var sub    = document.getElementById('prfDropzoneSub');
         var icon   = document.getElementById('prfDzIcon');
         img.src = e.target.result;
-        img.style.display = 'block';
-        if (icon) icon.style.display = 'none';
+        img.classList.remove('prf-preview-hidden');
+        if (icon) icon.classList.add('is-hidden');
         if (title) title.textContent = file.name;
         if (sub)   sub.textContent   = (file.size / 1024).toFixed(0) + ' KB · Siap diunggah';
         document.getElementById('prfDropzone').classList.add('prf-dropzone--has-file');

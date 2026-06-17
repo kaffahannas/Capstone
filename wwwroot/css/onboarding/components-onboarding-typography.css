@@ -1,0 +1,18 @@
+﻿/* Onboarding headings */
+/* ───── Headings ───── */
+.onb-title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin: 8px 0 8px;
+    background: linear-gradient(135deg, #1E293B, #475569);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+.onb-subtitle {
+    font-size: 15px;
+    color: var(--lu-text-muted);
+    margin: 0 0 32px;
+    line-height: 1.5;
+}

@@ -9,6 +9,8 @@ using LightenUp.Web.Services;
 using System.Threading.Tasks;
 using System.Linq; // Tambahan untuk memanipulasi data database (FirstOrDefault)
 using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LightenUp.Web.Controllers
 {
@@ -381,6 +383,314 @@ namespace LightenUp.Web.Controllers
             ViewBag.FullName = user.FullName;
             ViewBag.RoleType = user.RoleType;
             return View();
+        }
+
+        // ==========================================
+        // 8. EXTERNAL LOGIN (Google / Facebook)
+        // ==========================================
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult ExternalLogin(string provider, string? flow, string? fullName, string? accountType, string? returnUrl = null)
+        {
+            // Validate register flow data before redirecting to provider
+            if (flow == "register")
+            {
+                if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(accountType))
+                {
+                    TempData["ExternalError"] = "Silakan isi Nama Lengkap dan pilih Jenis Akun terlebih dahulu.";
+                    return RedirectToAction("Register");
+                }
+                if (accountType != "Patient" && accountType != "Psychologist" && accountType != "HR")
+                {
+                    TempData["ExternalError"] = "Jenis akun tidak valid.";
+                    return RedirectToAction("Register");
+                }
+                TempData["ExternalFlow"] = "register";
+                TempData["ExternalFullName"] = fullName;
+                TempData["ExternalAccountType"] = accountType;
+            }
+            else
+            {
+                TempData.Remove("ExternalFlow");
+                TempData.Remove("ExternalFullName");
+                TempData.Remove("ExternalAccountType");
+            }
+            
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return new ChallengeResult(provider, properties);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null)
+        {
+            var flow = TempData["ExternalFlow"]?.ToString();
+            var extFullName = TempData["ExternalFullName"]?.ToString();
+            var extAccountType = TempData["ExternalAccountType"]?.ToString();
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                TempData["ExternalError"] = "Gagal mendapatkan informasi dari provider. Silakan coba lagi.";
+                return RedirectToAction("Login");
+            }
+
+            // 1. Get email and check if user exists (to prevent register flow from logging in)
+            var email = info.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+            {
+                TempData["ExternalError"] = "Tidak bisa mendapatkan email dari akun " + info.LoginProvider + ". Pastikan email Anda dapat diakses.";
+                return RedirectToAction("Login");
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            // Reject register flow if email is already in the system
+            if (user != null && flow == "register")
+            {
+                await _signInManager.SignOutAsync();
+                TempData["ExternalError"] = "Akun dengan email ini sudah terdaftar. Silakan langsung login atau gunakan email lain.";
+                return RedirectToAction("Register");
+            }
+
+            // 2. Try sign in with this external login (already linked)
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (signInResult.Succeeded)
+            {
+                _logger.LogInformation("User logged in via {Provider}.", info.LoginProvider);
+                // Route using same logic as manual login
+                var existingUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+                if (existingUser != null)
+                    return await RouteAfterLogin(existingUser);
+                return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
+            }
+
+            // 3. Not linked yet — User exists (login flow)
+            if (user != null)
+            {
+                // User exists — link external login and sign in (LOGIN FLOW ONLY)
+                var addLoginResult = await _userManager.AddLoginAsync(user, info);
+                if (addLoginResult.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    _logger.LogInformation("Linked {Provider} to existing user {Email}.", info.LoginProvider, email);
+                    return await RouteAfterLogin(user);
+                }
+
+                _logger.LogWarning("Failed to link {Provider} to {Email}: {Errors}",
+                    info.LoginProvider, email, string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
+                await _signInManager.SignOutAsync();
+                TempData["ExternalError"] = "Gagal menghubungkan akun " + info.LoginProvider + ". Silakan coba lagi.";
+                return RedirectToAction("Login");
+            }
+
+            // 3. User does not exist
+            if (flow != "register" || string.IsNullOrWhiteSpace(extFullName) || string.IsNullOrWhiteSpace(extAccountType))
+            {
+                // From Login page — don't create account
+                await _signInManager.SignOutAsync();
+                TempData["ExternalError"] = "Akun dengan email tersebut belum terdaftar. Silakan daftar terlebih dahulu.";
+                return RedirectToAction("Login");
+            }
+
+            // 4. From Register page — create new user
+            var newUser = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                FullName = extFullName,
+                RoleType = extAccountType,
+                IsApprovedByAdmin = (extAccountType == "Patient" || extAccountType == "HR")
+            };
+
+            var createResult = await _userManager.CreateAsync(newUser);
+            if (!createResult.Succeeded)
+            {
+                _logger.LogWarning("Failed to create user {Email} via {Provider}: {Errors}",
+                    email, info.LoginProvider, string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                TempData["ExternalError"] = "Gagal membuat akun: " + string.Join(", ", createResult.Errors.Select(e => e.Description));
+                return RedirectToAction("Register");
+            }
+
+            await _userManager.AddToRoleAsync(newUser, extAccountType);
+            await _userManager.AddLoginAsync(newUser, info);
+
+            // Create role-specific record
+            if (extAccountType == "Patient")
+            {
+                _context.Patients.Add(new Patient { UserId = newUser.Id });
+            }
+            else if (extAccountType == "Psychologist")
+            {
+                _context.Psychologists.Add(new Psychologist { UserId = newUser.Id });
+            }
+            else if (extAccountType == "HR")
+            {
+                _context.HrStaffs.Add(new HrStaff { UserId = newUser.Id });
+            }
+            await _context.SaveChangesAsync();
+
+            // Create account folder (non-fatal)
+            try
+            {
+                var accountFolder = _uploadService.GetAccountFolderPath(newUser.Id);
+                Directory.CreateDirectory(accountFolder);
+
+                var meta = new
+                {
+                    newUser.Id,
+                    newUser.FullName,
+                    newUser.Email,
+                    newUser.RoleType,
+                    CreatedAt = DateTime.UtcNow
+                };
+                var metaPath = Path.Combine(accountFolder, "meta.json");
+                await System.IO.File.WriteAllTextAsync(metaPath,
+                    JsonSerializer.Serialize(meta, new JsonSerializerOptions { WriteIndented = true }));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to create account folder for user {UserId}.", newUser.Id);
+            }
+
+            _logger.LogInformation("Created new user {Email} via {Provider} as {Role}.", email, info.LoginProvider, extAccountType);
+            
+            TempData["SuccessMessage"] = "Pendaftaran berhasil! Silakan masuk menggunakan tombol " + info.LoginProvider + " di bawah.";
+            return RedirectToAction("Login");
+        }
+
+        /// <summary>
+        /// Shared post-login routing logic — same rules as the manual Login POST.
+        /// </summary>
+        private async Task<IActionResult> RouteAfterLogin(ApplicationUser user)
+        {
+            var adminHost = _config["Site:AdminHost"];
+            var patientHost = _config["Site:PatientHost"];
+            var currentHost = HttpContext.Request.Host.ToString();
+            bool isAdminAccount = await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin";
+            bool onAdminHost = !string.IsNullOrEmpty(adminHost) && currentHost.Equals(adminHost, StringComparison.OrdinalIgnoreCase);
+            bool onCustomerHost = !string.IsNullOrEmpty(patientHost) && currentHost.Equals(patientHost, StringComparison.OrdinalIgnoreCase);
+
+            if (isAdminAccount && onCustomerHost && !string.IsNullOrEmpty(adminHost))
+            {
+                await _signInManager.SignOutAsync();
+                TempData["ExternalError"] = $"Akun Admin harus login di https://{adminHost}/";
+                return RedirectToAction("Login");
+            }
+            if (!isAdminAccount && onAdminHost && !string.IsNullOrEmpty(patientHost))
+            {
+                await _signInManager.SignOutAsync();
+                TempData["ExternalError"] = $"Akun ini bukan akun Admin. Silakan login di https://{patientHost}/";
+                return RedirectToAction("Login");
+            }
+
+            if (isAdminAccount)
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+
+            bool isPsy = await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist";
+            bool isHr = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
+
+            if (isPsy && !user.IsApprovedByAdmin)
+            {
+                var psy = _context.Psychologists.FirstOrDefault(p => p.UserId == user.Id);
+                bool onboardingDone = psy != null && !string.IsNullOrEmpty(psy.LicenseNumber);
+                if (!onboardingDone)
+                    return RedirectToAction("Welcome", "Onboarding");
+                return RedirectToAction("PendingApproval");
+            }
+
+            if (isHr)
+            {
+                var hr = _context.HrStaffs.FirstOrDefault(h => h.UserId == user.Id);
+                if (hr == null || hr.OnboardingCompletedAt == null)
+                    return RedirectToAction("Welcome", "Onboarding", new { area = "Hr" });
+                if (hr.CompanyId == null)
+                    return RedirectToAction("Index", "Subscription", new { area = "Hr" });
+                return RedirectToAction("Index", "Home", new { area = "Hr" });
+            }
+
+            if (user.RoleType == "Patient")
+            {
+                var patient = _context.Patients.FirstOrDefault(p => p.UserId == user.Id);
+                if (patient == null || patient.OnboardingCompletedAt == null)
+                    return RedirectToAction("Welcome", "Onboarding", new { area = "Patient" });
+                return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
+            }
+
+            // Psychologist (approved)
+            return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
+        }
+
+        // ==========================================
+        // 9. CHANGE/SET PASSWORD
+        // ==========================================
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login");
+            
+            bool hasPassword = await _userManager.HasPasswordAsync(user);
+            return View(new ChangePasswordViewModel { HasPassword = hasPassword });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login");
+
+            model.HasPassword = await _userManager.HasPasswordAsync(user);
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            IdentityResult result;
+            if (model.HasPassword)
+            {
+                if (string.IsNullOrEmpty(model.OldPassword))
+                {
+                    ModelState.AddModelError("OldPassword", "Password lama wajib diisi.");
+                    return View(model);
+                }
+                result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            }
+            else
+            {
+                result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+            }
+
+            if (result.Succeeded)
+            {
+                await _signInManager.RefreshSignInAsync(user);
+                TempData["SuccessMessage"] = "Password berhasil diperbarui.";
+
+                if (await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin")
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                if (await _userManager.IsInRoleAsync(user, "Patient") || user.RoleType == "Patient")
+                    return RedirectToAction("Index", "Profile", new { area = "Patient" });
+                if (await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist")
+                    return RedirectToAction("Profile", "Profile", new { area = "Psychologist" });
+                if (await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR")
+                    return RedirectToAction("Index", "Profile", new { area = "Hr" });
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(model);
         }
     }
 }

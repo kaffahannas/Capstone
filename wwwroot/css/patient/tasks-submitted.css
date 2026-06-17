@@ -1,0 +1,25 @@
+.tsk-submitted {
+    max-width: 480px;
+    margin: 60px auto;
+    text-align: center;
+}
+
+.tsk-submitted-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    background: #7C3AED;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 36px;
+}
+
+.tsk-submitted p {
+    color: #6B7280;
+}
+
+.tsk-submitted-actions {
+    margin-top: 32px;
+}

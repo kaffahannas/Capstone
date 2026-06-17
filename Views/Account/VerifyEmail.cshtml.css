@@ -2,6 +2,38 @@
     padding-bottom: 50px;
 }
 
+.verify-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.verify-back {
+    position: static;
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 40px;
+    height: 40px;
+}
+
+.verify-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.verify-title {
+    margin: 0 0 8px;
+    font-size: 24px;
+    line-height: 1.25;
+}
+
+.verify-subtitle {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
 .auth-subtitle-email {
     color: #1f2937;
 }

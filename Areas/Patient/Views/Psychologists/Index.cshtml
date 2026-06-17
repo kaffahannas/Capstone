@@ -8,6 +8,10 @@
     var hasActivePsychologist = (bool)(ViewBag.HasActivePsychologist ?? false);
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/psychologists-index.css" asp-append-version="true" />
+}
+
 <div class="psy-page">
 
 <div class="psy-hero">

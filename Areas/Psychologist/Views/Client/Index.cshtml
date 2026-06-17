@@ -6,7 +6,11 @@
     var cid = new System.Globalization.CultureInfo("id-ID");
 }
 
-<div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/dashboard-index.css" asp-append-version="true" />
+}
+
+<div class="psy-dashboard-grid psy-dashboard-grid--single">
     <section class="psy-card psy-client-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
@@ -45,7 +49,7 @@
                         <div class="psy-client-info">
                             <span class="psy-client-name">@patient.FullName</span>
                             <span class="psy-client-meta">@patient.Gender · Sejak @patient.JoinedDate.ToString("d MMM yyyy", cid)</span>
-                            <span class="psy-client-meta" style="display:block; margin-top: 4px; color: #6B7280; font-size: 12px;">@patient.CompanyName</span>
+                            <span class="psy-client-meta psy-client-meta--company">@patient.CompanyName</span>
                         </div>
                         <span class="psy-status-chip psy-status--@statusCss">@patient.Status</span>
                         <a href="/Psychologist/Client/PatientDetail/@patient.PatientId" class="psy-btn psy-btn--ghost psy-btn--sm">Detail →</a>
@@ -61,7 +65,7 @@
     function filterClientSearch() {
         var q = document.getElementById("clientSearch").value.toLowerCase();
         document.querySelectorAll(".client-searchable").forEach(function(row) {
-            row.style.display = row.dataset.name.includes(q) ? "" : "none";
+            row.classList.toggle('is-hidden', !row.dataset.name.includes(q));
         });
     }
 </script>

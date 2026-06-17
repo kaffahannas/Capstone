@@ -1,24 +1,2 @@
-.sch-stat-bubble--cancel {
-    background: rgba(239,68,68,0.18);  border-color: rgba(239,68,68,0.3);
-}
+/* Styles: wwwroot/css/psychologist/schedule-scheduling.css */
 
-.sch-alert-success {
-    background: #D1FAE5;
-    color: #047857;
-    padding: 10px 14px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-}
-
-.sch-session--clickable {
-    cursor: pointer;
-}
-
-.sch-session-notes {
-    font-size: 12px;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 280px;
-}

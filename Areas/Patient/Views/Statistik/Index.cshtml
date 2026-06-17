@@ -10,6 +10,7 @@
 }
 
 @section Head {
+    <link rel="stylesheet" href="~/css/patient/statistik-index.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 }
 
@@ -84,6 +85,10 @@
     <div class="lu-card st-card">
         <div class="st-card-head">
             <span class="st-card-title">🎯 Pemicu Teratas</span>
+            @if (Model.TopTriggers.Any())
+            {
+                <span class="st-badge">@Model.MoodEntriesWithTriggers dari @Model.MoodEntryCount entri mood</span>
+            }
         </div>
         @if (!Model.TopTriggers.Any())
         {
@@ -94,6 +99,7 @@
         }
         else
         {
+            <p class="st-trigger-hint">Menghitung pemicu utama per sesi (total @Model.MoodEntriesWithTriggers dari @Model.MoodEntryCount lacak mood).</p>
             <div class="st-canvas-wrap st-canvas--square"><canvas id="triggersChart"></canvas></div>
         }
     </div>
@@ -189,7 +195,12 @@
             indexAxis: 'y', responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                x: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: C_GRID } },
+                x: {
+                    beginAtZero: true,
+                    max: @(Math.Max(Model.MoodEntriesWithTriggers, 1)),
+                    ticks: { stepSize: 1, precision: 0 },
+                    grid: { color: C_GRID }
+                },
                 y: { grid: { display: false }, ticks: { font: { size: 10 } } }
             }
         }

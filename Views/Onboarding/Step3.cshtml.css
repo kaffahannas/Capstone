@@ -10,6 +10,10 @@
     height: auto;
 }
 
+.onb-step-logo-img.is-hidden {
+    display: none;
+}
+
 .onb-step-logo-text {
     font-weight: 700;
     color: #7C3AED;

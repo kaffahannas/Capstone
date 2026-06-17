@@ -4,6 +4,10 @@
     ViewBag.ActiveNav = "Klien";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/psychologists-profile.css" asp-append-version="true" />
+}
+
 <a asp-action="Index" class="hrpsy-prof-back">← Direktori Psikolog</a>
 
 @if (TempData["success"] is string ok)
@@ -20,11 +24,11 @@
         <p class="hrpsy-prof-spec">@(Model.Specialization ?? "Psikolog Klinis")</p>
         @if (Model.AlreadyPartnered)
         {
-            <span class="status-badge sehat">Sudah Menjadi Mitra</span>
+            <span class="status-badge status-badge--partner">Sudah Menjadi Mitra</span>
         }
         else if (Model.HasPendingRequest)
         {
-            <span class="status-badge" style="background: #E5E7EB; color: #4B5563;">Menunggu Persetujuan</span>
+            <span class="status-badge status-badge--pending">Menunggu Persetujuan</span>
         }
     </div>
 

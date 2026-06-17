@@ -1,0 +1,36 @@
+﻿/* Admin general card */
+/* ═══════════════════════════════════════
+   GENERAL CARD
+   ═══════════════════════════════════════ */
+.adm-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: var(--adm-radius);
+    padding: 22px 24px;
+    box-shadow: var(--adm-shadow-sm);
+}
+.adm-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    margin: 0 0 18px;
+    color: var(--adm-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.adm-card-title-lg {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 18px;
+    color: var(--adm-text);
+    letter-spacing: -0.2px;
+    text-transform: none;
+}
+.adm-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}

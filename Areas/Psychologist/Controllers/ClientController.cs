@@ -1,5 +1,6 @@
 using LightenUp.Web.Data;
 using LightenUp.Web.Models;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,19 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly HealthStatusService _healthService;
+        private readonly AssignmentActivationService _activation;
 
-        public ClientController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ClientController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            HealthStatusService healthService,
+            AssignmentActivationService activation)
         {
             _context = context;
             _userManager = userManager;
+            _healthService = healthService;
+            _activation = activation;
         }
 
         private async Task<int?> CurrentPsychologistIdAsync()
@@ -38,11 +47,16 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Login", "Account", new { area = "" });
 
-            var activeAssignments = await _context.Assignments
+            await _activation.RepairDuplicateLiveAssignmentsAsync(psyId.Value);
+
+            var activeAssignments = AssignmentActivationService.SelectPrimaryPerPatient(
+                await _context.Assignments
                 .Include(a => a.Patient).ThenInclude(p => p!.User)
                 .Include(a => a.Patient).ThenInclude(p => p!.Company)
-                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
-                .ToListAsync();
+                .Where(a => a.PsychologistId == psyId && AssignmentActivationService.LiveClientListStatuses.Contains(a.Status))
+                .ToListAsync());
+
+            await _healthService.RefreshStatusesAsync(activeAssignments.Select(a => a.Patient!));
 
             var patients = activeAssignments.Select(a => new LightenUp.Web.Models.ViewModels.PatientListItem
             {
@@ -67,10 +81,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (psych == null) return NotFound();
 
-            var existing = await _context.Assignments.FirstOrDefaultAsync(a =>
-                a.PatientId == patientId && a.PsychologistId == psych.PsychologistId &&
-                (a.Status == "Active" || a.Status == "PendingAdminApproval"));
-            if (existing != null)
+            var existing = await _activation.HasLiveAssignmentForPairAsync(patientId, psych.PsychologistId);
+            if (existing)
             {
                 TempData["info"] = "Permintaan untuk klien ini sudah ada atau sedang ditangani.";
                 return RedirectToAction("Index", "Dashboard");
@@ -137,6 +149,10 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (patient == null) return NotFound();
 
+            await _healthService.UpdateAndSaveAsync(patient);
+            var snap = await _healthService.ComputeAsync(patient.PatientId);
+            var moodWindow = await _healthService.ComputeMoodWindowAsync(id, 7);
+
             string ageStr = "Belum diatur";
             if (patient.DateOfBirth.HasValue)
             {
@@ -152,33 +168,6 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .OrderByDescending(j => j.UpdatedAt)
                 .FirstOrDefaultAsync();
 
-            var from7 = DateTime.Today.AddDays(-6);
-            var moods = await _context.MoodTrackers
-                .Where(m => m.PatientId == id && m.MoodDate >= from7)
-                .OrderBy(m => m.MoodDate)
-                .ToListAsync();
-
-            var chartDates = Enumerable.Range(0, 7).Select(i => from7.AddDays(i)).ToList();
-            var chartScores = chartDates.Select(d =>
-            {
-                var m = moods.FirstOrDefault(x => x.MoodDate.Date == d.Date);
-                if (m == null) return (double?)null;
-                return (double?)(m.Feeling switch
-                {
-                    "Overjoyed" => 5, "Happy" => 4, "Calm" => 4,
-                    "Neutral" => 3, "Disappointed" => 2, "Angry" => 1, _ => (int?)null
-                });
-            }).ToList();
-
-            int sehatN = 0, beresikoN = 0, bahayaN = 0;
-            foreach (var s in chartScores.Where(x => x.HasValue).Select(x => x!.Value))
-            {
-                if (s >= 4) sehatN++;
-                else if (s >= 2.5) beresikoN++;
-                else bahayaN++;
-            }
-            int totalN = Math.Max(1, sehatN + beresikoN + bahayaN);
-
             var todaySession = await _context.Schedules
                 .Where(s => s.PatientId == id && s.SessionStart >= DateTime.Today && s.SessionStart < DateTime.Today.AddDays(1) && s.Status == "Scheduled")
                 .OrderBy(s => s.SessionStart)
@@ -186,22 +175,28 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             var openWorksheetCount = await _context.Worksheets.CountAsync(w => w.PatientId == id && w.Status != "Completed");
 
             ViewBag.Symptoms = patient.Symptoms;
-            ViewBag.MoodLabels = System.Text.Json.JsonSerializer.Serialize(chartDates.Select(d => d.ToString("dd/MM")));
-            ViewBag.MoodScores = System.Text.Json.JsonSerializer.Serialize(chartScores);
+            ViewBag.MoodLabels = System.Text.Json.JsonSerializer.Serialize(moodWindow.Labels);
+            ViewBag.MoodScores = System.Text.Json.JsonSerializer.Serialize(moodWindow.Scores);
             
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId != null)
             {
                 var activeAssignment = await _context.Assignments
-                    .Where(a => a.PatientId == id && a.PsychologistId == psyId.Value && (a.Status == "Active" || a.Status == "PendingCancellation"))
-                    .FirstOrDefaultAsync();
-                ViewBag.AssignmentId = activeAssignment?.AssignmentId;
+                    .Where(a => a.PatientId == id && a.PsychologistId == psyId.Value && AssignmentActivationService.LiveClientListStatuses.Contains(a.Status))
+                    .ToListAsync();
+                if (activeAssignment.Count == 0)
+                    ViewBag.AssignmentId = null;
+                else
+                {
+                    var primary = AssignmentActivationService.SelectPrimaryAssignment(activeAssignment);
+                    ViewBag.AssignmentId = (int?)primary.AssignmentId;
+                }
             }
 
-            ViewBag.SehatPct = (int)Math.Round((double)sehatN / totalN * 100);
-            ViewBag.BeresikoPct = (int)Math.Round((double)beresikoN / totalN * 100);
-            ViewBag.BahayaPct = (int)Math.Round((double)bahayaN / totalN * 100);
-            ViewBag.HasMoodData = moods.Any();
+            ViewBag.SehatPct = moodWindow.Distribution.SehatPct;
+            ViewBag.BeresikoPct = moodWindow.Distribution.BeresikoPct;
+            ViewBag.BahayaPct = moodWindow.Distribution.BahayaPct;
+            ViewBag.HasMoodData = moodWindow.HasData;
             ViewBag.TodaySession = todaySession;
             ViewBag.OpenWorksheetCount = openWorksheetCount;
 
@@ -213,7 +208,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 Age = ageStr,
                 Location = patient.Company != null ? (patient.Company.Address ?? patient.Company.Name) : "Pasien Publik",
                 Phone = patient.User?.PhoneNumber ?? "-",
-                Status = patient.MentalHealthStatus ?? "Sehat",
+                Status = snap.Status,
                 JournalContent = string.IsNullOrEmpty(todayJournal?.Content) ? "Belum ada catatan jurnal hari ini." : todayJournal!.Content,
                 Complaint = string.IsNullOrEmpty(patient.Symptoms) ? "Tidak ada keluhan" : patient.Symptoms
             };
@@ -227,68 +222,16 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return Unauthorized();
 
-            var from = DateTime.Today.AddDays(-(days - 1));
-
-            var moods = await _context.MoodTrackers
-                .Where(m => m.PatientId == patientId && m.MoodDate >= from)
-                .OrderBy(m => m.MoodDate)
-                .ToListAsync();
-
-            static double? ScoreMood(string? f) => f switch
-            {
-                "Overjoyed"    => 5,
-                "Happy"        => 4,
-                "Calm"         => 4,
-                "Neutral"      => 3,
-                "Disappointed" => 2,
-                "Angry"        => 1,
-                _              => (double?)null
-            };
-
-            List<string>  labels;
-            List<double?> scores;
-
-            if (days <= 30)
-            {
-                var dates = Enumerable.Range(0, days).Select(i => from.AddDays(i)).ToList();
-                labels = dates.Select(d => d.ToString("dd/MM")).ToList();
-                scores = dates.Select(d =>
-                {
-                    var m = moods.FirstOrDefault(x => x.MoodDate.Date == d.Date);
-                    return m == null ? (double?)null : ScoreMood(m.Feeling);
-                }).ToList();
-            }
-            else
-            {
-                int weeks = (days / 7) + 1;
-                var weekStarts = Enumerable.Range(0, weeks).Select(i => from.AddDays(i * 7)).ToList();
-                labels = weekStarts.Select(w => w.ToString("dd/MM")).ToList();
-                scores = weekStarts.Select(w =>
-                {
-                    var wm = moods.Where(m => m.MoodDate.Date >= w.Date && m.MoodDate.Date < w.AddDays(7).Date).ToList();
-                    if (!wm.Any()) return (double?)null;
-                    var vals = wm.Select(m => ScoreMood(m.Feeling)).Where(v => v != null).Select(v => v!.Value).ToList();
-                    return vals.Any() ? (double?)vals.Average() : null;
-                }).ToList();
-            }
-
-            int sehatN = 0, beresikoN = 0, bahayaN = 0;
-            foreach (var s in scores.Where(x => x.HasValue).Select(x => x!.Value))
-            {
-                if (s >= 4) sehatN++;
-                else if (s >= 2.5) beresikoN++;
-                else bahayaN++;
-            }
-            int totalN = Math.Max(1, sehatN + beresikoN + bahayaN);
+            var moodWindow = await _healthService.ComputeMoodWindowAsync(patientId, days);
 
             return Json(new
             {
-                labels,
-                scores,
-                sehatPct    = (int)Math.Round((double)sehatN    / totalN * 100),
-                beresikoPct = (int)Math.Round((double)beresikoN / totalN * 100),
-                bahayaPct   = (int)Math.Round((double)bahayaN   / totalN * 100),
-                hasData     = moods.Any()
+                labels = moodWindow.Labels,
+                scores = moodWindow.Scores,
+                sehatPct = moodWindow.Distribution.SehatPct,
+                beresikoPct = moodWindow.Distribution.BeresikoPct,
+                bahayaPct = moodWindow.Distribution.BahayaPct,
+                hasData = moodWindow.HasData
             });
         }
 
@@ -315,6 +258,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .Include(p => p.User)
                 .Where(p => p.CompanyId == company.CompanyId && assignedPatientIds.Contains(p.PatientId) && p.EmploymentStatus == "active")
                 .ToListAsync();
+
+            await _healthService.RefreshStatusesAsync(patients);
 
             ViewBag.CompanyName = company.Name;
             ViewBag.Company = company;
@@ -343,6 +288,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .Include(p => p.User)
                 .Where(p => p.CompanyId == company.CompanyId && assignedPatientIds.Contains(p.PatientId) && p.EmploymentStatus == "active")
                 .ToListAsync();
+
+            await _healthService.RefreshStatusesAsync(patients);
 
             ViewBag.CompanyName = company.Name;
             ViewBag.Company = company;

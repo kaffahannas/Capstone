@@ -1,0 +1,20 @@
+.usr-edit-card {
+    max-width: 600px;
+}
+
+.usr-validation-summary {
+    margin-bottom: 16px;
+}
+
+.usr-role-input {
+    background: #F3F4F6;
+    color: #6B7280;
+    border: 1px solid #E5E7EB;
+    padding: 10px;
+    border-radius: var(--adm-radius-sm);
+    cursor: not-allowed;
+}
+
+.usr-form-actions {
+    margin-top: 24px;
+}

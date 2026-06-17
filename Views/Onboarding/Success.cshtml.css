@@ -1,31 +1,25 @@
 .register-card--onb-success {
     text-align: center;
-    padding: 50px 30px;
+    padding: 48px 28px 40px;
 }
 
-.onb-success-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 30px;
+.onb-success-icon {
+    display: block;
+    margin: 0 auto 12px;
 }
 
-.onb-success-logo-img {
-    width: 28px;
-    height: auto;
-}
-
-.onb-success-logo-text {
+.onb-success-brand {
+    margin: 0 0 20px;
     font-weight: 700;
+    font-size: 18px;
     color: #7C3AED;
-    font-size: 20px;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
 }
 
 .auth-title--onb-success {
     font-size: 24px;
-    margin-bottom: 20px;
+    line-height: 1.3;
+    margin: 0 0 20px;
 }
 
 .onb-success-progress {
@@ -33,21 +27,27 @@
     height: 8px;
     background-color: var(--primary-purple);
     border-radius: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .onb-success-desc {
     font-size: 14px;
     color: var(--text-muted);
     line-height: 1.6;
-    margin-bottom: 40px;
+    margin: 0 0 32px;
 }
 
 .btn-submit--onb-outline {
     text-decoration: none;
     display: inline-block;
+    width: 100%;
     box-sizing: border-box;
     background-color: #F3F0FF;
     color: var(--primary-purple);
     border: 1px solid var(--primary-purple);
+}
+
+.btn-submit--onb-outline:hover {
+    background-color: #EDE9FE;
+    color: #6D28D9;
 }

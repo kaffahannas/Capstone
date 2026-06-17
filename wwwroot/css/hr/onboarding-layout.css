@@ -1,0 +1,4 @@
+.onb-progress-bar {
+    width: var(--bar-w, 0%);
+    transition: width 0.3s;
+}

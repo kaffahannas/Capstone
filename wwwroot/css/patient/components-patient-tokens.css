@@ -1,0 +1,20 @@
+﻿/* Patient design tokens (mood palette + app base) */
+:root {
+    --lu-primary: #7C3AED;
+    --lu-primary-hover: #6D28D9;
+    --lu-primary-soft: #EDE9FE;
+    --lu-text: #111827;
+    --lu-text-muted: #6B7280;
+    --lu-border: #E5E7EB;
+    --lu-bg: #F9FAFB;
+    --lu-card: #FFFFFF;
+    --lu-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+
+    /* Mood colors */
+    --mood-overjoyed: #D9F99D;
+    --mood-happy: #A3E635;
+    --mood-calm: #93C5FD;
+    --mood-neutral: #D1D5DB;
+    --mood-disappointed: #FBCFE8;
+    --mood-angry: #FCA5A5;
+}

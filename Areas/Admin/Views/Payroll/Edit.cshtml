@@ -7,6 +7,10 @@
     var psyName = ViewBag.PsyName as string ?? "—";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/payroll-edit.css" asp-append-version="true" />
+}
+
 <a class="adm-back-link" asp-action="Index">← Daftar Payroll</a>
 
 <div class="pay-edit-wrap">

@@ -21,6 +21,11 @@
     var arcOffset = (int)Math.Round(207.35 * (1 - healthScore / 100.0));
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/shared/components-stat-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/client-company-stats-modal.css" asp-append-version="true" />
+}
+
 @* ── Hero banner ── *@
 <div class="stat-hero">
     <div class="stat-hero-left">
@@ -232,6 +237,7 @@ else
 </div>
 
 @section Scripts {
+<script src="~/js/shared/animate-bars.js" asp-append-version="true"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -327,6 +333,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
         </text>
     }
+
+    animateBarFills('.stat-kpi-bar, .stat-div-bar-fill');
 
 });
 

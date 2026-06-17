@@ -13,6 +13,10 @@
     double bahayaPct   = Model.ActiveCount > 0 ? Math.Round(100.0 * Model.BahayaCount   / Model.ActiveCount, 1) : 0;
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/home-index.css" asp-append-version="true" />
+}
+
 <div class="hrd-page">
 
     @* ── Hero ── *@
@@ -534,6 +538,7 @@
 </div>
 
 @section Scripts {
+<script src="~/js/shared/animate-bars.js" asp-append-version="true"></script>
 <script>
 (function () {
     // ════════════════════════════════════════════
@@ -543,7 +548,7 @@
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.add('is-open');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('lu-scroll-lock');
         // auto-focus first input
         const first = el.querySelector('input,select,textarea');
         if (first) setTimeout(() => first.focus(), 120);
@@ -553,7 +558,7 @@
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.remove('is-open');
-        document.body.style.overflow = '';
+        document.body.classList.remove('lu-scroll-lock');
     };
 
     // Close on overlay click or Escape
@@ -817,13 +822,7 @@
         filterClientRows(input?.value.trim().toLowerCase() || '', divSel?.value || '', statusSel.value));
 
     // ─── Animate distribution bars on load ───
-    requestAnimationFrame(() => {
-        document.querySelectorAll('.hrd-dist-fill').forEach(el => {
-            const target = el.style.getPropertyValue('--bar-w');
-            el.style.setProperty('--bar-w', '0%');
-            requestAnimationFrame(() => { el.style.setProperty('--bar-w', target); });
-        });
-    });
+    animateBarFills('.hrd-dist-fill');
 
 })();
 </script>

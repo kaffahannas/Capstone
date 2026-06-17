@@ -1,0 +1,137 @@
+﻿/* HR hero banner + stats row */
+/* G??G?? Hero G??G?? (fixed height G?? don't grow) */
+.hrd-hero {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 45%, #7C3AED 75%, #8B5CF6 100%);
+    box-shadow: 0 6px 28px rgba(109,40,217,0.30);
+    flex-shrink: 0;
+}
+.hrd-hero-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
+    pointer-events: none;
+}
+.hrd-hero-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 32px;
+    flex-wrap: wrap;
+}
+
+.hrd-hero-left {
+    flex: 1;
+    min-width: 180px;
+    color: #fff;
+}
+.hrd-hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin: 0 0 9px;
+}
+.hrd-hero-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 5px;
+    line-height: 1.2;
+}
+.hrd-hero-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.68);
+    margin: 0;
+}
+
+/* Stats row */
+.hrd-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: stretch;
+    min-width: 0;
+    max-width: 100%;
+}
+.hrd-stat {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 85px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.2s;
+}
+.hrd-stat:hover {
+    transform: translateY(-2px);
+}
+.hrd-stat-ico {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 6px;
+    opacity: 0.95;
+}
+.hrd-stat-val {
+    display: block;
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.hrd-stat-lbl {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+.hrd-stat--sehat  { border-color: rgba(134,239,172,0.35); background: rgba(134,239,172,0.15); }
+.hrd-stat--sehat .hrd-stat-val  { color: #BBF7D0; }
+.hrd-stat--beresiko { border-color: rgba(252,211,77,0.35); background: rgba(252,211,77,0.13); }
+.hrd-stat--beresiko .hrd-stat-val { color: #FDE68A; }
+.hrd-stat--bahaya { border-color: rgba(252,165,165,0.35); background: rgba(252,165,165,0.13); }
+.hrd-stat--bahaya .hrd-stat-val { color: #FCA5A5; }
+
+/* Add button */
+.hrd-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 20px;
+    background: #fff;
+    color: var(--lu-primary);
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13.5px;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: box-shadow 0.18s, transform 0.12s;
+}
+.hrd-add-btn:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+    transform: translateY(-1px);
+    color: var(--lu-primary);
+}
+
+/* G??G?? Alert banners G??G?? (fixed height G?? don't grow) */

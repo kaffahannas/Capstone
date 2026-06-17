@@ -111,16 +111,20 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 LongestStreak = longest
             };
 
-            // ─── F: Top triggers ───
-            var counts = new Dictionary<string, int>();
-            foreach (var m in moods)
+            // ─── F: Top triggers (one primary trigger per mood entry) ───
+            var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            var moodEntriesWithTriggers = 0;
+            foreach (var m in moods.OrderBy(m => m.MoodDate))
             {
-                if (string.IsNullOrEmpty(m.Triggers)) continue;
-                foreach (var t in m.Triggers.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                {
-                    counts.TryGetValue(t, out var n);
-                    counts[t] = n + 1;
-                }
+                var sessionTriggers = MoodOptions.ParseStoredTriggers(m.Triggers)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+                if (sessionTriggers.Count == 0) continue;
+
+                moodEntriesWithTriggers++;
+                var primary = sessionTriggers[0];
+                counts.TryGetValue(primary, out var n);
+                counts[primary] = n + 1;
             }
             var topTriggers = counts
                 .OrderByDescending(kv => kv.Value)
@@ -140,7 +144,9 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 Radar = radar,
                 HasRadarData = hasRadar,
                 Engagement = engagement,
-                TopTriggers = topTriggers
+                TopTriggers = topTriggers,
+                MoodEntryCount = moods.Count,
+                MoodEntriesWithTriggers = moodEntriesWithTriggers
             };
 
             ViewBag.ActiveNav = "Statistik";

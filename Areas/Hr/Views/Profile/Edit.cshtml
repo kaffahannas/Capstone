@@ -4,6 +4,10 @@
     ViewBag.ActiveNav = "Profil";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/profile-edit.css" asp-append-version="true" />
+}
+
 <a class="pd-back" asp-action="Index">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Profil Saya
@@ -69,37 +73,3 @@
         </div>
     </form>
 </div>
-
-<style>
-/* Inline styles for toggle switches to ensure they look good without external CSS changes */
-.toggle-switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-    cursor: pointer;
-}
-.toggle-slider {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #D1D5DB;
-    border-radius: 24px;
-    transition: .3s;
-}
-.toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 18px; width: 18px;
-    left: 3px; bottom: 3px;
-    background-color: white;
-    border-radius: 50%;
-    transition: .3s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-input:checked + .toggle-slider {
-    background-color: var(--primary-purple);
-}
-input:checked + .toggle-slider:before {
-    transform: translateX(20px);
-}
-</style>

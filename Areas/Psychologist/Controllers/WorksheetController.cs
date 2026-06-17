@@ -277,7 +277,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PatientWorksheetHistory(int id, bool add = false)
+        public async Task<IActionResult> PatientWorksheetHistory(int id, bool add = false, int? open = null)
         {
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
@@ -303,6 +303,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 id,
                 addForm,
                 openModal: add,
+                openWorksheetId: open,
                 patientName: patient.User?.FullName ?? "—",
                 worksheets: worksheets);
         }
@@ -311,6 +312,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             int patientId,
             LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel? addForm = null,
             bool openModal = false,
+            int? openWorksheetId = null,
             string? patientName = null,
             List<Worksheet>? worksheets = null)
         {
@@ -340,33 +342,21 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 ReturnPatientId = patientId
             };
             ViewBag.OpenAddTaskModal = openModal;
+            ViewBag.OpenWorksheetId = openWorksheetId;
             return View("PatientWorksheetHistory");
         }
 
         [HttpGet]
         public async Task<IActionResult> ReviewWorksheet(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
-            var psy = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
-            if (psy == null) return NotFound();
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction("Login", "Account", new { area = "" });
 
             var w = await _context.Worksheets
-                .Include(x => x.Patient).ThenInclude(p => p!.User)
-                .FirstOrDefaultAsync(x => x.WorksheetId == id && x.PsychologistId == psy.PsychologistId);
+                .FirstOrDefaultAsync(x => x.WorksheetId == id && x.PsychologistId == psyId);
             if (w == null) return NotFound();
 
-            return View(new LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel
-            {
-                WorksheetId = w.WorksheetId,
-                PatientName = w.Patient?.User?.FullName ?? "—",
-                TaskName = w.TaskName,
-                Description = w.Description,
-                ProofImagePath = w.ProofImagePath,
-                PatientNote = w.Note,
-                Status = w.Status,
-                PsychologistFeedback = w.PsychologistFeedback
-            });
+            return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
         }
 
         [HttpPost]

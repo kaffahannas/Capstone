@@ -32,6 +32,10 @@
     };
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/profile-index.css" asp-append-version="true" />
+}
+
 <div class="pf-page">
 
     @if (TempData["success"] is string ok)
@@ -314,11 +318,11 @@
                 <h3 class="pf-quick-title">⚡ Akses Cepat</h3>
                 <div class="pf-quick-grid">
 
-                    <a asp-controller="Mood" asp-action="Feeling" class="pf-quick-card pf-quick-card--mood">
+                    <button type="button" class="pf-quick-card pf-quick-card--mood" onclick="openMoodModal()">
                         <span class="pf-quick-ico">😊</span>
                         <div class="pf-quick-label">Lacak Mood & Check-In</div>
                         <div class="pf-quick-sub">Catat perasaan harianmu</div>
-                    </a>
+                    </button>
 
                     <a asp-controller="Jadwal" asp-action="Index" class="pf-quick-card pf-quick-card--jadwal">
                         <span class="pf-quick-ico">📅</span>
@@ -331,6 +335,12 @@
                         <div class="pf-quick-label">Edit Profil</div>
                         <div class="pf-quick-sub">Perbarui data & kontak</div>
                     </a>
+
+                    <a href="/Account/ChangePassword" class="pf-quick-card pf-quick-card--security">
+                        <span class="pf-quick-ico">🔒</span>
+                        <div class="pf-quick-label">Pengaturan Keamanan</div>
+                        <div class="pf-quick-sub">Atur atau ubah password</div>
+                    </a>
                 </div>
             </section>
 
@@ -338,3 +348,27 @@
 
     </div>
 </div>
+
+<!-- Mood Tracker Modal (same as Beranda) -->
+<div class="hrpf-modal-overlay" id="moodModal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle">
+    <div class="hrpf-modal db-modal--mood">
+        <div class="hrpf-modal-head">
+            <div class="hrpf-modal-head-icon">😊</div>
+            <h2 class="hrpf-modal-title" id="moodModalTitle">Lacak Mood</h2>
+            <button type="button" class="hrpf-modal-close" onclick="closeMoodModal()" aria-label="Tutup">&times;</button>
+        </div>
+        <div class="hrpf-modal-body db-modal-body--iframe">
+            <iframe id="moodIframe" src="" class="db-mood-iframe" title="Lacak Mood"></iframe>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/shared/animate-bars.js" asp-append-version="true"></script>
+    <script src="~/js/patient/mood-modal.js" asp-append-version="true"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        animateBarFills('.pf-complete-fill, .pf-mood-fill');
+    });
+    </script>
+}

@@ -7,6 +7,10 @@
         : Model.CurrentProfilePicture;
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/profile-edit.css" asp-append-version="true" />
+}
+
 <div class="pf-edit-page">
     <form asp-action="Edit" method="post" enctype="multipart/form-data" class="pf-edit-form">
 

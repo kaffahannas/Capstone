@@ -6,8 +6,16 @@
     <title>@ViewData["Title"] - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-psy-page.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-psy-detail.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-psy-stats-legacy.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-psy-task.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-psy-profile-legacy.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-prf-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-history-card.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-status.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
@@ -18,7 +26,7 @@
         <aside class="sidebar app-sidebar" id="appSidebar" aria-label="Navigasi psikolog">
             <div class="sidebar-header">
                 <a asp-area="Psychologist" asp-controller="Dashboard" asp-action="Index" class="sidebar-brand">
-                    <img src="~/image/lightenuplogo.ico" alt="Logo LightenUp" onerror="this.style.display='none'" />
+                    <img src="~/image/lightenuplogo.ico" alt="Logo LightenUp" onerror="this.classList.add('is-hidden')" />
                     LightenUp
                 </a>
                 <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Tutup menu">&times;</button>

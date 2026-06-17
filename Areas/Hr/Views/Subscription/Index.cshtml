@@ -11,6 +11,10 @@
         daysLeft = Math.Max(0, (Model.ActiveUntil.Value - DateTime.Today).Days);
     bool expiringSoon = daysLeft > 0 && daysLeft <= 30;
 }
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/subscription-index.css" asp-append-version="true" />
+}
+
 <div class="hrln-page">
 
     @* ══════ HERO ══════ *@
@@ -305,20 +309,18 @@
 (function () {
     // Copy referral codes
     document.querySelectorAll('.hrln-div-copy').forEach(btn => {
+        const defaultIcon = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+        const doneIcon = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
         btn.addEventListener('click', function () {
             const code = this.dataset.code;
             if (!code) return;
             navigator.clipboard.writeText(code).then(() => {
-                this.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
-                this.style.background = 'var(--lu-primary)';
-                this.style.color = '#fff';
-                this.style.borderColor = 'var(--lu-primary)';
-                const btn = this;
-                setTimeout(() => {
-                    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-                    btn.style.background = '';
-                    btn.style.color = '';
-                    btn.style.borderColor = '';
+                this.innerHTML = doneIcon;
+                this.classList.add('is-copied');
+                const el = this;
+                setTimeout(function () {
+                    el.innerHTML = defaultIcon;
+                    el.classList.remove('is-copied');
                 }, 2000);
             });
         });

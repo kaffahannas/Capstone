@@ -19,8 +19,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/patient.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/mood-wizard-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/mood-feeling.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/mood-note.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/mood-question.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/mood-summary.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/mood-triggers.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/journal-checkin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/journal-checkin-saved.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/journal-question.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
 </head>
 <body class="mood-wizard-body">
 
@@ -57,7 +66,22 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script>
         if (window.self !== window.top) {
+            document.documentElement.classList.add('is-popup');
             document.body.classList.add('is-popup');
+        }
+
+        function notifyMoodWizardHeight() {
+            if (window.self === window.top) return;
+            var root = document.querySelector('.mood-wizard-body');
+            if (!root) return;
+            var height = Math.ceil(root.scrollHeight);
+            window.parent.postMessage({ type: 'moodWizardResize', height: height }, window.location.origin);
+        }
+
+        window.addEventListener('load', notifyMoodWizardHeight);
+        window.addEventListener('resize', notifyMoodWizardHeight);
+        if (window.ResizeObserver) {
+            new ResizeObserver(notifyMoodWizardHeight).observe(document.body);
         }
     </script>
     @await RenderSectionAsync("Scripts", required: false)

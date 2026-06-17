@@ -16,6 +16,10 @@
     bool hasSnapshots = assignmentRows.Any(a => a.SubscriptionValue > 0);
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/dashboard-payslip.css" asp-append-version="true" />
+}
+
 <div class="psy-payslip-page">
 
 <div class="tasks-hero pay-hero">

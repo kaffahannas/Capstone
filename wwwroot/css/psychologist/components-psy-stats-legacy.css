@@ -1,0 +1,78 @@
+﻿/* Psy legacy statistics blocks */
+/* ================== HALAMAN STATISTIK ================== */
+/* stats-summary-grid responsive columns handled by site.css */
+.stats-summary-grid {
+    margin-bottom: 30px;
+}
+
+.stat-box {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-sehat {
+    background: var(--status-sehat-bg);
+    color: var(--status-sehat-text);
+}
+
+.icon-beresiko {
+    background: var(--status-beresiko-bg);
+    color: var(--status-beresiko-text);
+}
+
+.icon-bahaya {
+    background: var(--status-bahaya-bg);
+    color: var(--status-bahaya-text);
+}
+
+/* charts-grid responsive columns handled by site.css */
+.charts-grid {
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.division-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.division-card {
+    background: var(--primary-purple);
+    color: white;
+    border-radius: 16px;
+    padding: 24px;
+    min-height: 260px; /* Diperbesar agar proporsional */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+.division-card-light {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+}

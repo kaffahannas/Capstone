@@ -17,6 +17,8 @@ namespace LightenUp.Web.Models.ViewModels
 
         // Widget F — Triggers
         public List<TriggerCount> TopTriggers { get; set; } = new();
+        public int MoodEntryCount { get; set; }
+        public int MoodEntriesWithTriggers { get; set; }
     }
 
     public class MoodTrendPoint

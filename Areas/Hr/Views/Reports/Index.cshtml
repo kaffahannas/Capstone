@@ -8,6 +8,8 @@
 }
 
 @section Head {
+    <link rel="stylesheet" href="~/css/hr/reports-edit-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/reports-index.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 }
 
@@ -26,6 +28,8 @@
         @err
     </div>
 }
+
+<div class="hrpt-page">
 
 @* ══════ HERO ══════ *@
 <div class="hrws-hero">
@@ -146,8 +150,10 @@
 
 </div>
 
+</div>
+
 @* Modal Container *@
-<div class="hrpf-modal-overlay" id="editModalOverlay" role="dialog" aria-modal="true">
+<div class="hrpf-modal-overlay" id="editModalOverlay" role="dialog" aria-modal="true" aria-hidden="true">
     <div id="editModalContainer" class="hrpt-edit-modal-wrap">
         @* AJAX content goes here *@
     </div>
@@ -157,17 +163,22 @@
 <script>
 (function () {
     const t = document.getElementById('hrptToast');
-    if (t) setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; }, 3200);
+    if (t) setTimeout(function () { t.classList.add('is-dismissing'); }, 3200);
 })();
 
 const editModalOverlay = document.getElementById('editModalOverlay');
 const editModalContainer = document.getElementById('editModalContainer');
 
+if (editModalOverlay && editModalOverlay.parentElement !== document.body) {
+    document.body.appendChild(editModalOverlay);
+}
+
 async function openEditModal(id) {
     // Show loading state
     editModalContainer.innerHTML = `<div class="hrpt-modal-loading"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--lu-primary)" stroke-width="2" class="hrpf-spin hrpt-modal-loading-ico"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><div class="hrpt-modal-loading-text">Memuat data...</div></div>`;
     editModalOverlay.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
+    editModalOverlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lu-scroll-lock');
     
     try {
         const res = await fetch(`/Hr/Reports/EditModal/${id}`);
@@ -189,14 +200,24 @@ async function openEditModal(id) {
 
 window.closeEditModal = function() {
     editModalOverlay.classList.remove('is-open');
-    document.body.style.overflow = '';
-    // Optional: clear HTML after transition
+    editModalOverlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lu-scroll-lock');
     setTimeout(() => { editModalContainer.innerHTML = ''; }, 300);
 };
 
-// Close modal on outside click
-editModalOverlay.addEventListener('click', (e) => {
-    if (e.target === editModalOverlay || e.target === editModalContainer) {
+document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-hrpt-close-modal]')) {
+        e.preventDefault();
+        closeEditModal();
+        return;
+    }
+    if (editModalOverlay.classList.contains('is-open') && e.target === editModalOverlay) {
+        closeEditModal();
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && editModalOverlay.classList.contains('is-open')) {
         closeEditModal();
     }
 });

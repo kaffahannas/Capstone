@@ -1,0 +1,90 @@
+/* Psychologist status tokens + shared badge/chip styles (extracted from dashboard.css) */
+
+:root {
+    --status-bahaya-bg: #FFEDD5;
+    --status-bahaya-text: #EA580C;
+    --status-beresiko-bg: #FEF9C3;
+    --status-beresiko-text: #CA8A04;
+    --status-sehat-bg: #D1FAE5;
+    --status-sehat-text: #059669;
+}
+
+/* Legacy patient-list status badges */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-bahaya {
+    background: var(--status-bahaya-bg);
+    color: var(--status-bahaya-text);
+}
+
+.status-beresiko {
+    background: var(--status-beresiko-bg);
+    color: var(--status-beresiko-text);
+}
+
+.status-sehat {
+    background: var(--status-sehat-bg);
+    color: var(--status-sehat-text);
+}
+
+/* Worksheet / assignment status variants */
+.status-selesai {
+    background: #D1FAE5;
+    color: #059669;
+}
+
+.status-belum {
+    background: #F3F4F6;
+    color: #4B5563;
+}
+
+.status-review {
+    background: #FFEDD5;
+    color: #EA580C;
+}
+
+/* Client list + dashboard mood chips */
+.psy-status-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.psy-status--sehat {
+    background: var(--status-sehat-bg);
+    color: var(--status-sehat-text);
+}
+
+.psy-status--beresiko {
+    background: var(--status-beresiko-bg);
+    color: var(--status-beresiko-text);
+}
+
+.psy-status--bahaya {
+    background: var(--status-bahaya-bg);
+    color: var(--status-bahaya-text);
+}
+
+/* Worksheet task card status colors (base .ws-status-badge in components-worksheet-dashboard.css) */
+.ws-status--belum {
+    background: #F3F4F6;
+    color: #374151;
+}
+
+.ws-status--review {
+    background: #FEF3C7;
+    color: #B45309;
+}
+
+.ws-status--selesai {
+    background: #D1FAE5;
+    color: #059669;
+}

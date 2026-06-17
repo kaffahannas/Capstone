@@ -22,6 +22,10 @@
     };
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/client-patient-detail.css" asp-append-version="true" />
+}
+
 @* ── Back link ── *@
 <a href="/Psychologist/Dashboard/Index" class="pd-back">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
@@ -70,7 +74,7 @@
             </div>
             <div class="pd-hero-stat pd-hero-stat--mood">
                 <span class="pd-hero-stat-val">@sehatPct%</span>
-                <span class="pd-hero-stat-lbl">Mood Sehat</span>
+                <span class="pd-hero-stat-lbl">Hari Sehat (7 hari)</span>
             </div>
         </div>
 
@@ -174,7 +178,6 @@
                     Riwayat Worksheet
                 </a>
                 
-                <div class="pd-debug">Debug AssignmentId: @(ViewBag.AssignmentId ?? "NULL")</div>
                 @if (ViewBag.AssignmentId != null)
                 {
                     <button type="button" class="pd-action-link pd-cancel-btn" onclick="openCancelModal(@(ViewBag.AssignmentId ?? 0), '@Html.Raw(Model.FullName.Replace("'", "\\'"))')">
@@ -376,7 +379,7 @@
             const wrap  = document.getElementById('moodChartWrap');
             const lgnd  = document.getElementById('moodLegend');
             const empty = document.getElementById('moodEmpty');
-            wrap.style.opacity = '0.4';
+            wrap.classList.add('is-loading');
 
             try {
                 const days = this.dataset.days;
@@ -388,21 +391,21 @@
                 moodChart.update();
 
                 if (d.hasData) {
-                    wrap.style.display  = '';
-                    lgnd.style.display  = '';
-                    empty.style.display = 'none';
+                    wrap.classList.remove('pd-is-hidden');
+                    lgnd.classList.remove('pd-is-hidden');
+                    empty.classList.add('pd-is-hidden');
                     document.getElementById('legSehat').textContent    = d.sehatPct    + '%';
                     document.getElementById('legBeresiko').textContent = d.beresikoPct + '%';
                     document.getElementById('legBahaya').textContent   = d.bahayaPct   + '%';
                 } else {
-                    wrap.style.display  = 'none';
-                    lgnd.style.display  = 'none';
-                    empty.style.display = '';
+                    wrap.classList.add('pd-is-hidden');
+                    lgnd.classList.add('pd-is-hidden');
+                    empty.classList.remove('pd-is-hidden');
                 }
             } catch(e) {
                 console.error('Mood fetch failed', e);
             } finally {
-                wrap.style.opacity = '1';
+                wrap.classList.remove('is-loading');
             }
         });
     });
@@ -414,14 +417,14 @@
         document.getElementById('cancelPatientName').textContent = patientNameJson;
         document.getElementById('cancelReason').value = '';
         overlay.classList.add('prf-modal--open');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('lu-scroll-lock');
         setTimeout(function() { document.getElementById('cancelReason').focus(); }, 60);
     };
     window.closeCancelModal = function() {
         var overlay = document.getElementById('cancelAssignmentModalOverlay');
         if (overlay) {
             overlay.classList.remove('prf-modal--open');
-            document.body.style.overflow = '';
+            document.body.classList.remove('lu-scroll-lock');
         }
     };
 })();

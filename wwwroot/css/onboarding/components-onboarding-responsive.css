@@ -1,0 +1,17 @@
+﻿/* Onboarding mobile */
+/* ───── Small phones (≤ 479px) ───── */
+@media (max-width: 479px) {
+    body { padding: 0; }
+    .onb-wrapper {
+        border-radius: 0;
+        min-height: 100vh;
+        padding: 24px 20px 32px;
+        border: none;
+    }
+    .onb-title { font-size: 24px; }
+    .onb-date-grid { grid-template-columns: 1fr; gap: 12px; }
+    .onb-choice-card { padding: 20px 12px; }
+    .onb-pill-row { flex-direction: column; gap: 12px; }
+    .onb-footer { flex-direction: column; }
+    .onb-btn { width: 100%; }
+}

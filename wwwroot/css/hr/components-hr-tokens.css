@@ -1,0 +1,13 @@
+﻿/* HR design tokens */
+/* HR design tokens (used by page CSS var() references) */
+:root {
+    --primary-purple: var(--lu-primary);
+    --light-purple: var(--lu-primary-soft);
+    --text-dark: #1F2937;
+    --text-muted: #6B7280;
+    --bg-gray: #F3F4F6;
+    --border-color: #E5E7EB;
+    --lu-surface: #FFFFFF;
+    --lu-hover: #F3F4F6;
+    --lu-border-strong: #D1D5DB;
+}

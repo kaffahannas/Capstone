@@ -19,15 +19,21 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SubscriptionPricingService _pricing;
+        private readonly HealthStatusService _healthService;
+        private readonly AssignmentActivationService _activation;
 
         public DashboardController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            SubscriptionPricingService pricing)
+            SubscriptionPricingService pricing,
+            HealthStatusService healthService,
+            AssignmentActivationService activation)
         {
             _context = context;
             _userManager = userManager;
             _pricing = pricing;
+            _healthService = healthService;
+            _activation = activation;
         }
 
         [HttpGet]
@@ -48,11 +54,14 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 ViewBag.ShowPayrollAgreement = true;
             }
 
-            var activeAssignments = await _context.Assignments
+            await _activation.RepairDuplicateLiveAssignmentsAsync(psychologist.PsychologistId);
+
+            var activeAssignments = AssignmentActivationService.SelectPrimaryPerPatient(
+                await _context.Assignments
                 .Include(a => a.Patient).ThenInclude(p => p!.User)
                 .Include(a => a.Patient).ThenInclude(p => p!.Company)
-                .Where(a => a.PsychologistId == psychologist.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
-                .ToListAsync();
+                .Where(a => a.PsychologistId == psychologist.PsychologistId && AssignmentActivationService.LiveClientListStatuses.Contains(a.Status))
+                .ToListAsync());
 
             var activePatients = activeAssignments.Select(a => a.Patient!).ToList();
 
@@ -73,7 +82,10 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                     (a.Status == "Active" || a.Status == "PendingAdminApproval" || a.Status == "PendingPsychologistApproval")))
                 .Where(p => p.CompanyId == null || partnerCompanyIds.Contains(p.CompanyId.Value))
                 .ToListAsync();
-                
+
+            await _healthService.RefreshStatusesAsync(
+                activePatients.Concat(unassignedPatientsDb));
+
             var pendingB2B = await _context.CompanyPsychologistRequests
                 .Include(r => r.Company)
                 .Where(r => r.PsychologistId == psychologist.PsychologistId && r.Status == "Pending")
@@ -134,11 +146,14 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction(nameof(Index));
 
-            var assignedIds = await _context.Assignments
-                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
+            await _activation.RepairDuplicateLiveAssignmentsAsync(psyId.Value);
+
+            var assignedIds = AssignmentActivationService.SelectPrimaryPerPatient(
+                await _context.Assignments
+                .Where(a => a.PsychologistId == psyId && AssignmentActivationService.LiveClientListStatuses.Contains(a.Status))
+                .ToListAsync())
                 .Select(a => a.PatientId)
-                .Distinct()
-                .ToListAsync();
+                .ToList();
 
             var patients = await _context.Patients
                 .Where(p => assignedIds.Contains(p.PatientId))
@@ -198,11 +213,14 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (psych == null) return NotFound();
 
-            var activeAssignments = await _context.Assignments
+            await _activation.RepairDuplicateLiveAssignmentsAsync(psych.PsychologistId);
+
+            var activeAssignments = AssignmentActivationService.SelectPrimaryPerPatient(
+                await _context.Assignments
                 .Include(a => a.Patient).ThenInclude(p => p!.User)
                 .Include(a => a.Patient).ThenInclude(p => p!.Company)
-                .Where(a => a.PsychologistId == psych.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
-                .ToListAsync();
+                .Where(a => a.PsychologistId == psych.PsychologistId && AssignmentActivationService.LiveClientListStatuses.Contains(a.Status))
+                .ToListAsync());
 
             var setting = await _context.PayrollSettings.FirstOrDefaultAsync(s => s.PsychologistId == psych.PsychologistId);
 

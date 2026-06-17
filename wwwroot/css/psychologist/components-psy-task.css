@@ -1,0 +1,65 @@
+﻿/* Psy worksheet / task review shared */
+/* ================== DETAIL WORKSHEET & REVIEW TUGAS ================== */
+.task-document-box {
+    border: 1px dashed var(--primary-purple);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    background-color: var(--light-purple);
+    color: var(--primary-purple);
+    font-weight: 600;
+    margin-top: 10px;
+    transition: 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+}
+
+    .task-document-box:hover {
+        background-color: #ddd4fc;
+    }
+
+.note-textarea {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-dark);
+    resize: vertical;
+    min-height: 140px;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+    background-color: #F9FAFB;
+}
+
+    .note-textarea:focus {
+        outline: none;
+        border-color: var(--primary-purple);
+        background-color: #FFFFFF;
+    }
+
+.btn-action-purple {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background-color: var(--primary-purple);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+
+    .btn-action-purple:hover {
+        background-color: var(--lu-primary-hover);
+    }

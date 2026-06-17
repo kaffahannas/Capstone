@@ -4,6 +4,10 @@
     var psyName = ViewBag.PsychologistName as string ?? "Psikolog";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/jadwal-request-session.css" asp-append-version="true" />
+}
+
 <div class="jdw-req-wrap">
 <div class="tasks-hero jdw-req-hero">
     <h1>

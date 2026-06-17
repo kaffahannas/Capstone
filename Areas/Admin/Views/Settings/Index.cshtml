@@ -7,6 +7,10 @@
 @if (TempData["success"] is string ok)  { <div class="adm-alert success">✅ @ok</div> }
 @if (TempData["error"]   is string err) { <div class="adm-alert error">⚠️ @err</div> }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/settings-index.css" asp-append-version="true" />
+}
+
 <div class="set-grid">
 
     <!-- ── Profile form ── -->

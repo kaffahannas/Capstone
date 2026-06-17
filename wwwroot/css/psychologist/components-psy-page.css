@@ -1,0 +1,95 @@
+﻿/* Psy shared page — headers, summary, patient list */
+/* Psychologist shared page primitives (extracted from dashboard.css) */
+
+/* Utilities */
+.pd-is-hidden { display: none !important; }
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.text-header {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.text-subtitle {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Grid Info Atas (Beranda) â€” layout handled by site.css; margin only here */
+.summary-grid {
+    margin-bottom: 30px;
+}
+
+.summary-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.summary-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--light-purple);
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tabel / List Pasien */
+.patient-list-container {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.patient-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+
+    .patient-card:hover {
+        border-color: var(--primary-purple);
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.05);
+    }
+
+.patient-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--primary-purple);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+}

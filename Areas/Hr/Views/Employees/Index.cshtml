@@ -11,6 +11,10 @@
     int totalBahaya   = Model.Items.Count(e => e.Status == "Bahaya");
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/employees-index.css" asp-append-version="true" />
+}
+
 <div class="hrem-page">
 
     @* ── Hero ── *@

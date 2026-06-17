@@ -335,23 +335,13 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/patient/mood-modal.js" asp-append-version="true"></script>
     <script>
         function openJournalModal() {
             document.getElementById('journalModal').classList.add('is-open');
         }
         function closeJournalModal() {
             document.getElementById('journalModal').classList.remove('is-open');
-        }
-
-        function openMoodModal() {
-            var iframe = document.getElementById('moodIframe');
-            if (!iframe.getAttribute('src')) {
-                iframe.setAttribute('src', '/Patient/Mood/Feeling');
-            }
-            document.getElementById('moodModal').classList.add('is-open');
-        }
-        function closeMoodModal() {
-            document.getElementById('moodModal').classList.remove('is-open');
         }
     </script>
 }

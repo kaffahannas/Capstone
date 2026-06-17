@@ -1,0 +1,322 @@
+:root {
+    --primary: #4F46E5;
+    --primary-light: #EEF2FF;
+    --text-main: #111827;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+}
+
+@page {
+    size: A4;
+    margin: 15mm;
+}
+
+/* ── Word-like document shell (screen preview) ── */
+body.hr-print-doc {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    margin: 0;
+    padding: 28px 16px 48px;
+    background: #D1D5DB;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.hr-print-sheet {
+    max-width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #B0B0B0;
+    outline: 1px solid #E5E7EB;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+        0 4px 20px rgba(0, 0, 0, 0.14);
+    padding: 44px 48px 52px;
+    box-sizing: border-box;
+}
+
+.hrst-print-logo-dot {
+    color: #A78BFA;
+}
+
+.hrst-print-chart-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.hrst-print-chart-total {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.hrst-print-chart-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.hrst-print-td-num {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.hrst-print-td-name {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.hrst-print-td-mono {
+    font-family: monospace;
+}
+
+/* ── Report content blocks ── */
+.hr-print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.hr-print-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.hr-print-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 6px;
+    line-height: 1.5;
+}
+
+.hr-print-logo {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+}
+
+.hr-print-kpi-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 36px;
+}
+
+.hr-print-chart-box {
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.hr-print-stats-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-content: center;
+}
+
+.hr-print-kpi-card {
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.hr-print-kpi-card h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 8px;
+}
+
+.hr-print-kpi-card .val {
+    font-size: 36px;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+}
+
+.hr-print-kpi--sehat { background: #ECFDF5; border-color: #A7F3D0; color: #059669; }
+.hr-print-kpi--sehat .val { color: #059669; }
+.hr-print-kpi--beresiko { background: #FFFBEB; border-color: #FDE68A; color: #D97706; }
+.hr-print-kpi--beresiko .val { color: #D97706; }
+.hr-print-kpi--bahaya { background: #FEF2F2; border-color: #FECACA; color: #DC2626; }
+.hr-print-kpi--bahaya .val { color: #DC2626; }
+
+.hr-print-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+
+.hr-print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.hr-print-table th,
+.hr-print-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.hr-print-table th {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.hr-print-table tr:nth-child(even) td {
+    background: #F9FAFB;
+}
+
+.hr-print-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.hr-print-badge--sehat { background: #D1FAE5; color: #047857; }
+.hr-print-badge--beresiko { background: #FEF3C7; color: #B45309; }
+.hr-print-badge--bahaya { background: #FEE2E2; color: #B91C1C; }
+
+.hr-print-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    line-height: 1.6;
+}
+
+.hr-print-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+    padding-top: 8px;
+}
+
+.hr-print-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.28);
+}
+
+.hr-print-btn:hover {
+    background: #4338CA;
+}
+
+.hr-print-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 20px;
+    margin-bottom: 8px;
+}
+
+.hr-print-info-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.hr-print-info-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.hr-print-info-value--body {
+    font-weight: 500;
+}
+
+.hr-print-info-full {
+    grid-column: 1 / -1;
+}
+
+.hr-print-empty {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-style: italic;
+    margin: 0;
+}
+
+.hr-print-table-empty td {
+    text-align: center;
+    color: #6B7280;
+    font-style: italic;
+}
+
+.hr-print-no-break {
+    page-break-inside: avoid;
+}
+
+@media print {
+    body.hr-print-doc {
+        background: #fff;
+        padding: 0;
+    }
+
+    .hr-print-sheet {
+        max-width: none;
+        min-height: auto;
+        margin: 0;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
+
+@media (max-width: 720px) {
+    .hr-print-sheet {
+        padding: 28px 24px 36px;
+    }
+
+    .hr-print-kpi-row {
+        flex-direction: column;
+    }
+
+    .hr-print-info-grid {
+        grid-template-columns: 1fr;
+    }
+}

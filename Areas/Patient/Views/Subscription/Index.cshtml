@@ -8,6 +8,10 @@
     var cid     = new System.Globalization.CultureInfo("id-ID");
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/subscription-index.css" asp-append-version="true" />
+}
+
 @if (TempData["error"] is string err)
 {
     <div class="lu-alert-danger" role="alert">

@@ -12,8 +12,19 @@
     <title>@pageTitle - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/onboarding.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-shell.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-typography.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-form.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-actions.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-upload.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-responsive.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/onboarding-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/onboarding-welcome.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/onboarding-terms.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/onboarding-medication.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/onboarding-counseling.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
     <div class="onb-wrapper">

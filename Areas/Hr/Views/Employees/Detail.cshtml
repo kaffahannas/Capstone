@@ -17,11 +17,14 @@
 }
 
 @section Head {
+    <link rel="stylesheet" href="~/css/hr/employees-detail.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 }
 
 @* ── AJAX toast ── *@
-<div class="hrpf-toast hrpf-toast--ok" id="hrdtToast" role="alert" aria-live="polite"></div>
+<div class="hrpf-toast hrpf-toast--ok" id="hrdtToast" role="alert" aria-live="polite">
+    @if (TempData["success"] is string okMsg) { @okMsg }
+</div>
 
 @* ── Back link ── *@
 <a href="@Url.Action("Index", "Employees", new { area = "Hr" })" class="pd-back hrdt-back">
@@ -167,22 +170,24 @@
             </div>
 
             @* Worksheet *@
-            <div class="pd-card hrdt-ws-card">
+            <div class="pd-card pd-card--plain">
                 <div class="pd-card-head">
                     <div class="pd-card-icon pd-card-icon--ws">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
                     </div>
                     <h3 class="pd-card-title">Worksheet</h3>
                 </div>
-                <div class="pd-card-body hrdt-ws-card-body">
+                <div class="pd-card-body">
                     @if (openWs > 0)
                     {
-                        <span class="hrdt-ws-num">@openWs</span>
-                        <span class="hrdt-ws-label">worksheet aktif</span>
+                        <div class="pd-ws-count">
+                            <span class="pd-ws-num">@openWs</span>
+                            <span class="pd-ws-label">worksheet aktif</span>
+                        </div>
                     }
                     else
                     {
-                        <span class="hrdt-ws-empty">Tidak ada worksheet aktif</span>
+                        <p class="pd-field-val pd-field-val--muted">Belum ada worksheet aktif.</p>
                     }
                 </div>
             </div>
@@ -209,9 +214,9 @@
                         Minta Worksheet
                     </button>
                     <a href="@Url.Action("EmployeePdf", "Employees", new { area = "Hr", id = Model.PatientId })" target="_blank" rel="noopener"
-                       class="hrdt-action-btn hrdt-action-btn--pdf">
+                       class="hrdt-action-btn hrdt-action-btn--gray">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        Cetak Laporan PDF
+                        Cetak PDF
                     </a>
                     <button type="button" onclick="openHrdtModal('removalModal')" class="hrdt-action-btn hrdt-action-btn--danger">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -557,11 +562,11 @@
     /* ── Modal open / close ── */
     function openHrdtModal(id) {
         document.getElementById(id).classList.add('is-open');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('lu-scroll-lock');
     }
     function closeHrdtModal(id) {
         document.getElementById(id).classList.remove('is-open');
-        document.body.style.overflow = '';
+        document.body.classList.remove('lu-scroll-lock');
         // Clear errors
         const err = document.getElementById(id.replace('Modal', 'ModalErr'));
         if (err) { err.classList.add('hrdt-is-hidden'); err.textContent = ''; }
@@ -586,15 +591,16 @@
     function showHrdtToast(msg, ok) {
         const t = document.getElementById('hrdtToast');
         t.textContent = msg;
-        t.className = 'hrpf-toast hrpf-toast--' + (ok ? 'ok' : 'err');
-        t.style.transition = 'none';
-        t.style.opacity = '1';
-        t.style.pointerEvents = 'none';
+        t.className = 'hrpf-toast hrpf-toast--' + (ok ? 'ok' : 'err') + ' is-active';
         clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => {
-            t.style.transition = 'opacity .4s';
-            t.style.opacity = '0';
+        toastTimer = setTimeout(function () {
+            t.classList.add('is-dismissing');
         }, 3400);
+    }
+
+    const bootToast = document.getElementById('hrdtToast');
+    if (bootToast?.textContent.trim()) {
+        showHrdtToast(bootToast.textContent.trim(), true);
     }
 
     /* ── Generic AJAX form submit ── */
@@ -706,7 +712,9 @@
     const MOOD_EMOJI = { 0: '', 1: '😢', 2: '😔', 3: '😐', 4: '😊', 5: '😄' };
     const labels = @Html.Raw(labelsJson);
     const scores = @Html.Raw(dataJson);
+    const hasMoodData = @(hasMoodData.ToString().ToLower());
 
+    if (hasMoodData) {
     const ctx = document.getElementById('moodChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
@@ -755,14 +763,8 @@
             }
         }
     });
-
-    // Auto-resize textarea
-    const ta = document.getElementById('hrNotesArea');
-    if (ta) {
-        const resize = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
-        ta.addEventListener('input', resize);
-        resize();
     }
+
 })();
 </script>
 }

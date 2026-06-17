@@ -57,6 +57,13 @@
     <div class="sch-alert-success">@successMsg</div>
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/shared/components-schedule-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-add-schedule-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-edit-schedule-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-schedule-detail-modal.css" asp-append-version="true" />
+}
+
 @* ── Hero banner ── *@
 <div class="sch-hero">
     <div class="sch-hero-left">
@@ -191,6 +198,18 @@ else
         }
         window.closeScheduleDetailModal = function() {
             document.getElementById('scheduleDetailModal').classList.remove('active');
+        }
+        window.openEditScheduleModal = async function(id) {
+            try {
+                const res = await fetch(`/Psychologist/Schedule/EditScheduleModal/${id}`);
+                if (!res.ok) throw new Error('Failed to load');
+                const html = await res.text();
+                document.getElementById('scheduleDetailModal').innerHTML = html;
+                document.getElementById('scheduleDetailModal').classList.add('active');
+            } catch (err) {
+                console.error(err);
+                alert("Gagal memuat form edit jadwal.");
+            }
         }
     </script>
 }

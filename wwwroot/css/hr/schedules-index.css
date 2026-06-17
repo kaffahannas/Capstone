@@ -1,0 +1,96 @@
+﻿.hrsch-idx-alert-error {
+    background: #FEE2E2;
+    color: #B91C1C;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.hrsch-idx-alert-success {
+    background: #D1FAE5;
+    color: #047857;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.hrsch-idx-btn-reset {
+    cursor: pointer;
+    border: none;
+}
+
+.hrsch-idx-search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 1 220px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.hrsch-idx-search-wrap {
+    width: 100%;
+    max-width: 220px;
+    min-width: 0;
+}
+
+.hrsch-page-wrap .sch-filter-bar > * {
+    min-width: 0;
+}
+
+.hrsch-page-wrap .sch-month-wrap {
+    flex-shrink: 0;
+}
+
+.hrsch-page-wrap .sch-filter-tabs {
+    flex: 1 1 auto;
+}
+
+.hrsch-idx-session-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hrsch-idx-meeting-link {
+    font-size: 12px;
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.hrsch-idx-modal-intro {
+    margin: 0 0 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.hrsch-idx-label-opt {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.hrsch-idx-notes-textarea {
+    margin-bottom: 0;
+}
+
+.hrsch-idx-modal-footer {
+    padding: 0;
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.hrsch-page-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}

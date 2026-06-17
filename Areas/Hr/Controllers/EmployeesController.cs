@@ -241,6 +241,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             var p = await _context.Patients
                 .Include(x => x.User)
                 .Include(x => x.Company)
+                .Include(x => x.Division)
                 .FirstOrDefaultAsync(x => x.PatientId == id && x.CompanyId == companyId);
             if (p == null) return NotFound();
 

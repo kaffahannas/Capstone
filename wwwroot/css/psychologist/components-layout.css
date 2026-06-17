@@ -1,0 +1,161 @@
+/* Psychologist app shell: sidebar nav + main column (extracted from dashboard.css) */
+
+:root {
+    --primary-purple: var(--lu-primary);
+    --light-purple: var(--lu-primary-soft);
+    --text-dark: #1F2937;
+    --text-muted: #6B7280;
+    --bg-gray: #F3F4F6;
+    --border-color: #E5E7EB;
+    --sidebar-width: 260px;
+}
+
+body {
+    margin: 0;
+    background-color: var(--bg-gray);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+}
+
+/* Sidebar overrides on top of site.css .app-sidebar / .sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: #FFFFFF;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5vh 0 0;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    margin-bottom: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-purple);
+    text-decoration: none;
+}
+
+.sidebar-brand img {
+    width: 28px;
+    height: auto;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3vh;
+    padding: 0 8px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1.1vh 12px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #F9FAFB;
+    color: var(--text-dark);
+}
+
+.nav-item.active {
+    background-color: var(--light-purple);
+    color: var(--primary-purple);
+    font-weight: 600;
+}
+
+.nav-badge {
+    margin-left: auto;
+    background: #EF4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    min-width: 20px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* Main column overrides */
+.main-content {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0 !important;
+}
+
+.main-content .app-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+.main-content .app-content > .psy-dashboard-grid {
+    flex: 1;
+    min-height: 0;
+}
+
+.psy-nav-logout {
+    margin-top: 0;
+    flex-shrink: 0;
+    padding: 1.5vh 8px clamp(14px, 2.5vh, 24px);
+    border-top: 1px solid var(--border-color);
+}
+
+.psy-logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #FEF2F2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+}
+
+.psy-logout-btn:hover {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.psy-topbar-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.psy-topbar-title h1 {
+    margin: 0;
+}
+
+@media (max-width: 991.98px) {
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+}

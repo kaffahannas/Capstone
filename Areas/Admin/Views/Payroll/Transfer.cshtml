@@ -8,6 +8,10 @@
     var payouts = ViewBag.Payouts as List<LightenUp.Web.Models.MonthlyPayout>;
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/payroll-transfer.css" asp-append-version="true" />
+}
+
 <a class="adm-back-link" asp-action="Index">← Kembali ke Daftar Payroll</a>
 
 <div class="adm-page-header">

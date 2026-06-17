@@ -5,6 +5,10 @@
     ViewBag.ActiveNav = "PendingCancellations";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/psychologists-pending-cancellations.css" asp-append-version="true" />
+}
+
 <div class="hr-page-wrap">
     @if (TempData["success"] is string ok)
     {

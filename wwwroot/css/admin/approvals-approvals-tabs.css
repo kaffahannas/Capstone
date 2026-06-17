@@ -1,0 +1,38 @@
+.apr-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    background: #fff;
+    padding: 12px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.apr-tab {
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.apr-tab--active {
+    background: #4338CA;
+    color: white;
+}
+
+.apr-tab--inactive {
+    background: #F3F4F6;
+    color: #4B5563;
+}
+
+.apr-tab-badge {
+    background: #EF4444;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-left: 6px;
+}

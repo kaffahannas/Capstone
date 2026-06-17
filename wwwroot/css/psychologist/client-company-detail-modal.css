@@ -1,0 +1,209 @@
+.cdm-modal {
+    max-width: 600px;
+    padding: 0;
+}
+
+.cdm-header {
+    padding: 24px 24px 10px 24px;
+}
+
+.cdm-eyebrow {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 0 4px 0;
+    font-weight: 500;
+}
+
+.cdm-title {
+    margin: 0;
+    font-size: 20px;
+    color: var(--text-dark);
+}
+
+.cdm-body {
+    padding: 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.cdm-count-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.cdm-count-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.cdm-count-lbl {
+    font-size: 15px;
+    color: var(--text-muted);
+}
+
+.cdm-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.cdm-stat-card {
+    background: #F9FAFB;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.cdm-stat-emoji {
+    font-size: 20px;
+}
+
+.cdm-stat-val {
+    margin: 4px 0;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.cdm-stat-val--sehat { color: #047857; }
+.cdm-stat-val--beresiko { color: #B45309; }
+.cdm-stat-val--bahaya { color: #B91C1C; }
+
+.cdm-stat-lbl {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.cdm-danger-banner {
+    background: #FEF2F2;
+    border-radius: 12px;
+    border: 1px solid #FCA5A5;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    color: #991B1B;
+}
+
+.cdm-danger-title {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.cdm-danger-sub {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.cdm-section-title {
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    font-weight: 600;
+}
+
+.cdm-empty {
+    padding: 24px;
+    text-align: center;
+    color: #9CA3AF;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.cdm-client-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.cdm-client-link {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: 0.2s;
+}
+
+.cdm-client-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cdm-client-av {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #F3E8FF;
+    color: #9333EA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.cdm-client-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.cdm-client-div {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.cdm-badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.cdm-badge--sehat { background: #D1FAE5; color: #047857; }
+.cdm-badge--beresiko { background: #FEF3C7; color: #B45309; }
+.cdm-badge--bahaya { background: #FEE2E2; color: #B91C1C; }
+.cdm-badge--default { background: #E5E7EB; color: #374151; }
+
+.cdm-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    background: #F9FAFB;
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.cdm-footer-btn {
+    text-align: center;
+    text-decoration: none;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 0 24px;
+}
+
+.cdm-footer-btn svg {
+    margin-right: 6px;
+    vertical-align: middle;
+}

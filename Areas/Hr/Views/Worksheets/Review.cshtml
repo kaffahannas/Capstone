@@ -7,6 +7,10 @@
     var idCulture = new System.Globalization.CultureInfo("id-ID");
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/worksheets-review.css" asp-append-version="true" />
+}
+
 <div class="hrwsrv-page">
 
     @* ── Toast ── *@
@@ -214,7 +218,7 @@
 <script>
 (function () {
     const t = document.getElementById('hrwsrvToast');
-    if (t) setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; }, 3200);
+    if (t) setTimeout(function () { t.classList.add('is-dismissing'); }, 3200);
 })();
 </script>
 }

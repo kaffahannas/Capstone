@@ -6,6 +6,10 @@
     var indoDeadline = Model.Deadline.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/tasks-detail.css" asp-append-version="true" />
+}
+
 <a asp-action="Index" class="tasks-back">← Tugas Kamu</a>
 
 @if (TempData["error"] is string err)
@@ -90,9 +94,8 @@ else
                 const reader = new FileReader();
                 reader.onload = e => {
                     preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    preview.classList.remove('task-preview-hidden');
-                    if (placeholder) placeholder.style.display = 'none';
+                    preview.classList.remove('task-preview-hidden', 'tsk-modal-preview-hidden');
+                    if (placeholder) placeholder.classList.add('task-preview-hidden', 'tsk-modal-preview-hidden');
                 };
                 reader.readAsDataURL(file);
             });
