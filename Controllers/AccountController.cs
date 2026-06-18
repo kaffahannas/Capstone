@@ -350,7 +350,7 @@ namespace LightenUp.Web.Controllers
 
         // #Bagian Logout#
         // #Function Logout#
-        [HttpPost]
+        [HttpGet, HttpPost]
         [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Logout()
         {

@@ -88,7 +88,7 @@ namespace LightenUp.Web.Areas.AdminAuth.Controllers
 
         // #Function Logout#
 
-        [HttpPost]
+        [HttpGet, HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
