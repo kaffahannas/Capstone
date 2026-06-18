@@ -424,6 +424,16 @@ body.auth-page::after {
     transform: translateY(0);
 }
 
+a.btn-submit,
+a.btn-submit:hover,
+a.btn-submit:focus-visible {
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+}
+
 .divider {
     display: flex;
     align-items: center;
@@ -676,6 +686,16 @@ select.form-control-custom {
     cursor: pointer;
 }
 /* #Bagian Auth Onboarding Step# */
+.onb-psy-progress-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-purple);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
 .onb-step-logo {
     display: flex;
     align-items: center;

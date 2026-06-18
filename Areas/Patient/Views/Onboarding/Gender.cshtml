@@ -5,6 +5,7 @@
 @* #Bagian Onboarding - Gender# *@
 
 @* #Komponen Form Pilih Gender# *@
+<div class="onb-step">
 <h1 class="onb-title">Pilih gender</h1>
 
 <form asp-action="Gender" method="post" class="onb-content">
@@ -28,7 +29,7 @@
         <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
     </div>
 </form>
-
+</div>
 @section Scripts {
     <script>
         document.querySelectorAll('.onb-choice-card').forEach(card => {

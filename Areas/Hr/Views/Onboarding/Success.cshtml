@@ -4,17 +4,20 @@
 }
 @* #Bagian OnboardingBerhasil# *@
 
-@section Head {
-    <link rel="stylesheet" href="~/css/hr/onboarding-success.css" asp-append-version="true" />
-}
-
-<div class="onb-welcome">
-    <div class="onb-welcome-emoji">✅</div>
+<div class="onb-welcome onb-welcome--hr onb-welcome--success">
+    <div class="onb-success-icon-wrap" aria-hidden="true">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="50" fill="#E0E7FF" />
+            <circle cx="50" cy="50" r="35" fill="#7C3AED" />
+            <path d="M40 50L46.5 56.5L60 43" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </div>
+    <p class="onb-brand-name onb-brand-name--success">LightenUp</p>
     <h1>Data berhasil ditambahkan!</h1>
     <p>Anda dapat langsung mengakses dashboard LightenUp &amp; mulai menambahkan data client.</p>
 </div>
 
-<div class="onb-footer onb-footer--no-border">
+<div class="onb-footer onb-welcome-footer onb-footer--stacked">
     <a asp-controller="Subscription" asp-action="Index" class="onb-btn onb-btn-primary">Aktifkan langganan perusahaan</a>
     <p class="onb-success-note">
         <a asp-controller="Home" asp-action="Index">Lewati dulu — buka dashboard</a>

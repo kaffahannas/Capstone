@@ -1,4 +1,2 @@
 /* #Bagian Onboarding Selamat Datang HR# */
-.onb-footer--no-border {
-    border-top: 0;
-}
+/* Welcome-specific overrides — base styles in hr/onboarding-layout.css */

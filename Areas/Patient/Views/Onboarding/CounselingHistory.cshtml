@@ -15,6 +15,7 @@
 @* #Bagian Onboarding - Riwayat Konseling# *@
 
 @* #Komponen Form Riwayat Konseling# *@
+<div class="onb-step">
 <h1 class="onb-title">Pernah mengikuti konseling/terapi psikologi?</h1>
 
 <form asp-action="CounselingHistory" method="post" class="onb-content">
@@ -58,7 +59,7 @@
         <button type="submit" class="onb-btn onb-btn-primary">Berikutnya</button>
     </div>
 </form>
-
+</div>
 @section Scripts {
     <script>
         const pills = document.querySelectorAll('.onb-pill');

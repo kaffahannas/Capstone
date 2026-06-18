@@ -1,10 +1,2 @@
 /* #Bagian Onboarding Berhasil HR# */
-.onb-footer--no-border {
-    border-top: 0;
-}
-
-.onb-success-note {
-    margin-top: 12px;
-    font-size: 13px;
-    color: #6B7280;
-}
+/* Success-specific overrides — base styles in hr/onboarding-layout.css */

@@ -4,9 +4,8 @@
 }
 @* #Bagian Onboarding - Selamat Datang# *@
 
-@* #Komponen Hero Selamat Datang# *@
-<div class="onb-welcome">
-    <div class="onb-welcome-emoji">🤩</div>
+<div class="onb-welcome onb-welcome--patient">
+    @await Html.PartialAsync("_OnboardingBrand")
     <h1>Hai, @(ViewBag.PatientName ?? "Sahabat")!</h1>
     <p>Lengkapi data diri kamu untuk dapat mulai menggunakan aplikasi ini dengan pengalaman yang dipersonalisasi.</p>
 </div>

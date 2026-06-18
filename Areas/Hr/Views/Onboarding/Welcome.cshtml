@@ -4,12 +4,8 @@
 }
 @* #Bagian OnboardingSelamatDatang# *@
 
-@section Head {
-    <link rel="stylesheet" href="~/css/hr/onboarding-welcome.css" asp-append-version="true" />
-}
-
-<div class="onb-welcome">
-    <div class="onb-welcome-emoji">👋</div>
+<div class="onb-welcome onb-welcome--hr">
+    @await Html.PartialAsync("_OnboardingBrand")
     <h1>Selamat datang, @(ViewBag.HrName ?? "HR")!</h1>
     <p>
         LightenUp adalah platform pendukung operasional bagi penyedia jasa layanan psikologi.
@@ -18,6 +14,6 @@
     </p>
 </div>
 
-<form asp-action="Welcome" method="post" class="onb-footer onb-footer--no-border">
+<form asp-action="Welcome" method="post" class="onb-footer onb-welcome-footer">
     <button type="submit" class="onb-btn onb-btn-primary">Lengkapi data HR</button>
 </form>

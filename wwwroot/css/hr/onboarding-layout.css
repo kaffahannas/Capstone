@@ -1,5 +1,136 @@
 /* #Bagian Onboarding Layout HR# */
+
 .onb-progress-bar {
     width: var(--bar-w, 0%);
     transition: width 0.3s;
+}
+
+/* #Komponen Logo Brand# */
+.onb-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.onb-brand svg {
+    width: 56px;
+    height: 56px;
+    filter: drop-shadow(0 4px 12px rgba(124, 58, 237, 0.2));
+}
+
+.onb-brand-name {
+    font-weight: 700;
+    font-size: 1.375rem;
+    color: var(--lu-primary);
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+/* #Komponen Langkah Onboarding# */
+.onb-step {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.onb-step .onb-title {
+    margin-top: 0;
+}
+
+.onb-step .onb-subtitle {
+    margin-bottom: 24px;
+}
+
+/* #Komponen Form Field# */
+.onb-field {
+    margin-bottom: 20px;
+}
+
+.onb-field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--lu-text);
+    margin-bottom: 8px;
+}
+
+.onb-upload-block {
+    margin-bottom: 20px;
+}
+
+.onb-upload-block > .onb-field-label {
+    margin-bottom: 10px;
+}
+
+.onb-file-link svg {
+    flex-shrink: 0;
+}
+
+/* #Komponen Tombol# */
+a.onb-btn,
+a.onb-btn:hover,
+a.onb-btn:focus-visible {
+    text-decoration: none;
+}
+
+a.onb-btn-primary,
+a.onb-btn-primary:hover,
+a.onb-btn-primary:focus-visible {
+    color: #ffffff;
+}
+
+.onb-footer--single .onb-btn-primary {
+    flex: 1;
+}
+
+.onb-footer--stacked {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.onb-welcome-footer {
+    border-top: 0;
+    padding-top: 0;
+}
+
+/* #Bagian Selamat Datang & Sukses HR# */
+.onb-welcome--hr h1 {
+    font-size: 28px;
+}
+
+.onb-welcome--hr p {
+    max-width: 400px;
+}
+
+.onb-welcome--success .onb-success-icon-wrap {
+    margin-bottom: 12px;
+}
+
+.onb-brand-name--success {
+    margin: 0 0 20px;
+}
+
+.onb-success-icon-wrap svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.onb-success-note {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: var(--lu-text-muted);
+    text-align: center;
+}
+
+.onb-success-note a {
+    color: var(--lu-primary);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.onb-success-note a:hover {
+    text-decoration: underline;
 }

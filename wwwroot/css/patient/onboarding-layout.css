@@ -1,5 +1,80 @@
 /* #Bagian Onboarding Layout Pasien# */
+
 .onb-progress-bar {
-    transition: width 0.3s;
     width: var(--bar-w, 0%);
+    transition: width 0.3s;
+}
+
+/* #Komponen Logo Brand# */
+.onb-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.onb-brand svg {
+    width: 56px;
+    height: 56px;
+    filter: drop-shadow(0 4px 12px rgba(124, 58, 237, 0.2));
+}
+
+.onb-brand-name {
+    font-weight: 700;
+    font-size: 1.375rem;
+    color: var(--lu-primary);
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+/* #Komponen Langkah Onboarding# */
+.onb-step {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.onb-step .onb-title {
+    margin-top: 0;
+}
+
+.onb-step .onb-subtitle {
+    margin-bottom: 24px;
+}
+
+/* #Komponen Tombol# */
+a.onb-btn,
+a.onb-btn:hover,
+a.onb-btn:focus-visible {
+    text-decoration: none;
+}
+
+a.onb-btn-primary,
+a.onb-btn-primary:hover,
+a.onb-btn-primary:focus-visible {
+    color: #ffffff;
+}
+
+.onb-footer--single .onb-btn-primary {
+    flex: 1;
+}
+
+.onb-welcome-footer {
+    border-top: 0;
+    padding-top: 0;
+}
+
+/* #Bagian Selamat Datang Pasien# */
+.onb-welcome--patient .onb-brand {
+    margin-bottom: 24px;
+}
+
+.onb-welcome--patient h1 {
+    font-size: 28px;
+}
+
+.onb-welcome--patient p {
+    max-width: 400px;
 }

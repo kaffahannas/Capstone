@@ -28,11 +28,9 @@
                 </svg>
             </a>
 
-            <!-- Logo Memanggil File Gambar .ico -->
-            <div class="onb-step-logo">
-                <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" class="onb-step-logo-img" onerror="this.classList.add('is-hidden')" />
-                <span class="onb-step-logo-text">LightenUp</span>
-            </div>
+            @await Html.PartialAsync("_PsyOnboardingBrand")
+
+            <div class="onb-psy-progress-label">Langkah 1 dari 3</div>
 
             <h1 class="auth-title auth-title--step1">Langkah 1: Masukkan<br />Foto Diri</h1>
             

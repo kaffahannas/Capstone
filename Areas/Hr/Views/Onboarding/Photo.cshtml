@@ -5,35 +5,38 @@
 }
 @* #Bagian OnboardingFoto# *@
 
-<h1 class="onb-title">Langkah 1: Masukkan Foto Diri</h1>
-<p class="onb-subtitle">Pastikan foto yang dilampirkan adalah foto yang bersifat formal &amp; terlihat professional, untuk menjaga kredibilitas penyedia layanan psikologi.</p>
+<div class="onb-step">
+    <h1 class="onb-title">Langkah 1: Masukkan Foto Diri</h1>
+    <p class="onb-subtitle">Pastikan foto yang dilampirkan adalah foto yang bersifat formal &amp; terlihat professional, untuk menjaga kredibilitas penyedia layanan psikologi.</p>
 
-<form asp-action="Photo" method="post" enctype="multipart/form-data" class="onb-content">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="Photo" method="post" enctype="multipart/form-data" class="onb-content">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="onb-upload-block">
-        @if (!string.IsNullOrEmpty(existingPhoto))
-        {
-            <div class="onb-upload-preview" id="existingPhotoPreview">
-                <img src="@existingPhoto" alt="Foto profil" class="onb-upload-thumb onb-upload-thumb-round" />
-                <p class="onb-upload-hint">Foto sudah diunggah. Pilih file baru untuk mengganti.</p>
-            </div>
-        }
-        <label class="onb-upload-zone">
-            <input type="file" asp-for="Photo" accept="image/*" class="onb-upload-input" data-preview="photoPreview" />
-            <div class="onb-upload-placeholder">
-                <span class="onb-upload-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                </span>
-                <strong>Upload foto</strong>
-                <small>Format JPG, maksimal 2MB</small>
-            </div>
-            <div id="photoPreview" class="onb-upload-preview onb-upload-preview-new" hidden></div>
-        </label>
-        <span asp-validation-for="Photo" class="text-danger"></span>
-    </div>
+        <div class="onb-upload-block">
+            <label class="onb-field-label">Foto diri</label>
+            @if (!string.IsNullOrEmpty(existingPhoto))
+            {
+                <div class="onb-upload-preview" id="existingPhotoPreview">
+                    <img src="@existingPhoto" alt="Foto profil" class="onb-upload-thumb onb-upload-thumb-round" />
+                    <p class="onb-upload-hint">Foto sudah diunggah. Pilih file baru untuk mengganti.</p>
+                </div>
+            }
+            <label class="onb-upload-zone">
+                <input type="file" asp-for="Photo" accept="image/*" class="onb-upload-input" data-preview="photoPreview" />
+                <div class="onb-upload-placeholder">
+                    <span class="onb-upload-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </span>
+                    <strong>Upload foto</strong>
+                    <small>Format JPG, maksimal 2 MB</small>
+                </div>
+                <div id="photoPreview" class="onb-upload-preview onb-upload-preview-new" hidden></div>
+            </label>
+            <span asp-validation-for="Photo" class="text-danger"></span>
+        </div>
 
-    <div class="onb-footer">
-        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutkan</button>
-    </div>
-</form>
+        <div class="onb-footer onb-footer--single">
+            <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutkan</button>
+        </div>
+    </form>
+</div>

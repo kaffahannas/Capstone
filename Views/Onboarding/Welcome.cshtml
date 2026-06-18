@@ -22,23 +22,7 @@
         <div class="auth-container register-card">
 
             @* #Komponen Logo Brand# *@
-            <div class="logo-container logo-container--in-card">
-                <svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M50 5L90 27V73L50 95L10 73V27L50 5Z" fill="url(#hexGradient)" />
-                    <circle cx="50" cy="50" r="18" fill="white" />
-                    <line x1="50" y1="14" x2="50" y2="22" stroke="white" stroke-width="3" stroke-linecap="round" />
-                    <line x1="50" y1="78" x2="50" y2="86" stroke="white" stroke-width="3" stroke-linecap="round" />
-                    <line x1="14" y1="50" x2="22" y2="50" stroke="white" stroke-width="3" stroke-linecap="round" />
-                    <line x1="78" y1="50" x2="86" y2="50" stroke="white" stroke-width="3" stroke-linecap="round" />
-                    <defs>
-                        <linearGradient id="hexGradient" x1="10" y1="5" x2="90" y2="95" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#C4B5FD" />
-                            <stop offset="1" stop-color="#8CE0FF" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-                <span class="app-name app-name--in-card">LightenUp</span>
-            </div>
+            @await Html.PartialAsync("_PsyOnboardingBrand")
             
             @* #Komponen Konten Selamat Datang# *@
             <h1 class="auth-title auth-title--onb-welcome">Selamat datang,<br />@ViewBag.FullName!</h1>
