@@ -41,20 +41,16 @@ namespace LightenUp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Login()
         {
-            if (User.Identity?.IsAuthenticated == true)
+            if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var user = await _userManager.GetUserAsync(User);
                 if (user != null)
                 {
-                    bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin";
-                    if (isAdmin) return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
-                    bool isHr = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
-                    if (isHr) return RedirectToAction("Index", "Home", new { area = "Hr" });
-                    bool isPsy = await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist";
-                    if (isPsy) return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
-                    return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
+                    return await RouteAfterLogin(user);
                 }
             }
+
+            ViewData["HideLayoutNav"] = true;
             return View();
         }
 
@@ -619,8 +615,13 @@ namespace LightenUp.Web.Controllers
                 return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
             }
 
-            // Psychologist (approved)
-            return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
+            if (isPsy)
+            {
+                return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
+            }
+
+            // Fallback for users with no role or unrecognized role
+            return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
         }
 
         // #Bagian Ganti Password#
