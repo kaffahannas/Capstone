@@ -94,16 +94,18 @@
 .dot.disappointed { background: var(--mood-disappointed); }
 .dot.angry { background: var(--mood-angry); }
 
-/* #Komponen Dashboard 3 Kartu Grid# */
-/* â”€â”€â”€â”€â”€ Dashboard 3-card grid â”€â”€â”€â”€â”€ */
+/* #Komponen Dashboard Kartu Grid# */
 .dash-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: var(--lu-gap, 1rem);
+    width: 100%;
 }
-/* #Bagian Media Query# */
-@media (max-width: 1024px) {
-    .dash-grid { grid-template-columns: 1fr; }
+
+@media (min-width: 768px) {
+    .dash-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* #Bagian Empty / Filled State# */
@@ -178,7 +180,13 @@
     font-size: 14px;
 }
 
-.journal-preview h4 { font-size: 14px; margin: 0 0 6px; }
+@media (max-width: 991.98px) {
+    .btn-pill,
+    .btn-primary,
+    .btn-secondary {
+        max-width: 100%;
+    }
+}
 .journal-preview .snippet {
     font-size: 13px;
     color: var(--lu-text-muted);

@@ -1,8 +1,77 @@
 /* #Bagian Onboarding Layout Pasien# */
+/* Override shared onboarding shell — scoped to patient only (see HR: hr/onboarding-layout.css) */
 
-.onb-progress-bar {
+body.patient-onboarding-page {
+    min-height: 100dvh;
+}
+
+.patient-onboarding-page .onb-wrapper {
+    width: 100%;
+    max-width: 440px;
+    min-height: 0;
+    padding: 24px 24px 28px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.patient-onboarding-page .onb-progress {
+    margin-bottom: 20px;
+}
+
+.patient-onboarding-page .onb-progress-bar {
     width: var(--bar-w, 0%);
     transition: width 0.3s;
+}
+
+.patient-onboarding-page .onb-progress-label {
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.patient-onboarding-page .onb-topbar {
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.patient-onboarding-page .onb-step {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.patient-onboarding-page .onb-step .onb-title {
+    margin-top: 0;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+}
+
+.patient-onboarding-page .onb-step .onb-subtitle {
+    font-size: 14px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+.patient-onboarding-page .onb-content {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.patient-onboarding-page .onb-footer {
+    margin-top: 24px;
+    padding-top: 16px;
+}
+
+.patient-onboarding-page .onb-footer > .onb-btn,
+.patient-onboarding-page .onb-footer > a.onb-btn,
+.patient-onboarding-page .onb-footer > button.onb-btn {
+    min-height: 44px;
+    box-sizing: border-box;
 }
 
 /* #Komponen Logo Brand# */
@@ -28,20 +97,17 @@
     line-height: 1;
 }
 
-/* #Komponen Langkah Onboarding# */
-.onb-step {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
+.patient-onboarding-page .onb-brand {
+    margin-bottom: 20px;
 }
 
-.onb-step .onb-title {
-    margin-top: 0;
+.patient-onboarding-page .onb-brand svg {
+    width: 48px;
+    height: 48px;
 }
 
-.onb-step .onb-subtitle {
-    margin-bottom: 24px;
+.patient-onboarding-page .onb-brand-name {
+    font-size: 1.25rem;
 }
 
 /* #Komponen Tombol# */
@@ -57,8 +123,10 @@ a.onb-btn-primary:focus-visible {
     color: #ffffff;
 }
 
-.onb-footer--single .onb-btn-primary {
-    flex: 1;
+.patient-onboarding-page .onb-footer--single .onb-btn,
+.patient-onboarding-page .onb-footer--single .onb-btn-primary {
+    flex: 1 1 auto;
+    width: 100%;
 }
 
 .onb-welcome-footer {
@@ -77,4 +145,99 @@ a.onb-btn-primary:focus-visible {
 
 .onb-welcome--patient p {
     max-width: 400px;
+}
+
+.patient-onboarding-page .onb-welcome--patient h1 {
+    font-size: 24px;
+    line-height: 1.3;
+}
+
+.patient-onboarding-page .onb-welcome--patient p {
+    font-size: 14px;
+    max-width: 100%;
+    line-height: 1.55;
+}
+
+.patient-onboarding-page .onb-welcome {
+    padding: 16px 8px 8px;
+}
+
+.patient-onboarding-page .onb-date-grid {
+    gap: 12px;
+}
+
+.patient-onboarding-page .onb-list label {
+    font-size: 14px;
+    padding: 12px 14px;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    body.patient-onboarding-page {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .patient-onboarding-page .onb-wrapper {
+        max-width: none;
+        width: 100%;
+        min-height: 100dvh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        padding: 20px 18px calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .patient-onboarding-page .onb-footer > .onb-btn,
+    .patient-onboarding-page .onb-footer > a.onb-btn,
+    .patient-onboarding-page .onb-footer > button.onb-btn {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .patient-onboarding-page .onb-choice-grid {
+        gap: 12px;
+    }
+
+    .patient-onboarding-page .onb-choice-card {
+        padding: 20px 12px;
+    }
+
+    .patient-onboarding-page .onb-choice-card .icon {
+        font-size: 30px;
+        margin-bottom: 8px;
+    }
+
+    .patient-onboarding-page .onb-pill-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .patient-onboarding-page .onb-date-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .patient-onboarding-page .onb-terms-text {
+        max-height: 40vh;
+    }
+}
+
+@media (max-width: 479px) {
+    .patient-onboarding-page .onb-wrapper {
+        padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .patient-onboarding-page .onb-step .onb-title {
+        font-size: 20px;
+    }
+
+    .patient-onboarding-page .onb-footer {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 12px;
+    }
 }

@@ -563,11 +563,112 @@
 }
 
 /* #Bagian Media Query# */
-@media (max-width: 1024px) {
-    .db-hero { flex-direction: column; align-items: stretch; }
-    .db-hero-chips { justify-content: flex-start; }
+@media (max-width: 991.98px) {
+    .db-hero {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px 18px;
+        gap: 14px;
+    }
+
+    .db-hero-chips {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .db-chip {
+        flex: 1 1 calc(50% - 5px);
+        min-width: 0;
+    }
+
+    .db-cal {
+        padding: 12px 14px !important;
+    }
+
+    .db-cal-head {
+        flex-wrap: wrap;
+        gap: 8px;
+        row-gap: 10px;
+    }
+
+    .db-cal-month {
+        flex: 1 1 100%;
+        order: 3;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .db-cal-select {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .db-cal-week {
+        gap: 4px;
+    }
+
+    .db-cal-day {
+        padding: 8px 2px;
+    }
+
+    .db-cal-day-dow {
+        font-size: 10px;
+    }
+
+    .db-cal-day-num {
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .db-cal-legend {
+        flex-wrap: wrap;
+        gap: 10px 14px;
+    }
+
+    .db-card {
+        min-height: 0;
+    }
+
+    .db-mood-iframe {
+        height: min(480px, 70vh);
+    }
 }
 
+@media (max-width: 639.98px) {
+    .db-hero {
+        padding: 14px 16px;
+        border-radius: 14px;
+    }
+
+    .db-chip {
+        flex: 1 1 100%;
+    }
+
+    .db-cal-week {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 8px;
+        padding-bottom: 6px;
+        scroll-snap-type: x proximity;
+    }
+
+    .db-cal-day {
+        flex: 0 0 3.25rem;
+        min-width: 3.25rem;
+        scroll-snap-align: start;
+    }
+
+    .db-cal-daily-num {
+        font-size: 34px;
+    }
+
+    .db-link-all {
+        display: flex;
+        justify-content: center;
+    }
+}
 
 .db-cal-day--today {
     border-color: var(--lu-primary);

@@ -1,16 +1,31 @@
 /* #Bagian Responsif Onboarding# */
-﻿/* Onboarding mobile */
-/* #Bagian Small Phones 479px# */
-/* ───── Small phones (≤ 479px) ───── */
-/* #Bagian Media Query# */
+/* Shared mobile fallbacks (Patient/HR use area-specific onboarding-layout.css) */
+
+@media (max-width: 991.98px) {
+    body:not(.patient-onboarding-page):not(.hr-onboarding-page) {
+        padding: 12px;
+    }
+
+    body:not(.patient-onboarding-page):not(.hr-onboarding-page) .onb-wrapper {
+        min-height: 0;
+        max-width: 100%;
+    }
+}
+
+/* #Bagian Small Phones# */
 @media (max-width: 479px) {
-    body { padding: 0; }
-    .onb-wrapper {
+    body:not(.patient-onboarding-page):not(.hr-onboarding-page) {
+        padding: 0;
+    }
+
+    body:not(.patient-onboarding-page):not(.hr-onboarding-page) .onb-wrapper {
         border-radius: 0;
-        min-height: 100vh;
+        min-height: 100dvh;
+        min-height: 100dvh;
         padding: 24px 20px 32px;
         border: none;
     }
+
     .onb-title { font-size: 24px; }
     .onb-date-grid { grid-template-columns: 1fr; gap: 12px; }
     .onb-choice-card { padding: 20px 12px; }

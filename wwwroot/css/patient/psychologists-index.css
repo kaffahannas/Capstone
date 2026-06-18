@@ -233,3 +233,71 @@
     opacity: 0.7;
     cursor: not-allowed;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .psy-page {
+        min-height: 0;
+    }
+
+    .psy-hero {
+        padding: 20px 18px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+    }
+
+    .psy-hero-title {
+        font-size: 1.35rem;
+        flex-wrap: wrap;
+    }
+
+    .psy-hero-deco {
+        font-size: 100px;
+    }
+
+    .psy-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .psy-card {
+        padding: 18px;
+    }
+
+    .psy-admin-box {
+        padding: 16px;
+    }
+
+    .psy-admin-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .psy-admin-field,
+    .psy-admin-field--wide {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .psy-admin-submit {
+        width: 100%;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .psy-hero {
+        padding: 16px;
+    }
+
+    .psy-hero-title {
+        font-size: 1.2rem;
+    }
+
+    .psy-hero-sub {
+        font-size: 14px;
+    }
+
+    .psy-card-head {
+        align-items: flex-start;
+    }
+}

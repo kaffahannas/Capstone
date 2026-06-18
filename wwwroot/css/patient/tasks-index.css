@@ -50,3 +50,93 @@
 .tasks-load-more { text-align: right; margin-top: 16px; }
 .tasks-modal { max-width: 600px; }
 .task-chip input[type=checkbox] { display: none; }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .tasks-page {
+        height: auto;
+        min-height: 0;
+    }
+
+    .tasks-hero {
+        padding: 20px 18px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+    }
+
+    .tasks-hero-title {
+        font-size: 1.35rem;
+        flex-wrap: wrap;
+    }
+
+    .tasks-hero-deco {
+        font-size: 100px;
+    }
+
+    .tasks-container {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .tasks-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tasks-filter-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .tasks-search-label {
+        max-width: none;
+    }
+
+    .task-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px 18px;
+        border-radius: 16px;
+    }
+
+    .task-card .right {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .task-card h4 {
+        font-size: 17px;
+    }
+
+    .task-card .meta {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tasks-list-scroll {
+        overflow-y: visible;
+        padding-right: 0;
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .tasks-hero {
+        padding: 16px;
+    }
+
+    .tasks-hero-title {
+        font-size: 1.2rem;
+    }
+
+    .task-chips {
+        gap: 6px;
+    }
+
+    .task-chip {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}

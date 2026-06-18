@@ -287,3 +287,90 @@
     background: #1E3A5F;
     box-shadow: 0 8px 24px rgba(30,58,95,0.3);
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .jdw-page {
+        height: auto;
+        min-height: 0;
+    }
+
+    .jdw-hero {
+        padding: 20px 18px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+    }
+
+    .jdw-hero-title {
+        font-size: 1.35rem;
+        flex-wrap: wrap;
+    }
+
+    .jdw-hero-deco {
+        font-size: 100px;
+    }
+
+    .jdw-container {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .jdw-session-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .jdw-session-left {
+        gap: 14px;
+    }
+
+    .jdw-session-meta {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .jdw-join-btn,
+    .jdw-join-btn--disabled {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .jdw-past-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .jdw-scroll--upcoming,
+    .jdw-scroll--past {
+        min-height: 0;
+        overflow-y: visible;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .jdw-hero {
+        padding: 16px;
+    }
+
+    .jdw-hero-title {
+        font-size: 1.2rem;
+    }
+
+    .jdw-hero-sub {
+        font-size: 14px;
+    }
+
+    .jdw-section-title {
+        font-size: 16px;
+    }
+
+    .jdw-toast {
+        left: 12px;
+        right: 12px;
+        bottom: 16px;
+    }
+}
