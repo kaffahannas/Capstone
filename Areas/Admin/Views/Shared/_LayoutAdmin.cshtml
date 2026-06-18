@@ -8,6 +8,8 @@
     var active     = ViewBag.ActiveNav as string ?? "Dashboard";
     var pageTitle  = ViewData["Title"]?.ToString() ?? "Admin";
 }
+
+@* #Bagian LayoutAdmin# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -35,7 +37,7 @@
     <div class="admin-shell app-shell" id="appShell">
         <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
-        <!-- ── SIDEBAR ── -->
+        @* #Komponen Sidebar# *@
         <aside class="admin-sidebar app-sidebar" id="appSidebar" aria-label="Navigasi admin">
             <div class="sidebar-header">
                 <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="admin-brand">
@@ -135,7 +137,7 @@
             </form>
         </aside>
 
-        <!-- ── MAIN ── -->
+        @* #Komponen KontenUtama# *@
         <main class="admin-main app-main">
             <header class="admin-topbar app-topbar">
                 <button type="button" class="sidebar-toggle" id="sidebarToggle"

@@ -1,3 +1,4 @@
+/* #Bagian Profil Index HR# */
 ﻿.hrpf-page {
     display: flex;
     flex-direction: column;
@@ -315,6 +316,7 @@
     gap: 16px;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 900px) {
     .hrpf-grid { grid-template-columns: 1fr; }
     .hrpf-fields--2col { grid-template-columns: 1fr; }

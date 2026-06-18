@@ -1,3 +1,4 @@
+/* #Bagian Mood Wizard Layout Pasien# */
 .mood-wizard-body {
     margin: 0;
     padding: 0;
@@ -97,6 +98,7 @@
     width: var(--bar-w, 0%);
 }
 
+/* #Komponen Iframe / Dashboard Modal White Compact No Scroll# */
 /* iframe / dashboard modal — white, compact, no scroll */
 html.is-popup,
 html.is-popup body {

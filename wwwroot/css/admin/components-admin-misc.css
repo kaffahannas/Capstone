@@ -1,3 +1,4 @@
+/* #Bagian Misc Admin# */
 ﻿/* Admin pagination, legacy aliases, responsive */
 /* ═══════════════════════════════════════
    PAGINATION
@@ -34,6 +35,7 @@ a.back-link:hover { color: var(--adm-primary); }
     margin: 20px 0;
 }
 
+/* #Bagian Legacy Compat Aliases# */
 /* Legacy compat aliases */
 .stat-grid     { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 16px; margin-bottom: 24px; }
 .stat-card     { background: var(--adm-card); border: 1px solid var(--adm-border); border-radius: var(--adm-radius); padding: 18px 20px; box-shadow: var(--adm-shadow-sm); }
@@ -51,6 +53,7 @@ a.back-link:hover { color: var(--adm-primary); }
 /* ═══════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════ */
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .admin-topbar {
         flex-direction: column;
@@ -76,6 +79,7 @@ a.back-link:hover { color: var(--adm-primary); }
     .lu-form-actions .btn { width: 100%; text-align: center; }
     .adm-quick-actions .btn { width: auto; }
 }
+/* #Bagian Media Query# */
 @media (max-width: 599.98px) {
     .adm-stat-grid,
     .stat-grid { grid-template-columns: 1fr; }

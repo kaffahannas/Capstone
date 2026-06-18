@@ -9,11 +9,13 @@ namespace LightenUp.Web.Data;
 /// Idempotent: skips if <see cref="CompanyName"/> already exists.
 /// Reset DB: drop database lalu jalankan dotnet ef database update
 /// </summary>
+// #Class DummyDataSeed#
 public static class DummyDataSeed
 {
     public const string CompanyName = "PT Sasindo";
     public const string DemoPassword = "Password123!";
 
+    // #Function SeedAsync#
     public static async Task SeedAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         await context.Database.MigrateAsync();

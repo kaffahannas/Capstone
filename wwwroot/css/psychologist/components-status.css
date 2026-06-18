@@ -1,3 +1,4 @@
+/* #Bagian Status Psikolog# */
 /* Psychologist status tokens + shared badge/chip styles (extracted from dashboard.css) */
 
 :root {
@@ -9,6 +10,7 @@
     --status-sehat-text: #059669;
 }
 
+/* #Komponen Legacy Pasien Daftar Status Badges# */
 /* Legacy patient-list status badges */
 .status-badge {
     padding: 6px 14px;
@@ -32,6 +34,7 @@
     color: var(--status-sehat-text);
 }
 
+/* #Bagian Worksheet / Penugasan Status Variants# */
 /* Worksheet / assignment status variants */
 .status-selesai {
     background: #D1FAE5;
@@ -48,6 +51,7 @@
     color: #EA580C;
 }
 
+/* #Bagian Klien Daftar + Dashboard Mood Chips# */
 /* Client list + dashboard mood chips */
 .psy-status-chip {
     padding: 4px 10px;

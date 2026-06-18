@@ -1,3 +1,4 @@
+/* #Bagian Modal Psikolog# */
 /* Psychologist shared modal shell + form controls (extracted from dashboard.css) */
 
 .modal-overlay {
@@ -141,6 +142,7 @@
     background: var(--lu-primary-hover);
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .modal-container {
         margin: 1rem;

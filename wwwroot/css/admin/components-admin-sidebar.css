@@ -1,3 +1,4 @@
+/* #Bagian Sidebar Admin# */
 ﻿/* Admin sidebar navigation */
 /* ═══════════════════════════════════════
    SIDEBAR
@@ -9,6 +10,7 @@
     flex-direction: column;
 }
 
+/* #Komponen Brand# */
 /* Brand */
 .admin-brand {
     display: flex;
@@ -46,6 +48,7 @@
     letter-spacing: 0.5px;
 }
 
+/* #Komponen Nav Section Label# */
 /* Nav section label */
 .admin-nav-section {
     font-size: 10px;
@@ -56,6 +59,7 @@
     padding: 16px 12px 6px;
 }
 
+/* #Komponen Nav Items# */
 /* Nav items */
 .admin-nav {
     flex: 1;
@@ -102,6 +106,7 @@
     border-radius: 0 2px 2px 0;
 }
 
+/* #Komponen Nav Badge Tertunda Count# */
 /* Nav badge (pending count) */
 .nav-badge {
     margin-left: auto;
@@ -115,6 +120,7 @@
     text-align: center;
 }
 
+/* #Komponen Logout# */
 /* Logout */
 .admin-logout {
     padding: 12px 0 4px;

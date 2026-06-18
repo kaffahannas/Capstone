@@ -33,6 +33,7 @@ public class DuitkuCallbackPayload
     public string? Amount { get; set; }
 }
 
+// #Class DuitkuService#
 public class DuitkuService
 {
     private readonly DuitkuOptions _options;
@@ -53,6 +54,8 @@ public class DuitkuService
         !string.IsNullOrWhiteSpace(_options.MerchantCode) &&
         !string.IsNullOrWhiteSpace(_options.ApiKey);
 
+    // #Bagian Pembayaran#
+    // #Function CreatePaymentAsync#
     public async Task<DuitkuCreatePaymentResult> CreatePaymentAsync(DuitkuCreatePaymentRequest request, CancellationToken ct = default)
     {
         if (_options.UseMock || !IsConfigured)
@@ -135,6 +138,7 @@ public class DuitkuService
         }
     }
 
+    // #Function VerifyCallbackSignature#
     public bool VerifyCallbackSignature(string merchantCode, string amount, string merchantOrderId, string signature)
     {
         if (!IsConfigured) return true;

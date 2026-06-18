@@ -7,7 +7,9 @@
     var feelingClass = Model.Feeling.ToLowerInvariant();
     var indoToday = DateTime.Today.ToString("dddd, d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
 }
+@* #Bagian Lacak Mood - Ringkasan# *@
 
+@* #Komponen Ringkasan Mood Hari Ini# *@
 <div class="mood-sum-nav">
     <a asp-action="Question"
        asp-route-feeling="@Model.Feeling"

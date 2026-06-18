@@ -1,3 +1,4 @@
+/* #Bagian Psikolog Index HR# */
 ﻿/* Directory grid & cards */
 .psy-dir-grid {
     display: grid;
@@ -124,6 +125,7 @@
 }
 
 
+/* #Bagian Empty State# */
 /* Empty state */
 .hrpsy-empty {
     background: #fff;
@@ -159,6 +161,7 @@
     margin: 0;
 }
 
+/* #Komponen Detail Modal Content# */
 /* Detail modal content */
 .hrpsy-modal-avatar {
     width: 100px;
@@ -192,6 +195,7 @@
     margin-bottom: 0;
 }
 
+/* #Komponen Alerts# */
 /* Alerts */
 .hrpsy-alert {
     padding: 16px;
@@ -215,6 +219,7 @@
     margin-right: 8px;
 }
 
+/* #Komponen Admin Permintaan Modal# */
 /* Admin request modal */
 .psy-modal--admin .psy-modal-close {
     background: rgba(0, 0, 0, 0.1);

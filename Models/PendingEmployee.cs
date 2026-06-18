@@ -8,6 +8,7 @@ namespace LightenUp.Web.Models
     // ─── HR slice 2: pre-registered employees ─────
     // HR adds expected employees here; when a patient registers with the company's referral code
     // and matching email, the row gets claimed and the patient's Dept/EmployeeId auto-fill.
+    // #Class PendingEmployee#
     public class PendingEmployee
     {
         [Key]

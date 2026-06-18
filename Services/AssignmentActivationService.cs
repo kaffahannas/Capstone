@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Services;
 
 /// <summary>Activates assignments and snapshots payroll fields (SlotValue + revenue %).</summary>
+// #Class AssignmentActivationService#
 public class AssignmentActivationService
 {
     private readonly ApplicationDbContext _context;
@@ -49,6 +50,7 @@ public class AssignmentActivationService
             .Select(SelectPrimaryAssignment)
             .ToList();
 
+    // #Function ActivateAsync#
     public async Task ActivateAsync(
         PatientPsychologistAssignment assignment,
         string? decisionByUserId = null,
@@ -74,6 +76,7 @@ public class AssignmentActivationService
         }
     }
 
+    // #Function SupersedeConflictingAssignmentsAsync#
     public async Task SupersedeConflictingAssignmentsAsync(
         PatientPsychologistAssignment keep,
         string? decisionByUserId = null,
@@ -103,7 +106,7 @@ public class AssignmentActivationService
         }
     }
 
-    /// <summary>Closes stale duplicate live assignments for the same patient (self-heal on read).</summary>
+    // #Function RepairDuplicateLiveAssignmentsAsync#
     public async Task RepairDuplicateLiveAssignmentsAsync(int psychologistId, string? decisionByUserId = null)
     {
         var live = await _context.Assignments

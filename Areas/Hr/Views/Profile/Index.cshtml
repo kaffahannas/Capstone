@@ -8,6 +8,7 @@
                         .Take(2).Select(p => char.ToUpper(p[0])));
     var joinedAt  = Model.OnboardingCompletedAt?.ToString("d MMMM yyyy", idCulture) ?? "—";
 }
+@* #Bagian ProfilHR# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/hr/profile-index.css" asp-append-version="true" />
@@ -24,6 +25,7 @@
         </div>
     }
 
+    @* #Komponen Hero# *@
     @* ══════════════ HERO ══════════════ *@
     <div class="hrpf-hero">
         <div class="hrpf-hero-bg" aria-hidden="true"></div>
@@ -109,6 +111,7 @@
         </div>
     </div>
 
+    @* #Komponen GridUtama# *@
     @* ══════════════ BODY GRID ══════════════ *@
     <div class="hrpf-grid">
 
@@ -353,6 +356,7 @@
 
 
 
+    @* #Komponen ModalEdit# *@
     @* ══════════════ EDIT MODAL ══════════════ *@
     <div class="hrpf-modal-overlay" id="hrpfModalOverlay" role="dialog" aria-modal="true" aria-labelledby="hrpfModalTitle">
         <div class="hrpf-modal">

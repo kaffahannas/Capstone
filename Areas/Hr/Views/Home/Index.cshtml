@@ -12,6 +12,7 @@
     double beresikoPct = Model.ActiveCount > 0 ? Math.Round(100.0 * Model.BeresikoCount / Model.ActiveCount, 1) : 0;
     double bahayaPct   = Model.ActiveCount > 0 ? Math.Round(100.0 * Model.BahayaCount   / Model.ActiveCount, 1) : 0;
 }
+@* #Bagian BerandaHR# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/hr/home-index.css" asp-append-version="true" />
@@ -19,6 +20,7 @@
 
 <div class="hrd-page">
 
+    @* #Komponen Hero# *@
     @* ── Hero ── *@
     <div class="hrd-hero">
         <div class="hrd-hero-bg" aria-hidden="true"></div>
@@ -93,6 +95,7 @@
         </div>
     }
 
+    @* #Komponen KartuMetrik# *@
     @* ── 4 Metric Cards ── *@
     <div class="hrd-metrics">
 
@@ -142,6 +145,7 @@
 
     </div>
 
+    @* #Komponen GridUtama# *@
     @* ── Main grid ── *@
     <div class="hrd-grid">
 
@@ -416,6 +420,7 @@
     <span id="brdToastMsg"></span>
 </div>
 
+@* #Komponen ModalLaporan# *@
 @* ═══════════════════════════════════════════
    MODAL 1 — Buat Laporan ke Psikolog
    ═══════════════════════════════════════════ *@

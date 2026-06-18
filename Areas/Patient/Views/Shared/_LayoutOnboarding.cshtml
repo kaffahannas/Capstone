@@ -4,6 +4,7 @@
     var pageTitle = ViewData["Title"] as string ?? "Data Pribadi";
     var hideChrome = ViewBag.HideChrome as bool? ?? false;  // Welcome screen sets this
 }
+@* #Bagian Layout Onboarding Pasien# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -30,6 +31,7 @@
     <div class="onb-wrapper">
         @if (!hideChrome)
         {
+            @* #Komponen Topbar Onboarding# *@
             <div class="onb-topbar">
                 <span>Data Pribadi</span>
                 <a class="close-btn" asp-controller="Account" asp-action="Login" asp-area="" title="Keluar">&times;</a>

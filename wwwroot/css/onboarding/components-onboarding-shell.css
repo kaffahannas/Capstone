@@ -1,6 +1,8 @@
+/* #Bagian Shell Onboarding# */
 ﻿/* Onboarding shell — body, wrapper, topbar, progress */
 * { box-sizing: border-box; }
 
+/* #Bagian Animated Gradient Background# */
 /* Animated Gradient Background */
 @keyframes gradientBg {
     0% { background-position: 0% 50%; }
@@ -13,6 +15,7 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--lu-text);
     min-height: 100vh;
+    /* #Bagian Soft Premium Animated Gradient# */
     /* Soft, premium animated gradient */
     background: linear-gradient(-45deg, #EEF2FF, #E0E7FF, #F3E8FF, #F8FAFC);
     background-size: 400% 400%;
@@ -23,6 +26,7 @@ body {
     padding: 20px;
 }
 
+/* #Bagian Glassmorphism Container# */
 /* Glassmorphism Container */
 .onb-wrapper {
     width: 100%;
@@ -42,6 +46,7 @@ body {
     overflow: hidden;
 }
 
+/* #Bagian Top Bar Data Pribadi + X Close# */
 /* ───── Top bar: "Data Pribadi" + X close ───── */
 .onb-topbar {
     display: flex;
@@ -75,6 +80,7 @@ body {
     transform: rotate(90deg);
 }
 
+/* #Komponen Progress Bar# */
 /* ───── Progress bar ───── */
 .onb-progress {
     width: 100%;

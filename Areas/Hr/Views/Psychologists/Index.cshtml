@@ -3,12 +3,13 @@
     ViewData["Title"] = "Direktori Psikolog";
     ViewBag.ActiveNav = "Psikolog";
 }
+@* #Bagian DirektoriPsikolog# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/hr/psychologists-index.css" asp-append-version="true" />
 }
 
-<div class="hrpsy-page">
+    <div class="hrpsy-page">
     @if (TempData["success"] is string successMsg)
     {
         <div class="hrpsy-alert hrpsy-alert--success">
@@ -24,6 +25,7 @@
         </div>
     }
 
+    @* #Komponen Hero# *@
     <div class="hrd-hero hrpsy-hero">
         <div class="hrd-hero-bg" aria-hidden="true"></div>
         <div class="hrd-hero-inner">
@@ -96,6 +98,7 @@
 </div>
 
 <!-- Modal -->
+@* #Komponen ModalDetailPsikolog# *@
 <div class="psy-modal-overlay" id="psyDetailModal" onclick="closeDetailModal(event)">
     <div class="psy-modal-content" onclick="event.stopPropagation()">
         <button class="psy-modal-close" onclick="closeDetailModal(event)">
@@ -141,6 +144,7 @@
 </div>
 
 <!-- Admin Request Modal -->
+@* #Komponen ModalAjukanAdmin# *@
 <div class="psy-modal-overlay" id="adminModal" onclick="closeAdminModal(event)">
     <div class="psy-modal-content psy-modal--admin" onclick="event.stopPropagation()">
         <button class="psy-modal-close" onclick="closeAdminModal(event)">

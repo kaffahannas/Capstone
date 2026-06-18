@@ -12,6 +12,7 @@ using System;
 
 namespace LightenUp.Web.Areas.Patient.Controllers
 {
+// #Class JadwalController#
 [Area("Patient")]
 [Authorize(Roles = "Patient")]
 [RequiresPatientPremium]
@@ -25,6 +26,8 @@ public class JadwalController : Controller
             _context = context;
             _userManager = userManager;
         }
+
+        // #Function Index#
 
         public async Task<IActionResult> Index()
         {
@@ -79,6 +82,8 @@ public class JadwalController : Controller
         }
 
         // ─── Pasien meminta jadwal sesi konseling (gated: premium) ───
+        // #Function RequestSession#
+        // #Bagian Permintaan Jadwal#
         [HttpGet]
         public async Task<IActionResult> RequestSession()
         {
@@ -104,6 +109,8 @@ public class JadwalController : Controller
             ViewBag.ActiveNav = "Jadwal";
             return View();
         }
+
+        // #Function RequestSession POST#
 
         [HttpPost]
         [ValidateAntiForgeryToken]

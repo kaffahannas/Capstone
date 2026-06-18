@@ -1,3 +1,4 @@
+/* #Bagian Dashboard Index Admin# */
 ﻿/* Admin dashboard — page-specific overrides (stat cards in components-admin-stat.css) */
 
 .dash-stat-warning {
@@ -155,6 +156,7 @@
     border-radius: 0 2px 2px 0
     }
 
+/* #Bagian Restored From Admin Layout# */
 /* Restored from Admin Layout */
 .admin-sidebar {
     background: var(--adm-sidebar-bg);

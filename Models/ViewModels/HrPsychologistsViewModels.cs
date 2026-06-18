@@ -1,5 +1,6 @@
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class HrPsychologistCard#
     public class HrPsychologistCard
     {
         public int PsychologistId { get; set; }
@@ -16,11 +17,13 @@ namespace LightenUp.Web.Models.ViewModels
         public bool HasPendingRequest { get; set; }
     }
 
+    // #Class HrPsychologistDirectoryViewModel#
     public class HrPsychologistDirectoryViewModel
     {
         public List<HrPsychologistCard> Psychologists { get; set; } = new();
     }
 
+    // #Class HrPsychologistProfileViewModel#
     public class HrPsychologistProfileViewModel
     {
         public int PsychologistId { get; set; }

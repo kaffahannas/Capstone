@@ -1,4 +1,6 @@
+/* #Bagian Toast HR# */
 ﻿/* HR toast notifications */
+/* #Bagian Toast# */
 /* Toast */
 .hrd-brd-toast {
     opacity: 0;
@@ -36,6 +38,7 @@
     flex-shrink: 0;
 }
 
+/* #Bagian Profil / Detail Pages Hrpf Toast# */
 /* Profile / detail pages (hrpf-toast) */
 .hrpf-toast {
     position: fixed;

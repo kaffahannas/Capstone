@@ -1,5 +1,7 @@
+/* #Bagian Daftar HR# */
 ﻿/* HR list rows (Worksheets, Reports, etc.) */
 
+/* #Komponen Shared Daftar Halaman Hero Worksheet Laporan# */
 /* Shared list-page hero (Worksheets, Reports) */
 .hrws-hero {
     position: relative;
@@ -144,6 +146,7 @@
     flex-shrink: 0;
 }
 
+/* #Bagian Shared Daftar Row Worksheet + Laporan# */
 /* ?? Shared list row (Worksheets + Reports) ?? */
 .hrws-list {
     display: flex;

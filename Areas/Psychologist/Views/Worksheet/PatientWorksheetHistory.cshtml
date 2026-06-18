@@ -29,6 +29,8 @@
     <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet-modal.css" asp-append-version="true" />
 }
 
+
+@* #Bagian RiwayatWorksheetPasien# *@
 <a href="javascript:history.back()" class="pd-back">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Kembali ke Detail Pasien
@@ -41,7 +43,7 @@
 
 <div class="psh-page">
 
-    @* ── Hero ── *@
+    @* #Komponen Hero# *@
     <div class="psh-hero pwh-hero">
         <div class="psh-hero-bg" aria-hidden="true"></div>
         <div class="psh-hero-inner">
@@ -82,7 +84,7 @@
         </div>
     </div>
 
-    @* ── Worksheet list ── *@
+    @* #Komponen DaftarWorksheet# *@
     <div class="psh-list">
         @if (!worksheets.Any())
         {

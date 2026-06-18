@@ -1,4 +1,6 @@
+/* #Bagian Psikolog Detail Psikolog# */
 ﻿/* Psy detail pages — pd-back, detail cards, actions */
+/* #Bagian Detail Pasien Umum# */
 /* ================== DETAIL PASIEN & UMUM ================== */
 .back-link {
     display: inline-flex;
@@ -31,6 +33,7 @@
 
 .pd-back:hover { color: var(--primary-purple); }
 
+/* #Bagian Detail Grid Layout Responsif Columns Handled By Sitecss# */
 /* detail-grid layout (responsive columns) handled by site.css */
 .detail-grid {
     align-items: start;
@@ -137,6 +140,7 @@
     margin-top: 20px;
 }
 
+/* #Bagian Action Grid Responsif Columns Handled By Sitecss# */
 /* action-grid responsive columns handled by site.css */
 .action-grid {
     gap: 20px;

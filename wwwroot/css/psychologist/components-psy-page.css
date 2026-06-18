@@ -1,6 +1,9 @@
+/* #Bagian Psikolog Halaman Psikolog# */
 ﻿/* Psy shared page — headers, summary, patient list */
+/* #Bagian Psychologist Shared Halaman Primitives Extracted From Dashboardcss# */
 /* Psychologist shared page primitives (extracted from dashboard.css) */
 
+/* #Bagian Utilities# */
 /* Utilities */
 .pd-is-hidden { display: none !important; }
 
@@ -24,6 +27,7 @@
     margin: 0;
 }
 
+/* #Bagian Grid Info Atas Beranda Layout Handled By Sitecss Margin Only Here# */
 /* Grid Info Atas (Beranda) â€” layout handled by site.css; margin only here */
 .summary-grid {
     margin-bottom: 30px;
@@ -50,6 +54,7 @@
     justify-content: center;
 }
 
+/* #Komponen Tabel / Daftar Pasien# */
 /* Tabel / List Pasien */
 .patient-list-container {
     background: white;

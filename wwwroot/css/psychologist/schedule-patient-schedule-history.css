@@ -1,10 +1,13 @@
+/* #Bagian Pasien Jadwal Riwayat Psikolog# */
 ﻿/* Patient schedule history timeline (psh-timeline + cards) */
+/* #Bagian Timeline# */
 /* ── Timeline ── */
 .psh-timeline {
     display: flex;
     flex-direction: column;
 }
 
+/* #Komponen Each Timeline Row Left Column Number + Line + Right Kartu# */
 /* Each timeline row = left column (number + line) + right card */
 .psh-item {
     display: flex;
@@ -14,6 +17,7 @@
 }
 .psh-item:last-child { padding-bottom: 0; }
 
+/* #Bagian Left Column Number Bubble Stacked Above The Connector Line# */
 /* ── Left column: number bubble stacked above the connector line ── */
 .psh-item-left {
     display: flex;
@@ -23,6 +27,7 @@
     width: 36px;
 }
 
+/* #Bagian Number Bubble# */
 /* Number bubble */
 .psh-item-num {
     width: 36px; height: 36px;
@@ -35,6 +40,7 @@
 .psh-num--upcoming { background: #DBEAFE; color: #1D4ED8; }
 .psh-num--batal    { background: #FEE2E2; color: #991B1B; }
 
+/* #Bagian Connector Line Fills Remaining Height Below The Number# */
 /* Connector line — fills remaining height below the number */
 .psh-item-line {
     width: 2px;
@@ -45,6 +51,7 @@
     border-radius: 1px;
 }
 
+/* #Komponen Session Kartu Fills All Remaining Width# */
 /* ── Session card (fills all remaining width) ── */
 .psh-card {
     flex: 1;
@@ -62,6 +69,7 @@
     transform: translateY(-1px);
 }
 
+/* #Bagian Left Accent# */
 /* left accent */
 .psh-card-left {
     flex-shrink: 0;
@@ -75,6 +83,7 @@
 .psh-card--upcoming .psh-card-left { background: #EFF6FF; }
 .psh-card--batal    .psh-card-left { background: #FEF2F2; }
 
+/* #Bagian Date Block Inside Left# */
 /* date block inside left */
 .psh-card-date-block {
     display: flex;
@@ -104,6 +113,7 @@
 .psh-card--upcoming .psh-card-date-block { color: #1D4ED8; }
 .psh-card--batal    .psh-card-date-block { color: #991B1B; }
 
+/* #Bagian Divider Between Left And Body# */
 /* divider between left and body */
 .psh-card-divider {
     width: 1px;
@@ -112,6 +122,7 @@
     flex-shrink: 0;
 }
 
+/* #Komponen Kartu Body# */
 /* card body */
 .psh-card-body {
     flex: 1;
@@ -135,6 +146,7 @@
     flex: 1;
 }
 
+/* #Komponen Status Badge# */
 /* status badge */
 .psh-badge {
     display: inline-flex;
@@ -155,6 +167,7 @@
 .psh-badge--upcoming { background: #DBEAFE; color: #1D4ED8; }
 .psh-badge--batal    { background: #FEE2E2; color: #991B1B; }
 
+/* #Bagian Meta Row# */
 /* meta row */
 .psh-card-meta {
     display: flex;
@@ -172,6 +185,7 @@
 }
 .psh-meta-sep { color: var(--border-color); font-size: 14px; }
 
+/* #Bagian Notes Row# */
 /* notes row */
 .psh-card-notes {
     display: flex;
@@ -186,7 +200,9 @@
 }
 .psh-card-notes svg { flex-shrink: 0; margin-top: 1px; }
 
+/* #Bagian Responsif# */
 /* Responsive */
+/* #Bagian Media Query# */
 @media (max-width: 700px) {
     .psh-hero-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
     .psh-hero-stats { width: 100%; }
@@ -196,6 +212,7 @@
     .psh-card-day   { font-size: 20px; }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 700px) {
     .psh-item-left  { width: 30px; }
     .psh-item-num   { width: 30px; height: 30px; font-size: 11px; }

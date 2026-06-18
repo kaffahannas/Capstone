@@ -10,6 +10,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 {
     // Flow: Feeling → Triggers → Note → Question(1-5) → Summary → Save
     [Area("Patient")]
+    // #Class MoodController#
     [Authorize(Roles = "Patient")]
     public class MoodController : Controller
     {
@@ -30,6 +31,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Step 1 — Feeling ════════════════════════════════════════════
+        // #Function Feeling#
+        // #Bagian Langkah1 Perasaan#
         [HttpGet]
         public async Task<IActionResult> Feeling()
         {
@@ -57,6 +60,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             return View(vm);
         }
 
+        // #Function Feeling POST#
+
         [HttpPost]
         public IActionResult Feeling(MoodTrackerSessionViewModel model)
         {
@@ -71,6 +76,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Step 2 — Triggers ═══════════════════════════════════════════
+        // #Function Triggers#
+        // #Bagian Langkah2 Pemicu#
         [HttpGet]
         public IActionResult Triggers(string feeling, string? triggers, string? note,
             int focusScore = 0, int anxietyScore = 0, int sleepScore = 0, int mindLoadScore = 0, int emotionScore = 0)
@@ -85,6 +92,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 SleepScore = sleepScore, MindLoadScore = mindLoadScore, EmotionScore = emotionScore
             });
         }
+
+        // #Function TriggersPost#
 
         [HttpPost, ActionName("Triggers")]
         public IActionResult TriggersPost(MoodTrackerSessionViewModel model, string? customTriggers)
@@ -101,6 +110,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Step 3 — Note (optional) ════════════════════════════════════
+        // #Function Note#
+        // #Bagian Langkah3 Catatan#
         [HttpGet]
         public IActionResult Note(string feeling, string? triggers, string? note,
             int focusScore = 0, int anxietyScore = 0, int sleepScore = 0, int mindLoadScore = 0, int emotionScore = 0)
@@ -116,6 +127,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             });
         }
 
+        // #Function NotePost#
+
         [HttpPost, ActionName("Note")]
         public IActionResult NotePost(MoodTrackerSessionViewModel model)
         {
@@ -124,6 +137,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Steps 4-8 — Questionnaire (5 questions, score 1-5) ══════════
+        // #Function Question#
+        // #Bagian Langkah4 Kuesioner#
         [HttpGet]
         public IActionResult Question(string feeling, string? triggers, string? note, int questionStep = 1,
             int focusScore = 0, int anxietyScore = 0, int sleepScore = 0, int mindLoadScore = 0, int emotionScore = 0)
@@ -139,6 +154,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 SleepScore = sleepScore, MindLoadScore = mindLoadScore, EmotionScore = emotionScore
             });
         }
+
+        // #Function QuestionPost#
 
         [HttpPost, ActionName("Question")]
         public IActionResult QuestionPost(MoodTrackerSessionViewModel model)
@@ -162,6 +179,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Summary + Save ═══════════════════════════════════════════════
+        // #Function Summary#
+        // #Bagian Ringkasan Simpan#
         [HttpGet]
         public IActionResult Summary(string feeling, string? triggers, string? note,
             int focusScore = 0, int anxietyScore = 0, int sleepScore = 0, int mindLoadScore = 0, int emotionScore = 0)
@@ -176,6 +195,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 SleepScore = sleepScore, MindLoadScore = mindLoadScore, EmotionScore = emotionScore
             });
         }
+
+        // #Function SummaryPost#
 
         [HttpPost, ActionName("Summary")]
         public async Task<IActionResult> SummaryPost(MoodTrackerSessionViewModel model)

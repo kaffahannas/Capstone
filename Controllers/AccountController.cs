@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LightenUp.Web.Controllers
 {
+    // #Class AccountController#
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -35,9 +36,8 @@ namespace LightenUp.Web.Controllers
             _emailSender = emailSender;
         }
 
-        // ==========================================
-        // 1. HALAMAN LOGIN
-        // ==========================================
+        // #Bagian Login#
+        // #Function Login GET#
         [HttpGet]
         public async Task<IActionResult> Login()
         {
@@ -58,6 +58,7 @@ namespace LightenUp.Web.Controllers
             return View();
         }
 
+        // #Function AccessDenied#
         [HttpGet]
         public async Task<IActionResult> AccessDenied()
         {
@@ -72,6 +73,7 @@ namespace LightenUp.Web.Controllers
             return View();
         }
 
+        // #Function Login POST#
         [HttpPost]
         [EnableRateLimiting("auth")]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -160,12 +162,12 @@ namespace LightenUp.Web.Controllers
             return View(model);
         }
 
-        // ==========================================
-        // 2. HALAMAN REGISTER
-        // ==========================================
+        // #Bagian Register#
+        // #Function Register GET#
         [HttpGet]
         public IActionResult Register() => View();
 
+        // #Function Register POST#
         [HttpPost]
         [EnableRateLimiting("auth")]
         public async Task<IActionResult> Register(PublicRegisterViewModel model)
@@ -207,9 +209,8 @@ namespace LightenUp.Web.Controllers
             return View(model);
         }
 
-        // ==========================================
-        // 3. VERIFIKASI EMAIL (OTP)
-        // ==========================================
+        // #Bagian Verifikasi OTP Email#
+        // #Function VerifyEmail GET#
         [HttpGet]
         public IActionResult VerifyEmail(string email)
         {
@@ -220,6 +221,7 @@ namespace LightenUp.Web.Controllers
             return View(new VerifyOtpViewModel { Email = email });
         }
 
+        // #Function VerifyEmail POST#
         [HttpPost]
         public IActionResult VerifyEmail(VerifyOtpViewModel model)
         {
@@ -241,9 +243,8 @@ namespace LightenUp.Web.Controllers
             return View(model);
         }
 
-        // ==========================================
-        // 4. BUAT PASSWORD & SIMPAN KE DB
-        // ==========================================
+        // #Bagian Buat Password#
+        // #Function CreatePassword GET#
         [HttpGet]
         public IActionResult CreatePassword(string email)
         {
@@ -253,6 +254,7 @@ namespace LightenUp.Web.Controllers
             return View(new CreatePasswordViewModel { Email = email });
         }
 
+        // #Function CreatePassword POST#
         [HttpPost]
         public async Task<IActionResult> CreatePassword(CreatePasswordViewModel model)
         {
@@ -342,18 +344,16 @@ namespace LightenUp.Web.Controllers
             return View(model);
         }
 
-        // ==========================================
-        // 5. SUCCESS PAGE
-        // ==========================================
+        // #Bagian Registrasi Sukses#
+        // #Function RegistrationSuccess#
         [HttpGet]
         public IActionResult RegistrationSuccess()
         {
             return View();
         }
 
-        // ==========================================
-        // 6. LOGOUT
-        // ==========================================
+        // #Bagian Logout#
+        // #Function Logout#
         [HttpPost]
         [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Logout()
@@ -362,9 +362,8 @@ namespace LightenUp.Web.Controllers
             return RedirectToAction("Login");
         }
 
-        // ==========================================
-        // 7. PENDING APPROVAL (Psy + HR waiting for Admin review)
-        // ==========================================
+        // #Bagian Pending Approval#
+        // #Function PendingApproval#
         [HttpGet]
         [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> PendingApproval()
@@ -385,9 +384,8 @@ namespace LightenUp.Web.Controllers
             return View();
         }
 
-        // ==========================================
-        // 8. EXTERNAL LOGIN (Google / Facebook)
-        // ==========================================
+        // #Bagian Login dengan Google#
+        // #Function ExternalLogin#
         [HttpPost]
         [IgnoreAntiforgeryToken]
         public IActionResult ExternalLogin(string provider, string? flow, string? fullName, string? accountType, string? returnUrl = null)
@@ -422,6 +420,7 @@ namespace LightenUp.Web.Controllers
         }
 
         [HttpGet]
+        // #Function ExternalLoginCallback#
         public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null)
         {
             var flow = TempData["ExternalFlow"]?.ToString();
@@ -598,7 +597,7 @@ namespace LightenUp.Web.Controllers
                 var psy = _context.Psychologists.FirstOrDefault(p => p.UserId == user.Id);
                 bool onboardingDone = psy != null && !string.IsNullOrEmpty(psy.LicenseNumber);
                 if (!onboardingDone)
-                    return RedirectToAction("Welcome", "Onboarding");
+                    return RedirectToAction("Welcome", "Onboarding", new { area = "" });
                 return RedirectToAction("PendingApproval");
             }
 
@@ -624,9 +623,8 @@ namespace LightenUp.Web.Controllers
             return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
         }
 
-        // ==========================================
-        // 9. CHANGE/SET PASSWORD
-        // ==========================================
+        // #Bagian Ganti Password#
+        // #Function ChangePassword GET#
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ChangePassword()
@@ -638,6 +636,7 @@ namespace LightenUp.Web.Controllers
             return View(new ChangePasswordViewModel { HasPassword = hasPassword });
         }
 
+        // #Function ChangePassword POST#
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -1,4 +1,4 @@
-/* Patient Profile Index — linked from Profile/Index.cshtml */
+/* #Bagian Profil Pasien Index# */
 
 .pf-page {
     width: 100%;
@@ -423,6 +423,7 @@
 .pf-psy-box-name { font-size: 14px; font-weight: 600; }
 .pf-psy-box-email { font-size: 12px; }
 
+/* #Bagian Akses Cepat# */
 .pf-quick-section { padding: 20px; }
 
 .pf-quick-title {
@@ -504,6 +505,7 @@ button.pf-quick-card {
 
 .pf-alert { margin-bottom: 16px; }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .pf-layout { grid-template-columns: 1fr; }
     .pf-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -511,10 +513,12 @@ button.pf-quick-card {
     .pf-detail-split { grid-template-columns: 1fr; }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 639.98px) {
     .pf-quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 575.98px) {
     .pf-kpi-grid { grid-template-columns: 1fr; }
 }

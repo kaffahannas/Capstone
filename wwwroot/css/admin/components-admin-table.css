@@ -1,3 +1,4 @@
+/* #Bagian Tabel Admin# */
 ﻿/* Admin tables */
 /* ═══════════════════════════════════════
    TABLES
@@ -39,6 +40,7 @@
 .adm-table a:not(.btn) { color: var(--adm-primary); text-decoration: none; font-weight: 500; }
 .adm-table a:not(.btn):hover { text-decoration: underline; }
 
+/* #Komponen User Row With Avatar# */
 /* User row with avatar */
 .adm-user-cell {
     display: flex;

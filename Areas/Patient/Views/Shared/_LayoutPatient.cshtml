@@ -6,6 +6,7 @@
     var fullName = user?.FullName ?? "Sahabat";
     var active = ViewBag.ActiveNav as string ?? "Beranda";
 }
+@* #Bagian Layout Pasien# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -25,6 +26,7 @@
     <div class="app-shell" id="appShell">
         <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
+        @* #Komponen Sidebar Navigasi# *@
         <aside class="app-sidebar" id="appSidebar" aria-label="Navigasi utama">
             <div class="sidebar-header">
                 <a class="brand" asp-controller="Dashboard" asp-action="Index">
@@ -80,6 +82,7 @@
             </form>
         </aside>
 
+        @* #Komponen Area Konten Utama# *@
         <div class="app-main">
             <header class="app-topbar">
                 <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="appSidebar">

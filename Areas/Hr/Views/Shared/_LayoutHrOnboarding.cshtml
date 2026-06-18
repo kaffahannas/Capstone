@@ -4,6 +4,7 @@
     var pageTitle = ViewData["Title"] as string ?? "Onboarding HR";
     var hideChrome = ViewBag.HideChrome as bool? ?? false;
 }
+@* #Bagian LayoutOnboardingHR# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -29,6 +30,7 @@
     <div class="onb-wrapper">
         @if (!hideChrome)
         {
+            @* #Komponen ProgressBar# *@
             <div class="onb-topbar">
                 <span>Onboarding HR</span>
                 <a class="close-btn" asp-controller="Account" asp-action="Login" asp-area="" title="Keluar">&times;</a>

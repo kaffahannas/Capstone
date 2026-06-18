@@ -8,6 +8,7 @@
     var testPlan = Model.Plans.FirstOrDefault(p => p.PlanId == "patient-test");
     var cid     = new System.Globalization.CultureInfo("id-ID");
 }
+@* #Bagian Langganan Pasien# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/patient/subscription-index.css" asp-append-version="true" />
@@ -24,6 +25,7 @@
     <div class="lu-alert-success" role="status">@ok</div>
 }
 
+@* #Komponen Banner Status Langganan# *@
 <!-- ─── Active-subscription status banner ─── -->
 @if (Model.HasActiveSubscription)
 {
@@ -50,12 +52,14 @@ else if (Model.IsB2B)
     </div>
 }
 
+@* #Komponen Hero Langganan# *@
 <!-- ─── Hero ─── -->
 <div class="sub-hero">
     <h1 class="sub-hero-title">Tingkatkan Perjalanan Mentalmu 🌟</h1>
     <p class="sub-hero-sub">Mulai gratis, upgrade kapan saja. Tanpa kontrak, tanpa syarat.</p>
 </div>
 
+@* #Komponen Grid Paket Langganan# *@
 <!-- ─── 3-column pricing grid ─── -->
 <div class="sub-grid">
 

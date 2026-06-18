@@ -1,4 +1,6 @@
+/* #Bagian Pasien Riwayat Hero# */
 ﻿/* Shared patient history hero shell (Psy schedule + worksheet history) */
+/* #Bagian Halaman Wrapper# */
 /* Page wrapper */
 .psh-page {
     display: flex;
@@ -14,6 +16,7 @@
     box-sizing: border-box;
 }
 
+/* #Komponen Hero# */
 /* ── Hero ── */
 .psh-hero {
     background: linear-gradient(130deg, #1E1B4B 0%, #312E81 25%, #4338CA 60%, #7C3AED 100%);
@@ -69,6 +72,7 @@
     font-weight: 500;
 }
 
+/* #Komponen Hero Stat Bubbles# */
 /* Hero stat bubbles */
 .psh-hero-stats {
     display: flex;
@@ -94,6 +98,7 @@
 .psh-stat-val { font-size: 22px; font-weight: 800; color: #fff; line-height: 1; }
 .psh-stat-lbl { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.65); white-space: nowrap; }
 
+/* #Komponen Tambah Button# */
 /* Add button */
 .psh-add-btn {
     display: inline-flex;
@@ -119,6 +124,7 @@
     color: #fff;
 }
 
+/* #Bagian Session Daftar Scrolls Independently# */
 /* ── Session list — scrolls independently ── */
 .psh-list {
     flex: 1;
@@ -127,6 +133,7 @@
     padding-bottom: 8px;
 }
 
+/* #Bagian Empty State# */
 /* ── Empty state ── */
 .psh-empty {
     display: flex;
@@ -182,6 +189,7 @@
     border-color: #3730A3;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 700px) {
     .psh-hero-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
     .psh-hero-stats { width: 100%; }

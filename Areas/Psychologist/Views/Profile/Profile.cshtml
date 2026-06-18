@@ -18,13 +18,15 @@
     <link rel="stylesheet" href="~/css/psychologist/profile-profile.css" asp-append-version="true" />
 }
 
+
+@* #Bagian ProfilPsikolog# *@
 <div class="prf-page">
 
-@* ── Hero profile banner ── *@
+@* #Komponen HeroProfil# *@
 <div class="prf-hero">
     <div class="prf-hero-inner">
 
-        @* Avatar *@
+        @* #Komponen Avatar# *@
         <div class="prf-hero-av-wrap">
             <div class="prf-hero-av-ring" aria-hidden="true"></div>
             @if (!string.IsNullOrEmpty(Model.ProfilePicture))
@@ -40,7 +42,7 @@
             </button>
         </div>
 
-        @* Identity *@
+        @* #Komponen Identitas# *@
         <div class="prf-hero-id">
             <p class="prf-hero-eyebrow">Psikolog · LightenUp</p>
             <h1 class="prf-hero-name">Dr. @displayName</h1>
@@ -87,7 +89,7 @@
 </div>
 
 <div class="prf-main-grid">
-    @* ── Kolom Kiri: Profesional ── *@
+    @* #Komponen KolomProfesional# *@
     <div class="prf-col">
         
         @* Tentang Saya *@
@@ -153,7 +155,7 @@
         </div>
     </div>
 
-    @* ── Kolom Kanan: Kontak & B2B ── *@
+    @* #Komponen KolomKontak# *@
     <div class="prf-col">
         
         @* Kontak & Praktik *@
@@ -234,7 +236,7 @@
 
 </div>@* /prf-page *@
 
-@* ── Edit Profile Modal ── *@
+@* #Bagian ModalEditProfil# *@
 <div class="prf-modal-overlay" id="prfModalOverlay" role="dialog" aria-modal="true" aria-labelledby="prfModalTitle">
     <form method="post" asp-action="EditProfile" enctype="multipart/form-data" autocomplete="off" class="prf-modal prf-edit-form">
         <div class="prf-modal-header">

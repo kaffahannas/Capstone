@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class HrEmployeeListItem#
     public class HrEmployeeListItem
     {
         public int PatientId { get; set; }
@@ -18,6 +19,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? TodaySessionTitle { get; set; }   // "General Counseling" etc — not in schema yet; use Schedule.Notes or default
     }
 
+    // #Class HrEmployeesListViewModel#
     public class HrEmployeesListViewModel
     {
         public string Tab { get; set; } = "Semua";       // "Semua" or "Sesi"
@@ -31,6 +33,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int TotalCount { get; set; }
     }
 
+    // #Class HrEmployeeDetailViewModel#
     public class HrEmployeeDetailViewModel
     {
         public int PatientId { get; set; }
@@ -69,6 +72,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? AssignmentStatus { get; set; }
     }
 
+    // #Class HrEditSymptomsViewModel#
     public class HrEditSymptomsViewModel
     {
         public int PatientId { get; set; }
@@ -76,6 +80,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? Symptoms { get; set; }
     }
 
+    // #Class HrAddClientViewModel#
     public class HrAddClientViewModel
     {
         [Required(ErrorMessage = "Divisi wajib dipilih.")]

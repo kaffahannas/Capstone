@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class PublicRegisterViewModel#
     public class PublicRegisterViewModel
     {
         [Required(ErrorMessage = "Nama Lengkap wajib diisi")]
@@ -15,6 +16,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string AccountType { get; set; } = string.Empty;
     }
 
+    // #Class HrRegisterViewModel#
     public class HrRegisterViewModel
     {
         [Required(ErrorMessage = "Nama HR wajib diisi")]

@@ -1,3 +1,4 @@
+/* #Bagian Riwayat Kartu Psikolog# */
 /* Psychologist history list cards (Schedule + Worksheet history; extracted from dashboard.css) */
 
 .history-card {
@@ -66,6 +67,7 @@
     color: white;
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .history-card {
         flex-direction: column;

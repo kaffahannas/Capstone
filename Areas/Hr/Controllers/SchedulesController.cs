@@ -11,6 +11,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    // #Class SchedulesController#
     [RequiresCompanySubscription]
     public class SchedulesController : Controller
     {
@@ -45,7 +46,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  List
         // ═════════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index(string? search, string? period, int page = 1)
         {
             var hr = await GetHrAsync();
@@ -118,6 +120,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  Edit (cancel / reschedule)
         // ═════════════════════════════════════════════
+        // #Function Edit#
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -142,6 +145,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 Notes = s.Notes
             });
         }
+
+        // #Function Edit POST#
 
         [HttpPost]
         public async Task<IActionResult> Edit(HrScheduleEditViewModel model)
@@ -172,6 +177,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  Request — propose a new session
         // ═════════════════════════════════════════════
+        // #Function Request#
         [HttpGet]
         public new async Task<IActionResult> Request()
         {
@@ -198,6 +204,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 AvailablePatients = patients
             });
         }
+
+        // #Function Request POST#
 
         [HttpPost]
         public new async Task<IActionResult> Request(HrRequestViewModel model)
@@ -237,6 +245,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  RequestModal  (AJAX — used by Employee Detail modal)
         // ═════════════════════════════════════════════
+        // #Function RequestModal#
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RequestModal(
@@ -279,6 +288,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             await _context.SaveChangesAsync();
             return Json(new { ok = true, message = "Permintaan jadwal sesi dikirim ke psikolog." });
         }
+        // #Function ScheduleDetailModal#
         [HttpGet]
         public async Task<IActionResult> ScheduleDetailModal(int id)
         {

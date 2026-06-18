@@ -1,3 +1,4 @@
+/* #Bagian Dashboard HR# */
 ﻿/* HR dashboard: page shell, alerts, grid, client list, sidebar, metrics, activity, distribution */
 .hrd-page {
     display: flex;
@@ -10,6 +11,7 @@
     overflow-x: hidden;
 }
 
+/* #Bagian Shared Hr Halaman Wrappers Prevent Content Bleeding Past Viewport# */
 /* Shared HR page wrappers ? prevent content bleeding past viewport */
 .hr-page-wrap,
 .hrstat-page,
@@ -56,6 +58,7 @@
 .hrd-alert-link:hover { opacity: 0.88; color: #fff; }
 .hrd-alert-link--danger { background: #EF4444; }
 
+/* #Bagian Gg Main Grid G Fills Remaining Halaman Height Gg# */
 /* G??G?? Main grid G?? fills remaining page height G??G?? */
 .hrd-grid {
     display: grid;
@@ -66,6 +69,7 @@
     width: 100%;
 }
 
+/* #Komponen Gg Klien Kartu G Fills Grid Row Daftar Scrolls Inside Gg# */
 /* G??G?? Client card G?? fills grid row, list scrolls inside G??G?? */
 .hrd-client-card {
     background: #fff;
@@ -101,6 +105,7 @@
 }
 .hrd-view-all-link:hover { text-decoration: underline; }
 
+/* #Komponen Search Input# */
 /* Search input */
 .hrd-search-wrap { position: relative; margin-bottom: 10px; }
 .hrd-search-input {
@@ -130,6 +135,7 @@
     align-items: center;
 }
 
+/* #Komponen Search Dropdown# */
 /* Search dropdown */
 .hrd-search-results {
     display: none;
@@ -164,6 +170,7 @@
     text-align: center;
 }
 
+/* #Bagian Filter Row# */
 /* Filter row */
 .hrd-filter-row {
     display: grid;
@@ -184,6 +191,7 @@
 }
 .hrd-select:focus { border-color: var(--lu-primary); }
 
+/* #Komponen Klien Rows G Scrollable Region Inside The Flex Kartu# */
 /* Client rows G?? scrollable region inside the flex card */
 .hrd-client-list {
     max-height: 400px;
@@ -209,6 +217,7 @@
 }
 .hrd-client-row:hover .hrd-client-arrow { opacity: 1; }
 
+/* #Komponen Avatar Circle# */
 /* Avatar circle */
 .hrd-client-avatar {
     width: 36px;
@@ -241,6 +250,7 @@
     text-overflow: ellipsis;
 }
 
+/* #Komponen Status Badges# */
 /* Status badges */
 .hrd-status {
     display: inline-flex;
@@ -266,6 +276,7 @@
     flex-shrink: 0;
 }
 
+/* #Komponen Empty State G Centred Inside The Flex Kartu# */
 /* Empty state G?? centred inside the flex card */
 .hrd-client-empty {
     flex: 1;
@@ -275,6 +286,7 @@
     justify-content: center;
 }
 
+/* #Komponen More Clients Footer Strip G Stays Pinned At Bottom Of Kartu# */
 /* "More clients" footer strip G?? stays pinned at bottom of card */
 .hrd-client-more {
     padding: 12px 20px;
@@ -290,6 +302,7 @@
 }
 .hrd-client-more-link:hover { text-decoration: underline; }
 
+/* #Komponen Empty State Icon/title/sub Only G Layout Handled By Flex Above# */
 /* Empty state (icon/title/sub only G?? layout handled by flex above) */
 .hrd-client-empty-icon {
     width: 54px; height: 54px;
@@ -318,6 +331,7 @@
 }
 .hrd-empty-add-btn:hover { background: var(--lu-primary-hover); color: #fff; }
 
+/* #Komponen Gg Sidebar G Scrollable Column Gg# */
 /* G??G?? Sidebar G?? scrollable column G??G?? */
 .hrd-side {
     display: flex;
@@ -395,6 +409,7 @@
     border-radius: 999px;
 }
 
+/* #Komponen Referral Code Kartu# */
 /* Referral code card */
 .hrd-referral-box {
     background: linear-gradient(135deg, #F5F3FF, #EDE9FE);
@@ -683,6 +698,7 @@
 }
 .hrd-dist-link:hover { text-decoration: underline; }
 
+/* #Komponen Hr Hero Modifiers Status Coloured Variants# */
 /* HR hero modifiers — status-coloured variants */
 .hrd-hero--beresiko {
     background: linear-gradient(135deg, #78350F 0%, #B45309 40%, #D97706 70%, #F59E0B 100%);
@@ -693,6 +709,7 @@
     box-shadow: 0 6px 28px rgba(185,28,28,0.30);
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 960px) {
     .hrd-grid {
         grid-template-columns: 1fr;

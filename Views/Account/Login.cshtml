@@ -17,10 +17,12 @@
 </head>
 <body class="auth-page login-page">
 
+    @* #Bagian Login# *@
     <div class="auth-wrapper">
 
         <div class="auth-container login-card">
 
+            @* #Komponen Logo Brand# *@
             <div class="logo-container logo-container--in-card">
                 <svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M50 5L90 27V73L50 95L10 73V27L50 5Z" fill="url(#hexGradient)" />
@@ -45,6 +47,7 @@
 
             <h1 class="auth-title text-center auth-title--login">Masuk ke Akun Anda</h1>
 
+            @* #Komponen Form Login# *@
             <form asp-action="Login" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -83,6 +86,7 @@
                 <button type="submit" class="btn-submit">Masuk</button>
             </form>
 
+            @* #Komponen Alert Pesan# *@
             @if (TempData["SuccessMessage"] != null)
             {
                 <div class="auth-alert auth-alert--success">@TempData["SuccessMessage"]</div>
@@ -93,8 +97,10 @@
                 <div class="auth-alert auth-alert--error">@TempData["ExternalError"]</div>
             }
 
+            @* #Komponen Divider Sosial# *@
             <div class="divider"><span>atau masuk dengan</span></div>
 
+            @* #Komponen Login Sosial Google# *@
             <div class="social-login-group">
                 <form asp-action="ExternalLogin" asp-controller="Account" method="post" class="social-login-form">
                     <input type="hidden" name="provider" value="Google" />
@@ -110,6 +116,7 @@
 
             </div>
 
+            @* #Komponen Footer Daftar# *@
             <div class="auth-footer">Tidak memiliki akun? <a href="/Account/Register">Daftar Sekarang</a></div>
         </div>
     </div>

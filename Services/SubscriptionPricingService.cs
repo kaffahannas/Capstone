@@ -19,6 +19,7 @@ public sealed class PatientPricingResult
 }
 
 /// <summary>Resolves monthly subscription slot value (IDR) for payroll.</summary>
+// #Class SubscriptionPricingService#
 public class SubscriptionPricingService
 {
     public const decimal DefaultPsychologistRevenuePercentage = 40m;
@@ -30,6 +31,8 @@ public class SubscriptionPricingService
         _context = context;
     }
 
+    // #Bagian Harga Pasien#
+    // #Function GetPatientPricingAsync#
     public async Task<PatientPricingResult> GetPatientPricingAsync(int patientId)
     {
         var patient = await _context.Patients
@@ -50,12 +53,14 @@ public class SubscriptionPricingService
         };
     }
 
+    // #Function GetSlotValueForPatientAsync#
     public async Task<(decimal SlotValue, int MaxSessions)> GetSlotValueForPatientAsync(int patientId)
     {
         var pricing = await GetPatientPricingAsync(patientId);
         return (pricing.SubscriptionValuePerMonth, pricing.MaxSessions);
     }
 
+    // #Function GetB2CSlotValueAsync#
     public async Task<(decimal SlotValue, int MaxSessions)> GetB2CSlotValueAsync(int patientId)
     {
         var sub = await _context.Subscriptions
@@ -71,6 +76,8 @@ public class SubscriptionPricingService
         return (amount, sub.MaxSessionsPerMonth);
     }
 
+    // #Bagian Harga B2B#
+    // #Function GetB2BPricingAsync#
     public async Task<PatientPricingResult> GetB2BPricingAsync(int companyId)
     {
         var companySub = await _context.CompanySubscriptions
@@ -109,6 +116,7 @@ public class SubscriptionPricingService
         };
     }
 
+    // #Function GetB2BSlotValueAsync#
     public async Task<(decimal SlotValue, int MaxSessions)> GetB2BSlotValueAsync(int companyId)
     {
         var pricing = await GetB2BPricingAsync(companyId);
@@ -157,6 +165,8 @@ public class SubscriptionPricingService
         return activeEmployees > 0 ? activeEmployees : 1;
     }
 
+    // #Bagian Payroll#
+    // #Function GetDefaultPsychologistPercentageAsync#
     public async Task<decimal> GetDefaultPsychologistPercentageAsync(int psychologistId)
     {
         var setting = await _context.PayrollSettings

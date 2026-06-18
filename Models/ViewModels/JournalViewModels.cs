@@ -4,6 +4,7 @@ namespace LightenUp.Web.Models.ViewModels
 {
     // ─── Daily 6-question Check-in ───
     // Accumulated across 6 steps via hidden fields, saved at the end.
+    // #Class JournalCheckInSessionViewModel#
     public class JournalCheckInSessionViewModel
     {
         [Range(0, 5)] public int FocusScore { get; set; }      // Q1
@@ -32,6 +33,7 @@ namespace LightenUp.Web.Models.ViewModels
         }
     }
 
+    // #Class CheckInQuestions#
     public static class CheckInQuestions
     {
         public static readonly (string Field, string Question)[] All = new[]
@@ -48,6 +50,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Free-write journal entry ───
+    // #Class JournalWriteViewModel#
     public class JournalWriteViewModel
     {
         public int? JournalId { get; set; }   // null = create new, else update

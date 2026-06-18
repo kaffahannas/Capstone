@@ -13,6 +13,7 @@ using System.Collections.Generic;
 namespace LightenUp.Web.Areas.Psychologist.Controllers
 {
     [Area("Psychologist")]
+    // #Class DashboardController#
     [Authorize(Roles = "Psychologist")]
     public class DashboardController : Controller
     {
@@ -35,6 +36,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             _healthService = healthService;
             _activation = activation;
         }
+
+        // #Function Index#
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -140,6 +143,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .Select(p => (int?)p.PsychologistId).FirstOrDefaultAsync();
         }
 
+        // #Function Statistics#
+
         [HttpGet]
         public async Task<IActionResult> Statistics()
         {
@@ -203,6 +208,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             public int SehatPct { get; set; }
             public int StressPct { get; set; }
         }
+
+        // #Function Payslip#
 
         [HttpGet]
         public async Task<IActionResult> Payslip()
@@ -300,6 +307,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View("~/Areas/Psychologist/Views/Dashboard/Payslip.cshtml", model);
         }
 
+        // #Function ApprovePartnership#
+
         [HttpPost]
         public async Task<IActionResult> ApprovePartnership(int requestId)
         {
@@ -329,6 +338,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // #Function RejectPartnership#
 
         [HttpPost]
         public async Task<IActionResult> RejectPartnership(int requestId)

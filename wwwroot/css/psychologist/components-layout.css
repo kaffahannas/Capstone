@@ -1,3 +1,4 @@
+/* #Bagian Layout Psikolog# */
 /* Psychologist app shell: sidebar nav + main column (extracted from dashboard.css) */
 
 :root {
@@ -153,6 +154,7 @@ body {
     margin: 0;
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .main-content {
         margin-left: 0;

@@ -1,5 +1,8 @@
+/* #Bagian Psikolog Stats Legacy Psikolog# */
 ﻿/* Psy legacy statistics blocks */
+/* #Bagian Halaman Statistik# */
 /* ================== HALAMAN STATISTIK ================== */
+/* #Bagian Stats Ringkasan Grid Responsif Columns Handled By Sitecss# */
 /* stats-summary-grid responsive columns handled by site.css */
 .stats-summary-grid {
     margin-bottom: 30px;
@@ -39,6 +42,7 @@
     color: var(--status-bahaya-text);
 }
 
+/* #Bagian Charts Grid Responsif Columns Handled By Sitecss# */
 /* charts-grid responsive columns handled by site.css */
 .charts-grid {
     margin-bottom: 30px;

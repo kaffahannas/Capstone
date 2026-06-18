@@ -8,6 +8,7 @@
     int countCompleted = Model.Items.Count(w => w.Status == "Completed");
     var modalPatients  = ViewBag.ModalPatients as List<LightenUp.Web.Models.ViewModels.HrSimplePatient> ?? new();
 }
+@* #Bagian RiwayatWorksheet# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/hr/worksheets-index.css" asp-append-version="true" />
@@ -24,6 +25,7 @@
         </div>
     }
 
+    @* #Komponen Hero# *@
     @* ══════ HERO ══════ *@
     <div class="hrws-hero">
         <div class="hrws-hero-bg" aria-hidden="true"></div>
@@ -77,6 +79,7 @@
         </form>
     </div>
 
+    @* #Komponen DaftarWorksheet# *@
     @* ══════ LIST ══════ *@
     @if (!Model.Items.Any())
     {
@@ -133,6 +136,7 @@
         }
     }
 
+    @* #Komponen ModalPermintaan# *@
     @* ══════ REQUEST MODAL ══════ *@
     <div class="hrpf-modal-overlay" id="hrwsModalOverlay" role="dialog" aria-modal="true" aria-labelledby="hrwsModalTitle">
         <div class="hrpf-modal">

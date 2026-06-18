@@ -1,4 +1,6 @@
+/* #Bagian Komponen Modal Pasien# */
 ﻿/* Patient modals (hrpf-*) — dashboard, profile, tasks */
+/* #Komponen Pasien Modals Jurnal / Mood On Dashboard# */
 /* --- Patient modals (journal / mood on dashboard) --- */
 .hrpf-modal-overlay {
     position: fixed;
@@ -33,6 +35,7 @@
 }
 .hrpf-modal-overlay.is-open .hrpf-modal { transform: none; }
 
+/* #Komponen Modal Header# */
 /* Modal header */
 .hrpf-modal-head {
     display: flex;
@@ -75,6 +78,7 @@
 }
 .hrpf-modal-close:hover { background: #E5E7EB; color: var(--lu-text); }
 
+/* #Komponen Modal Body# */
 /* Modal body */
 .hrpf-modal-body {
     flex: 1;
@@ -82,6 +86,7 @@
     padding: 22px 26px 8px;
 }
 
+/* #Bagian Section Titles# */
 /* Section titles */
 .hrpf-modal-section-title {
     font-size: 11px;
@@ -94,6 +99,7 @@
     border-bottom: 1px solid var(--lu-border);
 }
 
+/* #Komponen Form Error# */
 /* Form error */
 .hrpf-form-error {
     background: #FEE2E2;
@@ -105,6 +111,7 @@
     line-height: 1.45;
 }
 
+/* #Komponen Modal Fields# */
 /* Modal fields */
 .hrpf-modal-field { margin-bottom: 14px; }
 .hrpf-modal-label {
@@ -138,6 +145,7 @@
 
 .hrpf-modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
 
+/* #Bagian Toggle Rows# */
 /* Toggle rows */
 .hrpf-modal-toggle-row {
     display: flex;
@@ -165,6 +173,7 @@
     flex-shrink: 0;
 }
 
+/* #Bagian Toggle Switch# */
 /* Toggle switch */
 .hrpf-toggle {
     position: relative;
@@ -198,6 +207,7 @@
 .hrpf-toggle input:checked + .hrpf-toggle-slider { background: var(--lu-primary); }
 .hrpf-toggle input:checked + .hrpf-toggle-slider::before { transform: translateX(18px); }
 
+/* #Bagian Frequency Radio Pills# */
 /* Frequency radio pills */
 .hrpf-modal-freq-opts { display: flex; gap: 8px; flex-wrap: wrap; }
 .hrpf-freq-opt { display: none; }
@@ -220,6 +230,7 @@
     color: var(--lu-primary);
 }
 
+/* #Komponen Modal Footer# */
 /* Modal footer */
 .hrpf-modal-foot {
     display: flex;
@@ -261,6 +272,7 @@
 }
 .hrpf-modal-save:hover:not(:disabled) { background: var(--lu-primary-hover); }
 .hrpf-modal-save:disabled { opacity: .6; cursor: not-allowed; }
+/* #Bagian Password Show/hide Toggle# */
 /* ?????? Password show/hide toggle ?????? */
 .hrpf-pwd-eye {
     position: absolute;
@@ -300,10 +312,12 @@
 }
 .hrpf-modal-save--ghost:hover { background: var(--lu-bg); border-color: var(--lu-border-strong); }
 
+/* #Bagian Spin Animation For Loading State# */
 /* Spin animation for loading state */
 @keyframes hrpf-spin { to { transform: rotate(360deg); } }
 .hrpf-spin { animation: hrpf-spin .8s linear infinite; display: inline-block; }
 
+/* #Komponen Hero Approval Badges# */
 /* ?????? Hero approval badges ?????? */
 .hrpf-badge-verified {
     display: inline-flex;
@@ -330,14 +344,17 @@
     border: 1px solid rgba(251,191,36,.35);
 }
 
+/* #Bagian Stat Langganan Variants# */
 /* ?????? Stat subscription variants ?????? */
 .hrpf-stat--sub-active  .hrpf-stat-val { color: #6EE7B7; }
 .hrpf-stat--sub-inactive .hrpf-stat-val { color: #FCA5A5; }
 
+/* #Komponen Langganan Kartu Accent# */
 /* ?????? Subscription card accent ?????? */
 .hrpf-card--sub-active  { border-left: 4px solid #10B981; }
 .hrpf-card--sub-inactive { border-left: 4px solid #F59E0B; }
 
+/* #Bagian Active Langganan Content# */
 /* ?????? Active subscription content ?????? */
 .hrpf-sub-active { display: flex; flex-direction: column; gap: 12px; }
 .hrpf-sub-badge {
@@ -365,6 +382,7 @@
 }
 .hrpf-sub-manage-link:hover { color: var(--lu-primary-hover); }
 
+/* #Bagian Inactive Langganan Content# */
 /* ?????? Inactive subscription content ?????? */
 .hrpf-sub-inactive { display: flex; flex-direction: column; gap: 12px; }
 .hrpf-sub-inactive-text {
@@ -389,6 +407,7 @@
 }
 .hrpf-sub-buy-btn:hover { background: var(--lu-primary-hover); }
 
+/* #Bagian Referral Code Section# */
 /* ?????? Referral code section ?????? */
 .hrpf-referral-row {
     margin-top: 16px;
@@ -440,6 +459,7 @@
 }
 .hrpf-referral-copy:hover { background: var(--lu-primary-soft); color: var(--lu-primary); border-color: var(--lu-primary); }
 
+/* #Bagian Field Link# */
 /* ?????? Field link ?????? */
 .hrpf-field-link {
     color: var(--lu-primary);
@@ -450,6 +470,7 @@
 }
 .hrpf-field-link:hover { color: var(--lu-primary-hover); text-decoration: underline; }
 
+/* #Bagian Expiring / Warning States# */
 /* ?????? Expiring / warning states ?????? */
 .hrpf-field-val--warn { color: #D97706; font-weight: 600; }
 .hrpf-expiring-badge {
@@ -465,4 +486,5 @@
     vertical-align: middle;
 }
 
+/* #Komponen Amber Inline Badge# */
 /* ?????? Amber inline badge ?????? */

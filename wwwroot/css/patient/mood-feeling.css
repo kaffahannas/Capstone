@@ -1,3 +1,4 @@
+/* #Bagian Mood Perasaan Pasien# */
 .mood-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -137,6 +138,7 @@
     color: #0F172A;
 }
 
+/* #Komponen Popup / Dashboard Modal# */
 /* Popup / dashboard modal */
 .is-popup .mood-wizard-header {
     display: none !important;

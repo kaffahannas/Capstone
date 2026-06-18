@@ -13,6 +13,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    // #Class StatistikController#
     [RequiresCompanySubscription]
     public class StatistikController : Controller
     {
@@ -46,7 +47,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═══════════════════════════════════════
         //  Overview
         // ═══════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index()
         {
             var hr = await GetHrAsync();
@@ -97,6 +99,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═══════════════════════════════════════
         //  Division report
         // ═══════════════════════════════════════
+        // #Function Division#
         [HttpGet]
         public async Task<IActionResult> Division(string name, int window = 30, bool print = false)
         {
@@ -144,6 +147,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return View(vm);
         }
 
+        // #Function DivisionChartData#
+
         [HttpGet]
         public async Task<IActionResult> DivisionChartData(string name, int window = 30)
         {
@@ -177,6 +182,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             });
         }
 
+        // #Function DivisionPrint#
+
         [HttpGet]
         public async Task<IActionResult> DivisionPrint(string name, int window = 30)
         {
@@ -200,6 +207,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═══════════════════════════════════════
         //  Print-optimized view (browser → Save as PDF)
         // ═══════════════════════════════════════
+        // #Function Print#
         [HttpGet]
         public async Task<IActionResult> Print()
         {
@@ -217,6 +225,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═══════════════════════════════════════
         //  CSV export
         // ═══════════════════════════════════════
+        // #Function ExportCsv#
         [HttpGet]
         public async Task<IActionResult> ExportCsv()
         {

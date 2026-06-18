@@ -26,7 +26,9 @@
     <link rel="stylesheet" href="~/css/psychologist/client-company-stats-modal.css" asp-append-version="true" />
 }
 
-@* ── Hero banner ── *@
+
+@* #Bagian StatistikKeseluruhan# *@
+@* #Komponen Hero# *@
 <div class="stat-hero">
     <div class="stat-hero-left">
         <p class="stat-hero-eyebrow">Laporan Kesehatan Mental</p>
@@ -55,7 +57,7 @@
     </div>
 </div>
 
-@* ── KPI cards ── *@
+@* #Komponen KartuKPI# *@
 <div class="stat-kpi-row">
     <div class="stat-kpi stat-kpi--total">
         <div class="stat-kpi-icon">
@@ -114,7 +116,7 @@
     </div>
 </div>
 
-@* ── Charts row ── *@
+@* #Bagian Grafik# *@
 <div class="stat-charts-row">
 
     <div class="stat-chart-card stat-chart-card--donut">
@@ -174,7 +176,7 @@
 
 </div>
 
-@* ── Division summary ── *@
+@* #Bagian RingkasanPerusahaan# *@
 @if (divisions.Any())
 {
     <div class="stat-section-head">

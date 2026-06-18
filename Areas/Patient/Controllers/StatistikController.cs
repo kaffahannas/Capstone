@@ -11,6 +11,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
     [Authorize(Roles = "Patient")]
+    // #Class StatistikController#
     [RequiresPatientPremium]
     public class StatistikController : Controller
     {
@@ -33,6 +34,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             "Angry" => 1,
             _ => 3
         };
+
+        // #Function Index#
 
         [HttpGet]
         public async Task<IActionResult> Index(int window = 30)

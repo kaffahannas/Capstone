@@ -1,5 +1,6 @@
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class HrDashboardViewModel#
     public class HrDashboardViewModel
     {
         // ─── Personal / company context ───
@@ -33,6 +34,7 @@ namespace LightenUp.Web.Models.ViewModels
         public List<HrRecentActivity> RecentActivities { get; set; } = new();
     }
 
+    // #Class HrClientPreview#
     public class HrClientPreview
     {
         public int PatientId { get; set; }
@@ -41,6 +43,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string Status { get; set; } = string.Empty;
     }
 
+    // #Class HrRecentActivity#
     public class HrRecentActivity
     {
         public string Type { get; set; } = string.Empty;          // "Worksheet" | "Session"
@@ -49,6 +52,7 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime OccurredAt { get; set; }
     }
 
+    // #Class HrPsyPreview#
     public class HrPsyPreview
     {
         public int Id { get; set; }

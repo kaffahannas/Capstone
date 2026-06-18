@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="~/css/admin/payroll-edit.css" asp-append-version="true" />
 }
 
+
+@* #Bagian EditPayroll# *@
+@* #Komponen TombolKembali# *@
 <a class="adm-back-link" asp-action="Index">← Daftar Payroll</a>
 
 <div class="pay-edit-wrap">
@@ -22,6 +25,7 @@
         </p>
     </div>
 
+    @* #Komponen FormPayroll# *@
     <form asp-action="Edit" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="PsychologistId" />

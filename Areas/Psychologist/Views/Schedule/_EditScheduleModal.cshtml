@@ -3,6 +3,8 @@
     // Loaded via AJAX into the #scheduleDetailModal container.
 }
 
+
+@* #Bagian ModalEditJadwal# *@
 <div class="modal-container sem-modal">
     <div class="modal-header sem-header">
         <h2 class="modal-title sem-title">
@@ -12,7 +14,8 @@
         <button type="button" class="close-btn" onclick="closeScheduleDetailModal()">&times;</button>
     </div>
 
-    <form asp-action="EditSchedule" asp-area="Psychologist" asp-controller="Schedule" method="post" autocomplete="off">
+        @* #Komponen FormJadwal# *@
+        <form asp-action="EditSchedule" asp-area="Psychologist" asp-controller="Schedule" method="post" autocomplete="off">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="ScheduleId" />
         <input type="hidden" asp-for="PatientName" />

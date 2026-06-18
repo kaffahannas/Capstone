@@ -1,3 +1,4 @@
+/* #Bagian Layout Pasien# */
 ﻿/* Patient app shell — sidebar, main, viewport shells */
 * { box-sizing: border-box; }
 
@@ -15,6 +16,7 @@ body.patient-body {
     max-width: 100%;
 }
 
+/* #Komponen App Shell Sidebar + Main# */
 /* App shell: sidebar + main */
 .app-shell {
     display: grid;
@@ -33,6 +35,7 @@ body.patient-body {
     flex-direction: column;
 }
 
+/* #Komponen Brand Logo Image + Name# */
 /* ─── Brand: logo image + name ─── */
 .brand {
     display: flex;
@@ -66,6 +69,7 @@ body.patient-body {
     margin-top: 1px;
 }
 
+/* #Komponen Nav Items Svg Icon + Label# */
 /* ─── Nav items: SVG icon + label ─── */
 .side-nav {
     display: flex;
@@ -93,6 +97,7 @@ body.patient-body {
 }
 .side-nav-item.active svg { stroke: var(--lu-primary); }
 
+/* #Komponen Logout Button# */
 /* ─── Logout button ─── */
 .side-nav-logout {
     margin-top: auto;
@@ -118,6 +123,7 @@ body.patient-body {
 }
 .logout-btn:hover { background: #FEE2E2; color: #991B1B; }
 
+/* #Bagian Main Content Area# */
 /* â”€â”€â”€â”€â”€ Main content area â”€â”€â”€â”€â”€ */
 .app-main {
     padding: 24px 32px;
@@ -207,6 +213,7 @@ body:has(.st-layout) {
     display: flex;
     flex-direction: column;
 }
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .app-shell:has(.st-layout) {
         height: 100dvh;

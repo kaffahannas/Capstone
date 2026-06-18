@@ -1,3 +1,4 @@
+/* #Bagian Slip Gaji Psikolog# */
 .psy-payslip-page {
     width: 100%;
     display: block;
@@ -417,4 +418,5 @@
     box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 768px) { .pay-kpi-grid { grid-template-columns: 1fr; margin-bottom: 24px; gap: 16px; } .psy-payslip-page .pay-hero { padding-bottom: 36px; margin-bottom: 24px; } }

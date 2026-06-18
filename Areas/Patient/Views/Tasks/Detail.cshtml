@@ -5,6 +5,7 @@
     ViewBag.ActiveNav = "Tugas";
     var indoDeadline = Model.Deadline.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
 }
+@* #Bagian Detail Tugas# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/patient/tasks-detail.css" asp-append-version="true" />
@@ -17,6 +18,7 @@
     <div class="tasks-error">@err</div>
 }
 
+@* #Komponen Ringkasan Tugas# *@
 <div class="task-summary-card">
     <h2 class="task-summary-title">@Model.TaskName</h2>
     <p class="task-summary-desc">@Model.Description</p>

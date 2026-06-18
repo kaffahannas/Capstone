@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace LightenUp.Web.Models.ViewModels
 {
     // ─── Worksheets list ───
+    // #Class HrWorksheetListItem#
     public class HrWorksheetListItem
     {
         public int WorksheetId { get; set; }
@@ -16,6 +17,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string PsychologistName { get; set; } = "";
     }
 
+    // #Class HrWorksheetListViewModel#
     public class HrWorksheetListViewModel
     {
         public string? Search { get; set; }
@@ -28,6 +30,7 @@ namespace LightenUp.Web.Models.ViewModels
         public List<HrSimplePatient> AvailablePatients { get; set; } = new();
     }
 
+    // #Class HrWorksheetReviewViewModel#
     public class HrWorksheetReviewViewModel
     {
         public int WorksheetId { get; set; }
@@ -46,6 +49,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? HrNote { get; set; }
     }
 
+    // #Class HrWorksheetEditNoteViewModel#
     public class HrWorksheetEditNoteViewModel
     {
         public int WorksheetId { get; set; }
@@ -54,6 +58,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Schedules list + edit ───
+    // #Class HrScheduleListItem#
     public class HrScheduleListItem
     {
         public int ScheduleId { get; set; }
@@ -68,6 +73,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string PsychologistName { get; set; } = "";
     }
 
+    // #Class HrScheduleListViewModel#
     public class HrScheduleListViewModel
     {
         public string? Search { get; set; }
@@ -79,6 +85,7 @@ namespace LightenUp.Web.Models.ViewModels
         public List<HrSimplePatient> AvailablePatients { get; set; } = new();
     }
 
+    // #Class HrScheduleEditViewModel#
     public class HrScheduleEditViewModel
     {
         public int ScheduleId { get; set; }
@@ -96,6 +103,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Request to psychologist (worksheet or schedule) ───
+    // #Class HrRequestViewModel#
     public class HrRequestViewModel
     {
         [Required]
@@ -118,6 +126,7 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime? ProposedSessionDate { get; set; }
     }
 
+    // #Class HrSimplePatient#
     public class HrSimplePatient
     {
         public int PatientId { get; set; }

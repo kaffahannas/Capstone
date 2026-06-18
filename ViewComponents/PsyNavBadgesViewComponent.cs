@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.ViewComponents;
 
+// #Class PsyNavBadgesViewComponent#
 public class PsyNavBadgesViewComponent : ViewComponent
 {
     private readonly ApplicationDbContext _context;
@@ -18,6 +19,7 @@ public class PsyNavBadgesViewComponent : ViewComponent
         _userManager = userManager;
     }
 
+    // #Function InvokeAsync#
     public async Task<IViewComponentResult> InvokeAsync()
     {
         if (User?.Identity?.IsAuthenticated != true || !User.IsInRole("Psychologist"))

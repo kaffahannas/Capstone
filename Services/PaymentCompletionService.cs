@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Services;
 
+// #Class PaymentCompletionService#
 public static class PaymentCompletionService
 {
+    // #Function MarkPaidAsync#
     public static async Task MarkPaidAsync(ApplicationDbContext context, PaymentTransaction payment)
     {
         if (payment.PaymentStatus == "paid") return;

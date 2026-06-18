@@ -1,3 +1,4 @@
+/* #Bagian Langganan Index Pasien# */
 /* Patient Subscription — linked from Subscription/Index.cshtml */
 
 .sub-status-banner {
@@ -246,11 +247,13 @@
     text-align: center;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 1024px) {
     .sub-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
     .sub-plan--featured { transform: none; }
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 640px) {
     .sub-grid { max-width: none; }
 }

@@ -1,4 +1,6 @@
+/* #Bagian Form Onboarding# */
 ﻿/* Onboarding form controls, choices, lists */
+/* #Komponen Form Controls# */
 /* ───── Form controls ───── */
 .onb-content {
     flex: 1;
@@ -27,6 +29,7 @@
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 0 0 0 4px var(--lu-primary-soft);
 }
 
+/* #Komponen Two Column Choice Cards Gender# */
 /* ───── Two-column choice cards (gender) ───── */
 .onb-choice-grid {
     display: grid;
@@ -68,6 +71,7 @@
     box-shadow: 0 8px 16px -6px rgba(124, 58, 237, 0.25), 0 0 0 1px var(--lu-primary);
     transform: translateY(-2px);
 }
+/* #Bagian Selected Checkmark Indicator# */
 /* Selected checkmark indicator */
 .onb-choice-card::after {
     content: '';
@@ -103,6 +107,7 @@
 }
 input[type="radio"].onb-choice-input { display: none; }
 
+/* #Bagian Pill Chips For Binary Yes/no Konseling Obat# */
 /* ───── Pill chips for binary yes/no (counseling, medication) ───── */
 .onb-pill-row {
     display: flex;
@@ -133,6 +138,7 @@ input[type="radio"].onb-choice-input { display: none; }
     box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
 }
 
+/* #Bagian Radio Daftar Sleep And Checkbox Daftar App Goals Konseling Methods# */
 /* ───── Radio list (sleep) and checkbox list (app goals, counseling methods) ───── */
 .onb-list {
     list-style: none;
@@ -172,6 +178,7 @@ input[type="radio"].onb-choice-input { display: none; }
     cursor: pointer;
 }
 
+/* #Bagian 3 Column Birthdate Dropdown Row# */
 /* ───── 3-column birthdate dropdown row ───── */
 .onb-date-grid {
     display: grid;

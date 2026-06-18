@@ -3,6 +3,8 @@
     Layout = null;
 }
 
+@* #Bagian Onboarding Selamat Datang# *@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -17,6 +19,7 @@
 
     <div class="auth-wrapper">
         
+        @* #Komponen Logo Brand# *@
         <div class="logo-container logo-container--onb-welcome">
             <svg width="50" height="50" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M50 5L90 27V73L50 95L10 73V27L50 5Z" fill="url(#hexGradient)" />
@@ -37,6 +40,7 @@
 
         <div class="auth-container register-card">
             
+            @* #Komponen Konten Selamat Datang# *@
             <h1 class="auth-title auth-title--onb-welcome">Selamat datang,<br />@ViewBag.FullName!</h1>
             
             <p class="onb-welcome-intro">
@@ -57,6 +61,7 @@
                 <li>Scan dokumen pendukung lainnya</li>
             </ul>
 
+            @* #Komponen Tombol Mulai# *@
             <a href="/Onboarding/Step1" class="btn-submit btn-submit--onb-start">Lengkapi Data Diri</a>
 
         </div>

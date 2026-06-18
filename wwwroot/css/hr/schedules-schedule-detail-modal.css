@@ -1,3 +1,4 @@
+/* #Bagian Jadwal Detail Modal HR# */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -235,6 +236,7 @@
     color: #B45309;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 520px) {
     .sch-detail-grid {
         grid-template-columns: 1fr;

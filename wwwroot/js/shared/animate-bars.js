@@ -1,4 +1,6 @@
+// #Bagian Animasi Bar Statistik#
 (function () {
+    // #Function animateBarFills#
     window.animateBarFills = function (selector) {
         requestAnimationFrame(function () {
             document.querySelectorAll(selector).forEach(function (el) {

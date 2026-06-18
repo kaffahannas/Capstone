@@ -1,3 +1,4 @@
+/* #Bagian Blok Admin# */
 ﻿/* Admin profile, quick actions, empty state */
 /* ═══════════════════════════════════════
    PROFILE DETAIL (Users/Approvals)
@@ -68,6 +69,7 @@
     font-weight: 600;
 }
 
+/* #Komponen Mental Health Stat Mini Cards# */
 /* Mental health stat mini-cards */
 .adm-mental-grid {
     display: grid;
@@ -85,6 +87,7 @@
 }
 .adm-mental-card .adm-stat-value { font-size: 26px; margin-bottom: 4px; }
 
+/* #Komponen Approval Action Cards# */
 /* Approval action cards */
 .adm-approve-section {
     background: linear-gradient(135deg, #F0FDF4, #DCFCE7);

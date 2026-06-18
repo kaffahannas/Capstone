@@ -6,6 +6,7 @@
         ? "/lib/bootstrap-icons/icons/person-circle.svg"
         : Model.CurrentProfilePicture;
 }
+@* #Bagian Edit Profil Pasien# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/patient/profile-edit.css" asp-append-version="true" />
@@ -30,6 +31,7 @@
 
             <div class="pf-edit-sidebar">
 
+                @* #Komponen Foto Profil# *@
                 <div class="lu-card pf-edit-photo-card">
                     <div class="pf-edit-photo-preview-wrap pf-edit-photo-wrap-centered">
                         <img id="pfPhotoPreview" class="pf-edit-photo-preview" src="@photoSrc" alt="Foto profil" />
@@ -80,6 +82,7 @@
 
             </div>
 
+            @* #Komponen Form Data Diri# *@
             <div class="pf-edit-main">
 
                 <section class="lu-card pf-edit-panel pf-edit-panel--personal">

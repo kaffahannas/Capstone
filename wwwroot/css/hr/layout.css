@@ -1,3 +1,4 @@
+/* #Bagian Layout HR# */
 /* ── HR shell layout — no horizontal scroll, vertical scroll only ── */
 
 body.hr-body {
@@ -143,6 +144,7 @@ body.hr-body {
     color: #991B1B;
 }
 
+/* #Komponen Main Column Flex Grow Only Not Width100 That + Sidebar Overflow# */
 /* Main column: flex-grow only — NOT width:100% (that + sidebar = overflow) */
 .hr-shell > .app-main,
 .hr-shell > .main-content {
@@ -194,6 +196,7 @@ body.hr-body {
     box-sizing: border-box;
 }
 
+/* #Bagian Every Halaman Root Inside Hr Must Stay Within The Scroll Host# */
 /* Every page root inside HR must stay within the scroll host */
 .hr-shell .app-content > * {
     min-width: 0;
@@ -253,7 +256,9 @@ body.hr-body {
     font-weight: 600;
 }
 
+/* #Komponen Mobile Sidebar Offcanvas Main Takes Full Width# */
 /* Mobile: sidebar offcanvas — main takes full width */
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .hr-shell > .app-main,
     .hr-shell > .main-content {

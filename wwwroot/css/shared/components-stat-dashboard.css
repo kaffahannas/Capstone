@@ -1,4 +1,6 @@
+/* #Bagian Stat Dashboard# */
 ﻿/* Shared statistics dashboard (HR Statistik + Psy Statistics) */
+/* #Komponen Hero Banner# */
 /* ── Hero banner ── */
 .stat-hero {
     display: flex;
@@ -57,6 +59,7 @@
     color: rgba(255,255,255,0.58);
 }
 
+/* #Komponen Wellness Score Ring Right Side Of Hero# */
 /* ── Wellness score ring (right side of hero) ── */
 .stat-hero-score {
     display: flex;
@@ -105,6 +108,7 @@
     color: rgba(255,255,255,0.62);
 }
 
+/* #Bagian Kpi Row# */
 /* ── KPI row ── */
 .stat-kpi-row {
     display: grid;
@@ -164,6 +168,7 @@
     color: var(--text-muted);
 }
 
+/* #Komponen Colored Accent Bar At Bottom Of Kpi Kartu# */
 /* Colored accent bar at bottom of KPI card */
 .stat-kpi-bar {
     position: absolute;
@@ -178,6 +183,7 @@
 .stat-kpi-bar--beresiko { background: linear-gradient(90deg, #B45309, #fbbf24); }
 .stat-kpi-bar--bahaya  { background: linear-gradient(90deg, #DC2626, #f87171); }
 
+/* #Bagian Charts Row# */
 /* ── Charts row ── */
 .stat-charts-row {
     display: grid;
@@ -208,6 +214,7 @@
     color: var(--text-dark);
 }
 
+/* #Bagian Donut Chart Layout# */
 /* Donut chart layout */
 .stat-donut-wrap {
     display: flex;
@@ -220,6 +227,7 @@
     min-height: 200px;
     position: relative;
 }
+/* #Bagian Bar Chart Needs Explicit Height For Chartjs# */
 /* Bar chart — needs explicit height for Chart.js */
 .stat-chart-card--bar .stat-canvas-wrap {
     height: 260px;
@@ -233,6 +241,7 @@
     flex: 0 0 140px;
 }
 
+/* #Bagian Donut Legend# */
 /* Donut legend */
 .stat-legend {
     list-style: none;
@@ -262,6 +271,7 @@
     flex-shrink: 0;
 }
 
+/* #Komponen Empty State Inside Chart Kartu# */
 /* Empty state inside chart card */
 .stat-empty {
     display: flex;
@@ -277,6 +287,7 @@
 .stat-empty svg { opacity: 0.3; }
 .stat-empty p { margin: 0; font-size: 13px; }
 
+/* #Komponen Divisi Section Header# */
 /* ── Division section header ── */
 .stat-section-head {
     margin-bottom: 14px;
@@ -303,6 +314,7 @@
     font-weight: 700;
 }
 
+/* #Bagian Divisi Grid# */
 /* ── Division grid ── */
 .stat-division-grid {
     display: grid;
@@ -313,6 +325,7 @@
     align-content: start; /* items stay at top, don't stretch to fill */
 }
 
+/* #Komponen Divisi Kartu Each Perusahaan# */
 /* ── Division card (each company) ── */
 .stat-div-card {
     background: #fff;
@@ -371,6 +384,7 @@
     color: var(--text-muted);
 }
 
+/* #Komponen Status Chip On Divisi Kartu# */
 /* Status chip on division card */
 .stat-div-chip {
     padding: 4px 10px;
@@ -384,6 +398,7 @@
 .stat-div-chip--beresiko { background: #FEF3C7; color: #B45309; }
 .stat-div-chip--bahaya   { background: #FEE2E2; color: #DC2626; }
 
+/* #Komponen Progress Bars Inside Divisi Kartu# */
 /* Progress bars inside division card */
 .stat-div-bars {
     display: flex;
@@ -425,6 +440,7 @@
     flex-shrink: 0;
 }
 
+/* #Komponen Divisi Kartu Footer Lihat Detail# */
 /* Division card footer (lihat detail) */
 .stat-div-footer {
     display: flex;
@@ -439,6 +455,7 @@
 .stat-div-footer svg { transition: transform 0.2s; }
 .stat-div-card:hover .stat-div-footer svg { transform: translateX(3px); }
 
+/* #Bagian No Divisions Empty State# */
 /* ── No divisions empty state ── */
 .stat-no-div {
     display: flex;
@@ -459,10 +476,13 @@
 .stat-no-div svg { opacity: 0.3; }
 .stat-no-div p { margin: 0; font-size: 14px; }
 
+/* #Bagian Responsif# */
 /* ── Responsive ── */
+/* #Bagian Media Query# */
 @media (max-width: 1100px) {
     .stat-charts-row { grid-template-columns: 1fr 1fr; }
 }
+/* #Bagian Media Query# */
 @media (max-width: 900px) {
     .stat-kpi-row { grid-template-columns: repeat(2, 1fr); }
     .stat-charts-row { grid-template-columns: 1fr; }
@@ -471,6 +491,7 @@
     .stat-hero-title { font-size: 20px; }
     .stat-hero-score { gap: 12px; }
 }
+/* #Bagian Media Query# */
 @media (max-width: 600px) {
     .stat-kpi-row { grid-template-columns: repeat(2, 1fr); }
     .stat-division-grid { grid-template-columns: 1fr; }

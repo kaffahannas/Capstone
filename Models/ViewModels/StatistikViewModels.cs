@@ -1,6 +1,7 @@
 namespace LightenUp.Web.Models.ViewModels
 {
     // 4 widgets: mood trend line, check-in radar, triggers bar, engagement streaks
+    // #Class PatientStatistikViewModel#
     public class PatientStatistikViewModel
     {
         public int Window { get; set; } = 30;          // 7 / 30 / 90 days
@@ -21,6 +22,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int MoodEntriesWithTriggers { get; set; }
     }
 
+    // #Class MoodTrendPoint#
     public class MoodTrendPoint
     {
         public DateTime Date { get; set; }
@@ -28,6 +30,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string Feeling { get; set; } = string.Empty;
     }
 
+    // #Class CheckInRadar#
     public class CheckInRadar
     {
         public double Focus { get; set; }
@@ -38,6 +41,7 @@ namespace LightenUp.Web.Models.ViewModels
         public double Overall { get; set; }
     }
 
+    // #Class EngagementStats#
     public class EngagementStats
     {
         public int CurrentStreak { get; set; }
@@ -45,6 +49,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int LongestStreak { get; set; }
     }
 
+    // #Class TriggerCount#
     public class TriggerCount
     {
         public string Trigger { get; set; } = string.Empty;

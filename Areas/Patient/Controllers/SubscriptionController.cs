@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Areas.Patient.Controllers;
 
+// #Class SubscriptionController#
+
 [Area("Patient")]
 [Authorize(Roles = "Patient")]
 public class SubscriptionController : Controller
@@ -37,6 +39,8 @@ public class SubscriptionController : Controller
         _duitku = duitku;
         _access = access;
     }
+
+    // #Function Index#
 
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -71,6 +75,8 @@ public class SubscriptionController : Controller
             CompanyName = companyName
         });
     }
+
+    // #Function Checkout#
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -145,6 +151,8 @@ public class SubscriptionController : Controller
         return Redirect(result.PaymentUrl);
     }
 
+    // #Function Return#
+
     [HttpGet]
     public async Task<IActionResult> Return(string orderId, bool mock = false)
     {
@@ -163,6 +171,8 @@ public class SubscriptionController : Controller
         return RedirectToAction(nameof(Failed), new { orderId });
     }
 
+    // #Function Success#
+
     [HttpGet]
     public async Task<IActionResult> Success(string orderId)
     {
@@ -171,6 +181,8 @@ public class SubscriptionController : Controller
         ViewBag.PlanName = payment.PlanName;
         return View();
     }
+
+    // #Function Failed#
 
     [HttpGet]
     public IActionResult Failed(string orderId)

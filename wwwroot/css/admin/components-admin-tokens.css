@@ -1,15 +1,19 @@
+/* #Bagian Token Admin# */
 ﻿/* Admin design tokens + base */
 /* ═══════════════════════════════════════════════════════════
    LightenUp Admin Console — Design System
    ═══════════════════════════════════════════════════════════ */
 
+/* #Komponen Token Warna# */
 :root {
+    /* #Komponen Brand# */
     /* Brand */
     --adm-primary:        #7C3AED;
     --adm-primary-hover:  #6D28D9;
     --adm-primary-soft:   #EDE9FE;
     --adm-primary-glow:   rgba(124,58,237,0.15);
 
+    /* #Bagian Surface# */
     /* Surface */
     --adm-bg:             #F1F5F9;
     --adm-card:           #FFFFFF;
@@ -17,11 +21,13 @@
     --adm-border:         #E2E8F0;
     --adm-border-soft:    #F1F5F9;
 
+    /* #Bagian Text# */
     /* Text */
     --adm-text:           #0F172A;
     --adm-text-secondary: #475569;
     --adm-muted:          #94A3B8;
 
+    /* #Bagian State Colors# */
     /* State colors */
     --adm-success:        #059669;
     --adm-success-soft:   #D1FAE5;
@@ -32,6 +38,7 @@
     --adm-info:           #2563EB;
     --adm-info-soft:      #DBEAFE;
 
+    /* #Komponen Sidebar# */
     /* Sidebar */
     --adm-sidebar-bg:     #0F172A;
     --adm-sidebar-hover:  #1E293B;
@@ -39,11 +46,13 @@
     --adm-sidebar-text:   #CBD5E1;
     --adm-sidebar-muted:  #64748B;
 
+    /* #Bagian Shadow# */
     /* Shadow */
     --adm-shadow-sm:      0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
     --adm-shadow:         0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -1px rgba(0,0,0,.05);
     --adm-shadow-md:      0 10px 15px -3px rgba(0,0,0,.08), 0 4px 6px -2px rgba(0,0,0,.04);
 
+    /* #Bagian Radius# */
     /* Radius */
     --adm-radius-sm:      8px;
     --adm-radius:         12px;
@@ -51,6 +60,7 @@
     --adm-radius-pill:    999px;
 }
 
+/* #Bagian Reset# */
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
 

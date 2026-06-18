@@ -4,7 +4,9 @@
     ViewData["Title"] = "Pemicu";
     ViewBag.Step = "2/8";
 }
+@* #Bagian Lacak Mood - Pemicu# *@
 
+@* #Komponen Form Pilih Pemicu# *@
 <h2 class="mood-question">
     <a asp-action="Feeling" asp-route-feeling="@Model.Feeling" asp-route-triggers="@string.Join(",", Model.Triggers)" asp-route-note="@Model.Note"
        class="mood-back-link">←</a>

@@ -1,5 +1,7 @@
+/* #Bagian Token HR# */
 ﻿/* HR design tokens */
 /* HR design tokens (used by page CSS var() references) */
+/* #Komponen Token Warna# */
 :root {
     --primary-purple: var(--lu-primary);
     --light-purple: var(--lu-primary-soft);

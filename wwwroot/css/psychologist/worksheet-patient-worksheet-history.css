@@ -1,14 +1,17 @@
+/* #Bagian Pasien Worksheet Riwayat Psikolog# */
 /* Migrated from global CSS — page-specific (Areas/Psychologist/Views/Worksheet/PatientWorksheetHistory.cshtml.css) */
 /* ════════════════════════════════════════════════════
    PATIENT WORKSHEET HISTORY  (pwh-*)
    Hero reuses psh-* — only card + status overrides here
 ════════════════════════════════════════════════════ */
 
+/* #Komponen Hero Accent Teal/indigo Instead Of Purple# */
 /* Hero accent — teal/indigo instead of purple */
 .pwh-hero {
     background: linear-gradient(130deg, #0F172A 0%, #1E3A5F 25%, #1D4ED8 60%, #6366F1 100%);
 }
 
+/* #Bagian Extra Stat Colours Worksheet Specific# */
 /* Extra stat colours (worksheet-specific) */
 .pwh-stat--review { background: rgba(59,130,246,0.18); border-color: rgba(59,130,246,0.3); }
 .pwh-stat--belum  { background: rgba(245,158,11,0.18); border-color: rgba(245,158,11,0.3); }
@@ -21,6 +24,7 @@
     margin-bottom: 16px;
 }
 
+/* #Komponen Worksheet Kartu Grid# */
 /* ── Worksheet card grid ── */
 .pwh-grid {
     display: flex;
@@ -28,6 +32,7 @@
     gap: 10px;
 }
 
+/* #Komponen Kartu# */
 /* Card */
 .pwh-card {
     display: flex;
@@ -59,6 +64,7 @@ button.pwh-card {
     transform: translateY(-1px);
 }
 
+/* #Bagian Left Accent Bar# */
 /* Left accent bar */
 .pwh-card-accent {
     width: 5px;
@@ -70,6 +76,7 @@ button.pwh-card {
 .pwh-card--belum   .pwh-card-accent { background: linear-gradient(180deg, #F59E0B, #FDE68A); }
 .pwh-card--overdue .pwh-card-accent { background: linear-gradient(180deg, #EF4444, #FCA5A5); }
 
+/* #Komponen Icon Circle# */
 /* Icon circle */
 .pwh-card-icon {
     flex-shrink: 0;
@@ -83,6 +90,7 @@ button.pwh-card {
 .pwh-card--belum   .pwh-card-icon { background: #FEF3C7; color: #92400E; }
 .pwh-card--overdue .pwh-card-icon { background: #FEE2E2; color: #991B1B; }
 
+/* #Bagian Content Area# */
 /* Content area */
 .pwh-card-content {
     flex: 1;
@@ -110,11 +118,13 @@ button.pwh-card {
     text-overflow: ellipsis;
 }
 
+/* #Komponen Worksheet Specific Badge Colours# */
 /* Worksheet-specific badge colours */
 .pwh-badge--selesai { background: #D1FAE5; color: #065F46; }
 .pwh-badge--review  { background: #DBEAFE; color: #1D4ED8; }
 .pwh-badge--belum   { background: #FEF3C7; color: #92400E; }
 
+/* #Bagian Meta Row# */
 /* Meta row */
 .pwh-card-meta {
     display: flex;
@@ -124,6 +134,7 @@ button.pwh-card {
 }
 .pwh-meta--overdue { color: #B91C1C !important; font-weight: 600; }
 
+/* #Bagian Overdue Chip# */
 /* Overdue chip */
 .pwh-overdue-chip {
     display: inline-flex;
@@ -137,6 +148,7 @@ button.pwh-card {
     margin-left: 4px;
 }
 
+/* #Bagian Description Excerpt# */
 /* Description excerpt */
 .pwh-card-desc {
     margin: 0;
@@ -149,6 +161,7 @@ button.pwh-card {
     overflow: hidden;
 }
 
+/* #Bagian Chevron Arrow# */
 /* Chevron arrow */
 .pwh-card-arrow {
     flex-shrink: 0;
@@ -165,7 +178,9 @@ button.pwh-card {
     color: var(--primary-purple);
 }
 
+/* #Bagian Responsif# */
 /* Responsive */
+/* #Bagian Media Query# */
 @media (max-width: 700px) {
     .pwh-card-title { font-size: 13.5px; }
     .pwh-card-icon  { width: 34px; height: 34px; margin: 0 10px 0 12px; }

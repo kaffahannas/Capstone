@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace LightenUp.Web.Areas.Psychologist.Controllers
 {
     [Area("Psychologist")]
+    // #Class ProfileController#
     [Authorize(Roles = "Psychologist")]
     public class ProfileController : Controller
     {
@@ -24,6 +25,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             _userManager = userManager;
             _uploads = uploads;
         }
+
+        // #Function PayrollAgreement#
 
         [HttpGet]
         public async Task<IActionResult> PayrollAgreement()
@@ -42,6 +45,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return View();
         }
+
+        // #Function SubmitPayrollAgreement#
 
         [HttpPost]
         public async Task<IActionResult> SubmitPayrollAgreement()
@@ -71,6 +76,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return RedirectToAction("Index", "Dashboard");
         }
+
+        // #Function Profile#
 
         [HttpGet]
         public async Task<IActionResult> Profile()
@@ -118,6 +125,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return View(viewModel);
         }
+
+        // #Function EditProfile#
 
         [HttpPost]
         public async Task<IActionResult> EditProfile(LightenUp.Web.Models.ViewModels.EditProfileViewModel model)
@@ -175,6 +184,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return RedirectToAction(nameof(Profile));
         }
 
+        // #Function SetAvailability#
+
         [HttpPost]
         public async Task<IActionResult> SetAvailability(bool isAvailable)
         {
@@ -191,11 +202,17 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
 
 
+        // #Function Settings#
+
+
+
         [HttpGet]
         public IActionResult Settings()
         {
             return RedirectToAction(nameof(Profile));
         }
+
+        // #Function Settings POST#
 
         [HttpPost]
         public async Task<IActionResult> Settings(LightenUp.Web.Models.ViewModels.PsySettingsViewModel model)

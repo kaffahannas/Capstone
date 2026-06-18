@@ -14,6 +14,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 {
     [Area("Psychologist")]
     [Authorize(Roles = "Psychologist")]
+    // #Class ClientController#
     public class ClientController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -33,6 +34,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             _activation = activation;
         }
 
+        // #Function CurrentPsychologistIdAsync#
         private async Task<int?> CurrentPsychologistIdAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -41,6 +43,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .Select(p => (int?)p.PsychologistId).FirstOrDefaultAsync();
         }
 
+        // #Bagian Daftar Klien#
+        // #Function Index#
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -74,6 +78,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         }
 
 
+        // #Function AssignClient#
         [HttpPost]
         public async Task<IActionResult> AssignClient(int patientId)
         {
@@ -105,6 +110,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return RedirectToAction("Index", "Dashboard");
         }
 
+        // #Function CancelAssignment#
         [HttpPost]
         public async Task<IActionResult> CancelAssignment(int assignmentId, string reason)
         {
@@ -139,6 +145,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return RedirectToAction("Index", "Dashboard");
         }
 
+        // #Bagian Detail Klien#
+        // #Function PatientDetail#
         [HttpGet]
         public async Task<IActionResult> PatientDetail(int id)
         {
@@ -216,6 +224,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View(viewModel);
         }
 
+        // #Function GetMoodData#
         [HttpGet]
         public async Task<IActionResult> GetMoodData(int patientId, int days)
         {
@@ -235,6 +244,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             });
         }
 
+        // #Bagian Detail Perusahaan#
+        // #Function CompanyDetail#
         [HttpGet]
         public async Task<IActionResult> CompanyDetail(int? id, string? companyName)
         {
@@ -270,6 +281,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View();
         }
 
+        // #Function CompanyDetailModal#
         [HttpGet]
         public async Task<IActionResult> CompanyDetailModal(string companyName)
         {
@@ -300,6 +312,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return PartialView("_CompanyDetailModal");
         }
 
+        // #Function CompanyStatsModal#
         [HttpGet]
         public async Task<IActionResult> CompanyStatsModal(string companyName)
         {
@@ -326,6 +339,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return PartialView("_CompanyStatsModal");
         }
 
+        // #Function ReportToHr#
         [HttpGet]
         public IActionResult ReportToHr(int patientId)
         {

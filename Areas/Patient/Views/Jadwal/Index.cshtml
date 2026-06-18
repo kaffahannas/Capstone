@@ -3,6 +3,7 @@
     ViewData["Title"] = "Jadwal Konseling";
     ViewBag.ActiveNav = "Jadwal";
 }
+@* #Bagian Jadwal Konseling# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/patient/jadwal-index.css" asp-append-version="true" />
@@ -11,6 +12,7 @@
 
 <div class="jdw-page">
 
+@* #Komponen Hero Jadwal# *@
 <div class="jdw-hero">
     <div class="jdw-hero-deco">🗓️</div>
     <div class="jdw-hero-inner">
@@ -36,6 +38,7 @@
 
 <div class="jdw-container">
     
+    @* #Komponen Sesi Mendatang# *@
     <h3 class="jdw-section-title">
         <span class="jdw-section-ico">✨</span> Sesi Mendatang
     </h3>
@@ -80,6 +83,7 @@
         </div>
     }
 
+    @* #Komponen Riwayat Sesi# *@
     <h3 class="jdw-section-title jdw-section-title--past">
         Riwayat Sesi
     </h3>

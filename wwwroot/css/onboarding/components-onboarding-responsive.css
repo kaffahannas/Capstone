@@ -1,5 +1,8 @@
+/* #Bagian Responsif Onboarding# */
 ﻿/* Onboarding mobile */
+/* #Bagian Small Phones 479px# */
 /* ───── Small phones (≤ 479px) ───── */
+/* #Bagian Media Query# */
 @media (max-width: 479px) {
     body { padding: 0; }
     .onb-wrapper {

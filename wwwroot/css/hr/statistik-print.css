@@ -1,3 +1,4 @@
+/* #Bagian Statistik Cetak HR# */
 :root {
     --primary: #4F46E5;
     --primary-light: #EEF2FF;
@@ -11,6 +12,7 @@
     margin: 15mm;
 }
 
+/* #Bagian Word Like Document Shell Screen Preview# */
 /* ── Word-like document shell (screen preview) ── */
 body.hr-print-doc {
     font-family: 'Inter', sans-serif;
@@ -75,6 +77,7 @@ body.hr-print-doc {
     font-family: monospace;
 }
 
+/* #Bagian Laporan Content Blok# */
 /* ── Report content blocks ── */
 .hr-print-header {
     display: flex;
@@ -286,6 +289,7 @@ body.hr-print-doc {
     page-break-inside: avoid;
 }
 
+/* #Bagian Media Query# */
 @media print {
     body.hr-print-doc {
         background: #fff;
@@ -307,6 +311,7 @@ body.hr-print-doc {
     }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 720px) {
     .hr-print-sheet {
         padding: 28px 24px 36px;

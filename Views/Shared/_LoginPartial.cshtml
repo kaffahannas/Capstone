@@ -3,6 +3,8 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@* #Bagian Partial Login Nav# *@
+
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
@@ -17,7 +19,7 @@
 }
 else
 {
-    @* Anda bisa menyesuaikan link ini nanti agar mengarah ke AccountController Anda *@
+    @* #Komponen Link Masuk Daftar# *@
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
     </li>

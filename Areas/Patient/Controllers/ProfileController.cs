@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
+    // #Class ProfileController#
     [Authorize(Roles = "Patient")]
     public class ProfileController : Controller
     {
@@ -48,7 +49,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Index — profile page
         // ═════════════════════════════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index()
         {
             var (user, patient) = await LoadAsync();
@@ -146,6 +148,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Edit — full edit form
         // ═════════════════════════════════════════════════════════════════
+        // #Function Edit#
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
@@ -173,6 +176,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.ActiveNav = "Profil";
             return View(vm);
         }
+
+        // #Function Edit POST#
 
         [HttpPost]
         [RequestSizeLimit(10_000_000)]

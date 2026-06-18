@@ -1,4 +1,6 @@
+/* #Bagian Komponen Token Pasien# */
 ﻿/* Patient design tokens (mood palette + app base) */
+/* #Komponen Token Warna# */
 :root {
     --lu-primary: #7C3AED;
     --lu-primary-hover: #6D28D9;
@@ -10,6 +12,7 @@
     --lu-card: #FFFFFF;
     --lu-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
 
+    /* #Bagian Mood Colors# */
     /* Mood colors */
     --mood-overjoyed: #D9F99D;
     --mood-happy: #A3E635;

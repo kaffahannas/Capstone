@@ -13,6 +13,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
     [Authorize(Roles = "Patient")]
+    // #Class PsychologistsController#
     [RequiresPatientPremium]
     public class PsychologistsController : Controller
     {
@@ -31,6 +32,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ─── Daftar psikolog yang bisa dipilih pasien ───
+        // #Function Index#
+        // #Bagian Daftar Psikolog#
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -72,6 +75,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ─── Pasien memilih psikolog (Request → PendingPsychologistApproval) ───
+        // #Function Request#
+        // #Bagian Pilih Psikolog#
         [HttpPost]
         public new async Task<IActionResult> Request(int psychologistId)
         {
@@ -129,6 +134,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             TempData["success"] = "Permintaan pilihan psikolog berhasil dikirim. Menunggu persetujuan psikolog.";
             return RedirectToAction(nameof(Index));
         }
+
+        // #Function RequestAdminAssignment#
 
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -22,6 +22,7 @@
         return d.ToString("dddd", idCulture);
     }
 }
+@* #Bagian JadwalKonseling# *@
 
 @if (TempData["error"] is string err)
 {
@@ -40,6 +41,7 @@
 
 <div class="hrsch-page-wrap">
 
+@* #Komponen Hero# *@
 @* ── Hero (same sch-hero pattern) ── *@
 <div class="sch-hero">
     <div class="sch-hero-left">
@@ -86,6 +88,7 @@
     </form>
 </div>
 
+@* #Komponen Timeline# *@
 @* ── Timeline ── *@
 @if (!grouped.Any())
 {
@@ -169,6 +172,7 @@ else
 
 </div>@* /hrsch-page-wrap *@
 
+@* #Komponen ModalPermintaanSesi# *@
 @* ── Modal Permintaan Sesi ── *@
 <div id="requestModal" class="psy-modal-overlay">
     <div class="psy-modal">

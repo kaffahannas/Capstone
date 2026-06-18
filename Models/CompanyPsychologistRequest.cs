@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LightenUp.Web.Models
 {
+    // #Class CompanyPsychologistRequest#
     public class CompanyPsychologistRequest
     {
         [Key]

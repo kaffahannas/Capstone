@@ -12,6 +12,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    // #Class HomeController#
     [RequiresCompanySubscription]
     public class HomeController : Controller
     {
@@ -25,6 +26,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             _userManager = userManager;
             _access = access;
         }
+
+        // #Function Index#
 
         public async Task<IActionResult> Index()
         {
@@ -183,6 +186,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         }
 
         // ─── AJAX: psychologist search (no subscription guard) ───
+        // #Function SearchPsychologists#
+        // #Bagian Cari Psikolog AJAX#
         [HttpGet]
         public async Task<IActionResult> SearchPsychologists(string? q)
         {

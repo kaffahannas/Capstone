@@ -1,3 +1,4 @@
+/* #Bagian Profil Edit Pasien# */
 /* Patient Profile Edit — linked from Profile/Edit.cshtml */
 
 .pf-edit-page {
@@ -181,6 +182,7 @@
     color: #3B82F6;
 }
 
+/* #Bagian Inline Styles Migrated Appearance Unchanged# */
 /* Inline styles migrated � appearance unchanged */
 .pf-edit-header {
     display: flex;
@@ -367,6 +369,7 @@
     padding-top: 4px;
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 768px) {
     .pf-edit-grid {
         grid-template-columns: 1fr;

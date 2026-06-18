@@ -1,3 +1,4 @@
+/* #Bagian Stat Admin# */
 ﻿/* Admin stat cards */
 /* ═══════════════════════════════════════
    STAT CARDS
@@ -76,6 +77,7 @@
     color: var(--adm-muted);
 }
 
+/* #Komponen Alert Stat Kartu Tertunda Persetujuan# */
 /* Alert stat card (pending approvals) */
 .adm-stat-card.is-alert {
     border-color: #FCA5A5;

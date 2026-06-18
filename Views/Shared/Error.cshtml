@@ -3,16 +3,20 @@
     ViewData["Title"] = "Error";
 }
 
+@* #Bagian Halaman Error# *@
+
 <h1 class="text-danger">Error.</h1>
 <h2 class="text-danger">An error occurred while processing your request.</h2>
 
 @if (Model.ShowRequestId)
 {
+    @* #Komponen Info Request ID# *@
     <p>
         <strong>Request ID:</strong> <code>@Model.RequestId</code>
     </p>
 }
 
+@* #Komponen Mode Development# *@
 <h3>Development Mode</h3>
 <p>
     Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.

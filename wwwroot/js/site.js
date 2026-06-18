@@ -1,4 +1,5 @@
-﻿/**
+﻿// #Bagian App Shell Global#
+/**
  * LightenUp — global responsive app shell (sidebar offcanvas ≤ 992px)
  */
 (function () {
@@ -6,6 +7,7 @@
 
     const BP = 992;
 
+    // #Function initAppShell#
     function initAppShell() {
         const shell = document.getElementById('appShell') || document.querySelector('.app-shell, .admin-shell');
         const sidebar = document.getElementById('appSidebar')

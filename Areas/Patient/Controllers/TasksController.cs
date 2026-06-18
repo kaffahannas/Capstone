@@ -12,6 +12,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
     [Authorize(Roles = "Patient")]
+    // #Class TasksController#
     [RequiresPatientPremium]
     public class TasksController : Controller
     {
@@ -36,7 +37,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  List
         // ═════════════════════════════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index(string? search, List<string>? status, List<string>? period, int page = 1)
         {
             var patient = await GetPatientAsync();
@@ -126,6 +128,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Detail / Submit
         // ═════════════════════════════════════════════════════════════════
+        // #Function Detail#
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
         {
@@ -152,6 +155,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 PsychologistFeedback = w.PsychologistFeedback
             });
         }
+
+        // #Function DetailModal#
 
         [HttpGet]
         public async Task<IActionResult> DetailModal(int id)
@@ -181,6 +186,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 
         [HttpPost]
         [RequestSizeLimit(20_000_000)] // 20 MB
+        // #Function Submit#
         public async Task<IActionResult> Submit(TaskSubmitViewModel model)
         {
             var patient = await GetPatientAsync();
@@ -231,6 +237,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             TempData["success"] = "Data Berhasil Disimpan!";
             return RedirectToAction(nameof(Index));
         }
+
+        // #Function Submitted#
 
         [HttpGet]
         public async Task<IActionResult> Submitted(int id)

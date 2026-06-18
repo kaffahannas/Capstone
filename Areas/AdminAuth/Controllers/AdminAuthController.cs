@@ -7,6 +7,7 @@ namespace LightenUp.Web.Areas.AdminAuth.Controllers
 {
     // Separate login page for the Admin console. Lives only at /AdminAuth/Login.
     // Refuses non-Admin accounts. Refuses login attempts from the customer host.
+    // #Class AdminAuthController#
     [Area("AdminAuth")]
     public class AdminAuthController : Controller
     {
@@ -23,8 +24,13 @@ namespace LightenUp.Web.Areas.AdminAuth.Controllers
             _config = config;
         }
 
+        // #Bagian Login Admin#
+        // #Function Login#
+
         [HttpGet]
         public IActionResult Login() => View(new LoginViewModel());
+
+        // #Function Login POST#
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -73,6 +79,8 @@ namespace LightenUp.Web.Areas.AdminAuth.Controllers
 
             return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
         }
+
+        // #Function Logout#
 
         [HttpPost]
         public async Task<IActionResult> Logout()

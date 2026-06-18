@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace LightenUp.Web.Models.ViewModels
 {
     // Helper: total step count for the progress bar, and which step is current.
+    // #Class OnboardingProgress#
     public class OnboardingProgress
     {
         public int Current { get; set; }
@@ -11,6 +12,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 1: Gender
+    // #Class OnboardingGenderViewModel#
     public class OnboardingGenderViewModel
     {
         [Required(ErrorMessage = "Silakan pilih gender.")]
@@ -18,6 +20,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 2: Birthdate (3 dropdowns)
+    // #Class OnboardingBirthdateViewModel#
     public class OnboardingBirthdateViewModel
     {
         [Required(ErrorMessage = "Tanggal wajib dipilih.")]
@@ -40,6 +43,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 3: Relationship
+    // #Class OnboardingRelationshipViewModel#
     public class OnboardingRelationshipViewModel
     {
         [Required(ErrorMessage = "Pilih status hubungan.")]
@@ -48,6 +52,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 4: Spiritual
+    // #Class OnboardingSpiritualViewModel#
     public class OnboardingSpiritualViewModel
     {
         [Required(ErrorMessage = "Pilih jawaban.")]
@@ -56,6 +61,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 5: Counseling history (conditional follow-up)
+    // #Class OnboardingCounselingViewModel#
     public class OnboardingCounselingViewModel
     {
         [Required(ErrorMessage = "Silakan pilih.")]
@@ -69,6 +75,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 6: Medication
+    // #Class OnboardingMedicationViewModel#
     public class OnboardingMedicationViewModel
     {
         [Required(ErrorMessage = "Silakan pilih.")]
@@ -76,6 +83,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 7: Sleep quality
+    // #Class OnboardingSleepViewModel#
     public class OnboardingSleepViewModel
     {
         [Required(ErrorMessage = "Pilih salah satu opsi.")]
@@ -84,6 +92,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 8: App goals (multi-select, ≥1)
+    // #Class OnboardingAppGoalsViewModel#
     public class OnboardingAppGoalsViewModel
     {
         [Required(ErrorMessage = "Pilih minimal satu tujuan.")]
@@ -93,6 +102,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 9: Referral code (optional)
+    // #Class OnboardingReferralViewModel#
     public class OnboardingReferralViewModel
     {
         [StringLength(64)]
@@ -101,6 +111,7 @@ namespace LightenUp.Web.Models.ViewModels
 
     // Step 10: Terms acceptance — manual validation in controller
     // (Range(typeof(bool)) is flaky on POST; we now check `model.Accepted` directly.)
+    // #Class OnboardingTermsViewModel#
     public class OnboardingTermsViewModel
     {
         public bool Accepted { get; set; }

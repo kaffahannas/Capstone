@@ -6,20 +6,24 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 
+// #Bagian Konfigurasi# — lihat docs/konfigurasi.md untuk penjelasan appsettings
+// #Bagian Startup Aplikasi#
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Services ---
+// #Bagian Konfigurasi Services#
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+// #Bagian Identity#
 // Identity: ApplicationUser + role support (Patient, Psychologist, HR, Admin)
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// #Bagian Autentikasi Eksternal#
 // External login providers (Google, Facebook) — only registered when credentials are configured.
 var authBuilder = builder.Services.AddAuthentication();
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
@@ -32,6 +36,7 @@ if (!string.IsNullOrWhiteSpace(googleClientId))
     });
 }
 
+// #Bagian Registrasi Service Aplikasi#
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -47,6 +52,7 @@ builder.Services.AddScoped<LightenUp.Web.Services.PsychologistWorkloadService>()
 builder.Services.AddScoped<LightenUp.Web.Services.AssignmentActivationService>();
 builder.Services.AddScoped<LightenUp.Web.Services.IEmailSender, LightenUp.Web.Services.SmtpEmailSender>();
 
+// #Bagian Rate Limiting#
 // Rate limiting for login/register endpoints
 builder.Services.AddRateLimiter(options =>
 {
@@ -59,12 +65,14 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
+// #Bagian Health Check#
 // Health checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>();
 
 var app = builder.Build();
 
+// #Bagian Database Seeding#
 // ========================================================
 // DATABASE SEEDING (runs once at startup, in any environment)
 // ========================================================
@@ -136,6 +144,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// #Bagian Pipeline HTTP#
 // --- HTTP request pipeline ---
 if (app.Environment.IsDevelopment())
 {
@@ -154,6 +163,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseRateLimiter();
 
+// #Bagian Hostname Area Gating#
 // ───── Hostname-based area gating ─────
 // Customer site (Site:PatientHost) hosts Patient/Psychologist/HR. /Admin/* is BLOCKED here.
 // Admin console (Site:AdminHost) hosts only LightenUp staff. Only /Admin*, /AdminAuth*, static reachable.
@@ -208,6 +218,7 @@ if (!string.IsNullOrWhiteSpace(patientHost) || !string.IsNullOrWhiteSpace(adminH
 app.UseAuthentication();
 app.UseAuthorization();
 
+// #Bagian Routing#
 // Short admin login URL (avoids /AdminAuth/AdminAuth/Login from default area routing).
 app.MapControllerRoute(
     name: "admin_auth_login",

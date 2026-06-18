@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="~/css/admin/payroll-transfer.css" asp-append-version="true" />
 }
 
+
+@* #Bagian TransferPayroll# *@
+@* #Komponen TombolKembali# *@
 <a class="adm-back-link" asp-action="Index">← Kembali ke Daftar Payroll</a>
 
 <div class="adm-page-header">
@@ -123,6 +126,7 @@
             </div>
 
             <!-- Upload Action -->
+            @* #Komponen FormTransfer# *@
             <form asp-action="UploadPayoutProof" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="psychologistId" value="@Model.PsychologistId" />

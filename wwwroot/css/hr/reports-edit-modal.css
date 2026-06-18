@@ -1,3 +1,4 @@
+/* #Bagian Laporan Edit Modal HR# */
 .hrpt-edit-modal {
     max-width: 880px;
     width: 100%;
@@ -246,6 +247,7 @@
     border-color: var(--lu-primary);
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 760px) {
     .hrpt-edit-body,
     .hrpt-edit-head {

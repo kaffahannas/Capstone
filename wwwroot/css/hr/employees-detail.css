@@ -1,3 +1,4 @@
+/* #Bagian Karyawan Detail HR# */
 ﻿.hrdt-back {
     flex-shrink: 0;
 }
@@ -567,6 +568,7 @@
     transition: opacity .4s;
 }
 
+/* #Bagian Layout Detail Karyawan Scroll Satu Halaman# */
 /* Layout detail karyawan â€” scroll satu halaman */
 .hr-shell .app-content > .pd-page {
     flex: unset;
@@ -732,6 +734,7 @@
     text-align: center;
 }
 .pd-empty-mood p { margin: 0; font-size: 14px; }
+/* #Bagian Media Query# */
 @media (max-width: 900px) {
     .pd-grid { grid-template-columns: 1fr; }
 }

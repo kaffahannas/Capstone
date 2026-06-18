@@ -8,6 +8,7 @@
     var triggerLabels = string.Join(",", Model.TopTriggers.Select(t => $"\"{System.Web.HttpUtility.JavaScriptStringEncode(t.Label)}\""));
     var triggerData   = string.Join(",", Model.TopTriggers.Select(t => t.Count));
 }
+@* #Bagian Statistik Pasien# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/patient/statistik-index.css" asp-append-version="true" />
@@ -17,6 +18,7 @@
 <!-- st-layout fills the exact remaining viewport height; charts flex to fill it -->
 <div class="st-layout">
 
+@* #Komponen Topbar KPI# *@
 <!-- ─── Top bar: KPI chips + period selector ─── -->
 <div class="st-topbar">
     <div class="st-kpi-strip">
@@ -42,6 +44,7 @@
     </div>
 </div>
 
+@* #Komponen Tren Mood# *@
 <!-- ─── Mood trend (full width) ─── -->
 <div class="lu-card st-card st-card--trend">
     <div class="st-card-head">
@@ -62,6 +65,7 @@
     }
 </div>
 
+@* #Komponen Radar dan Pemicu# *@
 <!-- ─── Radar + Triggers side-by-side ─── -->
 <div class="st-row2">
     <div class="lu-card st-card">

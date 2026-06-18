@@ -1,3 +1,4 @@
+/* #Bagian Psikolog Modal HR# */
 /* HR psy-modal shell — directory/detail (psy-modal-content) + schedule form (psy-modal) */
 
 .psy-modal-overlay {
@@ -25,6 +26,7 @@
     pointer-events: auto;
 }
 
+/* #Komponen Content Kartu Statistik Psikolog Directory# */
 /* ── Content card (Statistik, Psychologists directory) ── */
 .psy-modal-content {
     background: #fff;
@@ -154,6 +156,7 @@
     border-color: rgba(255, 255, 255, 0.6);
 }
 
+/* #Komponen Form Kartu Jadwal Permintaan Modal# */
 /* ── Form card (Schedules request modal) ── */
 .psy-modal-overlay > .psy-modal,
 .psy-modal-overlay > .modal-container {
@@ -301,6 +304,7 @@
     border-top: 1px solid var(--border-color);
 }
 
+/* #Komponen Search Input Jadwal Filter Bar# */
 /* Search input (Schedules filter bar) */
 .psy-search-wrap {
     display: flex;

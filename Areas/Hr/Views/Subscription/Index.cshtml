@@ -11,12 +11,14 @@
         daysLeft = Math.Max(0, (Model.ActiveUntil.Value - DateTime.Today).Days);
     bool expiringSoon = daysLeft > 0 && daysLeft <= 30;
 }
+@* #Bagian Langganan# *@
 @section Head {
     <link rel="stylesheet" href="~/css/hr/subscription-index.css" asp-append-version="true" />
 }
 
 <div class="hrln-page">
 
+    @* #Komponen Hero# *@
     @* ══════ HERO ══════ *@
     <div class="hrln-hero">
         <div class="hrln-hero-bg" aria-hidden="true"></div>
@@ -206,6 +208,7 @@
             </div>
         }
 
+        @* #Komponen PaketHarga# *@
         @* ══════ PRICING PLANS ══════ *@
         <div class="hrln-plans-wrap">
             <div class="hrln-plans-header">

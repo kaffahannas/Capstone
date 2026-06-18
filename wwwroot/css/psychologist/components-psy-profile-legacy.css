@@ -1,6 +1,8 @@
+/* #Bagian Psikolog Profil Legacy Psikolog# */
 ﻿/* Psy profile legacy (compat with profile-profile.css) */
 /* â•â•â• Psychologist Profile page (legacy classes kept for compatibility) â•â•â• */
 
+/* #Komponen Profil Kartu Grid Right Column# */
 /* Profile card grid (right column) */
 .profile-card-grid {
     display: grid;
@@ -9,6 +11,7 @@
     margin-bottom: 24px;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 575.98px) {
     .profile-card-grid {
         grid-template-columns: 1fr;
@@ -56,6 +59,7 @@
 
 .info-text--mb { margin-bottom: 16px; }
 
+/* #Bagian Availability Toggle Row# */
 /* Availability toggle row */
 .avail-form {
     margin-top: auto;
@@ -72,6 +76,7 @@
     font-weight: 600;
 }
 
+/* #Bagian Ios Style Toggle Psychologist Availability# */
 /* iOS-style toggle (Psychologist availability) */
 .psy-switch {
     position: relative;
@@ -114,6 +119,7 @@
 .psy-switch input:checked + .psy-slider { background-color: var(--primary-purple); }
 .psy-switch input:checked + .psy-slider::before { transform: translateX(20px); }
 
+/* #Komponen Psychologist Profil Left Column Avatar Kartu# */
 /* Psychologist profile â€” left column avatar card */
 .psy-profile-card {
     text-align: center;
@@ -200,6 +206,7 @@
     margin: 0 0 16px 0;
 }
 
+/* #Komponen Profil Action Buttons Support/logout# */
 /* Profile action buttons (support/logout) */
 .btn-custom {
     width: 100%;
@@ -245,6 +252,7 @@
     background: #FEE2E2;
 }
 
+/* #Komponen Psychologist Profil Subtitle Below Topbar Title# */
 /* Psychologist profile subtitle (below topbar title) */
 .psy-profile-subtitle {
     font-size: 14px;
@@ -253,6 +261,7 @@
 }
 
 /* â•â•â• Responsive (uses site.css app-shell; psychologist area overrides) â•â•â• */
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .dashboard-header {
         flex-direction: column;
@@ -275,6 +284,7 @@
     }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 575.98px) {
     .division-grid {
         grid-template-columns: 1fr;

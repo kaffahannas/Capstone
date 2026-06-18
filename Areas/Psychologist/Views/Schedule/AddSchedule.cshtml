@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="~/css/psychologist/schedule-add-schedule-modal.css" asp-append-version="true" />
 }
 
+
+@* #Bagian TambahJadwal# *@
+@* #Komponen TombolKembali# *@
 <a href="/Psychologist/Schedule/Scheduling" class="back-link">← Kembali ke Jadwal</a>
 
 <div class="dashboard-header as-header">
@@ -19,6 +22,7 @@
 </div>
 
 <div class="as-card">
+    @* #Komponen FormJadwal# *@
     <form asp-action="AddSchedule" method="post">
         <div asp-validation-summary="ModelOnly" class="as-validation"></div>
 

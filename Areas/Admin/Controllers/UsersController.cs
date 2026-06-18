@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    // #Class UsersController#
     [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
@@ -20,6 +21,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        // #Function Index#
 
         [HttpGet]
         public async Task<IActionResult> Index(string? search, string? role, string? status, int page = 1)
@@ -61,6 +64,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewData["Title"] = "Pengguna";
             return View(vm);
         }
+
+        // #Function Detail#
 
         [HttpGet]
         public async Task<IActionResult> Detail(string id)
@@ -131,6 +136,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return View(vm);
         }
 
+        // #Function ToggleActive#
+
         [HttpPost]
         public async Task<IActionResult> ToggleActive(string id)
         {
@@ -141,6 +148,9 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             TempData["success"] = $"{user.FullName} {(user.IsActive ? "diaktifkan" : "dinonaktifkan")}.";
             return RedirectToAction(nameof(Detail), new { id });
         }
+
+
+        // #Function Edit#
 
 
         [HttpGet]
@@ -162,6 +172,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewData["Title"] = "Edit Pengguna";
             return View(vm);
         }
+
+        // #Function Edit POST#
 
         [HttpPost]
         public async Task<IActionResult> Edit(AdminUserEditViewModel vm)
@@ -204,6 +216,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewData["Title"] = "Edit Pengguna";
             return View(vm);
         }
+
+        // #Function Delete#
 
         [HttpPost]
         public async Task<IActionResult> Delete(string id)

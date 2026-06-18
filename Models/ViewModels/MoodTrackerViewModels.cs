@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace LightenUp.Web.Models.ViewModels
 {
     // Shared across all mood tracker steps. Hidden fields carry data forward.
+    // #Class MoodTrackerSessionViewModel#
     public class MoodTrackerSessionViewModel
     {
         [Required(ErrorMessage = "Pilih perasaan kamu.")]
@@ -34,6 +35,7 @@ namespace LightenUp.Web.Models.ViewModels
         };
     }
 
+    // #Class MoodOptions#
     public static class MoodOptions
     {
         public static readonly (string Value, string Label, string Emoji)[] Feelings = new[]
@@ -118,6 +120,7 @@ namespace LightenUp.Web.Models.ViewModels
             => string.Join(",", SanitizeTriggerList(triggers, customTrigger));
     }
 
+    // #Class MoodQuestions#
     public static class MoodQuestions
     {
         public static readonly (string Field, string Question, string Hint)[] All = new[]

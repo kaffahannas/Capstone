@@ -1,3 +1,4 @@
+/* #Bagian Statistik Index Pasien# */
 /* Patient Statistik — linked from Statistik/Index.cshtml */
 
 .st-layout {
@@ -203,6 +204,7 @@
     height: 100%;
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
     .st-topbar {
         flex-wrap: wrap;
@@ -217,6 +219,7 @@
     }
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 640px) {
     .st-chip strong { font-size: 1.25vh; }
     .st-kpi-strip { gap: 0.4vh; }

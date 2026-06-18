@@ -1,3 +1,4 @@
+/* #Bagian Worksheet Riwayat Psikolog# */
 .wh-header {
     margin-bottom: 20px;
 }
@@ -75,6 +76,7 @@
 .wh-status--progress { color: #FEF08A; }
 .wh-status--completed { color: #A7F3D0; }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 768px) {
     .wh-toolbar {
         flex-direction: column;

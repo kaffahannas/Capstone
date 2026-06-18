@@ -4,6 +4,7 @@ using LightenUp.Web.Models.ViewModels;
 namespace LightenUp.Web.Models.ViewModels
 {
     // One day on the weekly calendar strip.
+    // #Class CalendarDay#
     public class CalendarDay
     {
         public DateTime Date { get; set; }
@@ -23,6 +24,7 @@ namespace LightenUp.Web.Models.ViewModels
         };
     }
 
+    // #Class PatientDashboardViewModel#
     public class PatientDashboardViewModel
     {
         public bool IsSubscribed { get; set; }
@@ -49,6 +51,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int UpcomingSessionCount { get; set; }  // KPI for hero banner
     }
 
+    // #Class PatientWorksheetPreview#
     public class PatientWorksheetPreview
     {
         public int WorksheetId { get; set; }
@@ -60,6 +63,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Lightweight enum-string helpers used in views.
+    // #Class MoodPalette#
     public static class MoodPalette
     {
         public static string CssClass(string? feeling) => feeling?.ToLowerInvariant() ?? "";

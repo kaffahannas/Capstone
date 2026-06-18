@@ -27,7 +27,9 @@
     <link rel="stylesheet" href="~/css/psychologist/client-company-detail-modal.css" asp-append-version="true" />
 }
 
-@* ── Hero greeting banner ── *@
+
+@* #Bagian DashboardPsikolog# *@
+@* #Komponen HeroSapaan# *@
 <div class="psy-hero">
     <div class="psy-hero-left">
         <p class="psy-hero-greeting">@greeting, @greetIcon</p>
@@ -42,7 +44,7 @@
     </div>
 </div>
 
-@* ── KPI cards ── *@
+@* #Komponen KartuKPI# *@
 <div class="psy-kpi-row">
     <div class="psy-kpi psy-kpi--clients">
         <div class="psy-kpi-icon">
@@ -88,10 +90,10 @@
     }
 </div>
 
-@* ── Main content grid ── *@
+@* #Bagian KontenUtama# *@
 <div class="psy-dashboard-grid">
 
-    @* Client list card *@
+    @* #Komponen DaftarKlien# *@
     <section class="psy-card psy-client-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
@@ -182,7 +184,7 @@
         </section>
     }
 
-    @* Partner companies card *@
+    @* #Komponen PerusahaanMitra# *@
     <section class="psy-card psy-company-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
@@ -220,7 +222,7 @@
 
 </div><!-- /psy-dashboard-grid -->
 
-@* ── Modals ── *@
+@* #Bagian Modal# *@
 <div class="modal-overlay" id="companyDetailModal">
     <!-- content injected via ajax -->
 </div>

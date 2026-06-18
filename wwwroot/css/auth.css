@@ -1,3 +1,5 @@
+/* #Bagian Auth CSS# */
+/* #Komponen Token Warna# */
 :root {
     --primary-purple: #7C3AED;
     --primary-purple-hover: #6D28D9;
@@ -18,9 +20,7 @@
     text-align: center;
 }
 
-/* =======================================
-   PENGATURAN LAYAR UTAMA (BODY)
-   ======================================= */
+/* #Bagian Auth Layout Body# */
 body.auth-page {
     margin: 0;
     min-height: 100vh;
@@ -60,9 +60,7 @@ body.auth-page::after {
     background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
 }
 
-/* =======================================
-   WADAH PEMBATAS (Tengah Layar)
-   ======================================= */
+/* #Bagian Auth Wrapper Kartu# */
 .auth-wrapper {
     width: 100%;
     max-width: 440px;
@@ -87,9 +85,7 @@ body.auth-page::after {
     border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-/* =======================================
-   RESPONSIF HP (MOBILE)
-   ======================================= */
+/* #Bagian Auth Responsif Mobile# */
 @media (max-width: 575.98px) {
     .auth-wrapper {
         min-height: 100dvh;
@@ -128,9 +124,7 @@ body.auth-page::after {
     }
 }
 
-/* =======================================
-   ELEMEN DI DALAM FORM
-   ======================================= */
+/* #Bagian Auth Logo Brand# */
 .logo-container {
     display: flex;
     align-items: center;
@@ -147,7 +141,7 @@ body.auth-page::after {
     letter-spacing: -0.03em;
 }
 
-/* Brand inside auth card */
+/* #Komponen Logo Dalam Kartu# */
 .logo-container--in-card {
     flex-direction: column;
     gap: 10px;
@@ -215,6 +209,7 @@ body.auth-page::after {
     background: #E5E7EB;
 }
 
+/* #Bagian Auth Form Input# */
 .auth-title {
     font-size: 1.375rem;
     font-weight: 700;
@@ -403,6 +398,7 @@ body.auth-page::after {
     font-weight: 600;
 }
 
+/* #Komponen Tombol Submit Sosial# */
 .btn-submit {
     width: 100%;
     background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
@@ -540,9 +536,7 @@ body.auth-page::after {
     display: block;
 }
 
-/* =======================================
-   OTP STYLES (VERIFIKASI EMAIL)
-   ======================================= */
+/* #Bagian Auth OTP Verifikasi Email# */
 .otp-wrapper {
     display: flex;
     justify-content: space-between;
@@ -583,9 +577,7 @@ body.auth-page::after {
         font-weight: 600;
     }
 
-/* =======================================
-   ONBOARDING STYLES (UPLOAD & PROGRESS)
-   ======================================= */
+/* #Bagian Auth Onboarding Upload# */
 .upload-area {
     display: flex;
     flex-direction: column;
@@ -683,9 +675,7 @@ select.form-control-custom {
     padding-right: 40px;
     cursor: pointer;
 }
-/* =======================================
-   ONBOARDING SPECIFIC STYLES
-   ======================================= */
+/* #Bagian Auth Onboarding Step# */
 .onb-step-logo {
     display: flex;
     align-items: center;

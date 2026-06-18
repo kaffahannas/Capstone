@@ -8,7 +8,9 @@
     var calMonthLabel = ViewBag.CalendarMonthLabel as string ?? Model.MonthYearLabel;
     var cid = new System.Globalization.CultureInfo("id-ID");
 }
+@* #Bagian Dashboard Pasien# *@
 
+@* #Komponen Hero Banner# *@
 <!-- ─── Hero banner ─── -->
 <div class="db-hero">
     <div class="db-hero-text">
@@ -59,6 +61,7 @@
     </div>
 </div>
 
+@* #Komponen Widget Kalender# *@
 <!-- ─── Calendar widget ─── -->
 <div class="lu-card db-cal">
     <div class="db-cal-head">
@@ -127,6 +130,7 @@
     </div>
 </div>
 
+@* #Komponen Grid Kartu Dashboard# *@
 <!-- ─── Three dashboard cards ─── -->
 <div class="dash-grid">
 
@@ -288,6 +292,7 @@
         }
     </div>
 
+@* #Komponen Modal Jurnal# *@
 <!-- ─── Journal Modal ─── -->
 <div class="hrpf-modal-overlay" id="journalModal" role="dialog" aria-modal="true" aria-labelledby="journalModalTitle">
     <div class="hrpf-modal db-modal--journal">
@@ -320,6 +325,7 @@
     </div>
 </div>
 
+@* #Komponen Modal Mood# *@
 <!-- ─── Mood Tracker Modal (iframe) ─── -->
 <div class="hrpf-modal-overlay" id="moodModal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle">
     <div class="hrpf-modal db-modal--mood">

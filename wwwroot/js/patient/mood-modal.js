@@ -1,4 +1,6 @@
+// #Bagian Modal Mood Pasien#
 (function () {
+    // #Function bindMoodModalResize#
     function bindMoodModalResize() {
         window.addEventListener('message', function (e) {
             if (e.origin !== window.location.origin) return;
@@ -13,6 +15,7 @@
         });
     }
 
+    // #Function openMoodModal#
     window.openMoodModal = function () {
         var iframe = document.getElementById('moodIframe');
         if (!iframe) return;
@@ -22,6 +25,7 @@
         document.getElementById('moodModal').classList.add('is-open');
     };
 
+    // #Function closeMoodModal#
     window.closeMoodModal = function () {
         document.getElementById('moodModal').classList.remove('is-open');
     };

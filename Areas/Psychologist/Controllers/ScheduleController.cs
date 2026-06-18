@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace LightenUp.Web.Areas.Psychologist.Controllers
 {
     [Area("Psychologist")]
+    // #Class ScheduleController#
     [Authorize(Roles = "Psychologist")]
     public class ScheduleController : Controller
     {
@@ -50,6 +51,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .ToListAsync();
         }
 
+        // #Function AddSchedule#
+
         [HttpGet]
         public async Task<IActionResult> AddSchedule(int? patientId = null)
         {
@@ -57,6 +60,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = patientId.Value, add = true });
             return RedirectToAction(nameof(Scheduling), new { add = true, patientId });
         }
+
+        // #Function AddSchedule POST#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -140,6 +145,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return RedirectToAction(nameof(Scheduling), new { filter = model.ReturnFilter ?? "Semua" });
         }
 
+        // #Function EditSchedule#
+
         [HttpGet]
         public async Task<IActionResult> EditSchedule(int id)
         {
@@ -164,6 +171,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return View(model);
         }
+
+        // #Function EditSchedule POST#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -190,6 +199,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return RedirectToAction(nameof(Scheduling));
         }
 
+        // #Function CancelSchedule#
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelSchedule(int id)
@@ -210,6 +221,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return RedirectToAction(nameof(Scheduling));
         }
+
+        // #Function MarkNoShow#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -235,6 +248,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return RedirectToAction(nameof(Scheduling));
         }
+
+        // #Function Scheduling#
 
         [HttpGet]
         public async Task<IActionResult> Scheduling(string filter = "Semua", bool add = false, int? patientId = null)
@@ -291,6 +306,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View("Scheduling");
         }
 
+        // #Function ScheduleHistory#
+
         [HttpGet]
         public async Task<IActionResult> ScheduleHistory()
         {
@@ -308,6 +325,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View();
         }
 
+        // #Function ScheduleDetailModal#
+
         [HttpGet]
         public async Task<IActionResult> ScheduleDetailModal(int id)
         {
@@ -323,6 +342,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return PartialView("_ScheduleDetailModal", schedule);
         }
+
+        // #Function EditScheduleModal#
 
         [HttpGet]
         public async Task<IActionResult> EditScheduleModal(int id)
@@ -348,6 +369,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return PartialView("_EditScheduleModal", model);
         }
+
+        // #Function PatientScheduleHistory#
 
         [HttpGet]
         public async Task<IActionResult> PatientScheduleHistory(int id, bool add = false)

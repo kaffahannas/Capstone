@@ -1,9 +1,10 @@
 @model LightenUp.Web.Models.ViewModels.TaskDetailViewModel
-@using LightenUp.Web.Models.ViewModels
+@* #Bagian Modal Detail Tugas# *@
 
 @{
     var indoDeadline = Model.Deadline.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
 }
+@* #Komponen Modal Detail Tugas# *@
 
 <div class="hrpf-modal-head">
     <div class="hrpf-modal-title">@Model.TaskName</div>

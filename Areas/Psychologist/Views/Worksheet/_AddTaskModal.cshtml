@@ -3,6 +3,8 @@
     var openOnLoad = ViewBag.OpenAddTaskModal == true;
 }
 
+
+@* #Bagian ModalTambahTugas# *@
 <div class="prf-modal-overlay" id="addTaskModalOverlay" role="dialog" aria-modal="true" aria-labelledby="addTaskModalTitle">
     <div class="prf-modal atm-modal">
         <div class="prf-modal-header">
@@ -15,6 +17,7 @@
             </button>
         </div>
 
+        @* #Komponen FormTugas# *@
         <form asp-action="AddTask" method="post" autocomplete="off">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ReturnPatientId" />

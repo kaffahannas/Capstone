@@ -1,3 +1,4 @@
+﻿/* #Bagian Scoped CSS Register.cshtml# - Views/Account/Register.cshtml.css */
 /* Register page header — back button no longer overlaps title */
 .register-header {
     display: flex;

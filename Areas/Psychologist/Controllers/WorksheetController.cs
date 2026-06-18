@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace LightenUp.Web.Areas.Psychologist.Controllers
 {
     [Area("Psychologist")]
+    // #Class WorksheetController#
     [Authorize(Roles = "Psychologist")]
     public class WorksheetController : Controller
     {
@@ -57,6 +58,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             _            => (dbStatus,             "")
         };
 
+        // #Function AddTask#
+
         [HttpGet]
         public async Task<IActionResult> AddTask(int? patientId = null)
         {
@@ -64,6 +67,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 return RedirectToAction(nameof(PatientWorksheetHistory), new { id = patientId.Value, add = true });
             return RedirectToAction(nameof(Worksheet), new { add = true, patientId });
         }
+
+        // #Function AddTask POST#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -102,6 +107,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return RedirectToAction(nameof(Worksheet));
         }
 
+        // #Function EditWorksheet#
+
         [HttpGet]
         public async Task<IActionResult> EditWorksheet(int id)
         {
@@ -127,6 +134,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View(model);
         }
 
+        // #Function EditWorksheet POST#
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditWorksheet(LightenUp.Web.Models.ViewModels.PsyWorksheetEditViewModel model)
@@ -150,6 +159,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             TempData["success"] = "Worksheet berhasil diperbarui.";
             return RedirectToAction(nameof(Worksheet));
         }
+
+        // #Function Worksheet#
 
         [HttpGet]
         public async Task<IActionResult> Worksheet(bool add = false, int? patientId = null)
@@ -207,6 +218,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             });
         }
 
+        // #Function WorksheetDetailModal#
+
         [HttpGet]
         public async Task<IActionResult> WorksheetDetailModal(int id)
         {
@@ -234,6 +247,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return PartialView("_WorksheetDetailModal", model);
         }
 
+        // #Function EditWorksheetModal#
+
         [HttpGet]
         public async Task<IActionResult> EditWorksheetModal(int id)
         {
@@ -259,6 +274,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return PartialView("_EditWorksheetModal", model);
         }
 
+        // #Function WorksheetHistory#
+
         [HttpGet]
         public async Task<IActionResult> WorksheetHistory()
         {
@@ -275,6 +292,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             ViewBag.Worksheets = worksheets;
             return View();
         }
+
+        // #Function PatientWorksheetHistory#
 
         [HttpGet]
         public async Task<IActionResult> PatientWorksheetHistory(int id, bool add = false, int? open = null)
@@ -346,6 +365,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View("PatientWorksheetHistory");
         }
 
+        // #Function ReviewWorksheet#
+
         [HttpGet]
         public async Task<IActionResult> ReviewWorksheet(int id)
         {
@@ -358,6 +379,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
         }
+
+        // #Function ReviewWorksheet POST#
 
         [HttpPost]
         public async Task<IActionResult> ReviewWorksheet(LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel model, string submitAction)

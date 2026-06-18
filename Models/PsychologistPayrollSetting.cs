@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LightenUp.Web.Models
 {
     // ─── Payroll settings per psychologist (set by Admin) ─────
+    // #Class PsychologistPayrollSetting#
     public class PsychologistPayrollSetting
     {
         [Key]

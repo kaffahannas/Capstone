@@ -6,6 +6,7 @@
     var draftCount = ViewBag.DraftCount ?? 0;
     var sentCount  = ViewBag.SentCount ?? 0;
 }
+@* #Bagian DaftarLaporan# *@
 
 @section Head {
     <link rel="stylesheet" href="~/css/hr/reports-edit-modal.css" asp-append-version="true" />
@@ -31,6 +32,7 @@
 
 <div class="hrpt-page">
 
+@* #Komponen Hero# *@
 @* ══════ HERO ══════ *@
 <div class="hrws-hero">
     <div class="hrws-hero-bg" aria-hidden="true"></div>
@@ -61,6 +63,7 @@
     </div>
 </div>
 
+@* #Komponen DaftarLaporan# *@
 @* ══════ BODY ══════ *@
 <div class="hrpt-list-body">
 
@@ -152,6 +155,7 @@
 
 </div>
 
+@* #Komponen ModalEditLaporan# *@
 @* Modal Container *@
 <div class="hrpf-modal-overlay" id="editModalOverlay" role="dialog" aria-modal="true" aria-hidden="true">
     <div id="editModalContainer" class="hrpt-edit-modal-wrap">

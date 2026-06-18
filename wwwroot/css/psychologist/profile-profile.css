@@ -1,3 +1,4 @@
+/* #Bagian Profil Psikolog# */
 .prf-hero {
     background: linear-gradient(130deg, #1E1B4B 0%, #312E81 25%, #4338CA 60%, #7C3AED 100%);
     border-radius: 18px;
@@ -565,15 +566,18 @@
     color: #059669;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 600px) {
     .prf-b2b-card { flex-direction: column; align-items: flex-start; }
     .prf-b2b-right { width: 100%; justify-content: space-between; }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 1000px) {
     .prf-cards { grid-template-columns: 1fr 1fr; }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 900px) {
     .prf-hero { padding: 22px 18px 24px; }
     .prf-hero-name { font-size: 22px; }
@@ -582,6 +586,7 @@
     .prf-hero-stat-val { font-size: 22px; }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 700px) {
     .prf-hero-inner { gap: 16px; }
     .prf-hero-stats { width: 100%; justify-content: space-between; }
@@ -643,6 +648,7 @@
     font-size: 13px;
 }
 
+/* #Komponen Profil B2b Custom Styles Removed Now Uses Standard Profil Kartu# */
 /* prf-b2b custom styles removed - now uses standard prf-card */
 
 .prf-toggle--inline { margin: 0; }
@@ -713,10 +719,12 @@
     margin-right: 6px;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 900px) {
     .prf-main-grid { grid-template-columns: 1fr; }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 500px) {
     .prf-hero-av-wrap { width: 88px; height: 88px; }
     .prf-hero-av-fallback { font-size: 32px; }
@@ -726,8 +734,10 @@
 
 .prf-edit-form { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
+/* #Komponen Profil Modal Shell Komponen Profil Modalcss Layout# */
 /* prf-modal shell: components-prf-modal.css (layout) */
 
+/* #Bagian Photo Drop Zone Compact Horizontal# */
 /* ΓöÇΓöÇ Photo drop zone (compact horizontal) ΓöÇΓöÇ */
 .prf-dropzone {
     display: flex;

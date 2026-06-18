@@ -1,3 +1,4 @@
+/* #Bagian Permintaan Psikolog# */
 .req-assign-banner {
     background: #fffbeb;
     border: 1px solid #fcd34d;
@@ -579,6 +580,7 @@
     margin-left: 4px;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 700px) {
     .req-hero { flex-direction: column; align-items: flex-start; }
     .req-hero-stats { width: 100%; justify-content: space-between; }

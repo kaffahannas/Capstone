@@ -1,3 +1,4 @@
+/* #Bagian Edit Jadwal Modal Psikolog# */
 .sem-modal {
     max-width: 520px;
     padding: 0;
@@ -194,6 +195,7 @@ select.sem-input {
     background: #3730A3;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 520px) {
     .sem-grid {
         grid-template-columns: 1fr;

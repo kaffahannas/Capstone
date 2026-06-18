@@ -1,4 +1,6 @@
+/* #Bagian Hero HR# */
 ﻿/* HR hero banner + stats row */
+/* #Komponen Gg Hero Gg Fixed Height G Dont Grow# */
 /* G??G?? Hero G??G?? (fixed height G?? don't grow) */
 .hrd-hero {
     position: relative;
@@ -54,6 +56,7 @@
     margin: 0;
 }
 
+/* #Bagian Stats Row# */
 /* Stats row */
 .hrd-stats {
     display: flex;
@@ -111,6 +114,7 @@
 .hrd-stat--bahaya { border-color: rgba(252,165,165,0.35); background: rgba(252,165,165,0.13); }
 .hrd-stat--bahaya .hrd-stat-val { color: #FCA5A5; }
 
+/* #Komponen Tambah Button# */
 /* Add button */
 .hrd-add-btn {
     display: inline-flex;
@@ -134,4 +138,5 @@
     color: var(--lu-primary);
 }
 
+/* #Komponen Gg Alert Banners Gg Fixed Height G Dont Grow# */
 /* G??G?? Alert banners G??G?? (fixed height G?? don't grow) */

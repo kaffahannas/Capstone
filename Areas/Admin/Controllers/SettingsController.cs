@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LightenUp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    // #Class SettingsController#
     [Authorize(Roles = "Admin")]
     public class SettingsController : Controller
     {
@@ -18,6 +19,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
+
+        // #Function Index#
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -35,6 +38,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             });
         }
 
+        // #Function UpdateProfile#
+
         [HttpPost]
         public async Task<IActionResult> UpdateProfile(AdminSettingsViewModel model)
         {
@@ -47,6 +52,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             TempData["success"] = "Profil diperbarui.";
             return RedirectToAction(nameof(Index));
         }
+
+        // #Function ChangePassword#
 
         [HttpPost]
         public async Task<IActionResult> ChangePassword(AdminChangePasswordViewModel model)

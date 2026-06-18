@@ -11,6 +11,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    // #Class WorksheetsController#
     [RequiresCompanySubscription]
     public class WorksheetsController : Controller
     {
@@ -33,7 +34,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  List
         // ═════════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index(string? search, List<string>? status, string? period, int page = 1)
         {
             var hr = await GetHrAsync();
@@ -108,6 +110,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  Review (read most data, edit HrNote)
         // ═════════════════════════════════════════════
+        // #Function Review#
         [HttpGet]
         public async Task<IActionResult> Review(int id)
         {
@@ -140,6 +143,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             });
         }
 
+        // #Function SaveNote#
+
         [HttpPost]
         public async Task<IActionResult> SaveNote(HrWorksheetEditNoteViewModel model)
         {
@@ -159,6 +164,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  RequestModal  (AJAX — used by Index modal)
         // ═════════════════════════════════════════════
+        // #Function RequestModal#
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RequestModal(HrRequestViewModel model)
@@ -200,6 +206,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  Request (HR asks psychologist to assign a new worksheet)
         // ═════════════════════════════════════════════
+        // #Function Request#
         [HttpGet]
         public new async Task<IActionResult> Request()
         {
@@ -226,6 +233,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 AvailablePatients = patients
             });
         }
+
+        // #Function Request POST#
 
         [HttpPost]
         public new async Task<IActionResult> Request(HrRequestViewModel model)

@@ -1,3 +1,4 @@
+/* #Bagian Worksheet Dashboard# */
 ﻿/* Shared worksheet dashboard (Psy Monitor Worksheet) */
 .ws-hero {
     display: flex;
@@ -482,6 +483,7 @@
     background: var(--lu-primary-hover); color: #fff;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 900px) {
     .ws-hero { padding: 20px 18px; gap: 16px; }
     .ws-hero-title { font-size: 20px; }
@@ -491,6 +493,7 @@
     .ws-toolbar { gap: 8px; }
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 700px) {
     .ws-hero-stats { width: 100%; justify-content: space-between; }
     .ws-stat-bubble { flex: 1; }

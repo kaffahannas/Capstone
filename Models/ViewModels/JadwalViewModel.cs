@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class JadwalItemViewModel#
     public class JadwalItemViewModel
     {
         public int ScheduleId { get; set; }
@@ -13,6 +14,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? MeetingLink { get; set; }
     }
 
+    // #Class JadwalViewModel#
     public class JadwalViewModel
     {
         public List<JadwalItemViewModel> UpcomingSessions { get; set; } = new();

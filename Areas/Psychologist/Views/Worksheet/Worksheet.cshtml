@@ -22,7 +22,9 @@
     <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet-modal.css" asp-append-version="true" />
 }
 
-@* ── Hero banner ── *@
+
+@* #Bagian Worksheet# *@
+@* #Komponen Hero# *@
 <div class="ws-hero">
     <div class="ws-hero-left">
         <p class="ws-hero-eyebrow">Psikolog · Monitor Tugas</p>
@@ -53,7 +55,7 @@
     </div>
 </div>
 
-@* ── Toolbar ── *@
+@* #Komponen Toolbar# *@
 <div class="ws-toolbar">
     <div class="ws-search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -71,7 +73,7 @@
     </button>
 </div>
 
-@* ── Task list ── *@
+@* #Komponen DaftarTugas# *@
 @if (Model.Tasks == null || Model.Tasks.Count == 0)
 {
     <div class="ws-empty">

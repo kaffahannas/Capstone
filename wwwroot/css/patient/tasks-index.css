@@ -1,3 +1,4 @@
+/* #Bagian Tugas Index Pasien# */
 /* Patient Tasks Index � linked from Tasks/Index.cshtml */
 .task-count { font-size: 14px; margin-bottom: 12px; }
 .task-search .icon { margin-left: 16px; margin-right: 4px; color: var(--lu-text-muted); }
@@ -6,6 +7,7 @@
 .task-card.task-status-progress::before { background: #F59E0B; }
 .task-card.task-status-done::before { background: #10B981; }
 
+/* #Bagian Tugas Index Styles# */
 /* Tasks Index Styles */
 .tasks-toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
 .task-search { flex: 1; max-width: 100%; position: relative; display: flex; align-items: center; }
@@ -26,6 +28,7 @@
 .task-card .badge-arrow { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: #fff; color: var(--lu-primary); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .task-card:hover .badge-arrow { background: var(--lu-primary); color: #fff; transform: translateX(6px) scale(1.1); box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3); }
 
+/* #Bagian Halaman Layout# */
 /* Page layout */
 .tasks-page { display: flex; flex-direction: column; height: calc(100vh - 120px); }
 .tasks-hero { flex-shrink: 0; background: linear-gradient(135deg, var(--lu-primary) 0%, #A78BFA 100%); color: white; padding: 32px; border-radius: 20px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2); position: relative; overflow: hidden; }

@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class CreatePasswordViewModel#
     public class CreatePasswordViewModel
     {
         public string Email { get; set; } = string.Empty;

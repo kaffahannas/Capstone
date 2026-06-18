@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Areas.Hr.Controllers;
 
+// #Class SubscriptionController#
+
 [Area("Hr")]
 [Authorize(Roles = "HR")]
 public class SubscriptionController : Controller
@@ -38,6 +40,8 @@ public class SubscriptionController : Controller
         _duitku = duitku;
         _access = access;
     }
+
+    // #Function Index#
 
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -89,6 +93,8 @@ public class SubscriptionController : Controller
         });
     }
 
+    // #Function CreateDivision#
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateDivision(string name)
@@ -110,6 +116,8 @@ public class SubscriptionController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // #Function DeleteDivision#
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteDivision(int id)
@@ -126,6 +134,8 @@ public class SubscriptionController : Controller
         }
         return RedirectToAction(nameof(Index));
     }
+
+    // #Function Checkout#
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -195,6 +205,8 @@ public class SubscriptionController : Controller
         return Redirect(result.PaymentUrl);
     }
 
+    // #Function Return#
+
     [HttpGet]
     public async Task<IActionResult> Return(string orderId, bool mock = false)
     {
@@ -213,6 +225,8 @@ public class SubscriptionController : Controller
         return RedirectToAction(nameof(Failed), new { orderId });
     }
 
+    // #Function Success#
+
     [HttpGet]
     public async Task<IActionResult> Success(string orderId)
     {
@@ -228,6 +242,8 @@ public class SubscriptionController : Controller
         ViewBag.ActiveNav = "Langganan";
         return View();
     }
+
+    // #Function Failed#
 
     [HttpGet]
     public IActionResult Failed(string orderId)

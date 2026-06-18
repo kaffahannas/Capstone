@@ -1,5 +1,7 @@
+/* #Bagian Dashboard Psikolog# */
 ﻿/* Psychologist Dashboard + Client Index (merged from dashboard.css monolith) */
 
+/* #Komponen Hero Banner# */
 /* â”€â”€ Hero banner â”€â”€ */
 .psy-hero {
     display: flex;
@@ -60,6 +62,7 @@
     flex-shrink: 0;
 }
 
+/* #Komponen Shared Button# */
 /* â”€â”€ Shared button â”€â”€ */
 .psy-btn {
     display: inline-flex;
@@ -97,6 +100,7 @@
 .psy-btn--ghost:hover { background: #E5E7EB; }
 .psy-btn--sm { padding: 0 12px; height: 30px; font-size: 12px; }
 
+/* #Bagian Kpi Row# */
 /* â”€â”€ KPI row â”€â”€ */
 .psy-kpi-row {
     display: grid;
@@ -146,6 +150,7 @@
     font-weight: 500;
 }
 
+/* #Bagian Dashboard Grid Fills Remaining Viewport Height# */
 /* â”€â”€ Dashboard grid â€” fills remaining viewport height â”€â”€ */
 .psy-dashboard-grid {
     display: grid;
@@ -157,6 +162,7 @@
     padding-bottom: 16px; /* breathing room at the very bottom */
 }
 
+/* #Komponen Cards# */
 /* â”€â”€ Cards â”€â”€ */
 .psy-card {
     background: #fff;
@@ -225,6 +231,7 @@
     line-height: 1;
 }
 
+/* #Bagian Klien Rows# */
 /* â”€â”€ Client rows â”€â”€ */
 .psy-client-list { padding: 8px 0; flex: 1; }
 .psy-client-row {
@@ -269,6 +276,7 @@
     color: var(--text-muted);
 }
 
+/* #Bagian Perusahaan Rows# */
 /* â”€â”€ Company rows â”€â”€ */
 .psy-company-list { padding: 8px 0; flex: 1; }
 .psy-company-row {
@@ -309,6 +317,7 @@
 }
 .psy-company-row > svg { color: var(--text-muted); flex-shrink: 0; }
 
+/* #Bagian Empty State# */
 /* â”€â”€ Empty state â”€â”€ */
 .psy-empty {
     display: flex;
@@ -327,7 +336,9 @@
 .psy-empty--sm { padding: 24px 20px; min-height: 160px; }
 .psy-empty--sm svg { opacity: 0.3; }
 
+/* #Bagian Responsif# */
 /* â”€â”€ Responsive â”€â”€ */
+/* #Bagian Media Query# */
 @media (max-width: 900px) {
     .psy-dashboard-grid { grid-template-columns: 1fr; flex: unset; }
     .psy-hero { padding: 18px 16px; }
@@ -336,6 +347,7 @@
     .psy-btn--primary, .psy-btn--outline { flex: 1; justify-content: center; }
 }
 
+/* #Bagian Halaman Specific Extras# */
 /* Page-specific extras */
 .psy-dashboard-grid--single {
     grid-template-columns: 1fr;

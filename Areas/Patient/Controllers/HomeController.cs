@@ -7,9 +7,11 @@ namespace LightenUp.Web.Areas.Patient.Controllers
     // Real controllers (Dashboard, Mood, Journal, Tasks, Profile, Statistik, Onboarding)
     // land in this same folder in later turns.
     [Area("Patient")]
+    // #Class HomeController#
     [Authorize(Roles = "Patient")]
     public class HomeController : Controller
     {
+        // #Function Index#
         public IActionResult Index()
         {
             // For now redirect to the eventual dashboard. The dashboard view comes next.

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
+    // #Class ProfileController#
     [Authorize(Roles = "HR")]
     public class ProfileController : Controller
     {
@@ -40,7 +41,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  Index
         // ═════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index()
         {
             var (user, hr) = await LoadAsync();
@@ -97,6 +99,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  Edit  (fallback full-page, kept for safety)
         // ═════════════════════════════════════════
+        // #Function Edit#
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
@@ -114,6 +117,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 CompanyName = hr.Company?.Name ?? "",
             });
         }
+
+        // #Function Edit POST#
 
         [HttpPost]
         [RequestSizeLimit(10_000_000)]
@@ -151,6 +156,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  EditModal  (AJAX — used by profile modal)
         // ═════════════════════════════════════════
+        // #Function EditModal#
         [HttpPost]
         [RequestSizeLimit(10_000_000)]
         public async Task<IActionResult> EditModal(HrProfileEditViewModel model)
@@ -199,6 +205,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  ChangePassword  (AJAX modal)
         // ═════════════════════════════════════════
+        // #Function ChangePassword#
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(

@@ -1,4 +1,6 @@
 @model LightenUp.Web.Models.ViewModels.MoodTrackerSessionViewModel
+@* #Bagian Field Tersembunyi Mood# *@
+@* #Komponen Field Tersembunyi Mood# *@
 @foreach (var t in Model.Triggers)
 {
     <input type="hidden" name="Triggers" value="@t" />

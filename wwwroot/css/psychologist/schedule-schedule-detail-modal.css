@@ -1,3 +1,4 @@
+/* #Bagian Jadwal Detail Modal Psikolog# */
 .sdm-modal {
     max-width: 520px;
     padding: 0;
@@ -278,6 +279,7 @@
     color: #3730A3;
 }
 
+/* #Bagian Responsif Mobile# */
 @media (max-width: 480px) {
     .sdm-meta-grid {
         grid-template-columns: 1fr;

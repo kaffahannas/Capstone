@@ -1,3 +1,4 @@
+@* #Bagian Layout Dashboard Psikolog# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -23,6 +24,7 @@
     <div class="app-shell" id="appShell">
         <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
+        @* #Komponen Sidebar Navigasi# *@
         <aside class="sidebar app-sidebar" id="appSidebar" aria-label="Navigasi psikolog">
             <div class="sidebar-header">
                 <a asp-area="Psychologist" asp-controller="Dashboard" asp-action="Index" class="sidebar-brand">
@@ -46,6 +48,7 @@
             var _navPermintaan  = _ctrl == "PsyRequests";
             var _navPendapatan  = _ctrl == "Dashboard" && _action == "Payslip";
         }
+                    @* #Komponen Menu Navigasi# *@
                     <div class="nav-menu">
                         <a asp-area="Psychologist" asp-controller="Dashboard" asp-action="Index" class="nav-item @(_navBeranda ? "active" : "")">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -82,6 +85,7 @@
                 </a>
             </div>
 
+            @* #Komponen Tombol Keluar# *@
             <div class="psy-nav-logout">
                 <form class="form-inline" asp-area="" asp-controller="Account" asp-action="Logout" method="post">
                     <button type="submit" class="psy-logout-btn">
@@ -93,6 +97,7 @@
         </aside>
 
         <div class="main-content app-main">
+            @* #Komponen Topbar# *@
             <header class="dashboard-header app-topbar">
                 <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="appSidebar">
                     <span class="hamburger" aria-hidden="true"></span>
@@ -105,6 +110,7 @@
                 </div>
             </header>
 
+            @* #Komponen Konten Utama# *@
             <div class="app-content lu-scroll-host">
                 @RenderBody()
             </div>

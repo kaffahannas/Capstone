@@ -1,4 +1,6 @@
+/* #Bagian Komponen UI Pasien# */
 ﻿/* Patient shared UI — cards, calendar widget, buttons */
+/* #Bagian Custom Scrollbar For Inner Lists# */
 /* Custom Scrollbar for inner lists */
 .custom-scroll::-webkit-scrollbar {
     width: 6px;
@@ -14,6 +16,7 @@
     background-color: #94A3B8;
 }
 
+/* #Komponen Cards# */
 /* â”€â”€â”€â”€â”€ Cards â”€â”€â”€â”€â”€ */
 .lu-card {
     background: var(--lu-card);
@@ -28,6 +31,7 @@
     margin: 0 0 12px;
 }
 
+/* #Bagian Calendar Widget# */
 /* â”€â”€â”€â”€â”€ Calendar widget â”€â”€â”€â”€â”€ */
 .cal-widget { margin-bottom: 24px; }
 .cal-header {
@@ -90,16 +94,19 @@
 .dot.disappointed { background: var(--mood-disappointed); }
 .dot.angry { background: var(--mood-angry); }
 
+/* #Komponen Dashboard 3 Kartu Grid# */
 /* â”€â”€â”€â”€â”€ Dashboard 3-card grid â”€â”€â”€â”€â”€ */
 .dash-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
+/* #Bagian Media Query# */
 @media (max-width: 1024px) {
     .dash-grid { grid-template-columns: 1fr; }
 }
 
+/* #Bagian Empty / Filled State# */
 /* Empty / filled state */
 .dash-card-empty {
     text-align: center;
@@ -125,6 +132,7 @@
 .dash-card-mood-filled.angry { background: var(--mood-angry); }
 .dash-card-mood-filled .emoji { font-size: 40px; display:block; margin-bottom: 4px; }
 
+/* #Komponen Buttons# */
 /* Buttons */
 .btn-pill {
     display: inline-flex;

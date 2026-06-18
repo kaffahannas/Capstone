@@ -1,3 +1,4 @@
+/* #Bagian Laporan Buat HR# */
 .hrpt-page {
     display: flex; flex-direction: column; gap: 22px; padding: 26px 28px 48px; max-width: 1100px; margin: 0 auto;
 }

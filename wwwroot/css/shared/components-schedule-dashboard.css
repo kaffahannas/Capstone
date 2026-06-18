@@ -1,4 +1,6 @@
+/* #Bagian Jadwal Dashboard# */
 ﻿/* Shared schedule dashboard (HR Jadwal + Psy Scheduling) */
+/* #Komponen Hero Banner# */
 /* ── Hero banner ── */
 .sch-hero {
     display: flex;
@@ -83,6 +85,7 @@
 }
 .sch-hero-btn:hover { background: rgba(255,255,255,0.25); color: #fff; }
 
+/* #Komponen Hero Stat Bubbles# */
 /* Hero stat bubbles */
 .sch-hero-stats {
     display: flex;
@@ -121,6 +124,7 @@
     letter-spacing: 0.3px;
 }
 
+/* #Bagian Filter Bar# */
 /* ── Filter bar ── */
 .sch-filter-bar {
     display: flex;
@@ -178,6 +182,7 @@
     border-color: #c4b5fd;
 }
 
+/* #Bagian Timeline Container# */
 /* ── Timeline container ── */
 .sch-timeline {
     display: flex;
@@ -194,6 +199,7 @@
     box-sizing: border-box;
 }
 
+/* #Bagian Day Group# */
 /* ── Day group ── */
 .sch-day-group {
     display: flex;
@@ -242,6 +248,7 @@
     border-radius: 999px;
 }
 
+/* #Komponen Session Cards# */
 /* ── Session cards ── */
 .sch-sessions {
     display: flex;
@@ -271,12 +278,14 @@
     box-shadow: 0 4px 18px rgba(0,0,0,0.07);
 }
 
+/* #Bagian Left Accent Border Colors# */
 /* Left accent border colors */
 .sch-session--upcoming  { border-left-color: #F59E0B; }
 .sch-session--ongoing   { border-left-color: #3B82F6; }
 .sch-session--completed { border-left-color: #7C3AED; }
 .sch-session--cancelled { border-left-color: #EF4444; }
 
+/* #Bagian Time Block# */
 /* Time block */
 .sch-session-time {
     display: flex;
@@ -312,6 +321,7 @@
     white-space: nowrap;
 }
 
+/* #Bagian Separator Line# */
 /* Separator line */
 .sch-session-sep {
     width: 1px;
@@ -320,6 +330,7 @@
     flex-shrink: 0;
 }
 
+/* #Komponen Avatar# */
 /* Avatar */
 .sch-session-avatar {
     width: 40px;
@@ -337,6 +348,7 @@
 .sch-avatar--completed { background: #EDE9FE; color: #7C3AED; }
 .sch-avatar--cancelled { background: #FEE2E2; color: #DC2626; }
 
+/* #Bagian Info Block# */
 /* Info block */
 .sch-session-info {
     flex: 1;
@@ -379,6 +391,7 @@
     max-width: 280px;
 }
 
+/* #Komponen Status Badge# */
 /* Status badge */
 .sch-badge {
     display: inline-flex;
@@ -395,6 +408,7 @@
 .sch-badge--completed { background: #EDE9FE; color: #7C3AED; }
 .sch-badge--cancelled { background: #FEE2E2; color: #DC2626; }
 
+/* #Bagian Empty State# */
 /* ── Empty state ── */
 .sch-empty {
     display: flex;
@@ -446,7 +460,9 @@
 }
 .sch-empty-btn:hover { background: var(--lu-primary-hover); color: #fff; }
 
+/* #Bagian Responsif# */
 /* ── Responsive ── */
+/* #Bagian Media Query# */
 @media (max-width: 900px) {
     .sch-hero { padding: 20px 18px; gap: 16px; }
     .sch-hero-title { font-size: 20px; }
@@ -454,6 +470,7 @@
     .sch-stat-bubble { padding: 10px 14px; min-width: 60px; }
     .sch-stat-value { font-size: 18px; }
 }
+/* #Bagian Media Query# */
 @media (max-width: 600px) {
     .sch-hero-stats { width: 100%; justify-content: space-between; }
     .sch-stat-bubble { flex: 1; }

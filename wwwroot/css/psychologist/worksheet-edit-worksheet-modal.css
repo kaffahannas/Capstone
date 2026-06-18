@@ -1,3 +1,4 @@
+/* #Bagian Edit Worksheet Modal Psikolog# */
 .modal-container.wem-modal {
     max-width: 600px;
     padding: 0;
@@ -162,6 +163,7 @@
     background: #3730A3;
 }
 
+/* #Bagian Media Query# */
 @media (max-width: 520px) {
     .wem-grid {
         grid-template-columns: 1fr;

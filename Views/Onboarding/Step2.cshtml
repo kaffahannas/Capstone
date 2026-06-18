@@ -5,6 +5,8 @@
     Layout = null;
 }
 
+@* #Bagian Onboarding Langkah 2# *@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -43,6 +45,7 @@
                 Silakan masukkan informasi akademis Anda.
             </p>
 
+            @* #Komponen Form Akademik# *@
             <form asp-action="Step2" method="post" enctype="multipart/form-data">
                 
                 <div class="form-group">
@@ -67,7 +70,7 @@
                     <label class="form-label">Dokumen pendukung</label>
                 </div>
 
-                <!-- Area Upload Dokumen -->
+                @* #Komponen Upload Dokumen# *@
                 <label class="upload-area upload-area--step2" id="uploadArea">
                     
                     <svg id="uploadIcon" class="upload-icon--step2 upload-icon--default" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

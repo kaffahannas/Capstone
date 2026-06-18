@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Controllers
 {
     [Authorize(Roles = "Psychologist")]
+    // #Class PsyRequestsController#
     public class PsyRequestsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -33,9 +34,8 @@ namespace LightenUp.Web.Controllers
             return await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
         }
 
-        // ═════════════════════════════════════════
-        //  Inbox (HR requests + Patient assignment requests)
-        // ═════════════════════════════════════════
+        // #Bagian Inbox Permintaan#
+        // #Function Index#
         [HttpGet]
         public async Task<IActionResult> Index(string tab = "Pending")
         {
@@ -97,7 +97,8 @@ namespace LightenUp.Web.Controllers
             return View(new PsyRequestsViewModel { Tab = tab, Items = items });
         }
 
-        // ─── Accept patient's choice of this psychologist ───
+        // #Bagian Penugasan Pasien#
+        // #Function AcceptAssignment#
         [HttpPost]
         public async Task<IActionResult> AcceptAssignment(int assignmentId)
         {
@@ -117,7 +118,7 @@ namespace LightenUp.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ─── Reject patient's choice of this psychologist ───
+        // #Function RejectAssignment#
         [HttpPost]
         public async Task<IActionResult> RejectAssignment(int assignmentId, string? note)
         {
@@ -140,9 +141,8 @@ namespace LightenUp.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ═════════════════════════════════════════
-        //  Respond — Approve creates the actual row, Reject just records the rejection
-        // ═════════════════════════════════════════
+        // #Bagian Tanggapan Permintaan#
+        // #Function Respond#
         [HttpPost]
         public async Task<IActionResult> Respond(PsyRespondViewModel model)
         {

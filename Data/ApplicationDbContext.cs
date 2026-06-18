@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Data
 {
+    // #Class ApplicationDbContext#
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -11,6 +12,7 @@ namespace LightenUp.Web.Data
         {
         }
 
+        // #Bagian DbSet Tabel#
         // ==========================================
         // DAFTAR TABEL DATABASE (DbSet)
         // ==========================================
@@ -46,10 +48,12 @@ namespace LightenUp.Web.Data
         public DbSet<PsychologistPayrollSetting> PayrollSettings { get; set; }
         public DbSet<MonthlyPayout> MonthlyPayouts { get; set; }
 
+        // #Bagian Fluent API Relasi#
         // ==========================================
         // KONFIGURASI RELASI (Fluent API)
         // ==========================================
 
+        // #Function OnModelCreating#
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

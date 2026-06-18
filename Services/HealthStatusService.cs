@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Services
 {
-    // Computes MentalHealthStatus and Total Mood % from MoodTracker + JournalCheckIn data.
-    // Called from ProfileController on read. Could later be a nightly hosted service.
+// #Class HealthStatusService#
+    // Menghitung MentalHealthStatus dan distribusi mood dari MoodTracker + JournalCheckIn.
     public class HealthStatusService
     {
         private readonly ApplicationDbContext _context;
@@ -106,6 +106,7 @@ namespace LightenUp.Web.Services
             };
         }
 
+        // #Function ComputeAsync#
         public async Task<Snapshot> ComputeAsync(int patientId)
         {
             var today = DateTime.Today;
@@ -190,7 +191,7 @@ namespace LightenUp.Web.Services
             };
         }
 
-        // Chart + distribution for psychologist detail (same scoring rules as status).
+        // #Function ComputeMoodWindowAsync#
         public async Task<MoodWindowResult> ComputeMoodWindowAsync(int patientId, int days)
         {
             days = days is 7 or 30 or 90 ? days : 7;
@@ -239,7 +240,7 @@ namespace LightenUp.Web.Services
             };
         }
 
-        // Persist the computed status onto Patient.MentalHealthStatus.
+        // #Function UpdateAndSaveAsync#
         public async Task UpdateAndSaveAsync(Patient patient)
         {
             var snap = await ComputeAsync(patient.PatientId);
@@ -250,6 +251,7 @@ namespace LightenUp.Web.Services
             }
         }
 
+        // #Function RefreshStatusesAsync#
         public async Task RefreshStatusesAsync(IEnumerable<Patient> patients)
         {
             var changed = false;

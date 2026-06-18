@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class ChangePasswordViewModel#
     public class ChangePasswordViewModel
     {
         public bool HasPassword { get; set; }

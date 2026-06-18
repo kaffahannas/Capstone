@@ -9,8 +9,10 @@ using LightenUp.Web.Models;
 namespace LightenUp.Web.Filters;
 
 /// <summary>Blocks patient premium features (worksheets, advanced stats) without active personal or company subscription.</summary>
+// #Class RequiresPatientPremiumAttribute#
 public class RequiresPatientPremiumAttribute : ActionFilterAttribute
 {
+    // #Function OnActionExecutionAsync#
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var db = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
