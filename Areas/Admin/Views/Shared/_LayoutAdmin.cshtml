@@ -18,19 +18,8 @@
     <title>@pageTitle · LightenUp Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css?v=@DateTime.Now.Ticks" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-tokens.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-sidebar.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-topbar.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-stat.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-card.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-table.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-ui.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-alert.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-blocks.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/components-admin-misc.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin/layout.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
