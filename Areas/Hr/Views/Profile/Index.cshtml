@@ -354,11 +354,11 @@
         </div>
     </div>
 
+</div>
 
-
+@section Modals {
     @* #Komponen ModalEdit# *@
-    @* ══════════════ EDIT MODAL ══════════════ *@
-    <div class="hrpf-modal-overlay" id="hrpfModalOverlay" role="dialog" aria-modal="true" aria-labelledby="hrpfModalTitle">
+    <div class="hrpf-modal-overlay" id="hrpfModalOverlay" role="dialog" aria-modal="true" aria-labelledby="hrpfModalTitle" aria-hidden="true" hidden>
         <div class="hrpf-modal">
 
             <div class="hrpf-modal-head">
@@ -377,7 +377,6 @@
                 <div class="hrpf-modal-body">
                     <div id="hrpfFormError" class="hrpf-form-error hrpf-is-hidden" role="alert"></div>
 
-                    @* ── Info Pribadi ── *@
                     <p class="hrpf-modal-section-title">Info Pribadi</p>
 
                     <div class="hrpf-modal-field">
@@ -402,7 +401,6 @@
                         <span class="hrpf-modal-field-hint">JPG, PNG, WEBP · Maks 10 MB</span>
                     </div>
 
-                    @* ── Kepegawaian ── *@
                     <p class="hrpf-modal-section-title hrpf-modal-section-title--spaced">
                         Kepegawaian
                         <small class="hrpf-modal-section-sub">— @Model.CompanyName</small>
@@ -434,8 +432,7 @@
 
         </div>
     </div>
-
-</div>
+}
 
 @section Scripts {
 <script>
@@ -455,8 +452,18 @@
     //  EDIT PROFILE MODAL (original code)
     // ══════════════════════════════════════════
     // ── Open / close ─────────────────────────────
-    function openModal()  { overlay.classList.add('is-open');    document.body.classList.add('lu-scroll-lock'); }
-    function closeModal() { overlay.classList.remove('is-open'); document.body.classList.remove('lu-scroll-lock'); }
+    function openModal() {
+        overlay.hidden = false;
+        overlay.setAttribute('aria-hidden', 'false');
+        overlay.classList.add('is-open');
+        document.body.classList.add('lu-scroll-lock');
+    }
+    function closeModal() {
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        overlay.hidden = true;
+        document.body.classList.remove('lu-scroll-lock');
+    }
 
     document.querySelectorAll('.hrpf-open-modal').forEach(b => b.addEventListener('click', openModal));
     modalClose.addEventListener('click', closeModal);

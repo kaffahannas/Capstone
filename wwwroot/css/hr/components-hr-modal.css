@@ -1,5 +1,5 @@
 /* #Bagian Modal HR# */
-﻿/* HR profile modals (hrpf-modal) */
+/* HR profile modals (hrpf-modal) */
 .hrpf-modal-overlay {
     position: fixed;
     inset: 0;
@@ -14,6 +14,10 @@
     pointer-events: none;
     transition: opacity .22s, visibility .22s;
     backdrop-filter: blur(4px);
+}
+
+.hrpf-modal-overlay[hidden] {
+    display: none !important;
 }
 
 .hrpf-modal-overlay.is-open {

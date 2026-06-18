@@ -107,15 +107,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
             if (hr == null || hr.OnboardingCompletedAt == null) return RedirectToAction("Welcome", "Onboarding");
 
-            ViewBag.ActiveNav = "Profil";
-            return View(new HrProfileEditViewModel
-            {
-                FullName    = user.FullName,
-                Phone       = user.PhoneNumber,
-                EmployeeId  = hr.EmployeeId,
-                Department  = hr.Department,
-                CompanyName = hr.Company?.Name ?? "",
-            });
+            return RedirectToAction(nameof(Index));
         }
 
         // #Function Edit POST#
