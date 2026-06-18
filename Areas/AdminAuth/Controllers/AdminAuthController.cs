@@ -28,7 +28,10 @@ namespace LightenUp.Web.Areas.AdminAuth.Controllers
         // #Function Login#
 
         [HttpGet]
-        public IActionResult Login() => View(new LoginViewModel());
+        public IActionResult Login(string? returnUrl = null)
+        {
+            return View(new LoginViewModel { ReturnUrl = returnUrl });
+        }
 
         // #Function Login POST#
 
@@ -76,6 +79,9 @@ namespace LightenUp.Web.Areas.AdminAuth.Controllers
                     ModelState.AddModelError(string.Empty, "Email atau kata sandi salah.");
                 return View(model);
             }
+
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                return Redirect(model.ReturnUrl);
 
             return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
         }

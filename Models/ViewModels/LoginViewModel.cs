@@ -15,5 +15,7 @@ namespace LightenUp.Web.Models.ViewModels
 
         [Display(Name = "Ingat Saya")]
         public bool RememberMe { get; set; }
+
+        public string? ReturnUrl { get; set; }
     }
 }

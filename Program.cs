@@ -23,6 +23,44 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Admin console runs on a separate host where /Identity/* is blocked — send auth challenges to AdminAuth.
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        var adminHost = context.HttpContext.RequestServices
+            .GetRequiredService<IConfiguration>()["Site:AdminHost"];
+        var host = context.Request.Host.ToString();
+        if (!string.IsNullOrWhiteSpace(adminHost) &&
+            host.Equals(adminHost, StringComparison.OrdinalIgnoreCase))
+        {
+            var returnUrl = context.Request.PathBase + context.Request.Path + context.Request.QueryString;
+            context.Response.Redirect(
+                $"/AdminAuth/Login?ReturnUrl={Uri.EscapeDataString(returnUrl)}");
+            return Task.CompletedTask;
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        var adminHost = context.HttpContext.RequestServices
+            .GetRequiredService<IConfiguration>()["Site:AdminHost"];
+        var host = context.Request.Host.ToString();
+        if (!string.IsNullOrWhiteSpace(adminHost) &&
+            host.Equals(adminHost, StringComparison.OrdinalIgnoreCase))
+        {
+            context.Response.Redirect("/AdminAuth/Login");
+            return Task.CompletedTask;
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+});
+
 // #Bagian Autentikasi Eksternal#
 // External login providers (Google, Facebook) — only registered when credentials are configured.
 var authBuilder = builder.Services.AddAuthentication();
@@ -196,6 +234,7 @@ if (!string.IsNullOrWhiteSpace(patientHost) || !string.IsNullOrWhiteSpace(adminH
                 path.StartsWith("/js/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/lib/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/images/", StringComparison.OrdinalIgnoreCase) ||
+                path.StartsWith("/image/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/favicon", StringComparison.OrdinalIgnoreCase);
 

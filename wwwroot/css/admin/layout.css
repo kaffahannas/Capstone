@@ -6,3 +6,36 @@
 .lay-admin-brand-logo--fallback {
     background: linear-gradient(135deg, #7C3AED, #5B21B6);
 }
+
+/* site.css sets generic topbar geometry; admin components own chrome styling */
+.admin-shell .admin-topbar {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--adm-border);
+    min-height: auto;
+}
+
+/* Pages with their own hero title — hide duplicate layout heading */
+.admin-shell:has(.adm-page-header) .admin-topbar h2.lu-h2,
+.admin-shell:has(.adm-page-header) .admin-topbar-breadcrumb {
+    display: none;
+}
+
+.adm-page-header {
+    margin-bottom: 24px;
+}
+
+.adm-page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--adm-text);
+    margin: 0 0 8px;
+    letter-spacing: -0.4px;
+}
+
+.adm-page-sub {
+    color: var(--adm-text-secondary);
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
