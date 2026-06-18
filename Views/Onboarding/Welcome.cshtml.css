@@ -1,12 +1,4 @@
 ﻿/* #Bagian Scoped CSS Welcome.cshtml# - Views/Onboarding/Welcome.cshtml.css */
-.logo-container--onb-welcome {
-    margin-bottom: 20px;
-}
-
-.app-name--onb-welcome {
-    font-size: 28px;
-}
-
 .auth-title--onb-welcome {
     font-size: 22px;
     margin-bottom: 15px;
