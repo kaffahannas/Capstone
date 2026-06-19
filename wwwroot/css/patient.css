@@ -29,14 +29,16 @@ body {
     min-height: 100vh;
 }
 
-/* â”€â”€â”€â”€â”€ App shell: sidebar + main â”€â”€â”€â”€â”€ */
+/* ─────  App shell: sidebar + main ───── */
+/* Use flex (not grid) — site.css mobile offcanvas logic depends on flex */
 .app-shell {
-    display: grid;
-    grid-template-columns: 240px 1fr;
+    display: flex;
     min-height: 100vh;
 }
 
 .app-sidebar {
+    width: 240px;
+    flex-shrink: 0;
     background: var(--lu-card);
     border-right: 1px solid var(--lu-border);
     padding: 24px 16px;
@@ -129,9 +131,9 @@ body {
 }
 .logout-btn:hover { background: #FEE2E2; color: #991B1B; }
 
-/* â”€â”€â”€â”€â”€ Main content area â”€â”€â”€â”€â”€ */
+/* ───── Main content area ───── */
 .app-main {
-    padding: 24px 32px;
+    padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem);
     flex: 1;
     min-height: 0;
     overflow: hidden;
@@ -142,10 +144,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 .greeting {
-    font-size: 22px;
+    font-size: clamp(1.1rem, 2.5vw, 1.375rem);
     font-weight: 600;
     margin: 0;
 }
@@ -259,13 +263,13 @@ body {
 .dot.disappointed { background: var(--mood-disappointed); }
 .dot.angry { background: var(--mood-angry); }
 
-/* â”€â”€â”€â”€â”€ Dashboard 3-card grid â”€â”€â”€â”€â”€ */
+/* ───── Dashboard card grid ───── */
 .dash-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: clamp(1rem, 2.5vw, 1.25rem);
 }
-@media (max-width: 1024px) {
+@media (max-width: 991.98px) {
     .dash-grid { grid-template-columns: 1fr; }
 }
 
@@ -1122,7 +1126,7 @@ body {
     gap: 4px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 991.98px) {
     .db-hero { flex-direction: column; align-items: stretch; }
     .db-hero-chips { justify-content: flex-start; }
 }
@@ -1585,7 +1589,7 @@ body:has(.st-layout) {
     text-align: center;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 991.98px) {
     .sub-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
     .sub-plan--featured { transform: none; }
 }

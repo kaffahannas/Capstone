@@ -954,6 +954,42 @@ textarea,
     }
 }
 
+/* ─── Custom scrollbar (WebKit) ─── */
+::-webkit-scrollbar          { width: 6px; height: 6px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: #CBD5E1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* ─── Card hover polish ─── */
+.lu-card,
+.adm-card {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.lu-card:hover,
+.adm-card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ─── Button transitions ─── */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-pill,
+.onb-btn {
+    transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease, color 0.18s ease;
+}
+
+/* ─── Side nav item transition ─── */
+.side-nav-item {
+    transition: background 0.18s ease, color 0.18s ease, transform 0.1s ease;
+}
+.side-nav-item:hover {
+    transform: translateX(2px);
+}
+.side-nav-item.active {
+    transform: none;
+}
+
 /* Bootstrap focus ring override (public layout) */
 .btn:focus,
 .btn:active:focus,
