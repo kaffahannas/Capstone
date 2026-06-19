@@ -99,7 +99,7 @@
                 </td>
                 <td class="pay-td-right">
                     <div class="pay-action-row">
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="openSettingsModal(@r.PsychologistId, '@r.FullName', @r.DefaultPsychologistPercentage)">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="openSettingsModal(@r.PsychologistId, '@r.FullName', @r.DefaultPsychologistPercentage.ToString("G", System.Globalization.CultureInfo.InvariantCulture))">
                             Pengaturan
                         </button>
                         <a asp-action="Transfer" asp-route-id="@r.PsychologistId" class="btn btn-sm btn-primary pay-btn-transfer">
