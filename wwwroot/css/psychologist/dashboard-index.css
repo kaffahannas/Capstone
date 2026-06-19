@@ -1,6 +1,5 @@
 /* #Bagian Dashboard Psikolog# */
-﻿/* Psychologist Dashboard + Client Index (merged from dashboard.css monolith) */
-
+/* Psychologist Dashboard + Client Index (merged from dashboard.css monolith) */
 /* #Komponen Hero Banner# */
 /* â”€â”€ Hero banner â”€â”€ */
 .psy-hero {
@@ -104,10 +103,13 @@
 /* â”€â”€ KPI row â”€â”€ */
 .psy-kpi-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
     gap: 14px;
     margin-bottom: 18px;
     flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 .psy-kpi {
     background: #fff;
@@ -118,6 +120,9 @@
     align-items: center;
     gap: 14px;
     transition: box-shadow 0.2s;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 .psy-kpi:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
 .psy-kpi-icon {
@@ -158,8 +163,12 @@
     gap: 16px;
     align-items: stretch;
     flex: 1;
-    min-height: 0; overflow-y: auto;
-    padding-bottom: 16px; /* breathing room at the very bottom */
+    min-height: 0;
+    min-width: 0;
+    overflow-y: auto;
+    padding-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
 }
 
 /* #Komponen Cards# */
@@ -171,6 +180,9 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 .psy-card-head {
     display: flex;
@@ -227,6 +239,9 @@
     font-size: 13px;
     font-family: inherit;
     width: 180px;
+    max-width: 100%;
+    min-width: 0;
+    flex: 1;
     color: var(--text-dark);
     line-height: 1;
 }
@@ -341,10 +356,36 @@
 /* #Bagian Media Query# */
 @media (max-width: 900px) {
     .psy-dashboard-grid { grid-template-columns: 1fr; flex: unset; }
-    .psy-hero { padding: 18px 16px; }
-    .psy-hero-name { font-size: 18px; }
+    .psy-hero { padding: 12px 14px; margin-bottom: 10px; }
+    .psy-hero-name { font-size: 0.875rem; }
     .psy-hero-actions { width: 100%; }
     .psy-btn--primary, .psy-btn--outline { flex: 1; justify-content: center; }
+    .psy-card-head { flex-direction: column; align-items: stretch; gap: 10px; }
+    .psy-card-tools { width: 100%; }
+    .psy-search-wrap { width: 100%; }
+    .psy-search { width: 100%; flex: 1; min-width: 0; }
+    .psy-client-row { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+    .psy-client-row .psy-btn { margin-left: auto; }
+}
+
+@media (max-width: 767.98px) {
+    .psy-kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .psy-kpi { padding: 8px 10px; gap: 8px; }
+    .psy-kpi-value { font-size: 0.9375rem; }
+    .psy-kpi-icon { width: 28px; height: 28px; }
+    .psy-kpi-label { font-size: 8px; }
+    .psy-card-head { padding: 10px 12px; }
+    .psy-client-row { padding: 8px 12px; }
+    .psy-company-row { padding: 8px 12px; }
+}
+
+@media (max-width: 479.98px) {
+    .psy-kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+    .psy-hero { padding: 10px 12px; margin-bottom: 10px; }
+    .psy-hero-name { font-size: 0.8125rem; }
+    .psy-client-row { padding: 8px 10px; }
+    .psy-card-head { padding: 10px 12px; }
+    .idx-client-list { padding: 12px 14px; max-height: none; }
 }
 
 /* #Bagian Halaman Specific Extras# */

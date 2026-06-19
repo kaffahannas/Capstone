@@ -10,14 +10,14 @@
     aspect-ratio: 1;
     border-radius: 12px;
     border: 2px solid transparent;
-    background: var(--lu-border);
+    background: var(--lu-border, #E5E7EB);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     gap: 6px;
-    transition: transform 0.1s;
+    transition: transform 0.1s, border-color 0.15s, box-shadow 0.15s;
 }
 
 .mood-card:hover {
@@ -76,12 +76,12 @@
     margin: 0 0 32px;
 }
 
-.mood-card.overjoyed { background: var(--mood-overjoyed); }
-.mood-card.happy { background: var(--mood-happy); }
-.mood-card.calm { background: var(--mood-calm); }
-.mood-card.neutral { background: var(--mood-neutral); }
-.mood-card.disappointed { background: var(--mood-disappointed); }
-.mood-card.angry { background: var(--mood-angry); }
+.mood-card.overjoyed { background: var(--mood-overjoyed, #D9F99D); }
+.mood-card.happy { background: var(--mood-happy, #A3E635); }
+.mood-card.calm { background: var(--mood-calm, #93C5FD); }
+.mood-card.neutral { background: var(--mood-neutral, #D1D5DB); }
+.mood-card.disappointed { background: var(--mood-disappointed, #FBCFE8); }
+.mood-card.angry { background: var(--mood-angry, #FCA5A5); }
 
 .mood-textarea {
     width: 100%;
@@ -184,13 +184,17 @@
     aspect-ratio: auto;
     min-height: 76px;
     padding: 10px 6px;
-    border-radius: 10px;
+    border-radius: 12px;
+    border: 2px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.is-popup .mood-card.selected {
+    border-width: 2px;
 }
 
 .is-popup .mood-feeling-submit {
-    padding: 12px;
-    font-size: 14px;
-    border-radius: 10px;
+    margin-top: 4px;
 }
 
 .is-popup .mood-shell form > button[type="submit"],

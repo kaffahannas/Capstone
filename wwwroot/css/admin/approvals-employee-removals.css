@@ -95,3 +95,31 @@
     font-size: 12px;
     color: var(--adm-muted);
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .apr-page-header {
+        margin-bottom: 14px;
+    }
+
+    .apr-page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .apr-th-actions {
+        width: auto;
+    }
+
+    .apr-action-row {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .apr-btn-approve,
+    .apr-btn-reject {
+        width: auto;
+        min-width: 64px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}

@@ -378,3 +378,106 @@
     font-size: 13px;
     color: #6B7280;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .pay-transfer-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .pay-transfer-hero {
+        padding: 16px 18px;
+        border-radius: 12px;
+    }
+
+    .pay-transfer-hero-label {
+        font-size: 11px;
+    }
+
+    .pay-transfer-hero-title {
+        font-size: 1.25rem;
+    }
+
+    .pay-transfer-hero-sub {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .pay-filter-form {
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+    }
+
+    .pay-filter-field {
+        flex: 1 1 calc(50% - 5px);
+        min-width: 0;
+    }
+
+    .pay-history-header {
+        padding: 14px 16px;
+    }
+
+    .pay-history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 14px 16px;
+    }
+
+    .pay-history-amount-wrap {
+        text-align: left;
+        width: 100%;
+    }
+
+    .pay-history-list {
+        max-height: none;
+        overflow-y: visible;
+    }
+
+    .pay-breakdown-wrap {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 599.98px) {
+    .pay-filter-field {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .pay-transfer-col {
+        gap: 14px;
+    }
+
+    .pay-card-title-flex {
+        flex-wrap: wrap;
+    }
+
+    .pay-breakdown-section {
+        margin-bottom: 16px;
+    }
+
+    .pay-modal-actions {
+        flex-direction: column;
+    }
+
+    .pay-modal-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .pay-transfer-hero {
+        padding: 14px 16px;
+    }
+
+    .pay-transfer-hero-title {
+        font-size: 1.1rem;
+    }
+}

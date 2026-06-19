@@ -20,7 +20,10 @@
     <link rel="stylesheet" href="~/css/patient/components-patient-ui.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/patient/components-patient-dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/patient/components-patient-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-prf-modal.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
+    <link rel="stylesheet" href="~/css/patient/components-patient-mobile-text.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-mobile-compact.css" asp-append-version="true" />
 </head>
 <body class="patient-body">
     <div class="app-shell" id="appShell">
@@ -97,8 +100,11 @@
         </div>
     </div>
 
+    @await RenderSectionAsync("Overlays", required: false)
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/patient/hrpf-modal.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

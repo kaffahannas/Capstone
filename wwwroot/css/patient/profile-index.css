@@ -503,22 +503,356 @@ button.pf-quick-card {
     line-height: 1.3;
 }
 
+.pf-info-grid--dense {
+    gap: 10px;
+}
+
+.pf-info-item--full {
+    grid-column: 1 / -1;
+}
+
 .pf-alert { margin-bottom: 16px; }
 
-/* #Bagian Responsif Mobile# */
+/* #Bagian Responsif Mobile — profil: layout penuh lebar, detail terbaca# */
 @media (max-width: 991.98px) {
-    .pf-layout { grid-template-columns: 1fr; }
-    .pf-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .pf-row2-grid,
-    .pf-detail-split { grid-template-columns: 1fr; }
+    .pf-page {
+        min-width: 0;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .pf-layout {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .pf-aside {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .pf-profile-card {
+        grid-column: 1 / -1;
+        border-radius: 14px;
+    }
+
+    .pf-profile-card-inner {
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    .pf-avatar-wrap {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .pf-avatar-placeholder {
+        font-size: 24px;
+    }
+
+    .pf-name {
+        font-size: 15px;
+        line-height: 1.2;
+    }
+
+    .pf-status {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+
+    .pf-company-tag {
+        font-size: 10px;
+    }
+
+    .pf-complete-card,
+    .pf-help {
+        padding: 12px;
+        min-width: 0;
+    }
+
+    .pf-complete-head {
+        font-size: 11px;
+    }
+
+    .pf-complete-item {
+        font-size: 10px;
+        gap: 6px;
+    }
+
+    .pf-complete-link {
+        font-size: 11px;
+        padding: 8px 12px;
+        margin-top: 8px;
+    }
+
+    .pf-help {
+        grid-column: 1 / -1;
+    }
+
+    .pf-help-title {
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .pf-help-link {
+        font-size: 11px;
+        min-height: 36px;
+        padding: 8px 12px;
+    }
+
+    .pf-profile-main {
+        min-width: 0;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .pf-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .pf-kpi-card {
+        padding: 8px 10px;
+        min-width: 0;
+        border-radius: 10px;
+    }
+
+    .pf-kpi-value {
+        font-size: 0.9375rem;
+    }
+
+    .pf-kpi-label {
+        font-size: 8px;
+        line-height: 1.2;
+    }
+
+    .pf-kpi-sub {
+        display: none;
+    }
+
+    .pf-mood-track {
+        margin-top: 4px;
+        height: 3px;
+    }
+
+    .pf-row2-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .pf-row2-grid > * {
+        min-width: 0;
+    }
+
+    .pf-mental-card,
+    .pf-tip-card {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .pf-mental-card {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .pf-mental-ico {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .pf-mental-label {
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    .pf-mental-value {
+        font-size: 14px;
+        line-height: 1.25;
+    }
+
+    .pf-mental-checkin,
+    .pf-last-session,
+    .pf-session-badge {
+        font-size: 10px;
+        line-height: 1.35;
+        margin-top: 4px;
+    }
+
+    .pf-tip-card.pf-tip-row {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .pf-tip-ico-lg {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .pf-tip-title {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .pf-tip-msg {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .pf-tip-link {
+        font-size: 10px;
+        padding: 6px 10px;
+        margin-top: 8px;
+    }
+
+    .pf-detail-card,
+    .pf-quick-section {
+        padding: 12px;
+        min-width: 0;
+    }
+
+    .pf-detail-head {
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+
+    .pf-detail-title {
+        font-size: 13px;
+    }
+
+    .pf-detail-edit {
+        padding: 4px 8px;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    /* Satu kolom — hindari label tumpang tindih */
+    .pf-detail-split {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .pf-detail-subtitle {
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+
+    .pf-info-grid,
+    .pf-info-grid--dense {
+        gap: 8px;
+    }
+
+    .pf-info-item dt {
+        font-size: 9px;
+        margin-bottom: 2px;
+    }
+
+    .pf-info-item dd {
+        font-size: 11px;
+        line-height: 1.35;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .pf-info-link {
+        word-break: break-all;
+    }
+
+    .pf-info-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+
+    .pf-info-sub {
+        font-size: 9px;
+        display: block;
+        margin-left: 0;
+        margin-top: 2px;
+    }
+
+    .pf-psy-box {
+        padding: 8px 10px;
+        margin-top: 8px;
+    }
+
+    .pf-psy-box-label {
+        font-size: 9px;
+    }
+
+    .pf-psy-box-name {
+        font-size: 11px;
+    }
+
+    .pf-psy-box-email {
+        font-size: 10px;
+        word-break: break-all;
+    }
+
+    .pf-quick-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .pf-quick-card {
+        min-height: 68px;
+        padding: 8px 4px;
+        border-radius: 10px;
+    }
+
+    .pf-quick-ico {
+        font-size: 16px;
+    }
+
+    .pf-quick-label {
+        font-size: 8px;
+        line-height: 1.2;
+    }
+
+    .pf-quick-sub {
+        display: none;
+    }
+
+    .pf-quick-title {
+        font-size: 10px;
+        margin-bottom: 8px;
+    }
 }
 
-/* #Bagian Media Query# */
 @media (max-width: 639.98px) {
-    .pf-quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pf-aside {
+        grid-template-columns: 1fr;
+    }
+
+    .pf-kpi-value {
+        font-size: 0.85rem;
+    }
+
+    .pf-row2-grid {
+        gap: 8px;
+    }
 }
 
-/* #Bagian Media Query# */
-@media (max-width: 575.98px) {
-    .pf-kpi-grid { grid-template-columns: 1fr; }
+@media (max-width: 399.98px) {
+    .pf-quick-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pf-quick-sub {
+        display: block;
+        font-size: 7px;
+    }
 }

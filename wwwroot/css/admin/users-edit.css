@@ -19,3 +19,21 @@
 .usr-form-actions {
     margin-top: 24px;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .usr-edit-card {
+        max-width: none;
+    }
+
+    .usr-form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .usr-form-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}

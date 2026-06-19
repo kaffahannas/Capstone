@@ -114,3 +114,112 @@
     color: var(--adm-primary);
     font-weight: 700;
 }
+
+/* #Bagian Responsif Mobile Dashboard# */
+@media (max-width: 991.98px) {
+    .dash-stat-unit {
+        font-size: 12px;
+    }
+
+    .adm-quick-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    a.adm-quick-item,
+    a.adm-quick-item:link,
+    a.adm-quick-item:visited {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: var(--adm-text);
+    }
+
+    .dash-card-inner-nowrap {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dash-alert-content {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .dash-alert-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .dash-alert-title--purple,
+    .dash-alert-title--amber {
+        font-size: 14px;
+    }
+
+    .dash-alert-sub--purple,
+    .dash-alert-sub--amber {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .dash-alert-action {
+        width: auto;
+        flex-shrink: 0;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .dash-stat-unit {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 599.98px) {
+    .dash-alert-action {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .dash-alert-assignments,
+    .dash-alert-pending {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .dash-alert-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .dash-alert-content > div:last-child {
+        min-width: 0;
+    }
+
+    .dash-alert-sub--purple,
+    .dash-alert-sub--amber {
+        word-break: break-word;
+    }
+
+    .adm-stat-value .dash-stat-unit {
+        display: block;
+        margin-top: 2px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .dash-alert-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .dash-alert-title--purple,
+    .dash-alert-title--amber {
+        font-size: 13px;
+    }
+}

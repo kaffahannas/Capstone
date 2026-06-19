@@ -1,25 +1,50 @@
 @{
-    ViewData["Title"] = "Berhasil";
-    ViewBag.HideChrome = true;
+    ViewData["Title"] = "Pendaftaran Berhasil";
+    Layout = null;
 }
 @* #Bagian OnboardingBerhasil# *@
 
-<div class="onb-welcome onb-welcome--hr onb-welcome--success">
-    <div class="onb-success-icon-wrap" aria-hidden="true">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="50" fill="#E0E7FF" />
-            <circle cx="50" cy="50" r="35" fill="#7C3AED" />
-            <path d="M40 50L46.5 56.5L60 43" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-    </div>
-    <p class="onb-brand-name onb-brand-name--success">LightenUp</p>
-    <h1>Data berhasil ditambahkan!</h1>
-    <p>Anda dapat langsung mengakses dashboard LightenUp &amp; mulai menambahkan data client.</p>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
 
-<div class="onb-footer onb-welcome-footer onb-footer--stacked">
-    <a asp-controller="Subscription" asp-action="Index" class="onb-btn onb-btn-primary">Aktifkan langganan perusahaan</a>
-    <p class="onb-success-note">
-        <a asp-controller="Home" asp-action="Index">Lewati dulu — buka dashboard</a>
-    </p>
-</div>
+    <div class="auth-wrapper">
+        <div class="auth-container register-card register-card--onb-success">
+
+            @* #Komponen Ikon Sukses# *@
+            <svg class="onb-success-icon" width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="50" cy="50" r="50" fill="#E0E7FF" />
+                <circle cx="50" cy="50" r="35" fill="#7C3AED" />
+                <path d="M40 50L46.5 56.5L60 43" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+
+            <p class="onb-success-brand">LightenUp</p>
+
+            <h1 class="auth-title auth-title--onb-success">Data berhasil<br />ditambahkan!</h1>
+
+            <div class="onb-success-progress" role="presentation"></div>
+
+            <p class="onb-success-desc">
+                Anda dapat langsung mengakses dashboard LightenUp dan mulai menambahkan data klien. Aktifkan langganan perusahaan untuk membuka fitur lengkap.
+            </p>
+
+            @* #Komponen Tombol Aksi# *@
+            <a asp-controller="Subscription" asp-action="Index" class="btn-submit btn-submit--onb-success">Aktifkan langganan perusahaan</a>
+
+            <p class="onb-success-skip">
+                <a asp-controller="Home" asp-action="Index">Lewati dulu — buka dashboard</a>
+            </p>
+
+        </div>
+    </div>
+
+</body>
+</html>

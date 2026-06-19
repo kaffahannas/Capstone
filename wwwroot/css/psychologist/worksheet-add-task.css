@@ -69,3 +69,19 @@
     font-weight: 600;
     cursor: pointer;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .at-card {
+        max-width: 100%;
+        padding: 16px;
+    }
+
+    .at-deadline-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .at-actions {
+        flex-direction: column;
+    }
+}

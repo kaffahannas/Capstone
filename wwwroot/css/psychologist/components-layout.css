@@ -1,8 +1,15 @@
 /* #Bagian Layout Psikolog# */
 /* Psychologist app shell: sidebar nav + main column (extracted from dashboard.css) */
 
-:root {
-    --primary-purple: var(--lu-primary);
+/* #Komponen Box Model# */
+body.psychologist-body,
+body.psychologist-body *,
+body.psychologist-body *::before,
+body.psychologist-body *::after {
+    box-sizing: border-box;
+}
+
+:root {    --primary-purple: var(--lu-primary);
     --light-purple: var(--lu-primary-soft);
     --text-dark: #1F2937;
     --text-muted: #6B7280;
@@ -11,11 +18,29 @@
     --sidebar-width: 260px;
 }
 
+body.psychologist-body,
 body {
     margin: 0;
     background-color: var(--bg-gray);
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
+}
+
+body.psychologist-body {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+body.psychologist-body .app-shell {
+    display: flex;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 /* Sidebar overrides on top of site.css .app-sidebar / .sidebar */
@@ -154,10 +179,311 @@ body {
     margin: 0;
 }
 
+/* Halaman dengan hero sendiri — sembunyikan judul duplikat di topbar */
+body.psychologist-body .main-content:has(.app-content .psy-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .sch-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .ws-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .stat-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .req-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .prf-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .pay-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .pd-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .es-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .ew-hero) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .sh-header) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .wh-header) .psy-topbar-title,
+body.psychologist-body .main-content:has(.app-content .psy-client-card) .psy-topbar-title {
+    display: none;
+}
+
+body.psychologist-body .main-content:has(.app-content .psy-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .sch-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .ws-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .stat-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .req-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .prf-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .pay-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .pd-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .es-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .ew-hero) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .sh-header) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .wh-header) .dashboard-header,
+body.psychologist-body .main-content:has(.app-content .psy-client-card) .dashboard-header {
+    margin-bottom: 0;
+    min-height: auto;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+@media (max-width: 991.98px) {
+    body.psychologist-body .main-content:has(.app-content .psy-hero) .dashboard-header,
+    body.psychologist-body .main-content:has(.app-content .sch-hero) .dashboard-header,
+    body.psychologist-body .main-content:has(.app-content .ws-hero) .dashboard-header,
+    body.psychologist-body .main-content:has(.app-content .stat-hero) .dashboard-header,
+    body.psychologist-body .main-content:has(.app-content .req-hero) .dashboard-header,
+    body.psychologist-body .main-content:has(.app-content .prf-hero) .dashboard-header,
+    body.psychologist-body .main-content:has(.app-content .pay-hero) .dashboard-header,
+    body.psychologist-body .main-content:has(.app-content .pd-hero) .dashboard-header {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        margin-bottom: 8px;
+        box-shadow: none;
+    }
+
+    body.psychologist-body .main-content:has(.app-content .psy-client-card) .dashboard-header {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        margin-bottom: 8px;
+        box-shadow: none;
+    }
+}
+
 /* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
+    body.psychologist-body {
+        height: 100dvh;
+        overflow: hidden;
+        font-size: 14px;
+    }
+
+    body.psychologist-body.sidebar-open {
+        overflow: hidden;
+    }
+
+    body.psychologist-body .app-shell {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    body.psychologist-body .app-shell > .sidebar-backdrop {
+        flex: none;
+    }
+
+    body.psychologist-body .main-content,
+    body.psychologist-body .app-main {
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 0;
+        height: auto;
+        max-height: none;
+        margin-left: 0;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    body.psychologist-body .dashboard-header,
+    body.psychologist-body .app-topbar {
+        flex-shrink: 0;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        min-height: 0;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    body.psychologist-body .sidebar-toggle {
+        flex-shrink: 0;
+        margin: 0;
+        order: 0;
+        border: none;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+    }
+
+    body.psychologist-body .psy-topbar-title {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+    }
+
+    body.psychologist-body .psy-topbar-title h1,
+    body.psychologist-body .psy-topbar-title .text-header {
+        font-size: 1rem;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    body.psychologist-body .app-content,
+    body.psychologist-body .app-content.lu-scroll-host {
+        flex: 1 1 auto;
+        min-height: 0;
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        display: block;
+        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+
+    body.psychologist-body .app-content > * {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    /* Kartu & hero — cegah overflow ke kanan di semua halaman */
+    body.psychologist-body .psy-hero,
+    body.psychologist-body .psy-kpi-row,
+    body.psychologist-body .psy-kpi,
+    body.psychologist-body .psy-card,
+    body.psychologist-body .psy-dashboard-grid,
+    body.psychologist-body .sch-hero,
+    body.psychologist-body .sch-kpi-row,
+    body.psychologist-body .sch-card,
+    body.psychologist-body .ws-hero,
+    body.psychologist-body .ws-kpi-row,
+    body.psychologist-body .ws-card,
+    body.psychologist-body .stat-hero,
+    body.psychologist-body .stat-kpi-row,
+    body.psychologist-body .stat-chart-card,
+    body.psychologist-body .stat-charts-row,
+    body.psychologist-body .req-hero,
+    body.psychologist-body .req-page,
+    body.psychologist-body .req-card,
+    body.psychologist-body .prf-hero,
+    body.psychologist-body .prf-card,
+    body.psychologist-body .pd-hero,
+    body.psychologist-body .pd-card,
+    body.psychologist-body .pd-page,
+    body.psychologist-body .pd-grid,
+    body.psychologist-body .pd-sidebar,
+    body.psychologist-body .pd-main,
+    body.psychologist-body .es-hero,
+    body.psychologist-body .ew-hero,
+    body.psychologist-body .psy-payslip-page,
+    body.psychologist-body .pay-panel,
+    body.psychologist-body .pay-kpi-grid,
+    body.psychologist-body .patient-list-container,
+    body.psychologist-body .summary-grid,
+    body.psychologist-body .summary-card {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    body.psychologist-body .stat-kpi-row,
+    body.psychologist-body .sch-kpi-row,
+    body.psychologist-body .ws-kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    body.psychologist-body .sh-search,
+    body.psychologist-body .wh-search,
+    body.psychologist-body .sh-toolbar,
+    body.psychologist-body .wh-toolbar {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    body.psychologist-body .ws-search-wrap,
+    body.psychologist-body .sch-search-wrap {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+        height: 32px;
+        min-height: 32px;
+        max-height: 32px;
+        padding: 6px 10px;
+    }
+
+    body.psychologist-body .ws-toolbar,
+    body.psychologist-body .sch-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    body.psychologist-body .ws-filter-tabs {
+        flex: none;
+        width: 100%;
+    }
+
+    body.psychologist-body .ws-search-input,
+    body.psychologist-body .sch-search-input {
+        font-size: 11px;
+        line-height: 1.2;
+        min-height: 0;
+    }
+
+    /* Satu scroll host — nonaktifkan nested list scroll di mobile */
+    body.psychologist-body .psy-dashboard-grid {
+        flex: none;
+        min-height: 0;
+        height: auto;
+        overflow: visible;
+    }
+
+    body.psychologist-body .psy-client-list,
+    body.psychologist-body .psy-company-list,
+    body.psychologist-body .lu-list-scroll,
+    body.psychologist-body .idx-client-list {
+        flex: none;
+        overflow-y: visible;
+        max-height: none;
+    }
+
+    body.psychologist-body .psy-card,
+    body.psychologist-body .req-page,
+    body.psychologist-body .psy-payslip-page {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
     .main-content {
         margin-left: 0;
-        padding: 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.psychologist-body .main-content,
+    body.psychologist-body .app-main {
+        padding: 12px 14px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    body.psychologist-body .main-content,
+    body.psychologist-body .app-main {
+        padding: 8px 10px;
     }
 }

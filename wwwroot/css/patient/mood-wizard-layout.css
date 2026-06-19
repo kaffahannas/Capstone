@@ -108,33 +108,100 @@ html.is-popup body {
 }
 
 .is-popup.mood-wizard-body {
-    min-height: 0 !important;
+    min-height: 100% !important;
     height: auto;
     overflow: hidden;
-    padding: 16px 20px 20px;
+    padding: 0;
     background: #fff;
     align-items: stretch;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .is-popup .mood-wizard-progress {
     flex-shrink: 0;
     max-width: none;
     width: 100%;
-    margin: 0 0 14px;
-    padding: 0;
+    margin: 0 0 10px;
+    padding: 0 16px;
     box-sizing: border-box;
 }
 
 .is-popup .mood-shell {
-    flex: none;
+    flex: 1 1 auto;
     max-width: none;
     width: 100%;
     margin: 0;
     border-radius: 0;
     box-shadow: none;
     background: #fff;
-    padding: 0;
+    padding: 0 16px 16px;
     overflow: hidden;
     box-sizing: border-box;
+    border: none;
+}
+
+/* #Komponen Tombol Wizard Mood# */
+.mood-shell .btn-primary,
+.mood-wizard-body .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    background: var(--lu-primary, #7C3AED);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.25;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.mood-shell .btn-primary:hover,
+.mood-wizard-body .btn-primary:hover {
+    background: var(--lu-primary-hover, #6D28D9);
+}
+
+.mood-shell .btn-primary:active,
+.mood-wizard-body .btn-primary:active {
+    transform: scale(0.99);
+}
+
+.mood-shell .btn-secondary,
+.mood-wizard-body .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #F3F4F6;
+    color: var(--lu-text-muted, #6B7280);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    border: 1.5px solid var(--lu-border, #E5E7EB);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mood-shell .btn-secondary:hover,
+.mood-wizard-body .btn-secondary:hover {
+    background: #E5E7EB;
+    color: var(--lu-text, #111827);
+}
+
+.is-popup .mood-shell .btn-primary,
+.is-popup .mood-wizard-body .btn-primary {
+    border-radius: 11px;
+    padding: 12px 16px;
+    font-size: 14px;
 }

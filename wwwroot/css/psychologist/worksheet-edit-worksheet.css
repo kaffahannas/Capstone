@@ -148,3 +148,38 @@
     box-shadow: 0 4px 12px rgba(67,56,202,0.3);
     transition: all 0.2s;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .ew-wrap {
+        max-width: 100%;
+    }
+
+    .ew-hero {
+        padding: 20px 16px;
+        margin-bottom: 20px;
+    }
+
+    .ew-hero-title {
+        font-size: 1.25rem;
+    }
+
+    .ew-card {
+        padding: 20px 16px;
+    }
+
+    .ew-deadline-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .ew-actions {
+        flex-direction: column;
+    }
+
+    .ew-btn-cancel,
+    .ew-btn-submit {
+        width: 100%;
+        text-align: center;
+    }
+}

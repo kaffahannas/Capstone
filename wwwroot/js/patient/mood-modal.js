@@ -1,6 +1,5 @@
 // #Bagian Modal Mood Pasien#
 (function () {
-    // #Function bindMoodModalResize#
     function bindMoodModalResize() {
         window.addEventListener('message', function (e) {
             if (e.origin !== window.location.origin) return;
@@ -15,19 +14,19 @@
         });
     }
 
-    // #Function openMoodModal#
     window.openMoodModal = function () {
         var iframe = document.getElementById('moodIframe');
-        if (!iframe) return;
-        if (!iframe.getAttribute('src')) {
+        // #region agent log
+        if (window.luDbg) window.luDbg('mood-modal.js:openMoodModal', 'openMoodModal called', { iframeFound: !!iframe, moodModalFound: !!document.getElementById('moodModal') }, 'H4');
+        // #endregion
+        if (iframe && !iframe.getAttribute('src')) {
             iframe.setAttribute('src', '/Patient/Mood/Feeling');
         }
-        document.getElementById('moodModal').classList.add('is-open');
+        window.openHrpfModal('moodModal');
     };
 
-    // #Function closeMoodModal#
     window.closeMoodModal = function () {
-        document.getElementById('moodModal').classList.remove('is-open');
+        window.closeHrpfModal('moodModal');
     };
 
     bindMoodModalResize();

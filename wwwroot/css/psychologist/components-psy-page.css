@@ -79,6 +79,37 @@
         box-shadow: 0 4px 12px rgba(139, 92, 246, 0.05);
     }
 
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .dashboard-header {
+        margin-bottom: 16px;
+    }
+
+    .text-header {
+        font-size: 1.125rem;
+    }
+
+    .patient-list-container {
+        padding: 16px;
+    }
+
+    .patient-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .summary-card {
+        padding: 16px;
+    }
+
+    .patient-list-container {
+        padding: 12px;
+    }
+}
+
 .patient-info {
     display: flex;
     align-items: center;

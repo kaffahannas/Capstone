@@ -30,7 +30,16 @@
 
 /* #Bagian Halaman Layout# */
 /* Page layout */
-.tasks-page { display: flex; flex-direction: column; height: calc(100vh - 120px); }
+.tasks-page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 0;
+}
 .tasks-hero { flex-shrink: 0; background: linear-gradient(135deg, var(--lu-primary) 0%, #A78BFA 100%); color: white; padding: 32px; border-radius: 20px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2); position: relative; overflow: hidden; }
 .tasks-hero-deco { position: absolute; right: -20px; top: -40px; opacity: 0.1; font-size: 150px; user-select: none; }
 .tasks-hero-inner { position: relative; z-index: 1; }
@@ -51,52 +60,118 @@
 .tasks-modal { max-width: 600px; }
 .task-chip input[type=checkbox] { display: none; }
 
-/* #Bagian Responsif Mobile# */
+/* #Bagian Responsif Mobile — layout vertikal, lebar penuh# */
 @media (max-width: 991.98px) {
     .tasks-page {
         height: auto;
         min-height: 0;
+        width: 100%;
+        max-width: 100%;
     }
 
     .tasks-hero {
-        padding: 20px 18px;
-        border-radius: 16px;
-        margin-bottom: 16px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
     }
 
     .tasks-hero-title {
-        font-size: 1.35rem;
-        flex-wrap: wrap;
+        font-size: 0.9375rem;
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+
+    .tasks-hero-icon {
+        padding: 6px;
+        font-size: 16px;
     }
 
     .tasks-hero-deco {
-        font-size: 100px;
+        font-size: 72px;
+    }
+
+    .tasks-hero-sub {
+        font-size: 11px;
+        line-height: 1.4;
     }
 
     .tasks-container {
-        padding: 16px;
-        border-radius: 16px;
+        padding: 14px;
+        border-radius: 14px;
     }
 
-    .tasks-toolbar {
-        flex-direction: column;
-        align-items: stretch;
+    .tasks-success {
+        font-size: 12px;
+        padding: 10px 12px;
+        margin-bottom: 14px;
+    }
+
+    .task-count {
+        font-size: 12px;
+        margin-bottom: 10px;
     }
 
     .tasks-filter-row {
         flex-direction: column;
-        gap: 16px;
+        gap: 14px;
+        margin-bottom: 14px;
     }
 
     .tasks-search-label {
         max-width: none;
+        width: 100%;
+    }
+
+    .tasks-search-input,
+    .task-search input {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .tasks-filter-group-label {
+        font-size: 10px;
+        margin-bottom: 6px;
+    }
+
+    .task-chips {
+        gap: 6px;
+        margin-bottom: 14px;
+    }
+
+    .task-chip {
+        font-size: 11px;
+        padding: 5px 10px;
     }
 
     .task-card {
         grid-template-columns: 1fr;
         gap: 12px;
-        padding: 16px 18px;
-        border-radius: 16px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+    }
+
+    .task-card h4 {
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .task-card .desc {
+        font-size: 12px;
+        margin-bottom: 10px;
+        -webkit-line-clamp: 3;
+    }
+
+    .task-card .meta {
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 11px;
+    }
+
+    .task-card .meta strong {
+        font-size: 10px;
+        padding: 4px 8px;
     }
 
     .task-card .right {
@@ -106,37 +181,35 @@
         width: 100%;
     }
 
-    .task-card h4 {
-        font-size: 17px;
+    .task-card .date-tag {
+        font-size: 11px;
+        padding: 4px 8px;
     }
 
-    .task-card .meta {
-        flex-wrap: wrap;
-        gap: 8px;
+    .task-card .badge-arrow {
+        width: 34px;
+        height: 34px;
     }
 
     .tasks-list-scroll {
         overflow-y: visible;
         padding-right: 0;
         margin-right: 0;
+        padding-bottom: 12px;
+    }
+
+    .tasks-load-more {
+        margin-top: 12px;
+        text-align: center;
     }
 }
 
 @media (max-width: 639.98px) {
     .tasks-hero {
-        padding: 16px;
+        padding: 12px 14px;
     }
 
     .tasks-hero-title {
-        font-size: 1.2rem;
-    }
-
-    .task-chips {
-        gap: 6px;
-    }
-
-    .task-chip {
-        font-size: 12px;
-        padding: 5px 10px;
+        font-size: 0.875rem;
     }
 }

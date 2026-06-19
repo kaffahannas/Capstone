@@ -108,7 +108,6 @@ else if (Model.IsB2B)
                 else
                 {
                     <form asp-action="Checkout" method="post">
-                        @Html.AntiForgeryToken()
                         <input type="hidden" name="planId" value="@testPlan.PlanId" />
                         <button type="submit" class="sub-cta-btn">Mulai Test</button>
                     </form>
@@ -151,7 +150,6 @@ else if (Model.IsB2B)
                 else
                 {
                     <form asp-action="Checkout" method="post">
-                        @Html.AntiForgeryToken()
                         <input type="hidden" name="planId" value="@monthly.PlanId" />
                         <button type="submit" class="sub-cta-btn">Mulai Sekarang</button>
                     </form>
@@ -196,7 +194,6 @@ else if (Model.IsB2B)
                 else
                 {
                     <form asp-action="Checkout" method="post">
-                        @Html.AntiForgeryToken()
                         <input type="hidden" name="planId" value="@yearly.PlanId" />
                         <button type="submit" class="sub-cta-btn sub-cta-btn--green">Pilih Tahunan</button>
                     </form>

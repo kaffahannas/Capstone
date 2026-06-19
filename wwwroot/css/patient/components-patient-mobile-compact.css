@@ -1,0 +1,232 @@
+/* #Bagian Mobile Compact Pasien — skala kecil seperti Psikolog# */
+
+@media (max-width: 991.98px) {
+    body.patient-body .app-main,
+    body.patient-body .app-main:has(.st-layout),
+    body.patient-body .app-main:has(.pf-page),
+    body.patient-body .app-main:has(.pf-edit-page) {
+        padding: 10px 12px;
+    }
+
+    body.patient-body .app-topbar {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    body.patient-body .sidebar-toggle {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    body.patient-body .greeting {
+        flex: 1;
+        min-width: 0;
+        font-size: 0.8125rem;
+        line-height: 1.2;
+    }
+
+    body.patient-body .bell-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    body.patient-body .app-content {
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* #Komponen Hero# */
+    body.patient-body .db-hero,
+    body.patient-body .jdw-hero,
+    body.patient-body .tasks-hero,
+    body.patient-body .psy-hero,
+    body.patient-body .sub-hero {
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        gap: 10px;
+    }
+
+    body.patient-body .db-hero-tagline,
+    body.patient-body .jdw-hero-title,
+    body.patient-body .tasks-hero-title,
+    body.patient-body .psy-hero-title,
+    body.patient-body .sub-hero-title {
+        font-size: 0.875rem;
+        line-height: 1.3;
+    }
+
+    body.patient-body .db-hero-date,
+    body.patient-body .jdw-hero-sub,
+    body.patient-body .tasks-hero-sub,
+    body.patient-body .psy-hero-sub,
+    body.patient-body .sub-hero-sub {
+        font-size: 9px;
+        line-height: 1.35;
+    }
+
+    body.patient-body .jdw-hero-btn,
+    body.patient-body .tasks-hero-btn,
+    body.patient-body .psy-hero-btn {
+        height: 30px;
+        padding: 0 12px;
+        font-size: 10px;
+        margin-top: 8px;
+    }
+
+    /* #Komponen Scorecard / KPI — dashboard chips# */
+    body.patient-body .db-hero-chips {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+    }
+
+    body.patient-body .db-chip {
+        padding: 6px 8px;
+        gap: 6px;
+        border-radius: 8px;
+        min-width: 0;
+    }
+
+    body.patient-body .db-chip > span[aria-hidden="true"] {
+        font-size: 12px;
+    }
+
+    body.patient-body .db-chip-info strong {
+        font-size: 0.875rem;
+        line-height: 1;
+    }
+
+    body.patient-body .db-chip-info span {
+        font-size: 8px;
+        white-space: normal;
+    }
+
+    /* Profil KPI */
+    body.patient-body .pf-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    body.patient-body .pf-kpi-card {
+        padding: 8px 10px;
+        border-radius: 10px;
+    }
+
+    body.patient-body .pf-kpi-value {
+        font-size: 0.9375rem;
+    }
+
+    body.patient-body .pf-kpi-label {
+        font-size: 8px;
+    }
+
+    /* Statistik — chip scorecard */
+    body.patient-body .st-chip {
+        padding: 6px 8px;
+        border-radius: 8px;
+    }
+
+    body.patient-body .st-chip strong {
+        font-size: 0.875rem;
+    }
+
+    body.patient-body .st-chip small {
+        font-size: 8px;
+    }
+
+    body.patient-body .st-card {
+        padding: 10px 12px !important;
+        border-radius: 12px;
+    }
+
+    body.patient-body .st-card-title {
+        font-size: 11px;
+    }
+
+    body.patient-body .st-tab {
+        padding: 5px 8px;
+        font-size: 9px;
+    }
+
+    /* Langganan */
+    body.patient-body .sub-status-banner {
+        padding: 10px 12px;
+        gap: 8px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+
+    body.patient-body .sub-status-banner strong {
+        font-size: 11px;
+    }
+
+    body.patient-body .sub-status-banner span {
+        font-size: 9px;
+    }
+
+    body.patient-body .sub-status-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    /* #Komponen Kartu konten# */
+    body.patient-body .lu-card,
+    body.patient-body .db-cal,
+    body.patient-body .jdw-container,
+    body.patient-body .tasks-container,
+    body.patient-body .psy-container {
+        padding: 10px 12px !important;
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+
+    body.patient-body .lu-card-title,
+    body.patient-body .db-card-title,
+    body.patient-body .jdw-section-title {
+        font-size: 11px;
+    }
+
+    body.patient-body .db-cal-head {
+        margin-bottom: 8px;
+        gap: 6px;
+    }
+
+    body.patient-body .db-cal-month {
+        font-size: 11px;
+    }
+
+    body.patient-body .db-cal-nav-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+
+    body.patient-body .db-session-card,
+    body.patient-body .db-task-row,
+    body.patient-body .jdw-session-card,
+    body.patient-body .jdw-past-card {
+        padding: 8px 10px;
+        border-radius: 10px;
+    }
+
+    body.patient-body .btn-primary,
+    body.patient-body .btn-secondary,
+    body.patient-body .btn-pill {
+        font-size: 10px;
+        padding: 7px 12px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    body.patient-body .db-hero-chips,
+    body.patient-body .pf-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

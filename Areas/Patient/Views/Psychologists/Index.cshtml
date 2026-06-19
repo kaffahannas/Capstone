@@ -49,7 +49,6 @@ else if (!hasActivePsychologist && activeAssignment == null)
         <strong>Belum punya psikolog?</strong>
         <p class="psy-admin-desc">Anda bisa memilih psikolog sendiri di bawah, atau minta Admin LightenUp menugaskan berdasarkan beban kerja psikolog.</p>
         <form asp-action="RequestAdminAssignment" method="post" class="psy-admin-form">
-            @Html.AntiForgeryToken()
             <div class="psy-admin-field">
                 <label class="psy-admin-label">Psikolog preferensi (opsional)</label>
                 <select name="preferredPsychologistId" class="psy-admin-select">

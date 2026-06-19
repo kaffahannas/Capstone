@@ -229,3 +229,48 @@
 .apr-btn-full {
     width: 100%;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .apr-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .apr-applicant-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+    }
+
+    .apr-detail-row {
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 0;
+    }
+
+    .apr-detail-label {
+        min-width: 0;
+    }
+
+    .apr-detail-value {
+        word-break: break-word;
+    }
+
+    .apr-decision-grid {
+        grid-template-columns: 1fr;
+        max-width: none;
+    }
+
+    .apr-form-row-narrow {
+        max-width: none;
+    }
+
+    .adm-doc-item {
+        word-break: break-word;
+    }
+}

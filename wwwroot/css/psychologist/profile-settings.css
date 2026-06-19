@@ -93,3 +93,34 @@
     border-radius: 999px;
     cursor: pointer;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .set-page {
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .set-form {
+        padding: 16px;
+    }
+
+    .set-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .set-form {
+        padding: 14px 12px;
+    }
+
+    .set-actions {
+        justify-content: stretch;
+    }
+
+    .set-submit {
+        width: 100%;
+    }
+}

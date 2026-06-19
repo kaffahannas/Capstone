@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/components-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/components-psy-hero.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/components-psy-page.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/components-psy-detail.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/components-psy-stats-legacy.css" asp-append-version="true" />
@@ -18,8 +19,10 @@
     <link rel="stylesheet" href="~/css/psychologist/components-history-card.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/components-status.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
+    <link rel="stylesheet" href="~/css/psychologist/components-psy-mobile-text.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/psy-desktop-guard.css" asp-append-version="true" />
 </head>
-<body>
+<body class="psychologist-body">
 
     <div class="app-shell" id="appShell">
         <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>

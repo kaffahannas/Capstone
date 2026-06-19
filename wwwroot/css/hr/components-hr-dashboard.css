@@ -1,5 +1,5 @@
 /* #Bagian Dashboard HR# */
-﻿/* HR dashboard: page shell, alerts, grid, client list, sidebar, metrics, activity, distribution */
+/* HR dashboard: page shell, alerts, grid, client list, sidebar, metrics, activity, distribution */
 .hrd-page {
     display: flex;
     flex-direction: column;
@@ -276,14 +276,14 @@
     flex-shrink: 0;
 }
 
-/* #Komponen Empty State G Centred Inside The Flex Kartu# */
 /* Empty state G?? centred inside the flex card */
 .hrd-client-empty {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 32px 20px;
+    text-align: center;
 }
 
 /* #Komponen More Clients Footer Strip G Stays Pinned At Bottom Of Kartu# */
@@ -710,41 +710,159 @@
 }
 
 /* #Bagian Media Query# */
-@media (max-width: 960px) {
+@media (max-width: 991.98px) {
+    .hrd-page {
+        gap: 10px;
+    }
+
     .hrd-grid {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
 
     .hrd-hero-inner {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: 10px;
+    }
+
+    .hrd-hero-left {
+        width: 100%;
+        min-width: 0;
     }
 
     .hrd-stats {
-        gap: 8px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
     }
 
     .hrd-stat {
-        padding: 10px 14px;
-        min-width: 70px;
-    }
-
-    .hrd-stat-val {
-        font-size: 22px;
+        padding: 6px 4px;
+        min-width: 0;
+        border-radius: 8px;
+        gap: 2px;
     }
 
     .hrd-stat-ico {
-        font-size: 14px;
+        margin-bottom: 2px;
+    }
+
+    .hrd-stat-ico svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .hrd-stat-val {
+        font-size: 0.875rem;
+    }
+
+    .hrd-stat-lbl {
+        font-size: 8px;
+        line-height: 1.2;
+        white-space: normal;
     }
 
     .hrd-metrics {
-        grid-template-columns: repeat(2, 1fr);
-        margin: 0 0 16px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        margin: 0 0 10px;
         padding: 0;
     }
 
+    .hrd-metric {
+        padding: 8px 10px;
+        border-radius: 10px;
+        border-width: 1px;
+    }
+
+    .hrd-metric-head {
+        margin-bottom: 6px;
+    }
+
+    .hrd-metric-ico {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+    }
+
+    .hrd-metric-ico svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .hrd-metric-badge {
+        font-size: 8px;
+        padding: 2px 6px;
+    }
+
     .hrd-metric-val {
-        font-size: 26px;
+        font-size: 1rem;
+        letter-spacing: 0;
+    }
+
+    .hrd-metric-lbl {
+        font-size: 9px;
+        margin-top: 2px;
+    }
+
+    .hrd-client-card {
+        border-radius: 12px;
+    }
+
+    .hrd-client-card-head {
+        padding: 12px 14px 10px;
+    }
+
+    .hrd-client-card-title {
+        font-size: 12px;
+    }
+
+    .hrd-client-row {
+        padding: 10px 12px;
+    }
+
+    .hrd-search-input {
+        height: 32px;
+        padding: 6px 10px 6px 32px;
+        font-size: 12px;
+        box-sizing: border-box;
+    }
+
+    .hrd-select {
+        height: 32px;
+        padding: 6px 8px;
+        font-size: 12px;
+        box-sizing: border-box;
+    }
+
+    .hrd-filter-row {
+        gap: 6px;
+    }
+
+    .hrd-client-empty {
+        padding: 24px 16px;
+    }
+
+    .hrd-client-empty-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+
+    .hrd-client-empty-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .hrd-client-empty-title {
+        font-size: 12px;
+    }
+
+    .hrd-client-empty-sub {
+        font-size: 10px;
+        margin-bottom: 0;
+        line-height: 1.45;
     }
 }

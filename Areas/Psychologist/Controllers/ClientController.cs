@@ -104,9 +104,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             };
 
             _context.Assignments.Add(assignment);
+            
+            // Auto-activate since the psychologist picked the client themselves
+            await _activation.ActivateAsync(assignment, user.Id, "Diambil langsung oleh Psikolog");
+            
             await _context.SaveChangesAsync();
 
-            TempData["success"] = "Permintaan penambahan klien dikirim. Menunggu persetujuan Admin.";
+            TempData["success"] = "Klien berhasil ditambahkan dan langsung aktif.";
             return RedirectToAction("Index", "Dashboard");
         }
 

@@ -1,0 +1,146 @@
+/* #Bagian Admin Overrides — dimuat terakhir, fix visual mobile# */
+
+/* #Komponen Akses Cepat — warna kartu# */
+.adm-quick-item--amber {
+    border-color: #FDE68A !important;
+    background: linear-gradient(180deg, #FFFBEB 0%, #FFFFFF 65%) !important;
+}
+
+.adm-quick-item--amber .adm-quick-icon {
+    background: #FEF3C7 !important;
+}
+
+.adm-quick-item--purple {
+    border-color: #DDD6FE !important;
+    background: linear-gradient(180deg, #FAF5FF 0%, #FFFFFF 65%) !important;
+}
+
+.adm-quick-item--purple .adm-quick-icon {
+    background: #EDE9FE !important;
+}
+
+.adm-quick-item--blue {
+    border-color: #BFDBFE !important;
+    background: linear-gradient(180deg, #EFF6FF 0%, #FFFFFF 65%) !important;
+}
+
+.adm-quick-item--blue .adm-quick-icon {
+    background: #DBEAFE !important;
+}
+
+.adm-quick-item--green {
+    border-color: #BBF7D0 !important;
+    background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 65%) !important;
+}
+
+.adm-quick-item--green .adm-quick-icon {
+    background: #DCFCE7 !important;
+}
+
+@media (max-width: 991.98px) {
+    body.admin-body .adm-quick-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+
+    body.admin-body a.adm-quick-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        color: var(--adm-text) !important;
+        padding: 12px 8px !important;
+        border-radius: 12px !important;
+        border: 1px solid var(--adm-border) !important;
+        box-sizing: border-box !important;
+        min-width: 0 !important;
+    }
+
+    body.admin-body .adm-quick-icon {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+        font-size: 18px !important;
+        flex-shrink: 0 !important;
+    }
+
+    body.admin-body .adm-quick-label {
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: var(--adm-text) !important;
+    }
+
+    body.admin-body .adm-quick-sub {
+        font-size: 10px !important;
+        color: var(--adm-muted) !important;
+        line-height: 1.3 !important;
+    }
+
+    body.admin-body .adm-quick-item:last-child:nth-child(odd) {
+        grid-column: 1 / -1 !important;
+        max-width: calc(50% - 4px) !important;
+        justify-self: center !important;
+    }
+}
+
+/* #Komponen Empty State — teks tengah di card# */
+.adm-table-wrap > .adm-empty,
+.adm-empty--centered {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.adm-empty--centered .adm-empty-icon,
+.adm-table-wrap > .adm-empty .adm-empty-icon {
+    display: block !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.adm-empty--centered .adm-empty-title,
+.adm-table-wrap > .adm-empty .adm-empty-title {
+    width: 100% !important;
+    text-align: center !important;
+}
+
+.adm-empty--centered .adm-empty-sub,
+.adm-table-wrap > .adm-empty .adm-empty-sub {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+@media (max-width: 991.98px) {
+    .adm-table-wrap > .adm-empty,
+    .adm-empty--centered {
+        min-height: 180px !important;
+        padding: 32px 20px !important;
+    }
+
+    .adm-empty--centered .adm-empty-icon,
+    .adm-table-wrap > .adm-empty .adm-empty-icon {
+        font-size: 40px !important;
+    }
+
+    .adm-empty--centered .adm-empty-title,
+    .adm-table-wrap > .adm-empty .adm-empty-title {
+        font-size: 15px !important;
+    }
+
+    .adm-empty--centered .adm-empty-sub,
+    .adm-table-wrap > .adm-empty .adm-empty-sub {
+        font-size: 12px !important;
+        max-width: 280px !important;
+    }
+}

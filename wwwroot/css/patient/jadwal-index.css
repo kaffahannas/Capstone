@@ -3,15 +3,20 @@
 .jdw-page {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 120px);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 0;
 }
 
 .jdw-hero {
     flex-shrink: 0;
-    background: linear-gradient(135deg, #312E81 0%, #4338CA 100%);
+    background: var(--lu-gradient-hero-indigo);
     color: white;
     padding: 32px;
-    border-radius: 20px;
+    border-radius: var(--lu-radius-2xl);
     margin-bottom: 24px;
     box-shadow: 0 10px 25px rgba(49, 46, 129, 0.2);
     position: relative;
@@ -112,10 +117,10 @@
 }
 
 .jdw-empty {
-    background: #F9FAFB;
+    background: var(--lu-bg);
     padding: 32px;
     text-align: center;
-    border-radius: 16px;
+    border-radius: var(--lu-radius-xl);
 }
 
 .jdw-empty--upcoming {
@@ -205,14 +210,14 @@
 }
 
 .jdw-meta-status {
-    color: #10B981;
+    color: var(--lu-success);
     font-weight: 500;
 }
 
 .jdw-join-btn {
     display: inline-block;
     padding: 10px 24px;
-    border-radius: 999px;
+    border-radius: var(--lu-radius-pill);
     text-decoration: none;
     font-weight: 500;
     background: var(--lu-primary);
@@ -221,11 +226,11 @@
 
 .jdw-join-btn--disabled {
     padding: 10px 24px;
-    border-radius: 999px;
+    border-radius: var(--lu-radius-pill);
     opacity: 0.5;
     cursor: not-allowed;
-    background: #E5E7EB;
-    color: #6B7280;
+    background: var(--lu-border);
+    color: var(--lu-text-muted);
     border: none;
     font-weight: 500;
     font-family: inherit;
@@ -233,12 +238,12 @@
 
 .jdw-past-card {
     border: 1px solid var(--lu-border);
-    border-radius: 12px;
+    border-radius: var(--lu-radius-lg);
     padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #F9FAFB;
+    background: var(--lu-bg);
     margin-bottom: 12px;
 }
 
@@ -258,8 +263,8 @@
     font-size: 13px;
     font-weight: 500;
     padding: 4px 12px;
-    border-radius: 999px;
-    background: #E5E7EB;
+    border-radius: var(--lu-radius-pill);
+    background: var(--lu-border);
     color: #4B5563;
 }
 
@@ -279,7 +284,7 @@
 }
 
 .jdw-toast--success {
-    background: #065F46;
+    background: var(--lu-success-text);
     box-shadow: 0 8px 24px rgba(6,95,70,0.25);
 }
 
@@ -288,47 +293,100 @@
     box-shadow: 0 8px 24px rgba(30,58,95,0.3);
 }
 
-/* #Bagian Responsif Mobile# */
+/* #Bagian Responsif Mobile (≤991.98px) — layout vertikal, lebar penuh# */
 @media (max-width: 991.98px) {
     .jdw-page {
         height: auto;
         min-height: 0;
+        width: 100%;
+        max-width: 100%;
     }
 
     .jdw-hero {
-        padding: 20px 18px;
-        border-radius: 16px;
-        margin-bottom: 16px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
     }
 
     .jdw-hero-title {
-        font-size: 1.35rem;
-        flex-wrap: wrap;
+        font-size: 0.9375rem;
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+
+    .jdw-hero-icon {
+        padding: 6px;
+        font-size: 16px;
     }
 
     .jdw-hero-deco {
-        font-size: 100px;
+        font-size: 72px;
+    }
+
+    .jdw-hero-sub {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .jdw-hero-btn {
+        font-size: 12px;
+        padding: 8px 16px;
+        margin-top: 12px;
     }
 
     .jdw-container {
-        padding: 16px;
-        border-radius: 16px;
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .jdw-section-title {
+        font-size: 14px;
+        margin-bottom: 14px;
+    }
+
+    .jdw-section-title--past {
+        padding-top: 16px;
     }
 
     .jdw-session-card {
         flex-direction: column;
         align-items: stretch;
-        gap: 16px;
-        padding: 16px;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 12px;
     }
 
     .jdw-session-left {
-        gap: 14px;
+        gap: 12px;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .jdw-date-box {
+        width: 48px;
+        min-width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+    }
+
+    .jdw-date-month {
+        font-size: 9px;
+    }
+
+    .jdw-date-day {
+        font-size: 18px;
+    }
+
+    .jdw-session-title {
+        font-size: 14px;
     }
 
     .jdw-session-meta {
         flex-wrap: wrap;
         gap: 8px;
+        font-size: 11px;
     }
 
     .jdw-join-btn,
@@ -336,41 +394,61 @@
         width: 100%;
         text-align: center;
         box-sizing: border-box;
+        padding: 10px 14px;
+        font-size: 12px;
     }
 
     .jdw-past-card {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        gap: 8px;
+        padding: 12px 14px;
+    }
+
+    .jdw-past-title {
+        font-size: 13px;
+    }
+
+    .jdw-past-date,
+    .jdw-past-status {
+        font-size: 11px;
+    }
+
+    .jdw-empty {
+        padding: 20px 16px;
+    }
+
+    .jdw-empty-text {
+        font-size: 12px;
     }
 
     .jdw-scroll--upcoming,
     .jdw-scroll--past {
         min-height: 0;
         overflow-y: visible;
+        margin-bottom: 20px;
+        padding-right: 0;
     }
 }
 
+/* #Bagian Responsif Mobile Sempit (≤639.98px)# */
 @media (max-width: 639.98px) {
     .jdw-hero {
-        padding: 16px;
+        padding: 12px 14px;
     }
 
     .jdw-hero-title {
-        font-size: 1.2rem;
-    }
-
-    .jdw-hero-sub {
-        font-size: 14px;
+        font-size: 0.875rem;
     }
 
     .jdw-section-title {
-        font-size: 16px;
+        font-size: 13px;
     }
 
     .jdw-toast {
         left: 12px;
         right: 12px;
         bottom: 16px;
+        font-size: 12px;
     }
 }

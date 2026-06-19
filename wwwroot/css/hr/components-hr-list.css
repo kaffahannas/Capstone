@@ -1,5 +1,5 @@
 /* #Bagian Daftar HR# */
-﻿/* HR list rows (Worksheets, Reports, etc.) */
+/* HR list rows (Worksheets, Reports, etc.) */
 
 /* #Komponen Shared Daftar Halaman Hero Worksheet Laporan# */
 /* Shared list-page hero (Worksheets, Reports) */
@@ -248,5 +248,67 @@
 
 .hrws-row:hover .hrws-row-chevron {
     color: var(--lu-primary);
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .hrws-hero {
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+
+    .hrws-hero-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .hrws-hero-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+    }
+
+    .hrws-stat {
+        padding: 6px 8px;
+        min-width: 0;
+        border-radius: 8px;
+    }
+
+    .hrws-stat-val {
+        font-size: 0.9375rem;
+    }
+
+    .hrws-stat-lbl {
+        font-size: 8px;
+    }
+
+    .hrws-row {
+        padding: 10px 12px;
+        border-radius: 10px;
+        gap: 10px;
+    }
+
+    .hrws-row-av {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    .hrws-row-title {
+        font-size: 11px;
+    }
+
+    .hrws-row-meta {
+        font-size: 9px;
+    }
+
+    .hrws-badge {
+        font-size: 9px;
+        padding: 3px 8px;
+    }
 }
 

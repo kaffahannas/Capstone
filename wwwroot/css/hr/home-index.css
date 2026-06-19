@@ -389,3 +389,22 @@ button.hrd-psy-all-link {
 .hrd-psy-hint--pad-lg {
     padding: 18px;
 }
+
+/* #Bagian Responsif Mobile Beranda# */
+@media (max-width: 991.98px) {
+    .hrd-stat--sehat,
+    .hrd-stat--beresiko,
+    .hrd-stat--bahaya {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    .hrd-main-col {
+        gap: 10px;
+    }
+
+    .hrd-psy-search-input {
+        height: 32px;
+        font-size: 12px;
+    }
+}

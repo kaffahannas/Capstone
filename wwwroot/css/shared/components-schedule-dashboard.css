@@ -1,5 +1,5 @@
 /* #Bagian Jadwal Dashboard# */
-﻿/* Shared schedule dashboard (HR Jadwal + Psy Scheduling) */
+/* Shared schedule dashboard (HR Jadwal + Psy Scheduling) */
 /* #Komponen Hero Banner# */
 /* ── Hero banner ── */
 .sch-hero {
@@ -461,8 +461,100 @@
 .sch-empty-btn:hover { background: var(--lu-primary-hover); color: #fff; }
 
 /* #Bagian Responsif# */
-/* ── Responsive ── */
-/* #Bagian Media Query# */
+@media (max-width: 991.98px) {
+    .sch-hero {
+        padding: 12px 14px;
+        gap: 10px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+
+    .sch-hero-title {
+        font-size: 0.875rem;
+    }
+
+    .sch-hero-sub,
+    .sch-hero-eyebrow {
+        font-size: 9px;
+    }
+
+    .sch-hero-btn {
+        height: 30px;
+        padding: 0 12px;
+        font-size: 10px;
+    }
+
+    .sch-hero-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        gap: 6px;
+    }
+
+    .sch-stat-bubble {
+        min-width: 0;
+        padding: 6px 8px;
+        border-radius: 8px;
+    }
+
+    .sch-stat-value {
+        font-size: 0.875rem;
+    }
+
+    .sch-stat-label {
+        font-size: 8px;
+        white-space: normal;
+        line-height: 1.2;
+    }
+
+    .sch-toolbar,
+    .sch-filter-bar {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        gap: 8px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sch-search-wrap {
+        flex: none;
+        width: 100%;
+        max-width: none;
+        height: 32px;
+        min-height: 32px;
+        max-height: 32px;
+        padding: 6px 10px;
+        box-sizing: border-box;
+    }
+
+    .sch-search-input {
+        font-size: 11px;
+        line-height: 1.2;
+        min-height: 0;
+    }
+
+    .sch-filter-tabs {
+        flex: none;
+        width: 100%;
+    }
+
+    .sch-filter-tab {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+
+    .sch-session {
+        padding: 10px 12px;
+        gap: 8px;
+        border-radius: 10px;
+    }
+
+    .sch-empty {
+        padding: 24px 12px;
+    }
+}
+
 @media (max-width: 900px) {
     .sch-hero { padding: 20px 18px; gap: 16px; }
     .sch-hero-title { font-size: 20px; }
@@ -472,15 +564,23 @@
 }
 /* #Bagian Media Query# */
 @media (max-width: 600px) {
-    .sch-hero-stats { width: 100%; justify-content: space-between; }
-    .sch-stat-bubble { flex: 1; }
-    .sch-filter-bar { flex-direction: column; align-items: flex-start; }
+    .sch-hero-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .sch-stat-bubble {
+        flex: unset;
+        width: 100%;
+    }
+
+    .sch-filter-bar { flex-direction: column; align-items: stretch; }
     .sch-filter-tabs { width: 100%; }
-    .sch-filter-tab { flex: 1; justify-content: center; }
-    .sch-session { gap: 10px; padding: 12px 14px; }
+    .sch-filter-tab { flex: 1; justify-content: center; font-size: 9px; }
+    .sch-session { gap: 8px; padding: 10px 12px; }
     .sch-session-sep { display: none; }
     .sch-session-avatar { display: none; }
-    .sch-session-notes { max-width: 160px; }
+    .sch-session-notes { max-width: 100%; }
 }
 
 /* ── view overrides ── */

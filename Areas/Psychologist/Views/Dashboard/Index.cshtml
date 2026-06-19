@@ -28,6 +28,19 @@
 }
 
 
+@if (TempData["success"] is string ok)
+{
+    <div class="lu-alert-success" role="status" style="margin-bottom: 24px;">@ok</div>
+}
+@if (TempData["info"] is string info)
+{
+    <div class="lu-alert-info" role="status" style="margin-bottom: 24px;">@info</div>
+}
+@if (TempData["error"] is string err)
+{
+    <div class="lu-alert-danger" role="status" style="margin-bottom: 24px;">@err</div>
+}
+
 @* #Bagian DashboardPsikolog# *@
 @* #Komponen HeroSapaan# *@
 <div class="psy-hero">
@@ -146,7 +159,38 @@
         </div>
     </section>
 
-    </section>
+    @if (Model.PendingAssignments != null && Model.PendingAssignments.Any())
+    {
+        <section class="psy-card psy-client-card">
+            <header class="psy-card-head">
+                <div class="psy-card-title-wrap">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <h2 class="psy-card-title">Menunggu Persetujuan</h2>
+                    <span class="psy-count-chip psy-count-chip--warning">@Model.PendingAssignments.Count</span>
+                </div>
+            </header>
+
+            <div class="psy-client-list">
+                @foreach (var patient in Model.PendingAssignments)
+                {
+                    var initials = patient.FullName.Length > 0 ? patient.FullName.Substring(0, 1).ToUpper() : "?";
+                    var statusText = patient.Status == "PendingAdminApproval" ? "Menunggu Admin" : "Perlu Persetujuan Anda";
+                    <div class="psy-client-row">
+                        <div class="psy-client-avatar psy-avatar--sehat" style="opacity: 0.6">@initials</div>
+                        <div class="psy-client-info">
+                            <span class="psy-client-name">@patient.FullName</span>
+                            <span class="psy-client-meta">@patient.CompanyName</span>
+                        </div>
+                        <span class="psy-status-chip psy-status--beresiko">@statusText</span>
+                        @if (patient.Status == "PendingPsychologistApproval")
+                        {
+                            <a href="/PsyRequests/Index" class="psy-btn psy-btn--primary psy-btn--sm" style="margin-left: 10px;">Tinjau</a>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
+    }
 
     @if (Model.PendingB2BRequests != null && Model.PendingB2BRequests.Any())
     {

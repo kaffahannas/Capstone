@@ -1,5 +1,5 @@
 /* #Bagian Karyawan Index HR# */
-﻿.hrem-page {
+.hrem-page {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -353,4 +353,95 @@
     background: var(--lu-bg);
     border-color: var(--lu-primary);
     color: var(--lu-primary);
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .hrem-page {
+        gap: 10px;
+        height: auto;
+    }
+
+    .hrem-card {
+        border-radius: 12px;
+    }
+
+    .hrem-card-head {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 14px;
+    }
+
+    .hrem-head-right {
+        margin-left: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .hrem-search-wrap {
+        width: 100%;
+    }
+
+    .hrem-search-input {
+        width: 100%;
+        max-width: none;
+        height: 32px;
+        box-sizing: border-box;
+    }
+
+    .hrem-search-input:focus {
+        width: 100%;
+    }
+
+    .hrem-select {
+        width: 100%;
+        height: 32px;
+        box-sizing: border-box;
+    }
+
+    .hrem-tabs {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 6px;
+    }
+
+    .hrem-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hrem-tab {
+        flex-shrink: 0;
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+
+    .hrem-row {
+        padding: 10px 12px;
+        border-radius: 10px;
+        gap: 10px;
+    }
+
+    .hrem-row-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    .hrem-empty {
+        padding: 32px 16px;
+        text-align: center;
+    }
+
+    .hrem-pagination {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 14px;
+        gap: 8px;
+    }
 }

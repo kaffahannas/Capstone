@@ -1,19 +1,54 @@
 @{
     ViewData["Title"] = "Selamat Datang";
-    ViewBag.HideChrome = true;
+    Layout = null;
 }
 @* #Bagian OnboardingSelamatDatang# *@
 
-<div class="onb-welcome onb-welcome--hr">
-    @await Html.PartialAsync("_OnboardingBrand")
-    <h1>Selamat datang, @(ViewBag.HrName ?? "HR")!</h1>
-    <p>
-        LightenUp adalah platform pendukung operasional bagi penyedia jasa layanan psikologi.
-        Sebagai permulaan, lengkapi data HR sebuah perusahaan: foto diri, status akademik,
-        dan informasi perusahaan.
-    </p>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
 
-<form asp-action="Welcome" method="post" class="onb-footer onb-welcome-footer">
-    <button type="submit" class="onb-btn onb-btn-primary">Lengkapi data HR</button>
-</form>
+    <div class="auth-wrapper">
+        <div class="auth-container register-card">
+
+            @* #Komponen Logo Brand# *@
+            @await Html.PartialAsync("_OnboardingBrand")
+
+            @* #Komponen Konten Selamat Datang# *@
+            <h1 class="auth-title auth-title--onb-welcome">Selamat datang,<br />@(ViewBag.HrName ?? "HR")!</h1>
+
+            <p class="onb-welcome-intro">
+                LightenUp adalah platform pendukung operasional bagi penyedia jasa layanan psikologi, seperti manajemen data karyawan, monitoring kesehatan mental, dan koordinasi dengan psikolog.
+            </p>
+
+            <p class="onb-welcome-heading">
+                Sebagai permulaan, Anda dapat melengkapi data HR perusahaan seperti:
+            </p>
+
+            <ul class="onb-welcome-list">
+                <li>Foto diri</li>
+                <li>Status akademik &amp; gelar terakhir</li>
+                <li>Universitas asal gelar</li>
+                <li>Informasi perusahaan</li>
+                <li>Scan dokumen pendukung perusahaan</li>
+                <li>Divisi yang Anda kelola</li>
+            </ul>
+
+            @* #Komponen Tombol Mulai# *@
+            <form asp-action="Welcome" method="post">
+                <button type="submit" class="btn-submit btn-submit--onb-start">Lengkapi Data HR</button>
+            </form>
+
+        </div>
+    </div>
+
+</body>
+</html>

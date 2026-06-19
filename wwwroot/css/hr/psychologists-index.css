@@ -1,12 +1,13 @@
 /* #Bagian Psikolog Index HR# */
-﻿/* Directory grid & cards */
+/* Directory grid & cards */
 .psy-dir-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 28px;
-    padding: 24px 32px 40px;
-    max-width: 1200px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
+    justify-content: start;
+    gap: 24px;
+    padding: 8px 0 32px;
+    max-width: 100%;
+    margin: 0;
     position: relative;
     z-index: 10;
 }
@@ -122,6 +123,42 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
+}
+
+/* #Komponen Hero Direktori — stat tunggal# */
+.hrpsy-hero .hrd-stats {
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.hrpsy-hero .hrd-stat {
+    min-width: 96px;
+}
+
+.hrpsy-hero .btn-admin {
+    margin-top: 10px;
+}
+
+/* #Bagian Responsif Mobile Direktori# */
+@media (max-width: 991.98px) {
+    .psy-dir-grid {
+        grid-template-columns: 1fr;
+        justify-content: stretch;
+        gap: 10px;
+        padding: 0;
+    }
+
+    .psy-dir-card {
+        max-width: none;
+        padding: 16px 14px;
+        border-radius: 12px;
+    }
+
+    .psy-dir-avatar-wrap {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 10px;
+    }
 }
 
 

@@ -1,19 +1,94 @@
 /* #Bagian Komponen Token Pasien# */
-﻿/* Patient design tokens (mood palette + app base) */
-/* #Komponen Token Warna# */
+/* Patient design tokens — single source of truth untuk warna, radius, dan skala mood */
+/* Catatan: file ini hanya berisi custom property; tidak ada selector lain. */
+
+/* #Komponen Token Warna Brand & Netral# */
 :root {
+    /* Brand primary */
     --lu-primary: #7C3AED;
     --lu-primary-hover: #6D28D9;
+    --lu-primary-strong: #5B21B6;          /* dipakai gradient hero */
+    --lu-primary-deep: #4C1D95;            /* dipakai gradient hero & subscription banner */
     --lu-primary-soft: #EDE9FE;
+    --lu-primary-softer: #F5F3FF;          /* background ringan ungu (mood-wizard, journal-link) */
+    --lu-primary-tint: #DDD6FE;            /* hover state lembut ungu */
+    --lu-primary-border: #C4B5FD;          /* border tipis ungu */
+
+    /* Netral utama */
     --lu-text: #111827;
     --lu-text-muted: #6B7280;
     --lu-border: #E5E7EB;
+    --lu-border-strong: #D1D5DB;           /* border lebih kontras untuk state hover */
     --lu-bg: #F9FAFB;
     --lu-card: #FFFFFF;
     --lu-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
 
-    /* #Bagian Mood Colors# */
-    /* Mood colors */
+    /* Skala slate (untuk teks/permukaan abu-abu netral) */
+    --lu-slate-50: #F8FAFC;
+    --lu-slate-100: #F1F5F9;
+    --lu-slate-200: #E2E8F0;
+    --lu-slate-500: #64748B;
+    --lu-slate-700: #334155;
+    --lu-slate-900: #0F172A;
+
+    /* Skala gray (variasi netral tambahan yang dipakai layout/modal) */
+    --lu-gray-100: #F3F4F6;
+    --lu-gray-300: #D1D5DB;
+    --lu-gray-700: #374151;
+
+    /* Tombol pill gelap */
+    --lu-btn-pill-bg: #1F2937;
+    --lu-btn-pill-hover: #111827;
+
+    /* #Komponen Token Status (success / warning / danger / info)# */
+    /* Success / sehat */
+    --lu-success: #10B981;
+    --lu-success-strong: #059669;
+    --lu-success-deep: #047857;
+    --lu-success-soft: #ECFDF5;
+    --lu-success-tint: #D1FAE5;
+    --lu-success-border: #A7F3D0;
+    --lu-success-text: #065F46;
+
+    /* Warning / berisiko */
+    --lu-warning: #F59E0B;
+    --lu-warning-strong: #D97706;
+    --lu-warning-soft: #FFFBEB;
+    --lu-warning-tint: #FEF3C7;
+    --lu-warning-border: #FDE68A;
+    --lu-warning-text: #92400E;
+    --lu-warning-text-strong: #B45309;
+
+    /* Danger / bahaya */
+    --lu-danger: #EF4444;
+    --lu-danger-soft: #FEF2F2;
+    --lu-danger-tint: #FEE2E2;
+    --lu-danger-border: #FECACA;
+    --lu-danger-text: #B91C1C;
+    --lu-danger-text-deep: #991B1B;
+
+    /* Info (biru) */
+    --lu-info: #2563EB;
+    --lu-info-soft: #EFF6FF;
+    --lu-info-tint: #DBEAFE;
+    --lu-info-border: #93C5FD;
+    --lu-info-text: #1D4ED8;
+
+    /* #Komponen Token Radius# */
+    --lu-radius-sm: 6px;
+    --lu-radius-md: 8px;
+    --lu-radius-lg: 12px;
+    --lu-radius-xl: 16px;
+    --lu-radius-2xl: 20px;
+    --lu-radius-3xl: 24px;
+    --lu-radius-pill: 999px;
+
+    /* #Komponen Token Gradient Hero# */
+    --lu-gradient-hero-primary: linear-gradient(135deg, #5B21B6 0%, #7C3AED 55%, #8B5CF6 100%);
+    --lu-gradient-hero-indigo: linear-gradient(135deg, #312E81 0%, #4338CA 100%);
+    --lu-gradient-hero-deep: linear-gradient(160deg, #4C1D95 0%, #4F46E5 42%, #7C3AED 75%, #6D28D9 100%);
+
+    /* #Komponen Mood Colors# */
     --mood-overjoyed: #D9F99D;
     --mood-happy: #A3E635;
     --mood-calm: #93C5FD;

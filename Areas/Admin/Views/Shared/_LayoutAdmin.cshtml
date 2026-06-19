@@ -21,8 +21,10 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
+    <link rel="stylesheet" href="~/css/admin/admin-overrides.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/admin-desktop-guard.css" asp-append-version="true" />
 </head>
-<body>
+<body class="admin-body">
     <div class="admin-shell app-shell" id="appShell">
         <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 

@@ -9,8 +9,12 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0; overflow-y: auto;
+    min-height: 0;
+    overflow-y: auto;
     gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 /* #Komponen Hero# */
@@ -425,31 +429,349 @@
 .pd-action-link--blue:hover { background: #DBEAFE; }
 
 /* #Bagian Responsif# */
-/* Responsive */
-/* #Bagian Media Query# */
-@media (max-width: 900px) {
-    /* #Bagian Single Column Stacked Layout Let The Outer Halaman Scroll Naturally# */
-    /* single-column stacked layout ΓÇö let the outer page scroll naturally */
+@media (max-width: 991.98px) {
+    .pd-back {
+        font-size: 11px;
+        margin-bottom: 8px;
+        max-width: 100%;
+    }
+
+    .pd-page {
+        gap: 10px;
+        overflow: visible;
+    }
+
+    .pd-hero {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .pd-hero-inner {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "av id"
+            "status status"
+            "stats stats";
+        gap: 10px;
+        align-items: start;
+    }
+
+    .pd-hero-av {
+        grid-area: av;
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+        border-width: 2px;
+    }
+
+    .pd-hero-id {
+        grid-area: id;
+        gap: 3px;
+    }
+
+    .pd-hero-eyebrow {
+        font-size: 8px;
+    }
+
+    .pd-hero-name {
+        font-size: 0.875rem;
+    }
+
+    .pd-hero-meta {
+        gap: 8px;
+        margin-top: 0;
+    }
+
+    .pd-hero-meta span {
+        font-size: 9px;
+        gap: 3px;
+    }
+
+    .pd-hero-status-wrap {
+        grid-area: status;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .pd-status-badge {
+        font-size: 10px;
+        padding: 4px 10px;
+        gap: 5px;
+    }
+
+    .pd-status-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .pd-hero-status-label {
+        font-size: 8px;
+    }
+
+    .pd-hero-stats {
+        grid-area: stats;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        justify-content: stretch;
+    }
+
+    .pd-hero-stat {
+        min-width: 0;
+        padding: 6px 8px;
+        border-radius: 8px;
+    }
+
+    .pd-hero-stat-val {
+        font-size: 0.875rem;
+    }
+
+    .pd-hero-stat-lbl {
+        font-size: 8px;
+        white-space: normal;
+        line-height: 1.2;
+    }
+
     .pd-grid {
         grid-template-columns: 1fr;
-        grid-template-rows: auto;   /* rows size to content again */
+        grid-template-rows: auto;
+        align-items: start;
+        flex: unset;
+        min-height: unset;
+        gap: 10px;
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+    }
+
+    .pd-sidebar,
+    .pd-main {
+        overflow-y: visible;
+        min-height: unset;
+        padding-bottom: 0;
+        gap: 10px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .pd-card {
+        flex-shrink: 1;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .pd-card-head {
+        padding: 10px 12px 8px;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .pd-card-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+    }
+
+    .pd-card-title {
+        font-size: 11px;
+    }
+
+    .pd-card-date {
+        font-size: 9px;
+        width: 100%;
+    }
+
+    .pd-card-body {
+        padding: 0 12px 12px;
+        gap: 8px;
+    }
+
+    .pd-field-label {
+        font-size: 8px;
+    }
+
+    .pd-field-val {
+        font-size: 11px;
+    }
+
+    .pd-section-label {
+        font-size: 8px;
+    }
+
+    .pd-journal-box {
+        padding: 10px 12px;
+        font-size: 11px;
+        border-radius: 8px;
+    }
+
+    .pd-complaint-box {
+        padding: 8px 10px;
+        font-size: 11px;
+        border-radius: 8px;
+    }
+
+    .pd-period-btns {
+        width: 100%;
+        justify-content: stretch;
+        margin-top: 4px;
+    }
+
+    .pd-period-btn {
+        flex: 1;
+        padding: 4px 6px;
+        font-size: 9px;
+        text-align: center;
+    }
+
+    .pd-mood-legend {
+        margin-top: 8px;
+        padding: 8px 0;
+        border-radius: 8px;
+    }
+
+    .pd-mood-leg-item {
+        padding: 0 8px;
+        gap: 2px;
+    }
+
+    .pd-mood-leg-val {
+        font-size: 0.875rem;
+    }
+
+    .pd-mood-leg-lbl {
+        font-size: 8px;
+    }
+
+    .pd-mood-leg-divider {
+        height: 24px;
+    }
+
+    .pd-ws-num {
+        font-size: 1.25rem;
+    }
+
+    .pd-ws-label {
+        font-size: 10px;
+    }
+
+    .pd-session-time {
+        font-size: 12px;
+    }
+
+    .pd-session-note {
+        font-size: 10px;
+    }
+
+    .pd-action-link {
+        padding: 8px 10px;
+        font-size: 11px;
+        border-radius: 8px;
+    }
+
+    .pd-bottom-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .pd-empty-mood {
+        padding: 24px 0;
+        min-height: 100px;
+        gap: 6px;
+    }
+
+    .pd-empty-mood svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .pd-empty-mood p {
+        font-size: 11px;
+    }
+
+    .app-content > .pd-page .pd-mood-card .pd-card-body {
+        min-height: unset;
+        gap: 8px;
+    }
+
+    .app-content > .pd-page .pd-mood-card .pd-chart-wrap {
+        min-height: 140px;
+        height: 160px;
+    }
+
+    .app-content > .pd-page .pd-empty-mood {
+        min-height: 120px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .pd-hero {
+        padding: 10px 12px;
+    }
+
+    .pd-hero-av {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .pd-hero-name {
+        font-size: 0.8125rem;
+    }
+
+    .pd-hero-meta span {
+        font-size: 8px;
+    }
+
+    .pd-hero-stat-val {
+        font-size: 0.8125rem;
+    }
+
+    .pd-card-head {
+        padding: 8px 10px 6px;
+    }
+
+    .pd-card-body {
+        padding: 0 10px 10px;
+    }
+
+    .app-content > .pd-page .pd-mood-card .pd-chart-wrap {
+        min-height: 120px;
+        height: 140px;
+    }
+}
+
+/* Legacy breakpoints — digantikan aturan di atas */
+@media (max-width: 900px) {
+    .pd-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
         align-items: start;
         flex: unset;
         min-height: unset;
     }
-    .pd-sidebar, .pd-main {
-        overflow-y: visible;        /* no inner scroll on mobile ΓÇö outer scrolls */
+
+    .pd-sidebar,
+    .pd-main {
+        overflow-y: visible;
         min-height: unset;
         padding-bottom: 0;
     }
-    .pd-card { flex-shrink: 1; }
-    .pd-hero-inner { flex-wrap: wrap; gap: 14px; }
-    .pd-hero-stats { width: 100%; justify-content: flex-end; }
+
+    .pd-card {
+        flex-shrink: 1;
+    }
 }
-/* #Bagian Media Query# */
+
 @media (max-width: 600px) {
-    .pd-bottom-row { grid-template-columns: 1fr; }
-    .pd-hero-status-wrap { width: 100%; flex-direction: row; justify-content: flex-start; gap: 10px; }
+    .pd-bottom-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ

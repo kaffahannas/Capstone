@@ -1,5 +1,5 @@
 /* #Bagian Profil Index HR# */
-﻿.hrpf-page {
+.hrpf-page {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -317,11 +317,130 @@
 }
 
 /* #Bagian Media Query# */
-@media (max-width: 900px) {
+@media (max-width: 991.98px) {
     .hrpf-grid { grid-template-columns: 1fr; }
     .hrpf-fields--2col { grid-template-columns: 1fr; }
-    .hrpf-hero-inner { padding: 24px 20px; }
-    .hrpf-hero-stats { width: 100%; justify-content: flex-start; }
+    .hrpf-hero {
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+
+    .hrpf-hero-inner {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "avatar identity"
+            "stats stats";
+        align-items: start;
+        gap: 10px 12px;
+        padding: 12px 14px;
+    }
+
+    .hrpf-av-wrap {
+        grid-area: avatar;
+        align-self: start;
+    }
+
+    .hrpf-hero-id {
+        grid-area: identity;
+        min-width: 0;
+    }
+
+    .hrpf-hero-stats {
+        grid-area: stats;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+        align-self: stretch;
+    }
+
+    .hrpf-stat {
+        padding: 6px 4px;
+        min-width: 0;
+        border-radius: 8px;
+        gap: 2px;
+    }
+
+    .hrpf-stat-val {
+        font-size: 0.875rem;
+        max-width: none;
+    }
+
+    .hrpf-stat-val--sm {
+        font-size: 0.6875rem;
+        font-weight: 700;
+    }
+
+    .hrpf-stat-lbl {
+        font-size: 8px;
+        line-height: 1.2;
+        white-space: normal;
+    }
+
+    .hrpf-hero-name {
+        font-size: 0.9375rem;
+        white-space: normal;
+    }
+
+    .hrpf-hero-dept {
+        font-size: 10px;
+        margin-bottom: 8px;
+    }
+
+    .hrpf-hero-eyebrow {
+        font-size: 9px;
+        margin-bottom: 4px;
+    }
+
+    .hrpf-hero-row {
+        gap: 6px;
+    }
+
+    .hrpf-status {
+        padding: 4px 8px;
+        font-size: 9px;
+    }
+
+    .hrpf-status-dot {
+        width: 5px;
+        height: 5px;
+    }
+
+    .hrpf-badge-verified,
+    .hrpf-badge-pending {
+        padding: 4px 8px;
+        font-size: 9px;
+    }
+
+    .hrpf-edit-btn {
+        height: 28px;
+        padding: 0 10px;
+        font-size: 9px;
+        border-radius: 8px;
+    }
+
+    .hrpf-status-hint {
+        font-size: 9px;
+        margin-top: 6px;
+        line-height: 1.35;
+    }
+
+    .hrpf-av-ring {
+        inset: -3px;
+    }
+
+    .hrpf-av-fallback,
+    .hrpf-av-img {
+        width: 52px;
+        height: 52px;
+        font-size: 18px;
+        border-width: 2px;
+    }
+
+    .hrpf-card {
+        border-radius: 12px;
+    }
 }
 
 .hrpf-field {

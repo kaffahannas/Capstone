@@ -77,3 +77,19 @@
     font-weight: 600;
     cursor: pointer;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .as-card {
+        max-width: 100%;
+        padding: 16px;
+    }
+
+    .as-datetime-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .as-actions {
+        flex-direction: column;
+    }
+}

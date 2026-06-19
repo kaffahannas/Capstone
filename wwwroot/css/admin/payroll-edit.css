@@ -114,3 +114,36 @@
     padding: 12px;
     font-size: 15px;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .pay-edit-wrap {
+        max-width: none;
+        margin-top: 12px;
+    }
+
+    .pay-edit-hero {
+        padding: 16px 18px;
+        margin-bottom: 16px;
+        border-radius: 12px;
+    }
+
+    .pay-edit-hero-title {
+        font-size: 1.15rem;
+    }
+
+    .pay-edit-card {
+        padding: 16px;
+    }
+
+    .pay-edit-actions {
+        flex-direction: column;
+    }
+
+    .pay-btn-cancel,
+    .pay-btn-save {
+        flex: none;
+        width: 100%;
+        text-align: center;
+    }
+}

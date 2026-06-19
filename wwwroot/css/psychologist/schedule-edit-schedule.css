@@ -160,3 +160,38 @@
     box-shadow: 0 4px 12px rgba(67,56,202,0.3);
     transition: all 0.2s;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .es-wrap {
+        max-width: 100%;
+    }
+
+    .es-hero {
+        padding: 20px 16px;
+        margin-bottom: 20px;
+    }
+
+    .es-hero-title {
+        font-size: 1.25rem;
+    }
+
+    .es-card {
+        padding: 20px 16px;
+    }
+
+    .es-datetime-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .es-actions {
+        flex-direction: column;
+    }
+
+    .es-btn-cancel,
+    .es-btn-submit {
+        width: 100%;
+        text-align: center;
+    }
+}

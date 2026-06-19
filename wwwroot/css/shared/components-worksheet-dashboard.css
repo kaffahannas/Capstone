@@ -1,5 +1,5 @@
 /* #Bagian Worksheet Dashboard# */
-﻿/* Shared worksheet dashboard (Psy Monitor Worksheet) */
+/* Shared worksheet dashboard (Psy Monitor Worksheet) */
 .ws-hero {
     display: flex;
     align-items: center;
@@ -484,24 +484,153 @@
 }
 
 /* #Bagian Media Query# */
+@media (max-width: 991.98px) {
+    .ws-hero {
+        padding: 12px 14px;
+        gap: 10px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+
+    .ws-hero-title {
+        font-size: 0.875rem;
+    }
+
+    .ws-hero-sub,
+    .ws-hero-eyebrow {
+        font-size: 9px;
+    }
+
+    .ws-hero-btn {
+        height: 30px;
+        padding: 0 12px;
+        font-size: 10px;
+    }
+
+    .ws-hero-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+    }
+
+    .ws-stat-bubble {
+        min-width: 0;
+        padding: 6px 8px;
+        border-radius: 8px;
+    }
+
+    .ws-stat-value {
+        font-size: 0.875rem;
+    }
+
+    .ws-stat-label {
+        font-size: 8px;
+        white-space: normal;
+    }
+
+    .ws-toolbar {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        gap: 8px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ws-search-wrap {
+        flex: none;
+        width: 100%;
+        max-width: none;
+        height: 32px;
+        min-height: 32px;
+        max-height: 32px;
+        padding: 6px 10px;
+    }
+
+    .ws-search-input {
+        font-size: 11px;
+        line-height: 1.2;
+        height: auto;
+        min-height: 0;
+    }
+
+    .ws-filter-tabs {
+        flex: none;
+        width: 100%;
+    }
+
+    .ws-add-btn {
+        width: 100%;
+        height: 32px;
+        justify-content: center;
+    }
+}
+
 @media (max-width: 900px) {
-    .ws-hero { padding: 20px 18px; gap: 16px; }
-    .ws-hero-title { font-size: 20px; }
-    .ws-hero-stats { gap: 8px; }
-    .ws-stat-bubble { padding: 10px 14px; min-width: 64px; }
-    .ws-stat-value { font-size: 18px; }
+    .ws-hero { padding: 12px 14px; gap: 10px; }
+    .ws-hero-title { font-size: 0.875rem; }
+    .ws-hero-stats { gap: 6px; }
+    .ws-stat-bubble { padding: 6px 8px; min-width: 0; }
+    .ws-stat-value { font-size: 0.875rem; }
     .ws-toolbar { gap: 8px; }
 }
 
 /* #Bagian Media Query# */
 @media (max-width: 700px) {
-    .ws-hero-stats { width: 100%; justify-content: space-between; }
-    .ws-stat-bubble { flex: 1; }
-    .ws-toolbar { flex-direction: column; align-items: stretch; }
-    .ws-search-wrap { width: 100%; box-sizing: border-box; }
-    .ws-search-input { width: 100%; flex: 1; }
-    .ws-add-btn { width: 100%; justify-content: center; }
-    .ws-task-card { gap: 10px; padding: 14px 14px; }
+    .ws-hero-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .ws-stat-bubble {
+        flex: unset;
+        width: 100%;
+    }
+
+    .ws-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .ws-search-wrap {
+        flex: none;
+        width: 100%;
+        max-width: none;
+        height: 32px;
+        min-height: 32px;
+        max-height: 32px;
+        padding: 6px 10px;
+        box-sizing: border-box;
+    }
+
+    .ws-search-input {
+        width: 100%;
+        flex: 1;
+        font-size: 11px;
+        line-height: 1.2;
+        min-height: 0;
+    }
+
+    .ws-filter-tabs {
+        flex: none;
+        width: 100%;
+    }
+
+    .ws-add-btn {
+        width: 100%;
+        justify-content: center;
+        height: 32px;
+        font-size: 10px;
+    }
+
+    .ws-filter-tab {
+        font-size: 9px;
+        padding: 5px 8px;
+    }
+
+    .ws-task-card { gap: 8px; padding: 10px 12px; }
     .ws-task-right { flex-direction: column; align-items: flex-end; gap: 6px; }
     .ws-status-badge { display: none; }
 }

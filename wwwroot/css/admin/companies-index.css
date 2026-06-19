@@ -65,3 +65,32 @@
     font-size: 12px;
     color: var(--adm-muted);
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .cmp-company-cell {
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .cmp-company-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .cmp-company-name {
+        font-size: 13px;
+        word-break: break-word;
+    }
+
+    .cmp-company-address {
+        font-size: 11px;
+        word-break: break-word;
+    }
+
+    .cmp-th-company,
+    .cmp-th-action {
+        width: auto;
+    }
+}

@@ -41,3 +41,25 @@
     font-size: 12px;
     color: var(--adm-muted);
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .set-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        max-width: none;
+    }
+
+    .set-profile-banner {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+    }
+
+    .set-profile-avatar {
+        width: 42px;
+        height: 42px;
+        font-size: 16px;
+    }
+}

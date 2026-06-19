@@ -588,4 +588,12 @@
     .req-card-parties { flex-direction: column; gap: 8px; }
     .req-party-sep { display: none; }
     .req-detail-label { min-width: 80px; }
+    .req-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+    .req-action-btns { flex-direction: column; align-items: stretch; }
+    .req-action-btns .req-btn { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 479.98px) {
+    .req-hero { padding: 16px 12px; }
+    .req-card { padding: 14px 12px; }
 }

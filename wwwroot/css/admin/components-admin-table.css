@@ -67,3 +67,48 @@
     border-radius: var(--adm-radius-pill);
     object-fit: cover;
 }
+
+/* #Bagian Responsif Mobile Tabel# */
+@media (max-width: 991.98px) {
+    .adm-table-wrap {
+        max-width: 100%;
+        min-width: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .adm-table {
+        min-width: 32rem;
+    }
+
+    .adm-user-cell {
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .adm-avatar-sm {
+        width: 30px;
+        height: 30px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .adm-table-wrap {
+        border-radius: 12px;
+    }
+
+  /* Tables inside cards without wrap — enable horizontal scroll */
+    .apr-request-card,
+    .asg-workload-card {
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .apr-request-table,
+    .asg-workload-table {
+        min-width: 36rem;
+    }
+}

@@ -75,7 +75,10 @@
     <link rel="stylesheet" href="~/css/hr/components-hr-psy-modal.css" asp-append-version="true" />
 
     @await RenderSectionAsync("Head", required: false)
-
+    <link rel="stylesheet" href="~/css/hr/components-hr-mobile-text.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/components-hr-mobile-compact.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/hr-mobile-overrides.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/hr-desktop-guard.css" asp-append-version="true" />
 </head>
 
 <body class="hr-body">
@@ -228,7 +231,7 @@
 
                 </button>
 
-                <div>
+                <div class="hr-topbar-title">
 
                     <h2 class="greeting">@greeting, @fullName 👋</h2>
 

@@ -37,12 +37,10 @@
 
 @if (!Model.Items.Any())
 {
-    <div class="adm-table-wrap">
-        <div class="adm-empty">
-            <div class="adm-empty-icon">✅</div>
-            <div class="adm-empty-title">Tidak ada akun menunggu persetujuan</div>
-            <div class="adm-empty-sub">Psikolog baru akan muncul di sini setelah menyelesaikan onboarding.</div>
-        </div>
+    <div class="adm-empty-state-premium apr-empty-premium">
+        <div class="icon apr-empty-premium-icon">✅</div>
+        <h3>Tidak ada akun menunggu persetujuan</h3>
+        <p>Psikolog baru akan muncul di sini setelah menyelesaikan onboarding.</p>
     </div>
 }
 else

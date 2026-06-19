@@ -1,0 +1,154 @@
+/* #Bagian Mobile Text Scale — teks lebih kecil, layout desktop tetap# */
+
+@media (max-width: 991.98px) {
+    body.patient-body {
+        font-size: 12px;
+    }
+
+    body.patient-body .greeting {
+        font-size: 0.875rem;
+    }
+
+    body.patient-body .brand-name {
+        font-size: 14px;
+    }
+
+    body.patient-body .side-nav-item {
+        font-size: 12px;
+    }
+
+    /* Hero halaman */
+    body.patient-body .jdw-hero-title,
+    body.patient-body .tasks-hero-title,
+    body.patient-body .psy-hero-title {
+        font-size: 0.8125rem;
+    }
+
+    body.patient-body .jdw-hero-sub,
+    body.patient-body .tasks-hero-sub,
+    body.patient-body .psy-hero-sub {
+        font-size: 10px;
+    }
+
+    body.patient-body .jdw-hero-btn {
+        font-size: 11px;
+        padding: 7px 14px;
+    }
+
+    body.patient-body .sub-hero-title {
+        font-size: 0.9375rem;
+    }
+
+    body.patient-body .sub-hero-sub {
+        font-size: 10px;
+    }
+
+    /* Langganan — diatur di subscription-index.css */
+
+    /* Jadwal, Tugas, Psikolog, Statistik — diatur di masing-masing *-index.css */
+
+    /* Profil — diatur di profile-index.css */
+
+    /* Dashboard */
+    body.patient-body .db-hero-tagline {
+        font-size: 0.8125rem;
+    }
+
+    body.patient-body .db-hero-date {
+        font-size: 9px;
+    }
+
+    body.patient-body .db-chip-info strong {
+        font-size: 12px;
+    }
+
+    body.patient-body .db-chip-info span {
+        font-size: 8px;
+    }
+
+    body.patient-body .db-cal-month {
+        font-size: 11px;
+    }
+
+    body.patient-body .db-cal-select {
+        font-size: 10px;
+    }
+
+    body.patient-body .db-cal-day-dow {
+        font-size: 8px;
+    }
+
+    body.patient-body .db-cal-day-num {
+        font-size: 10px;
+    }
+
+    body.patient-body .db-cal-legend {
+        font-size: 8px;
+    }
+
+    body.patient-body .db-card-title {
+        font-size: 11px;
+    }
+
+    body.patient-body .db-empty p {
+        font-size: 10px;
+    }
+
+    body.patient-body .db-mood-label {
+        font-size: 11px;
+    }
+
+    body.patient-body .db-task-name {
+        font-size: 11px;
+    }
+
+    body.patient-body .db-task-meta,
+    body.patient-body .db-session-time {
+        font-size: 9px;
+    }
+
+    body.patient-body .db-session-name {
+        font-size: 11px;
+    }
+
+    body.patient-body .db-journal-preview h4 {
+        font-size: 11px;
+    }
+
+    body.patient-body .db-journal-preview p {
+        font-size: 10px;
+    }
+
+    /* Tombol umum */
+    body.patient-body .btn-primary,
+    body.patient-body .btn-secondary,
+    body.patient-body .btn-pill {
+        font-size: 11px;
+    }
+
+    body.patient-body .lu-card-title {
+        font-size: 11px;
+    }
+
+    /* Edit profil — diatur di profile-edit.css */
+}
+
+@media (max-width: 639.98px) {
+    body.patient-body {
+        font-size: 11px;
+    }
+
+    body.patient-body .greeting {
+        font-size: 0.8125rem;
+    }
+
+    body.patient-body .jdw-hero-title,
+    body.patient-body .tasks-hero-title,
+    body.patient-body .psy-hero-title {
+        font-size: 0.75rem;
+    }
+
+    body.patient-body .st-tab {
+        font-size: 0.5rem;
+    }
+}

@@ -318,11 +318,12 @@
 /* ── Division grid ── */
 .stat-division-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 340px));
+    justify-content: start;
     gap: 14px;
     padding-bottom: 20px;
-    flex: 1;           /* grow to fill remaining viewport height */
-    align-content: start; /* items stay at top, don't stretch to fill */
+    flex: 1;
+    align-content: start;
 }
 
 /* #Komponen Divisi Kartu Each Perusahaan# */

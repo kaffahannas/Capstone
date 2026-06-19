@@ -128,7 +128,9 @@
     </div>
 }
 
+@section Overlays {
 @if (Model.HasActivePsychologist)
 {
     @await Html.PartialAsync("_RequestSessionModal")
+}
 }

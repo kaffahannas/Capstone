@@ -37,3 +37,85 @@
     font-size: 12px;
     margin-left: 6px;
 }
+
+/* #Komponen Empty State Persetujuan# */
+.apr-empty-premium,
+.adm-empty-state-premium.apr-empty-premium {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 48px 32px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--adm-card);
+    border-radius: var(--adm-radius);
+    border: 1px solid var(--adm-border);
+    box-shadow: var(--adm-shadow-sm);
+}
+
+.apr-empty-premium-icon,
+.apr-empty-premium .icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    line-height: 1;
+}
+
+.apr-empty-premium h3 {
+    margin: 0 0 8px;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--adm-text);
+}
+
+.apr-empty-premium p {
+    margin: 0 auto;
+    color: var(--adm-muted);
+    font-size: 14px;
+    line-height: 1.55;
+    max-width: 420px;
+}
+
+/* #Bagian Responsif Mobile Tab# */
+@media (max-width: 991.98px) {
+    .apr-tab-badge {
+        font-size: 10px;
+        padding: 1px 5px;
+        margin-left: 4px;
+    }
+
+    .apr-empty-premium,
+    .adm-empty-state-premium.apr-empty-premium {
+        padding: 28px 20px;
+        min-height: auto;
+        border-radius: 14px;
+        border-style: dashed;
+        border-color: #D1D5DB;
+    }
+
+    .apr-empty-premium-icon,
+    .apr-empty-premium .icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .apr-empty-premium h3 {
+        font-size: 15px;
+    }
+
+    .apr-empty-premium p {
+        font-size: 12px;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .adm-tabs .nav-badge,
+    .apr-tab-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+        margin-left: 3px;
+    }
+}

@@ -17,7 +17,10 @@
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 10px 16px;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .wh-search svg {

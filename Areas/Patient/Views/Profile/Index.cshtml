@@ -355,19 +355,21 @@
     </div>
 </div>
 
+@section Overlays {
 <!-- Mood Tracker Modal (same as Beranda) -->
-<div class="hrpf-modal-overlay" id="moodModal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle">
+<div class="hrpf-modal-overlay" id="moodModal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle" hidden aria-hidden="true">
     <div class="hrpf-modal db-modal--mood">
         <div class="hrpf-modal-head">
             <div class="hrpf-modal-head-icon">😊</div>
             <h2 class="hrpf-modal-title" id="moodModalTitle">Lacak Mood</h2>
-            <button type="button" class="hrpf-modal-close" onclick="closeMoodModal()" aria-label="Tutup">&times;</button>
+            <button type="button" class="hrpf-modal-close" data-hrpf-modal-close aria-label="Tutup">&times;</button>
         </div>
         <div class="hrpf-modal-body db-modal-body--iframe">
             <iframe id="moodIframe" src="" class="db-mood-iframe" title="Lacak Mood"></iframe>
         </div>
     </div>
 </div>
+}
 
 @section Scripts {
     <script src="~/js/shared/animate-bars.js" asp-append-version="true"></script>

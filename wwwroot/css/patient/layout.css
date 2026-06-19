@@ -1,5 +1,5 @@
 /* #Bagian Layout Pasien# */
-﻿/* Patient app shell — sidebar, main, viewport shells */
+/* Patient app shell — sidebar, main, viewport shells */
 * { box-sizing: border-box; }
 
 body.patient-body,
@@ -12,20 +12,23 @@ body {
 }
 
 body.patient-body {
-    overflow-x: hidden;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
     max-width: 100%;
 }
 
 /* #Komponen App Shell Sidebar + Main# */
 /* App shell: sidebar + main (desktop grid; mobile = site.css offcanvas) */
-.app-shell {
+body.patient-body .app-shell {
     display: grid;
     grid-template-columns: 240px 1fr;
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .app-sidebar {
@@ -90,7 +93,7 @@ body.patient-body {
     transition: background 0.18s, color 0.18s;
 }
 .side-nav-item svg { flex-shrink: 0; }
-.side-nav-item:hover { background: #F3F4F6; color: var(--lu-text); }
+.side-nav-item:hover { background: var(--lu-gray-100); color: var(--lu-text); }
 .side-nav-item.active {
     background: var(--lu-primary-soft);
     color: var(--lu-primary);
@@ -112,9 +115,9 @@ body.patient-body {
     justify-content: center;
     gap: 10px;
     padding: 10px 14px;
-    background: #FEF2F2;
-    color: #B91C1C;
-    border: 1px solid #FECACA;
+    background: var(--lu-danger-soft);
+    color: var(--lu-danger-text);
+    border: 1px solid var(--lu-danger-border);
     border-radius: 10px;
     font-weight: 600;
     font-size: 14px;
@@ -122,14 +125,16 @@ body.patient-body {
     cursor: pointer;
     transition: background 0.18s, color 0.18s;
 }
-.logout-btn:hover { background: #FEE2E2; color: #991B1B; }
+.logout-btn:hover { background: var(--lu-danger-tint); color: var(--lu-danger-text-deep); }
 
 /* #Bagian Main Content Area# */
 /* â”€â”€â”€â”€â”€ Main content area â”€â”€â”€â”€â”€ */
-.app-main {
+body.patient-body .app-main {
     padding: 24px 32px;
     flex: 1;
     min-height: 0;
+    height: 100%;
+    max-height: 100dvh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -218,33 +223,107 @@ body:has(.st-layout) {
 }
 /* #Bagian Responsif Mobile# */
 @media (max-width: 991.98px) {
-    .app-shell {
-        display: block;
-        min-height: 100dvh;
-        height: auto;
-        overflow: visible;
+    body.patient-body:not(.sidebar-open) {
+        height: 100dvh;
+        overflow: hidden;
     }
 
-    .app-main {
+    body.patient-body.sidebar-open {
+        overflow: hidden;
+    }
+
+    /* Must match body.patient-body specificity — grid 240px+1fr leaves app-main in a ~240px column */
+    body.patient-body .app-shell {
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: none;
+        min-height: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    body.patient-body .app-shell > .sidebar-backdrop {
+        flex: none;
+    }
+
+    body.patient-body .app-main {
+        flex: 1 1 auto;
         width: 100%;
         max-width: 100%;
         min-width: 0;
-        padding: 1rem;
+        min-height: 0;
+        height: auto;
+        max-height: none;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    body.patient-body .app-topbar {
+        margin-bottom: 8px;
+        flex-shrink: 0;
+        justify-content: flex-start;
+    }
+
+    body.patient-body .greeting {
+        font-size: 0.8125rem;
+    }
+
+    body.patient-body .app-content,
+    body.patient-body .app-content.lu-scroll-host {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        display: block;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Statistik — scroll ala dashboard, bukan viewport terkunci */
+    body.patient-body .app-main:has(.st-layout) {
+        padding: 10px 12px;
+    }
+
+    body.patient-body .app-content:has(.st-layout) {
+        overflow-y: auto;
+        display: block;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body.patient-body .st-layout {
+        height: auto;
+        max-height: none;
         overflow: visible;
     }
 
-    .app-topbar {
-        margin-bottom: 1rem;
-        flex-shrink: 0;
+    /* Halaman hero — lebar penuh seperti desktop */
+    body.patient-body .app-content:has(.jdw-page),
+    body.patient-body .app-content:has(.tasks-page),
+    body.patient-body .app-content:has(.psy-page),
+    body.patient-body .app-content:has(.sub-hero),
+    body.patient-body .app-content:has(.st-layout),
+    body.patient-body .app-content:has(.pf-page) {
+        max-width: none;
+        width: 100%;
     }
 
-    .greeting {
-        font-size: clamp(1.05rem, 4.5vw, 1.25rem);
-    }
-
-    .app-content {
-        overflow-y: visible;
-        overflow-x: hidden;
+    .jdw-page,
+    .tasks-page,
+    .psy-page {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     .app-shell:has(.st-layout) {
@@ -255,36 +334,29 @@ body:has(.st-layout) {
         overflow: hidden;
     }
 
-    .st-topbar {
-        flex-wrap: wrap;
-    }
-    .st-kpi-strip {
-        flex-wrap: wrap;
-        width: 100%;
-    }
-    .st-period-tabs {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
     .app-shell:has(.pf-page),
     .app-shell:has(.pf-edit-page) {
         display: flex;
         flex-direction: column;
-        min-height: 100dvh;
-        height: auto;
-        overflow: visible;
+        height: 100dvh;
+        max-height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
     }
 
     .app-main:has(.pf-page),
     .app-main:has(.pf-edit-page) {
         padding: 1rem;
+        flex: 1 1 auto;
+        min-height: 0;
         height: auto;
         max-height: none;
-        overflow: visible;
+        overflow: hidden;
     }
 
     .app-content:has(.pf-page) {
+        flex: 1 1 auto;
+        min-height: 0;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
@@ -372,4 +444,34 @@ body:has(.st-layout) {
 .app-content:has(.pf-edit-page) {
     max-width: none;
     width: 100%;
+}
+
+/* Patient modal overlay — fixed center (layout.css loads reliably) */
+body.patient-body .hrpf-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(17, 24, 39, .50);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+body.patient-body .hrpf-modal-overlay[hidden] {
+    display: none !important;
+}
+
+body.patient-body .hrpf-modal-overlay.is-open {
+    display: flex !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 10000 !important;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
 }

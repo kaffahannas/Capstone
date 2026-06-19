@@ -140,3 +140,51 @@
 .cmp-hr-email {
     color: var(--adm-text-secondary);
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .cmp-header-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .cmp-header-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .cmp-header-title {
+        font-size: 1.15rem;
+    }
+
+    .adm-mental-grid,
+    .cmp-mental-grid-spaced {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .adm-mental-card {
+        padding: 12px;
+    }
+
+    .cmp-empty-hr {
+        padding: 24px 16px;
+    }
+
+    .adm-card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .adm-mental-grid,
+    .cmp-mental-grid-spaced {
+        grid-template-columns: 1fr;
+    }
+}

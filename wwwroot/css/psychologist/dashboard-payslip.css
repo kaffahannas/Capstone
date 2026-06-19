@@ -419,4 +419,159 @@
 }
 
 /* #Bagian Responsif Mobile# */
-@media (max-width: 768px) { .pay-kpi-grid { grid-template-columns: 1fr; margin-bottom: 24px; gap: 16px; } .psy-payslip-page .pay-hero { padding-bottom: 36px; margin-bottom: 24px; } }
+@media (max-width: 991.98px) {
+    .psy-payslip-page {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .psy-payslip-page .pay-hero {
+        padding: 12px 14px 16px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+
+    .pay-hero-title {
+        font-size: 0.875rem;
+    }
+
+    .pay-hero-sub {
+        font-size: 10px;
+        max-width: none;
+        line-height: 1.4;
+    }
+
+    .pay-hero-eyebrow {
+        font-size: 8px;
+        margin-bottom: 4px;
+    }
+
+    .pay-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .pay-kpi--income {
+        grid-column: 1 / -1;
+    }
+
+    .pay-kpi {
+        padding: 8px 10px;
+        border-radius: 10px;
+    }
+
+    .pay-kpi-label {
+        font-size: 8px;
+        margin-bottom: 4px;
+    }
+
+    .pay-kpi-value,
+    .pay-kpi-value--md {
+        font-size: 1rem;
+    }
+
+    .pay-kpi-value--lg {
+        font-size: 1.125rem;
+    }
+
+    .pay-kpi-suffix {
+        font-size: 9px;
+        margin-top: 2px;
+    }
+
+    .pay-panel {
+        padding: 12px 14px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .pay-panel-title {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .pay-info-box,
+    .pay-warn {
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        font-size: 11px;
+        border-radius: 10px;
+    }
+
+    .pay-info-title {
+        font-size: 12px;
+    }
+
+    .pay-info-text {
+        font-size: 11px;
+    }
+
+    .pay-table-wrap {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0;
+    }
+
+    .pay-table {
+        min-width: 360px;
+        font-size: 11px;
+    }
+
+    .pay-th,
+    .pay-td {
+        padding: 8px 10px;
+    }
+
+    .pay-type-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+
+    .pay-empty {
+        padding: 24px 12px;
+    }
+
+    .pay-empty p {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 768px) {
+    .pay-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .psy-payslip-page .pay-hero {
+        padding: 10px 12px 14px;
+    }
+
+    .pay-kpi-value,
+    .pay-kpi-value--md {
+        font-size: 0.9375rem;
+    }
+
+    .pay-kpi-value--lg {
+        font-size: 1rem;
+    }
+
+    .pay-table {
+        min-width: 320px;
+        font-size: 10px;
+    }
+
+    .pay-th,
+    .pay-td {
+        padding: 6px 8px;
+    }
+}

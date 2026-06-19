@@ -135,12 +135,14 @@ else
 </div>
 </div>
 
+@section Overlays {
 @* #Komponen Modal Tugas# *@
 <div class="hrpf-modal-overlay" id="taskModalOverlay">
     <div class="hrpf-modal tasks-modal" id="taskModalContainer">
         <!-- Modal content loaded via AJAX -->
     </div>
 </div>
+}
 
 @section Scripts {
     <script>
@@ -150,7 +152,9 @@ else
                 if (!res.ok) throw new Error('Network error');
                 const html = await res.text();
                 document.getElementById('taskModalContainer').innerHTML = html;
-                document.getElementById('taskModalOverlay').classList.add('is-open');
+                const overlay = document.getElementById('taskModalOverlay');
+                overlay.classList.add('is-open');
+                document.body.classList.add('lu-scroll-lock');
                 
                 const scripts = document.getElementById('taskModalContainer').getElementsByTagName('script');
                 for (let i = 0; i < scripts.length; i++) {
@@ -163,6 +167,7 @@ else
         }
         function closeTaskModal() {
             document.getElementById('taskModalOverlay').classList.remove('is-open');
+            document.body.classList.remove('lu-scroll-lock');
         }
     </script>
 }

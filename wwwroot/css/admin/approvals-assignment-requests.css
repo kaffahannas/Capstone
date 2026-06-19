@@ -44,7 +44,11 @@
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .apr-request-table {
@@ -156,4 +160,42 @@
     font-weight: 600;
     width: 70px;
     text-align: center;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .apr-page-header {
+        margin-bottom: 14px;
+    }
+
+    .apr-page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .apr-empty-premium {
+        padding: 40px 16px;
+    }
+
+    .apr-request-th,
+    .apr-request-td {
+        padding: 12px;
+        font-size: 12px;
+    }
+
+    .apr-request-td--right {
+        min-width: 0;
+    }
+
+    .apr-action-row {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .apr-btn-approve,
+    .apr-btn-reject {
+        width: auto;
+        min-width: 64px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
 }

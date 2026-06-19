@@ -325,3 +325,91 @@
     font-size: 12px;
     font-weight: 600;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .asg-page-header {
+        margin-bottom: 14px;
+    }
+
+    .asg-page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .asg-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .asg-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .asg-tab {
+        flex-shrink: 0;
+        white-space: nowrap;
+        font-size: 12px;
+        padding: 7px 12px;
+    }
+
+    .asg-tab-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+        margin-left: 3px;
+    }
+
+    .asg-request-card {
+        padding: 16px;
+        margin-bottom: 14px;
+    }
+
+    .asg-request-header {
+        gap: 12px;
+        margin-bottom: 14px;
+        padding-bottom: 14px;
+    }
+
+    .asg-patient-name {
+        font-size: 16px;
+    }
+
+    .asg-assign-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .asg-btn-assign,
+    .asg-btn-dismiss {
+        width: 100%;
+        height: auto;
+        padding: 10px 16px;
+    }
+
+    .asg-workload-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .asg-workload-th,
+    .asg-workload-td {
+        padding: 12px;
+        font-size: 12px;
+    }
+
+    .adm-empty-state-premium {
+        padding: 40px 16px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .asg-tab {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}

@@ -73,6 +73,16 @@
     object-fit: cover;
     background: #F1F5F9;
 }
+
+.pf-edit-photo-preview--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--lu-primary);
+    background: var(--lu-primary-soft);
+}
 .pf-edit-photo-change {
     position: absolute;
     bottom: 0;
@@ -369,13 +379,224 @@
     padding-top: 4px;
 }
 
-/* #Bagian Responsif Mobile# */
-@media (max-width: 768px) {
+/* #Bagian Responsif Mobile — layout vertikal, form terbaca# */
+@media (max-width: 991.98px) {
+    .pf-edit-page {
+        padding: 0;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+
+    .pf-edit-form {
+        max-width: none;
+        width: 100%;
+        max-height: 100dvh;
+        height: 100dvh;
+        border-radius: 0;
+        padding: 12px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        box-sizing: border-box;
+    }
+
+    .pf-edit-header {
+        margin-bottom: 12px;
+    }
+
+    .pf-edit-header-left {
+        align-items: flex-start;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .pf-edit-back-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        flex-shrink: 0;
+        border-radius: 8px;
+    }
+
+    .pf-edit-page-title {
+        font-size: 15px;
+        line-height: 1.2;
+    }
+
+    .pf-edit-page-sub {
+        font-size: 10px;
+        line-height: 1.35;
+        margin-top: 2px;
+    }
+
     .pf-edit-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
+        min-width: 0;
     }
+
+    .pf-edit-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .pf-edit-photo-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+        padding: 12px 14px;
+    }
+
+    .pf-edit-photo-wrap-centered {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .pf-edit-photo-preview-wrap {
+        width: 72px;
+        height: 72px;
+        border-width: 2px;
+    }
+
+    .pf-edit-photo-preview--placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--lu-primary);
+        background: var(--lu-primary-soft);
+    }
+
+    .pf-edit-photo-change {
+        width: 28px;
+        height: 28px;
+        border-width: 2px;
+        font-size: 11px;
+    }
+
+    .pf-edit-photo-hint {
+        font-size: 10px;
+        line-height: 1.35;
+    }
+
+    .pf-edit-photo-limit {
+        font-size: 9px;
+        margin-top: 4px;
+    }
+
+    .pf-edit-side-card,
+    .pf-edit-tips-card {
+        padding: 12px 14px;
+    }
+
+    .pf-edit-side-label,
+    .pf-edit-tips-title {
+        font-size: 10px;
+        margin-bottom: 6px;
+    }
+
+    .pf-edit-tips-list {
+        font-size: 10px;
+        line-height: 1.45;
+        padding-left: 14px;
+    }
+
+    .pf-edit-b2b-name {
+        font-size: 12px;
+    }
+
+    .pf-edit-b2b-sub,
+    .pf-edit-b2b-note,
+    .pf-edit-referral-note {
+        font-size: 10px;
+    }
+
+    .pf-edit-main {
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .pf-edit-panel {
+        padding: 14px;
+        border-radius: 12px;
+        min-width: 0;
+    }
+
+    .pf-edit-panel-head {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        gap: 8px;
+    }
+
+    .pf-edit-panel-ico {
+        font-size: 16px;
+    }
+
+    .pf-edit-panel-title {
+        font-size: 13px;
+    }
+
+    .pf-edit-panel-note {
+        font-size: 10px;
+    }
+
+    .pf-label {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .pf-input,
+    .pf-select {
+        font-size: 12px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .pf-input[type="date"] {
+        min-height: 38px;
+    }
+
+    .pf-field-error {
+        font-size: 10px;
+    }
+
+    .pf-edit-field-mb {
+        margin-bottom: 12px;
+    }
+
     .pf-edit-row-2 {
         grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .pf-edit-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 8px;
+        padding-top: 4px;
+    }
+
+    .pf-edit-actions .pf-btn {
+        width: 100%;
+        font-size: 13px;
+        padding: 11px 16px;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .pf-edit-form {
+        padding: 10px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .pf-edit-tips-card {
+        display: none;
     }
 }
 .profile-header {

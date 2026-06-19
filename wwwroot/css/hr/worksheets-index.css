@@ -1,5 +1,5 @@
 /* #Bagian Worksheet Index HR# */
-﻿.hrws-page {
+.hrws-page {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -233,4 +233,59 @@
 
 .hrws-notes-textarea {
     resize: vertical;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .hrws-page {
+        gap: 10px;
+    }
+
+    .hrws-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .hrws-filter-tabs {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 6px;
+    }
+
+    .hrws-filter-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hrws-tab {
+        flex-shrink: 0;
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+
+    .hrws-search-form {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .hrws-search-wrap {
+        width: 100%;
+    }
+
+    .hrws-search {
+        width: 100%;
+        height: 32px;
+        box-sizing: border-box;
+        font-size: 12px;
+    }
+
+    .hrws-empty {
+        padding: 32px 16px;
+        border-radius: 12px;
+    }
 }

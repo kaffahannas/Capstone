@@ -32,6 +32,9 @@
     flex-direction: column;
     gap: 16px;
     margin-bottom: 24px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .usr-card {
@@ -44,6 +47,10 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     border: 1px solid #F3F4F6;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .usr-card:hover {
@@ -76,6 +83,8 @@
 .usr-info {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    flex: 1;
 }
 
 .usr-name-primary {
@@ -136,4 +145,102 @@
     justify-content: flex-end;
     gap: 8px;
     padding-bottom: 40px;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .usr-search-input {
+        height: 36px;
+        min-height: 36px;
+        max-height: 36px;
+        box-sizing: border-box;
+        font-size: 13px;
+        padding: 0 12px 0 36px;
+        border: 1.5px solid #E5E7EB;
+    }
+
+    .usr-cards-container {
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .usr-card {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    .usr-card:hover {
+        transform: none;
+    }
+
+    .usr-card-main {
+        flex: none;
+        width: 100%;
+    }
+
+    .usr-avatar {
+        width: 42px;
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .usr-name-primary {
+        font-size: 15px;
+    }
+
+    .usr-name-secondary {
+        font-size: 12px;
+        word-break: break-all;
+    }
+
+    .usr-card-badges {
+        flex: none;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .usr-badge {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .usr-card-action {
+        flex: none;
+        justify-content: stretch;
+        width: 100%;
+    }
+
+    .usr-card-action .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .usr-pagination {
+        justify-content: center;
+        flex-wrap: wrap;
+        padding-bottom: 16px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .usr-card-main {
+        min-width: 0;
+    }
+
+    .usr-name-primary {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .usr-card {
+        padding: 12px 14px;
+    }
 }

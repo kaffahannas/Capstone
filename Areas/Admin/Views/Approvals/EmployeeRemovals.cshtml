@@ -45,12 +45,10 @@
 
 @if (!Model.Any())
 {
-    <div class="adm-table-wrap">
-        <div class="adm-empty">
-            <div class="adm-empty-icon">✅</div>
-            <div class="adm-empty-title">Tidak ada permintaan pemberhentian</div>
-            <div class="adm-empty-sub">Permintaan dari HR akan muncul di sini.</div>
-        </div>
+    <div class="adm-empty-state-premium apr-empty-premium">
+        <div class="icon apr-empty-premium-icon">✅</div>
+        <h3>Tidak ada permintaan pemberhentian</h3>
+        <p>Permintaan dari HR akan muncul di sini.</p>
     </div>
 }
 else

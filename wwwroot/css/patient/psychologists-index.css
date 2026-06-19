@@ -3,7 +3,12 @@
 .psy-page {
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 120px);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    min-height: 0;
+    height: auto;
 }
 
 .psy-hero {
@@ -234,70 +239,146 @@
     cursor: not-allowed;
 }
 
-/* #Bagian Responsif Mobile# */
+/* #Bagian Responsif Mobile — layout vertikal, lebar penuh# */
 @media (max-width: 991.98px) {
     .psy-page {
         min-height: 0;
+        width: 100%;
+        max-width: 100%;
     }
 
     .psy-hero {
-        padding: 20px 18px;
-        border-radius: 16px;
-        margin-bottom: 16px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
     }
 
     .psy-hero-title {
-        font-size: 1.35rem;
-        flex-wrap: wrap;
+        font-size: 0.9375rem;
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+
+    .psy-hero-icon {
+        padding: 6px;
+        font-size: 16px;
     }
 
     .psy-hero-deco {
-        font-size: 100px;
+        font-size: 72px;
+        right: -12px;
+        top: -20px;
     }
 
-    .psy-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
+    .psy-hero-sub {
+        font-size: 11px;
+        line-height: 1.4;
     }
 
-    .psy-card {
-        padding: 18px;
+    .psy-alert,
+    .psy-status-box {
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        line-height: 1.4;
     }
 
     .psy-admin-box {
-        padding: 16px;
+        padding: 14px;
+        margin-bottom: 14px;
+        border-radius: 12px;
+    }
+
+    .psy-admin-box > strong {
+        font-size: 13px;
+    }
+
+    .psy-admin-desc {
+        font-size: 11px;
+        line-height: 1.45;
+        margin: 6px 0 12px;
     }
 
     .psy-admin-form {
         flex-direction: column;
         align-items: stretch;
+        gap: 12px;
     }
 
     .psy-admin-field,
     .psy-admin-field--wide {
         min-width: 0;
         width: 100%;
+        flex: none;
+    }
+
+    .psy-admin-label {
+        font-size: 11px;
+        margin-bottom: 5px;
+    }
+
+    .psy-admin-select,
+    .psy-admin-input {
+        font-size: 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
     }
 
     .psy-admin-submit {
         width: 100%;
+        padding: 11px 16px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+
+    .psy-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .psy-card {
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .psy-card-name {
+        font-size: 14px;
+    }
+
+    .psy-card-spec {
+        font-size: 12px;
+    }
+
+    .psy-tag {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+
+    .psy-avatar,
+    .psy-avatar-ph {
+        width: 48px;
+        height: 48px;
+    }
+
+    .psy-avatar-ph {
+        font-size: 18px;
+    }
+
+    .psy-select-btn,
+    .psy-disabled-btn {
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 10px;
     }
 }
 
 @media (max-width: 639.98px) {
     .psy-hero {
-        padding: 16px;
+        padding: 12px 14px;
     }
 
     .psy-hero-title {
-        font-size: 1.2rem;
-    }
-
-    .psy-hero-sub {
-        font-size: 14px;
-    }
-
-    .psy-card-head {
-        align-items: flex-start;
+        font-size: 0.875rem;
     }
 }

@@ -258,3 +258,117 @@
     gap: 12px;
     margin-top: 8px;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .pay-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .pay-kpi-card {
+        padding: 14px 16px;
+    }
+
+    .pay-kpi-label {
+        font-size: 10px;
+    }
+
+    .pay-kpi-value {
+        font-size: 1.35rem;
+    }
+
+    .pay-kpi-value--medium {
+        font-size: 1.05rem;
+    }
+
+    .pay-action-row {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 6px;
+    }
+
+    .pay-action-row .btn {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+
+    .pay-note {
+        font-size: 12px;
+        padding: 12px 14px;
+        line-height: 1.45;
+    }
+
+    .pay-settings-modal {
+        max-width: calc(100vw - 24px);
+        margin: auto;
+    }
+}
+
+@media (max-width: 599.98px) {
+    .pay-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pay-kpi-card--accent {
+        order: -1;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .pay-page {
+        gap: 12px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .pay-page .adm-page-header {
+        margin-bottom: 12px;
+    }
+
+    .pay-page .adm-page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .pay-page .adm-page-sub {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .pay-page .adm-page-sub code {
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    .pay-page > .adm-table-wrap.lu-list-scroll {
+        overflow-y: visible;
+        max-height: none;
+        flex: none;
+    }
+
+    .pay-action-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pay-action-row .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .pay-th-actions {
+        width: auto;
+    }
+
+    .pay-modal-actions {
+        flex-direction: column;
+    }
+
+    .pay-modal-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}

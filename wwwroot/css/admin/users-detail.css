@@ -126,3 +126,33 @@
     color: white;
     border: none;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .usr-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .usr-detail-main,
+    .usr-sidebar {
+        gap: 12px;
+    }
+
+    .usr-doc-links {
+        flex-wrap: wrap;
+    }
+
+    .adm-profile-hero {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+
+    .adm-profile-badges {
+        justify-content: center;
+    }
+}

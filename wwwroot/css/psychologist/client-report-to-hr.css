@@ -27,3 +27,21 @@
     color: #9CA3AF;
     margin-top: 24px;
 }
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .rth-card {
+        margin: 16px 0;
+        padding: 24px 16px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .rth-card {
+        padding: 20px 14px;
+    }
+
+    .rth-icon {
+        font-size: 36px;
+    }
+}

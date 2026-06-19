@@ -1,0 +1,569 @@
+/* #Bagian Mobile Compact Psikolog — skala kecil, layout desktop tetap# */
+
+@media (max-width: 991.98px) {
+    body.psychologist-body {
+        font-size: 12px;
+    }
+
+    body.psychologist-body .main-content,
+    body.psychologist-body .app-main {
+        padding: 10px 12px;
+    }
+
+    body.psychologist-body .dashboard-header,
+    body.psychologist-body .app-topbar {
+        margin-bottom: 8px;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    body.psychologist-body .sidebar-toggle {
+        margin: 0;
+        flex-shrink: 0;
+        border: none;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+    }
+
+    body.psychologist-body .psy-topbar-title {
+        flex: 1;
+        min-width: 0;
+    }
+
+    body.psychologist-body .nav-item {
+        font-size: 12px;
+    }
+
+    body.psychologist-body .sidebar-brand {
+        font-size: 14px;
+    }
+
+    body.psychologist-body .psy-topbar-title h1,
+    body.psychologist-body .psy-topbar-title .text-header {
+        font-size: 0.8125rem;
+    }
+
+    /* #Komponen Hero — ringkas# */
+    body.psychologist-body .psy-hero,
+    body.psychologist-body .sch-hero,
+    body.psychologist-body .ws-hero,
+    body.psychologist-body .stat-hero,
+    body.psychologist-body .req-hero,
+    body.psychologist-body .prf-hero,
+    body.psychologist-body .pd-hero,
+    body.psychologist-body .es-hero,
+    body.psychologist-body .ew-hero,
+    body.psychologist-body .psy-payslip-page .pay-hero {
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        gap: 10px;
+    }
+
+    body.psychologist-body .psy-hero-name,
+    body.psychologist-body .sch-hero-title,
+    body.psychologist-body .ws-hero-title,
+    body.psychologist-body .stat-hero-title,
+    body.psychologist-body .req-hero-title,
+    body.psychologist-body .prf-hero-name,
+    body.psychologist-body .pd-hero-name,
+    body.psychologist-body .pay-hero-title,
+    body.psychologist-body .es-hero-title,
+    body.psychologist-body .ew-hero-title {
+        font-size: 0.875rem;
+        margin-bottom: 2px;
+    }
+
+    body.psychologist-body .psy-hero-sub,
+    body.psychologist-body .psy-hero-greeting,
+    body.psychologist-body .sch-hero-sub,
+    body.psychologist-body .sch-hero-eyebrow,
+    body.psychologist-body .ws-hero-sub,
+    body.psychologist-body .ws-hero-eyebrow,
+    body.psychologist-body .stat-hero-sub,
+    body.psychologist-body .stat-hero-eyebrow,
+    body.psychologist-body .req-hero-sub,
+    body.psychologist-body .req-hero-eyebrow,
+    body.psychologist-body .prf-hero-sub,
+    body.psychologist-body .prf-hero-eyebrow,
+    body.psychologist-body .pd-hero-sub,
+    body.psychologist-body .pay-hero-sub,
+    body.psychologist-body .pay-hero-eyebrow,
+    body.psychologist-body .es-hero-sub,
+    body.psychologist-body .ew-hero-sub {
+        font-size: 9px;
+        line-height: 1.35;
+    }
+
+    body.psychologist-body .psy-btn,
+    body.psychologist-body .sch-hero-btn,
+    body.psychologist-body .ws-hero-btn {
+        height: 30px;
+        padding: 0 12px;
+        font-size: 10px;
+    }
+
+    body.psychologist-body .pd-hero-eyebrow,
+    body.psychologist-body .pd-hero-meta span {
+        font-size: 8px;
+    }
+
+    /* Detail pasien — scorecard hero & mood legend */
+    body.psychologist-body .pd-back {
+        font-size: 10px;
+        margin-bottom: 6px;
+    }
+
+    body.psychologist-body .pd-hero-av {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+    }
+
+    body.psychologist-body .pd-hero-stat {
+        padding: 6px 8px;
+        min-width: 0;
+    }
+
+    body.psychologist-body .pd-hero-stat-val {
+        font-size: 0.875rem;
+    }
+
+    body.psychologist-body .pd-hero-stat-lbl {
+        font-size: 8px;
+        white-space: normal;
+    }
+
+    body.psychologist-body .pd-status-badge {
+        font-size: 10px;
+        padding: 4px 10px;
+    }
+
+    body.psychologist-body .pd-card-title {
+        font-size: 11px;
+    }
+
+    body.psychologist-body .pd-mood-leg-val {
+        font-size: 0.875rem;
+    }
+
+    body.psychologist-body .pd-mood-leg-lbl {
+        font-size: 8px;
+    }
+
+    body.psychologist-body .pd-ws-num {
+        font-size: 1.125rem;
+    }
+
+    body.psychologist-body .pd-field-val {
+        font-size: 11px;
+    }
+
+    body.psychologist-body .pd-action-link {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    /* #Komponen Scorecard / KPI — kecil & rapat# */
+    body.psychologist-body .psy-kpi-row,
+    body.psychologist-body .stat-kpi-row,
+    body.psychologist-body .pay-kpi-grid {
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    body.psychologist-body .psy-kpi-row,
+    body.psychologist-body .stat-kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body.psychologist-body .psy-kpi,
+    body.psychologist-body .stat-kpi,
+    body.psychologist-body .pay-kpi {
+        padding: 8px 10px;
+        gap: 8px;
+        border-radius: 10px;
+    }
+
+    body.psychologist-body .psy-kpi-icon,
+    body.psychologist-body .stat-kpi-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+    }
+
+    body.psychologist-body .psy-kpi-icon svg,
+    body.psychologist-body .stat-kpi-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    body.psychologist-body .psy-kpi-value,
+    body.psychologist-body .stat-kpi-value,
+    body.psychologist-body .pay-kpi-value {
+        font-size: 0.9375rem;
+        line-height: 1;
+    }
+
+    body.psychologist-body .pay-kpi-value--lg {
+        font-size: 1.0625rem;
+    }
+
+    body.psychologist-body .pay-kpi-value--md {
+        font-size: 0.9375rem;
+    }
+
+    body.psychologist-body .psy-kpi-label,
+    body.psychologist-body .stat-kpi-label,
+    body.psychologist-body .pay-kpi-label {
+        font-size: 8px;
+    }
+
+    body.psychologist-body .stat-kpi-bar {
+        height: 3px;
+    }
+
+    /* Statistik — wellness score ring */
+    body.psychologist-body .stat-hero-score {
+        gap: 8px;
+        width: 100%;
+    }
+
+    body.psychologist-body .stat-score-ring {
+        width: 52px;
+        height: 52px;
+    }
+
+    body.psychologist-body .stat-score-pct {
+        font-size: 13px;
+    }
+
+    body.psychologist-body .stat-score-pct small {
+        font-size: 8px;
+    }
+
+    body.psychologist-body .stat-score-name {
+        font-size: 10px;
+    }
+
+    body.psychologist-body .stat-score-label {
+        font-size: 8px;
+    }
+
+    /* Jadwal / Worksheet — stat bubble di hero */
+    body.psychologist-body .sch-hero-stats,
+    body.psychologist-body .ws-hero-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+    }
+
+    body.psychologist-body .sch-stat-bubble,
+    body.psychologist-body .ws-stat-bubble {
+        padding: 6px 8px;
+        min-width: 0;
+        border-radius: 8px;
+    }
+
+    body.psychologist-body .sch-stat-value,
+    body.psychologist-body .ws-stat-value {
+        font-size: 0.875rem;
+    }
+
+    body.psychologist-body .sch-stat-label,
+    body.psychologist-body .ws-stat-label {
+        font-size: 8px;
+        white-space: normal;
+    }
+
+    /* Pendapatan */
+    body.psychologist-body .psy-payslip-page .pay-hero {
+        padding: 12px 14px 16px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+
+    body.psychologist-body .pay-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    body.psychologist-body .pay-kpi--income {
+        grid-column: 1 / -1;
+    }
+
+    body.psychologist-body .pay-kpi {
+        padding: 8px 10px;
+    }
+
+    body.psychologist-body .pay-panel {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    body.psychologist-body .pay-panel-title {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    body.psychologist-body .pay-table-wrap {
+        max-width: 100%;
+    }
+
+    /* Permintaan — stat di hero */
+    body.psychologist-body .req-hero-stats {
+        gap: 6px;
+        width: 100%;
+    }
+
+    body.psychologist-body .req-hero-stat {
+        padding: 6px 8px;
+        border-radius: 8px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    body.psychologist-body .req-hero-stat-val {
+        font-size: 0.875rem;
+    }
+
+    body.psychologist-body .req-hero-stat-lbl {
+        font-size: 8px;
+    }
+
+    /* #Komponen Kartu konten# */
+    body.psychologist-body .psy-card,
+    body.psychologist-body .sch-card,
+    body.psychologist-body .ws-card,
+    body.psychologist-body .stat-chart-card,
+    body.psychologist-body .req-card,
+    body.psychologist-body .prf-card,
+    body.psychologist-body .pd-card,
+    body.psychologist-body .patient-list-container,
+    body.psychologist-body .summary-card {
+        border-radius: 12px;
+    }
+
+    body.psychologist-body .psy-card-head,
+    body.psychologist-body .sch-card-head,
+    body.psychologist-body .ws-card-head,
+    body.psychologist-body .stat-chart-head,
+    body.psychologist-body .req-card-head {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    body.psychologist-body .psy-card-title,
+    body.psychologist-body .sch-card-title,
+    body.psychologist-body .ws-card-title,
+    body.psychologist-body .stat-chart-title,
+    body.psychologist-body .req-card-title {
+        font-size: 11px;
+    }
+
+    body.psychologist-body .psy-count-chip {
+        padding: 1px 6px;
+        font-size: 9px;
+    }
+
+    body.psychologist-body .psy-search-wrap,
+    body.psychologist-body .sch-search-wrap,
+    body.psychologist-body .ws-search-wrap,
+    body.psychologist-body .stat-search-wrap {
+        height: 32px;
+        min-height: 32px;
+        max-height: 32px;
+        padding: 6px 10px;
+        flex: none;
+    }
+
+    body.psychologist-body .ws-toolbar .ws-search-wrap {
+        flex: none;
+        width: 100%;
+        max-width: none;
+    }
+
+    body.psychologist-body .ws-filter-tabs {
+        flex: none;
+        width: 100%;
+    }
+
+    body.psychologist-body .psy-search,
+    body.psychologist-body .sch-search-input,
+    body.psychologist-body .ws-search-input {
+        font-size: 11px;
+    }
+
+    body.psychologist-body .psy-btn--ghost,
+    body.psychologist-body .psy-btn--sm,
+    body.psychologist-body .sch-add-btn,
+    body.psychologist-body .ws-add-btn {
+        height: 30px;
+        padding: 0 10px;
+        font-size: 10px;
+    }
+
+    /* Daftar klien / baris */
+    body.psychologist-body .psy-client-row,
+    body.psychologist-body .psy-company-row {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    body.psychologist-body .psy-client-avatar,
+    body.psychologist-body .psy-company-logo {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+
+    body.psychologist-body .psy-client-name {
+        font-size: 11px;
+    }
+
+    body.psychologist-body .psy-client-meta {
+        font-size: 9px;
+    }
+
+    body.psychologist-body .psy-status-chip {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+
+    body.psychologist-body .psy-empty {
+        padding: 24px 12px;
+        min-height: 120px;
+        gap: 8px;
+    }
+
+    body.psychologist-body .psy-empty svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    body.psychologist-body .psy-empty p {
+        font-size: 11px;
+    }
+
+    /* Chart cards statistik */
+    body.psychologist-body .stat-charts-row {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    body.psychologist-body .stat-chart-card {
+        padding: 10px 12px;
+    }
+
+    body.psychologist-body .stat-chart-card--bar .stat-canvas-wrap,
+    body.psychologist-body .stat-chart-card--donut .stat-canvas-wrap {
+        min-height: 140px;
+    }
+
+    body.psychologist-body .stat-legend-item {
+        font-size: 9px;
+    }
+
+    /* Grid jarak antar section */
+    body.psychologist-body .psy-dashboard-grid,
+    body.psychologist-body .sch-dashboard-grid,
+    body.psychologist-body .ws-dashboard-grid {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    body.psychologist-body {
+        font-size: 11px;
+    }
+
+    body.psychologist-body .main-content,
+    body.psychologist-body .app-main {
+        padding: 8px 10px;
+    }
+
+    body.psychologist-body .psy-hero,
+    body.psychologist-body .sch-hero,
+    body.psychologist-body .ws-hero,
+    body.psychologist-body .stat-hero,
+    body.psychologist-body .req-hero,
+    body.psychologist-body .pd-hero {
+        padding: 10px 12px;
+    }
+
+    body.psychologist-body .psy-hero-name,
+    body.psychologist-body .sch-hero-title,
+    body.psychologist-body .ws-hero-title,
+    body.psychologist-body .stat-hero-title,
+    body.psychologist-body .req-hero-title,
+    body.psychologist-body .pay-hero-title {
+        font-size: 0.8125rem;
+    }
+
+    /* Scorecard 2 kolom tetap — lebih padat daripada 1 kolom tinggi */
+    body.psychologist-body .psy-kpi-row,
+    body.psychologist-body .stat-kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    body.psychologist-body .psy-kpi,
+    body.psychologist-body .stat-kpi {
+        padding: 7px 8px;
+        gap: 6px;
+    }
+
+    body.psychologist-body .psy-kpi-icon,
+    body.psychologist-body .stat-kpi-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    body.psychologist-body .psy-kpi-value,
+    body.psychologist-body .stat-kpi-value {
+        font-size: 0.875rem;
+    }
+
+    body.psychologist-body .stat-hero {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    body.psychologist-body .stat-score-ring {
+        width: 44px;
+        height: 44px;
+    }
+
+    body.psychologist-body .stat-score-pct {
+        font-size: 11px;
+    }
+
+    body.psychologist-body .pd-hero {
+        padding: 10px 12px;
+    }
+
+    body.psychologist-body .pd-hero-name {
+        font-size: 0.8125rem;
+    }
+
+    body.psychologist-body .pd-hero-av {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    body.psychologist-body .pd-hero-stat-val {
+        font-size: 0.8125rem;
+    }
+}

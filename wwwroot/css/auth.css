@@ -87,28 +87,37 @@ body.auth-page::after {
 
 /* #Bagian Auth Responsif Mobile# */
 @media (max-width: 575.98px) {
-    .auth-wrapper {
-        min-height: 100dvh;
-        justify-content: flex-start;
-        padding: 20px 16px 0;
+    body.auth-page {
+        align-items: center;
+        padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
     }
 
-    body.login-page .auth-wrapper {
+    .auth-wrapper {
+        min-height: auto;
+        flex: none;
+        width: 100%;
+        max-width: 440px;
         justify-content: center;
-        padding-top: 32px;
-        padding-bottom: 32px;
+        padding: 0;
+    }
+
+    .auth-container.login-card,
+    .auth-container.register-card {
+        border-radius: var(--radius-card);
+        box-shadow: var(--card-shadow);
+        max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
     }
 
     .auth-container.login-card {
-        border-radius: var(--radius-card);
-        box-shadow: var(--card-shadow);
+        padding: 28px 22px 26px;
     }
 
     .auth-container.register-card {
         padding: 24px 22px 28px;
-        border-radius: var(--radius-card);
         margin-top: 0;
-        box-shadow: var(--card-shadow);
     }
 }
 

@@ -204,24 +204,154 @@
     height: 100%;
 }
 
-/* #Bagian Responsif Mobile# */
+/* #Bagian Responsif Mobile — scroll vertikal, semua chart tampil# */
 @media (max-width: 991.98px) {
+    .st-layout {
+        --st-gap: 10px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        flex: none;
+    }
+
     .st-topbar {
         flex-wrap: wrap;
+        gap: 8px;
+        align-items: flex-start;
+        flex: none;
     }
+
     .st-kpi-strip {
+        flex: 1 1 100%;
         flex-wrap: wrap;
-        width: 100%;
+        min-width: 0;
+        gap: 6px;
     }
+
+    .st-chip {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+        padding: 6px 8px;
+        gap: 4px;
+        border-radius: 8px;
+    }
+
+    .st-chip strong {
+        font-size: 0.7rem;
+    }
+
+    .st-chip small {
+        font-size: 0.55rem;
+    }
+
     .st-period-tabs {
+        flex: 1 1 100%;
+        flex-shrink: 0;
         width: 100%;
+        gap: 6px;
+        flex-wrap: wrap;
         justify-content: flex-start;
+    }
+
+    .st-tab {
+        padding: 5px 10px;
+        font-size: 0.65rem;
+    }
+
+    .st-card {
+        padding: 10px 12px !important;
+        overflow: visible;
+    }
+
+    .st-card--trend {
+        flex: none;
+        min-height: 0;
+        height: auto;
+    }
+
+    .st-card-title {
+        font-size: 0.75rem;
+    }
+
+    .st-badge {
+        font-size: 0.58rem;
+        padding: 2px 6px;
+        white-space: nowrap;
+    }
+
+    .st-canvas-wrap {
+        flex: none;
+        min-height: 200px;
+        height: 200px;
+        overflow: visible;
+    }
+
+    .st-canvas--trend {
+        min-height: 200px;
+        height: 200px;
+    }
+
+    .st-canvas--square {
+        min-height: 180px;
+        height: 180px;
+    }
+
+    .st-row2 {
+        flex: none;
+        height: auto;
+        min-height: 0;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        overflow: visible;
+    }
+
+    .st-row2 .st-card {
+        min-height: 0;
+        height: auto;
+    }
+
+    .st-empty p {
+        font-size: 0.7rem;
+    }
+
+    .st-empty span {
+        font-size: 1.1rem;
+    }
+
+    .st-trigger-hint {
+        font-size: 10px;
     }
 }
 
-/* #Bagian Responsif Mobile# */
-@media (max-width: 640px) {
-    .st-chip strong { font-size: 1.25vh; }
-    .st-kpi-strip { gap: 0.4vh; }
-    .st-chip { padding: 0.5vh 0.65vh; }
+@media (max-width: 639.98px) {
+    .st-chip {
+        flex: 1 1 calc(50% - 4px);
+        padding: 5px 6px;
+    }
+
+    .st-chip strong {
+        font-size: 0.62rem;
+    }
+
+    .st-tab {
+        padding: 4px 8px;
+        font-size: 0.6rem;
+    }
+
+    .st-canvas-wrap,
+    .st-canvas--trend {
+        min-height: 180px;
+        height: 180px;
+    }
+
+    .st-canvas--square {
+        min-height: 160px;
+        height: 160px;
+    }
+
+    .st-row2 {
+        gap: 8px;
+    }
 }
