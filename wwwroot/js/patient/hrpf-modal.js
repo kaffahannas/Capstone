@@ -30,20 +30,12 @@
 
     window.openHrpfModal = function (id) {
         var overlay = document.getElementById(id);
-        // #region agent log
-        if (window.luDbg) window.luDbg('hrpf-modal.js:openHrpfModal:entry', 'openHrpfModal called', { id: id, overlayFound: !!overlay }, 'H1');
-        // #endregion
         if (!overlay) return;
         overlay.classList.add('is-open');
         overlay.removeAttribute('hidden');
         overlay.setAttribute('aria-hidden', 'false');
-        var jsFallbackApplied = applyModalOverlayLayout(overlay);
+        applyModalOverlayLayout(overlay);
         updateScrollLock();
-        var cs = window.getComputedStyle(overlay);
-        var rect = overlay.getBoundingClientRect();
-        // #region agent log
-        if (window.luDbg) window.luDbg('hrpf-modal.js:openHrpfModal:after', 'modal state after open', { id: id, parent: overlay.parentElement === document.body ? 'BODY' : overlay.parentElement.tagName, hasHidden: overlay.hasAttribute('hidden'), hasIsOpen: overlay.classList.contains('is-open'), jsFallbackApplied: jsFallbackApplied, position: cs.position, display: cs.display, opacity: cs.opacity, visibility: cs.visibility, pointerEvents: cs.pointerEvents, zIndex: cs.zIndex, rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height } }, 'H2,H3,H5,H6', 'post-fix-2');
-        // #endregion
     };
 
     window.closeHrpfModal = function (id) {
@@ -61,9 +53,6 @@
         if (opener) {
             e.preventDefault();
             var targetId = opener.getAttribute('data-hrpf-modal-open');
-            // #region agent log
-            if (window.luDbg) window.luDbg('hrpf-modal.js:click', 'data-hrpf-modal-open clicked', { targetId: targetId }, 'H1');
-            // #endregion
             window.openHrpfModal(targetId);
             return;
         }
