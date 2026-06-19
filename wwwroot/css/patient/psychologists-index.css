@@ -1,0 +1,384 @@
+/* #Bagian Psikolog Index Pasien# */
+/* Patient Psychologists — linked from Psychologists/Index.cshtml */
+.psy-page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    min-height: 0;
+    height: auto;
+}
+
+.psy-hero {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #312E81 0%, #4338CA 100%);
+    color: white;
+    padding: 32px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 25px rgba(49, 46, 129, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.psy-hero-deco {
+    position: absolute;
+    right: -20px;
+    top: -40px;
+    opacity: 0.1;
+    font-size: 150px;
+    user-select: none;
+}
+
+.psy-hero-inner {
+    position: relative;
+    z-index: 1;
+}
+
+.psy-hero-title {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.psy-hero-icon {
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 8px;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.psy-hero-sub {
+    margin: 0;
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+.psy-alert {
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.psy-alert--success {
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+}
+
+.psy-alert--error {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #7f1d1d;
+}
+
+.psy-alert--pending {
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+    margin-bottom: 24px;
+}
+
+.psy-admin-box {
+    background: #f5f3ff;
+    border: 1px solid #c4b5fd;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.psy-admin-desc {
+    margin: 8px 0 12px;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.psy-admin-form {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.psy-admin-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+.psy-admin-field--wide {
+    flex: 2;
+    min-width: 200px;
+}
+
+.psy-admin-label {
+    font-size: 12px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.psy-admin-select,
+.psy-admin-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.psy-admin-submit {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.psy-status-box {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.psy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.psy-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.psy-card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.psy-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.psy-avatar-ph {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #e0e7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #4338ca;
+}
+
+.psy-card-name {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.psy-card-spec {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.psy-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.psy-tag {
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+.psy-tag--b2b {
+    background: #ecfdf5;
+    color: #065f46;
+}
+
+.psy-request-form {
+    margin-top: auto;
+}
+
+.psy-select-btn {
+    width: 100%;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.psy-disabled-btn {
+    margin-top: auto;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* #Bagian Responsif Mobile — layout vertikal, lebar penuh# */
+@media (max-width: 991.98px) {
+    .psy-page {
+        min-height: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .psy-hero {
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+    }
+
+    .psy-hero-title {
+        font-size: 0.9375rem;
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+
+    .psy-hero-icon {
+        padding: 6px;
+        font-size: 16px;
+    }
+
+    .psy-hero-deco {
+        font-size: 72px;
+        right: -12px;
+        top: -20px;
+    }
+
+    .psy-hero-sub {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .psy-alert,
+    .psy-status-box {
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .psy-admin-box {
+        padding: 14px;
+        margin-bottom: 14px;
+        border-radius: 12px;
+    }
+
+    .psy-admin-box > strong {
+        font-size: 13px;
+    }
+
+    .psy-admin-desc {
+        font-size: 11px;
+        line-height: 1.45;
+        margin: 6px 0 12px;
+    }
+
+    .psy-admin-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .psy-admin-field,
+    .psy-admin-field--wide {
+        min-width: 0;
+        width: 100%;
+        flex: none;
+    }
+
+    .psy-admin-label {
+        font-size: 11px;
+        margin-bottom: 5px;
+    }
+
+    .psy-admin-select,
+    .psy-admin-input {
+        font-size: 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
+    }
+
+    .psy-admin-submit {
+        width: 100%;
+        padding: 11px 16px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+
+    .psy-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .psy-card {
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .psy-card-name {
+        font-size: 14px;
+    }
+
+    .psy-card-spec {
+        font-size: 12px;
+    }
+
+    .psy-tag {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+
+    .psy-avatar,
+    .psy-avatar-ph {
+        width: 48px;
+        height: 48px;
+    }
+
+    .psy-avatar-ph {
+        font-size: 18px;
+    }
+
+    .psy-select-btn,
+    .psy-disabled-btn {
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .psy-hero {
+        padding: 12px 14px;
+    }
+
+    .psy-hero-title {
+        font-size: 0.875rem;
+    }
+}

@@ -1,0 +1,291 @@
+/* #Bagian Worksheet Index HR# */
+.hrws-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.hrws-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    background: rgba(255,255,255,.18);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,.35);
+    border-radius: 11px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background .15s, border-color .15s;
+}
+
+.hrws-hero-btn:hover {
+    background: rgba(255,255,255,.28); border-color: rgba(255,255,255,.55);
+}
+
+.hrws-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid var(--lu-border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    box-shadow: var(--lu-shadow);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.hrws-filter-tabs {
+    display: flex; gap: 4px; flex-wrap: wrap;
+}
+
+.hrws-tab {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lu-text-muted);
+    text-decoration: none;
+    transition: background .13s, color .13s;
+    white-space: nowrap;
+}
+
+.hrws-tab:hover {
+    background: var(--lu-bg); color: var(--lu-text);
+}
+
+.hrws-search-form {
+    margin-left: auto;
+}
+
+.hrws-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.hrws-search-wrap svg {
+    position: absolute;
+    left: 11px;
+    color: var(--lu-text-muted);
+    pointer-events: none;
+}
+
+.hrws-search {
+    padding: 7px 12px 7px 32px;
+    border: 1.5px solid var(--lu-border);
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--lu-bg);
+    color: var(--lu-text);
+    outline: none;
+    width: 220px;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.hrws-search:focus {
+    border-color: var(--lu-primary); box-shadow: 0 0 0 3px rgba(124,58,237,.10); background: #fff;
+}
+
+.hrws-row-date {
+    min-width: 70px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--lu-text-muted);
+    text-align: center;
+    line-height: 1.4;
+    flex-shrink: 0;
+}
+
+.hrws-row-patient {
+    font-weight: 600; color: var(--lu-primary);
+}
+
+.hrws-row-psy {
+    
+}
+
+.hrws-row-chevron {
+    color: #D1D5DB; flex-shrink: 0; transition: color .13s;
+}
+
+.hrws-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 56px 24px;
+    background: #fff;
+    border: 1.5px dashed var(--lu-border);
+    border-radius: 18px;
+    text-align: center;
+    flex: 1;
+}
+
+.hrws-empty-icon {
+    color: #D1D5DB;
+}
+
+.hrws-empty-title {
+    font-size: 16px; font-weight: 700; color: var(--lu-text); margin: 0;
+}
+
+.hrws-empty-sub {
+    font-size: 13.5px; color: var(--lu-text-muted); margin: 0; max-width: 340px; line-height: 1.55;
+}
+
+.hrws-empty-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 22px;
+    background: var(--lu-primary);
+    color: #fff;
+    border: none;
+    border-radius: 11px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background .15s;
+}
+
+.hrws-empty-btn:hover {
+    background: var(--lu-primary-hover);
+}
+
+.hrws-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 0 4px;
+    flex-wrap: wrap;
+}
+
+.hrws-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    border: 1.5px solid var(--lu-border);
+    background: #fff;
+    color: var(--lu-text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .13s, color .13s, border-color .13s;
+}
+
+.hrws-page-btn:hover {
+    background: var(--lu-bg); color: var(--lu-text);
+}
+
+.hrws-form-error--hidden {
+    display: none;
+}
+
+.hrws-required {
+    color: #EF4444;
+}
+
+.hrws-no-patients-warning {
+    padding: 10px 12px;
+    background: #FEF3C7;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #92400E;
+}
+
+.hrws-section-title--spaced {
+    margin-top: 22px;
+}
+
+.hrws-section-opt {
+    text-transform: none;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--lu-text-muted);
+    font-size: 11px;
+    margin-left: 4px;
+}
+
+.hrws-modal-field--last {
+    margin-bottom: 0;
+}
+
+.hrws-notes-textarea {
+    resize: vertical;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .hrws-page {
+        gap: 10px;
+    }
+
+    .hrws-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .hrws-filter-tabs {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 6px;
+    }
+
+    .hrws-filter-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hrws-tab {
+        flex-shrink: 0;
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+
+    .hrws-search-form {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .hrws-search-wrap {
+        width: 100%;
+    }
+
+    .hrws-search {
+        width: 100%;
+        height: 32px;
+        box-sizing: border-box;
+        font-size: 12px;
+    }
+
+    .hrws-empty {
+        padding: 32px 16px;
+        border-radius: 12px;
+    }
+}

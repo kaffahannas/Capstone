@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    // #Class CompaniesController#
     [Authorize(Roles = "Admin")]
     public class CompaniesController : Controller
     {
@@ -20,6 +21,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        // #Function Index#
 
         [HttpGet]
         public async Task<IActionResult> Index(string? search)
@@ -53,6 +56,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewData["Title"] = "Perusahaan";
             return View(new AdminCompaniesListViewModel { Search = search, Items = items });
         }
+
+        // #Function Detail#
 
         [HttpGet]
         public async Task<IActionResult> Detail(int id)

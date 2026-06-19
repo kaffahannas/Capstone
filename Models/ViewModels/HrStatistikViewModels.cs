@@ -1,5 +1,6 @@
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class HrStatistikOverviewViewModel#
     public class HrStatistikOverviewViewModel
     {
         public string CompanyName { get; set; } = "";
@@ -12,6 +13,7 @@ namespace LightenUp.Web.Models.ViewModels
         public List<DivisionStress> Divisions { get; set; } = new();
     }
 
+    // #Class DivisionStress#
     public class DivisionStress
     {
         public string Name { get; set; } = "";
@@ -25,6 +27,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int BahayaCount { get; set; }
     }
 
+    // #Class HrDivisionReportViewModel#
     public class HrDivisionReportViewModel
     {
         public string DivisionName { get; set; } = "";
@@ -42,6 +45,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Roster row for CSV/print export
+    // #Class HrRosterRow#
     public class HrRosterRow
     {
         public string FullName { get; set; } = "";

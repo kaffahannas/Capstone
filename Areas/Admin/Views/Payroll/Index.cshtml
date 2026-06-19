@@ -15,6 +15,12 @@
     <div class="adm-alert success">✅ @ok</div>
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/payroll-index.css" asp-append-version="true" />
+}
+
+
+@* #Bagian PayrollPsikolog# *@
 <div class="lu-page pay-page">
 <div class="adm-page-header">
     <h1>Payroll Psikolog</h1>
@@ -24,7 +30,7 @@
     </p>
 </div>
 
-@* KPI summary strip *@
+@* #Komponen KartuKPI# *@
 <div class="pay-kpi-grid">
     <div class="pay-kpi-card">
         <p class="pay-kpi-label">Total Psikolog</p>

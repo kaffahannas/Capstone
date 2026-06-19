@@ -5,6 +5,8 @@
     Layout = null;
 }
 
+@* #Bagian Verifikasi Email# *@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -20,21 +22,26 @@
     <div class="auth-wrapper">
         <div class="auth-container register-card register-card--verify">
 
-            <a href="/Account/Register" class="back-button">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 18L9 12L15 6" stroke="#1f2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-            </a>
+            @* #Komponen Header Verifikasi# *@
+            <header class="verify-header">
+                <a href="/Account/Register" class="back-button verify-back" aria-label="Kembali ke pendaftaran">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
+                <div class="verify-header-text">
+                    <h1 class="auth-title verify-title">Verifikasi Email</h1>
+                    <p class="auth-subtitle verify-subtitle">Masukkan 4 digit kode OTP yang dikirim ke alamat email <strong class="auth-subtitle-email">@Model.Email</strong></p>
+                </div>
+            </header>
 
-            <h1 class="auth-title">Verifikasi Email</h1>
-            <p class="auth-subtitle">Masukkan 4 digit kode OTP yang dikirim ke alamat email <strong class="auth-subtitle-email">@Model.Email</strong></p>
-
+            @* #Komponen Form OTP# *@
             <form id="otpForm" asp-action="VerifyEmail" method="post">
                 <!-- Data Asli yang akan dikirim ke Server (Disembunyikan) -->
                 <input type="hidden" asp-for="Email" />
                 <input type="hidden" asp-for="OtpCode" id="OtpCode" />
 
-                <!-- 4 Kotak Input Visual -->
+                @* #Komponen Input OTP# *@
                 <div class="otp-wrapper">
                     <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
                     <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
@@ -44,7 +51,7 @@
 
                 <span asp-validation-for="OtpCode" class="text-danger mb-3 text-center d-block"></span>
 
-                <!-- Teks Info dan Timer -->
+                @* #Komponen Timer OTP# *@
                 <div class="otp-text-info text-center" id="timerContainer">
                     Belum menerima kode OTP? <span id="countdownTimer">01:15</span>
                 </div>

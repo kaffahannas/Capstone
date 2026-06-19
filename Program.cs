@@ -6,28 +6,75 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 
+// #Bagian Konfigurasi# — lihat docs/konfigurasi.md untuk penjelasan appsettings
+// #Bagian Startup Aplikasi#
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Services ---
+// #Bagian Konfigurasi Services#
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+// #Bagian Identity#
 // Identity: ApplicationUser + role support (Patient, Psychologist, HR, Admin)
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddAuthentication()
-    .AddGoogle(options =>
+// Admin console runs on a separate host where /Identity/* is blocked — send auth challenges to AdminAuth.
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
     {
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
-        options.CallbackPath = "/Account/ExternalLoginCallback";
-    });
+        var adminHost = context.HttpContext.RequestServices
+            .GetRequiredService<IConfiguration>()["Site:AdminHost"];
+        var host = context.Request.Host.ToString();
+        if (!string.IsNullOrWhiteSpace(adminHost) &&
+            host.Equals(adminHost, StringComparison.OrdinalIgnoreCase))
+        {
+            var returnUrl = context.Request.PathBase + context.Request.Path + context.Request.QueryString;
+            context.Response.Redirect(
+                $"/AdminAuth/Login?ReturnUrl={Uri.EscapeDataString(returnUrl)}");
+            return Task.CompletedTask;
+        }
 
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        var adminHost = context.HttpContext.RequestServices
+            .GetRequiredService<IConfiguration>()["Site:AdminHost"];
+        var host = context.Request.Host.ToString();
+        if (!string.IsNullOrWhiteSpace(adminHost) &&
+            host.Equals(adminHost, StringComparison.OrdinalIgnoreCase))
+        {
+            context.Response.Redirect("/AdminAuth/Login");
+            return Task.CompletedTask;
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+});
+
+// #Bagian Autentikasi Eksternal#
+// External login providers (Google, Facebook) — only registered when credentials are configured.
+var authBuilder = builder.Services.AddAuthentication();
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+if (!string.IsNullOrWhiteSpace(googleClientId))
+{
+    authBuilder.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
+    });
+}
+
+// #Bagian Registrasi Service Aplikasi#
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -43,6 +90,7 @@ builder.Services.AddScoped<LightenUp.Web.Services.PsychologistWorkloadService>()
 builder.Services.AddScoped<LightenUp.Web.Services.AssignmentActivationService>();
 builder.Services.AddScoped<LightenUp.Web.Services.IEmailSender, LightenUp.Web.Services.SmtpEmailSender>();
 
+// #Bagian Rate Limiting#
 // Rate limiting for login/register endpoints
 builder.Services.AddRateLimiter(options =>
 {
@@ -55,12 +103,14 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
+// #Bagian Health Check#
 // Health checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>();
 
 var app = builder.Build();
 
+// #Bagian Database Seeding#
 // ========================================================
 // DATABASE SEEDING (runs once at startup, in any environment)
 // ========================================================
@@ -120,7 +170,10 @@ using (var scope = app.Services.CreateScope())
         }
 
         // 3. Seed domain data (Companies, Psychologists, Patients, Schedules, ...)
-        await DbInitializer.SeedAsync(context, userManager);
+        // if (app.Environment.IsDevelopment())
+        // {
+        //     await DbInitializer.SeedAsync(context, userManager);
+        // }
     }
     catch (Exception ex)
     {
@@ -129,6 +182,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// #Bagian Pipeline HTTP#
 // --- HTTP request pipeline ---
 if (app.Environment.IsDevelopment())
 {
@@ -147,6 +201,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseRateLimiter();
 
+// #Bagian Hostname Area Gating#
 // ───── Hostname-based area gating ─────
 // Customer site (Site:PatientHost) hosts Patient/Psychologist/HR. /Admin/* is BLOCKED here.
 // Admin console (Site:AdminHost) hosts only LightenUp staff. Only /Admin*, /AdminAuth*, static reachable.
@@ -179,6 +234,7 @@ if (!string.IsNullOrWhiteSpace(patientHost) || !string.IsNullOrWhiteSpace(adminH
                 path.StartsWith("/js/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/lib/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/images/", StringComparison.OrdinalIgnoreCase) ||
+                path.StartsWith("/image/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("/favicon", StringComparison.OrdinalIgnoreCase);
 
@@ -201,6 +257,7 @@ if (!string.IsNullOrWhiteSpace(patientHost) || !string.IsNullOrWhiteSpace(adminH
 app.UseAuthentication();
 app.UseAuthorization();
 
+// #Bagian Routing#
 // Short admin login URL (avoids /AdminAuth/AdminAuth/Login from default area routing).
 app.MapControllerRoute(
     name: "admin_auth_login",

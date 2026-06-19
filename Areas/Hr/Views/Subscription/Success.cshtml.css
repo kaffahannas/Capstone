@@ -1,21 +1,3 @@
-.hrln-success-card {
-    text-align: center;
-    padding: 40px;
-}
+﻿/* #Bagian Scoped CSS Success.cshtml# - lihat wwwroot/css/hr/subscription-success.css */ */
+/* Styles: wwwroot/css/hr/subscription-success.css */
 
-.hrln-success-icon {
-    font-size: 48px;
-}
-
-.hrln-success-code {
-    margin-top: 12px;
-}
-
-.hrln-success-code strong {
-    color: #7C3AED;
-    letter-spacing: 1px;
-}
-
-.hrln-success-btn {
-    margin-top: 16px;
-}

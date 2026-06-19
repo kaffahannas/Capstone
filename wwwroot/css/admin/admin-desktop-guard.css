@@ -1,0 +1,103 @@
+/* #Bagian Admin Desktop Guard — pulihkan layout desktop# */
+
+@media (min-width: 992px) {
+    /* #Bagian Akses Cepat# */
+    body.admin-body .adm-quick-grid {
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
+
+    body.admin-body a.adm-quick-item,
+    body.admin-body a.adm-quick-item:link,
+    body.admin-body a.adm-quick-item:visited {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        gap: 8px !important;
+        padding: 20px 14px !important;
+        min-height: 128px !important;
+        border-radius: 12px !important;
+        border: 1px solid var(--adm-border) !important;
+        box-shadow: var(--adm-shadow-sm) !important;
+        text-decoration: none !important;
+        color: var(--adm-text) !important;
+        transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s !important;
+    }
+
+    body.admin-body a.adm-quick-item:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: var(--adm-shadow-md) !important;
+    }
+
+    body.admin-body .adm-quick-icon {
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 12px !important;
+        font-size: 20px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+    }
+
+    body.admin-body .adm-quick-label {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: var(--adm-text) !important;
+    }
+
+    body.admin-body .adm-quick-sub {
+        font-size: 11px !important;
+        color: var(--adm-muted) !important;
+        line-height: 1.35 !important;
+    }
+
+    body.admin-body .adm-quick-item:last-child:nth-child(odd) {
+        grid-column: auto !important;
+        max-width: none !important;
+        justify-self: stretch !important;
+    }
+
+    /* KPI atas */
+    body.admin-body .adm-stat-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+
+    /* #Bagian Empty State Persetujuan — full width desktop# */
+    body.admin-body .apr-empty-premium,
+    body.admin-body .adm-empty-state-premium.apr-empty-premium {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 48px 32px !important;
+        min-height: 200px !important;
+        border-style: solid !important;
+        border-color: var(--adm-border) !important;
+        border-radius: var(--adm-radius) !important;
+        box-shadow: var(--adm-shadow-sm) !important;
+    }
+
+    body.admin-body .apr-empty-premium-icon,
+    body.admin-body .apr-empty-premium .icon {
+        font-size: 48px !important;
+    }
+
+    body.admin-body .apr-empty-premium h3 {
+        font-size: 18px !important;
+    }
+
+    body.admin-body .apr-empty-premium p {
+        font-size: 14px !important;
+        max-width: 420px !important;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    body.admin-body .adm-quick-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}

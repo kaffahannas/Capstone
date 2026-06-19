@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class TaskListItemViewModel#
     public class TaskListItemViewModel
     {
         public int WorksheetId { get; set; }
@@ -16,6 +17,7 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime? ReviewedAt { get; set; }
     }
 
+    // #Class TaskListViewModel#
     public class TaskListViewModel
     {
         public string? Search { get; set; }
@@ -28,6 +30,7 @@ namespace LightenUp.Web.Models.ViewModels
         public bool HasMore => Page * PageSize < TotalCount;
     }
 
+    // #Class TaskDetailViewModel#
     public class TaskDetailViewModel
     {
         public int WorksheetId { get; set; }
@@ -45,6 +48,7 @@ namespace LightenUp.Web.Models.ViewModels
         public bool IsLocked => Status == "Completed";
     }
 
+    // #Class TaskSubmitViewModel#
     public class TaskSubmitViewModel
     {
         public int WorksheetId { get; set; }
@@ -56,6 +60,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Status helpers ───
+    // #Class WorksheetStatus#
     public static class WorksheetStatus
     {
         public const string Assigned = "Assigned";

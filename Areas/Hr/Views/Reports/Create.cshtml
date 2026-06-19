@@ -41,8 +41,10 @@
         _          => "rgba(239,68,68,0.12)"
     };
 }
+@* #Bagian BuatLaporan# *@
 
 @section Head {
+    <link rel="stylesheet" href="~/css/hr/reports-create.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 }
 
@@ -70,6 +72,7 @@
         Detail Karyawan
     </a>
 
+    @* #Komponen Hero# *@
     @* ══════ HERO ══════ *@
     <div class="hrpt-hero hrpt-hero--@statusCss">
         <div class="hrpt-hero-bg" aria-hidden="true"></div>
@@ -121,6 +124,7 @@
         </div>
     </div>
 
+    @* #Komponen FormLaporan# *@
     @* ══════ BODY GRID ══════ *@
     <div class="hrpt-grid">
 
@@ -209,7 +213,7 @@
 <script>
 (function () {
     const t = document.getElementById('hrptToast');
-    if (t) setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; }, 3200);
+    if (t) setTimeout(function () { t.classList.add('is-dismissing'); }, 3200);
 })();
 
 new Chart(document.getElementById('trendChart'), {

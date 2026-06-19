@@ -6,6 +6,11 @@
     var initial   = Model.PatientName?.Length > 0 ? Model.PatientName.Substring(0, 1).ToUpper() : "?";
     var idCulture = new System.Globalization.CultureInfo("id-ID");
 }
+@* #Bagian TinjauWorksheet# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/worksheets-review.css" asp-append-version="true" />
+}
 
 <div class="hrwsrv-page">
 
@@ -24,6 +29,7 @@
         Riwayat Worksheet
     </a>
 
+    @* #Komponen Hero# *@
     @* ══════ HERO ══════ *@
     <div class="hrwsrv-hero hrwsrv-hero--@accent">
         <div class="hrwsrv-hero-bg" aria-hidden="true"></div>
@@ -214,7 +220,7 @@
 <script>
 (function () {
     const t = document.getElementById('hrwsrvToast');
-    if (t) setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; }, 3200);
+    if (t) setTimeout(function () { t.classList.add('is-dismissing'); }, 3200);
 })();
 </script>
 }

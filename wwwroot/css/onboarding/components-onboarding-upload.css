@@ -1,0 +1,109 @@
+/* #Bagian Unggah Onboarding# */
+﻿/* Onboarding file upload zones */
+/* #Bagian File Unggah Zones + Previews# */
+/* ───── File upload zones + previews ───── */
+.onb-upload-block { margin-bottom: 12px; }
+.onb-upload-zone {
+    display: block;
+    padding: 32px 24px;
+    border: 2px dashed #C4B5FD;
+    border-radius: 16px;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(245, 243, 255, 0.5);
+    transition: all 0.2s ease;
+}
+.onb-upload-zone:hover {
+    border-color: var(--lu-primary);
+    background: var(--lu-primary-soft);
+    transform: scale(1.02);
+}
+.onb-upload-zone input[type="file"] { display: none; }
+.onb-upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.onb-upload-placeholder.is-hidden {
+    display: none !important;
+}
+.onb-upload-placeholder strong {
+    display: block;
+    margin: 8px 0 4px;
+    font-size: 15px;
+    color: var(--lu-primary);
+}
+.onb-upload-placeholder small {
+    color: var(--lu-text-muted);
+    font-size: 13px;
+}
+.onb-upload-icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 8px;
+    color: var(--lu-primary);
+}
+.onb-upload-preview {
+    margin-bottom: 16px;
+    padding: 16px;
+    border: 1px solid var(--lu-border);
+    border-radius: 12px;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+.onb-upload-preview-new {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+}
+.onb-upload-preview[hidden] { display: none !important; }
+.onb-upload-thumb {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    object-fit: contain;
+}
+.onb-upload-thumb-round {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.onb-upload-hint {
+    font-size: 13px;
+    color: var(--lu-text-muted);
+    margin: 12px 0 0;
+}
+.onb-file-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--lu-primary);
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    background: #fff;
+    padding: 16px 24px;
+    border-radius: 100px;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    word-break: break-all;
+}
+.onb-file-link:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 16px rgba(139, 92, 246, 0.25);
+    text-decoration: none;
+}
+.onb-file-link .file-name {
+    font-weight: 600;
+}
+.onb-file-link .file-status {
+    color: var(--lu-text-muted);
+    font-size: 13px;
+}

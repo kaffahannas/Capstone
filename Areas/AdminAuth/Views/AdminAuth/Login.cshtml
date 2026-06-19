@@ -3,6 +3,8 @@
     ViewData["Title"] = "Admin Login - LightenUp";
     Layout = null;
 }
+
+@* #Bagian LoginAdmin# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -11,17 +13,19 @@
     <title>@ViewData["Title"]</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/admin-auth.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
     <div class="admin-card">
-        <div class="admin-brand">
+        @* #Komponen LogoBrand# *@
+<div class="admin-brand">
             <div class="mark">L</div>
             <h1>LightenUp Admin</h1>
             <small>Internal staff only</small>
         </div>
 
-        <form asp-action="Login" method="post">
+        @* #Komponen FormLogin# *@
+<form asp-action="Login" method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
             @if (!ViewData.ModelState.IsValid)
             {
                 <div asp-validation-summary="All" class="err-summary"></div>
@@ -45,7 +49,8 @@
             <button type="submit" class="btn-submit">Masuk ke Admin Console</button>
         </form>
 
-        <div class="info-strip">
+        @* #Komponen InfoKeamanan# *@
+<div class="info-strip">
             ⚠️ Akses dibatasi untuk staf LightenUp. Aktivitas login dicatat untuk audit keamanan.
             Jika Anda bukan staf, silakan login di situs utama.
         </div>

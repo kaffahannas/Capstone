@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    // #Class AssignmentsController#
     [Authorize(Roles = "Admin")]
     public class AssignmentsController : Controller
     {
@@ -32,6 +33,9 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             _workload = workload;
             _pricing = pricing;
         }
+
+        // #Bagian Daftar Penugasan#
+        // #Function Index#
 
         [HttpGet]
         public async Task<IActionResult> Index(string tab = "patient")
@@ -83,6 +87,9 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             });
         }
 
+        // #Bagian Penugasan Pasien#
+        // #Function AssignPatient#
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignPatient(int requestId, int psychologistId, decimal? psychologistRevenuePercentage, string? note)
@@ -128,6 +135,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index), new { tab = "patient" });
         }
 
+        // #Function DismissPatientRequest#
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DismissPatientRequest(int requestId, string? note)
@@ -148,6 +157,9 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index), new { tab = "patient" });
         }
 
+        // #Bagian Penugasan B2B#
+        // #Function AssignB2BPsychologist#
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignB2BPsychologist(int requestId, int psychologistId)
@@ -162,6 +174,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             TempData["success"] = "Permintaan kemitraan telah diteruskan ke psikolog terpilih.";
             return RedirectToAction(nameof(Index), new { tab = "b2b" });
         }
+
+        // #Function DismissB2BRequest#
 
         [HttpPost]
         [ValidateAntiForgeryToken]

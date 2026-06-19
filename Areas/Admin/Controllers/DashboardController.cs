@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    // #Class DashboardController#
     [Authorize(Roles = "Admin")]
     public class DashboardController : Controller
     {
@@ -20,6 +21,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        // #Function Index#
 
         public async Task<IActionResult> Index()
         {

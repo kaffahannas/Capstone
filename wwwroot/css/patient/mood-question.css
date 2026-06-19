@@ -1,0 +1,66 @@
+/* #Bagian Mood Pertanyaan Pasien# */
+.mq-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    aspect-ratio: 1;
+    border: 2px solid #E5E7EB;
+    border-radius: 14px;
+    background: #F9FAFB;
+    cursor: pointer;
+    transition: all 0.15s;
+    padding: 8px 4px;
+}
+
+.mq-btn:hover {
+    border-color: #C4B5FD;
+    background: #F5F3FF;
+    transform: translateY(-2px);
+}
+
+.mq-emoji {
+    font-size: 22px; line-height: 1;
+}
+
+.mq-num {
+    font-size: 14px; font-weight: 700;
+}
+
+.mq-btn--selected {
+    border-color: #7C3AED;
+    background: #7C3AED;
+    color: #fff;
+}
+
+.mq-title {
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.mq-helper {
+    text-align: center;
+}
+
+.mq-validation {
+    display: block;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.mq-scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-bottom: 10px;
+    padding: 0 4px;
+}
+
+.mq-scale-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+}

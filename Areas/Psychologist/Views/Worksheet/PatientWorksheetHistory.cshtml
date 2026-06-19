@@ -21,6 +21,16 @@
     };
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/shared/components-patient-history-hero.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-patient-worksheet-history.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-add-task-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-detail-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet-modal.css" asp-append-version="true" />
+}
+
+
+@* #Bagian RiwayatWorksheetPasien# *@
 <a href="javascript:history.back()" class="pd-back">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Kembali ke Detail Pasien
@@ -33,7 +43,7 @@
 
 <div class="psh-page">
 
-    @* ── Hero ── *@
+    @* #Komponen Hero# *@
     <div class="psh-hero pwh-hero">
         <div class="psh-hero-bg" aria-hidden="true"></div>
         <div class="psh-hero-inner">
@@ -74,7 +84,7 @@
         </div>
     </div>
 
-    @* ── Worksheet list ── *@
+    @* #Komponen DaftarWorksheet# *@
     <div class="psh-list">
         @if (!worksheets.Any())
         {
@@ -97,8 +107,9 @@
                 {
                     var (lbl, css) = MapStatus(w.Status);
                     var isOverdue  = w.Status != "Completed" && w.Deadline < DateTime.Now;
-                    <a href="@Url.Action("ReviewWorksheet", "Worksheet", new { id = w.WorksheetId })"
-                       class="pwh-card pwh-card--@css @(isOverdue ? "pwh-card--overdue" : "")">
+                    <button type="button"
+                       class="pwh-card pwh-card--@css @(isOverdue ? "pwh-card--overdue" : "")"
+                       onclick="openWorksheetDetailModal(@w.WorksheetId)">
 
                         @* Left accent bar *@
                         <div class="pwh-card-accent"></div>
@@ -148,7 +159,7 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                         </div>
 
-                    </a>
+                    </button>
                 }
             </div>
         }
@@ -156,4 +167,49 @@
 
 </div>
 
+<div class="modal-overlay" id="worksheetDetailModal"></div>
+
 @await Html.PartialAsync("_AddTaskModal", ViewBag.AddTaskForm as PsyAddTaskViewModel ?? new PsyAddTaskViewModel())
+
+@section Scripts {
+<script>
+window.openWorksheetDetailModal = async function(id) {
+    try {
+        const res = await fetch(`/Psychologist/Worksheet/WorksheetDetailModal/${id}`);
+        if (!res.ok) throw new Error('Failed to load');
+        const html = await res.text();
+        const modal = document.getElementById('worksheetDetailModal');
+        modal.innerHTML = html;
+        modal.classList.add('active');
+        document.body.classList.add('lu-scroll-lock');
+    } catch (err) {
+        console.error(err);
+        alert('Gagal memuat detail worksheet.');
+    }
+};
+window.openEditWorksheetModal = async function(id) {
+    try {
+        const res = await fetch(`/Psychologist/Worksheet/EditWorksheetModal/${id}`);
+        if (!res.ok) throw new Error('Failed to load');
+        const html = await res.text();
+        document.getElementById('worksheetDetailModal').innerHTML = html;
+    } catch (err) {
+        console.error(err);
+        alert('Gagal memuat form edit worksheet.');
+    }
+};
+window.closeWorksheetDetailModal = function() {
+    const modal = document.getElementById('worksheetDetailModal');
+    modal.classList.remove('active');
+    modal.innerHTML = '';
+    document.body.classList.remove('lu-scroll-lock');
+};
+document.getElementById('worksheetDetailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeWorksheetDetailModal();
+});
+@if (ViewBag.OpenWorksheetId is int openWsId)
+{
+    <text>document.addEventListener('DOMContentLoaded', () => openWorksheetDetailModal(@openWsId));</text>
+}
+</script>
+}

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LightenUp.Web.Models
 {
     /// <summary>Patient asks admin to assign a psychologist when they have no active one.</summary>
+    // #Class PatientAdminAssignmentRequest#
     public class PatientAdminAssignmentRequest
     {
         [Key]

@@ -14,11 +14,17 @@
     var scoreSuffix = healthScore >= 70 ? "👍" : healthScore >= 40 ? "⚠️" : "🚨";
     var arcOffset   = (int)Math.Round(207.35 * (1 - healthScore / 100.0));
 }
+@* #Bagian StatistikPerusahaan# *@
 
 @section Head {
+    <link rel="stylesheet" href="~/css/shared/components-stat-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/statistik-index.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 }
 
+<div class="hrstat-page">
+
+@* #Komponen Hero# *@
 @* ── Hero (same stat-hero pattern as Psychologist/Statistics) ── *@
 <div class="stat-hero">
     <div class="stat-hero-left">
@@ -52,6 +58,7 @@
     </div>
 </div>
 
+@* #Komponen KartuKPI# *@
 @* ── KPI cards (stat-kpi-row) ── *@
 <div class="stat-kpi-row">
     <div class="stat-kpi stat-kpi--total">
@@ -102,6 +109,7 @@
     </div>
 </div>
 
+@* #Komponen Grafik# *@
 @* ── Charts row ── *@
 <div class="stat-charts-row">
 
@@ -162,6 +170,7 @@
 
 </div>
 
+@* #Komponen KartuDivisi# *@
 @* ── Division cards ── *@
 @if (Model.Divisions.Any())
 {
@@ -255,12 +264,12 @@ else
             <div class="stat-div-bars psy-modal-bars">
                 <div class="stat-div-bar-row psy-modal-bar-row--spaced">
                     <span class="stat-div-bar-label psy-modal-bar-label">Sehat</span>
-                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--sehat psy-modal-bar-fill-init" id="dSehatBar"></div></div>
+                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--sehat" id="dSehatBar"></div></div>
                     <span class="stat-div-bar-pct" id="dSehatPct">0%</span>
                 </div>
                 <div class="stat-div-bar-row">
                     <span class="stat-div-bar-label psy-modal-bar-label">Stress</span>
-                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--stress psy-modal-bar-fill-init" id="dStressBar"></div></div>
+                    <div class="stat-div-bar-track"><div class="stat-div-bar-fill stat-div-bar-fill--stress" id="dStressBar"></div></div>
                     <span class="stat-div-bar-pct" id="dStressPct">0%</span>
                 </div>
             </div>
@@ -277,7 +286,10 @@ else
     </div>
 </div>
 
+</div>@* /hrstat-page *@
+
 @section Scripts {
+    <script src="~/js/shared/animate-bars.js" asp-append-version="true"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -325,6 +337,8 @@ else
             </text>
         }
 
+        animateBarFills('.stat-kpi-bar, .stat-div-bar-fill');
+
     });
     var modalChartInstance = null;
     var modalDoughnutInstance = null;
@@ -337,21 +351,20 @@ else
         document.getElementById('dBeresikoCount').textContent = beresikoCount;
         document.getElementById('dBahayaCount').textContent = bahayaCount;
         
-        document.getElementById('dSehatBar').style.width = sehatPct + '%';
+        document.getElementById('dSehatBar').style.setProperty('--bar-w', sehatPct + '%');
         document.getElementById('dSehatPct').textContent = sehatPct + '%';
-        
-        document.getElementById('dStressBar').style.width = stressPct + '%';
+
+        document.getElementById('dStressBar').style.setProperty('--bar-w', stressPct + '%');
         document.getElementById('dStressPct').textContent = stressPct + '%';
-        
-        // Append print=true to trigger auto-print when downloading
-        document.getElementById('dLink').href = '/Hr/Statistik/Division?name=' + encodeURIComponent(name) + '&print=true';
-        
+
+        document.getElementById('dLink').href = '/Hr/Statistik/DivisionPrint?name=' + encodeURIComponent(name) + '&window=30';
+
         var modal = document.getElementById('divDetailModal');
-        modal.style.display = 'flex';
-        setTimeout(() => {
+        modal.classList.add('is-open');
+        requestAnimationFrame(function () {
             modal.classList.add('is-active');
-            document.body.style.overflow = 'hidden';
-        }, 10);
+        });
+        document.body.classList.add('lu-scroll-lock');
         
         // Initialize Doughnut Chart
         if (modalDoughnutInstance) {
@@ -408,12 +421,12 @@ else
     }
     
     function closeDivModal(e) {
-        if(e) e.preventDefault();
+        if (e) e.preventDefault();
         var modal = document.getElementById('divDetailModal');
         modal.classList.remove('is-active');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
+        setTimeout(function () {
+            modal.classList.remove('is-open');
+            document.body.classList.remove('lu-scroll-lock');
         }, 300);
     }
     </script>

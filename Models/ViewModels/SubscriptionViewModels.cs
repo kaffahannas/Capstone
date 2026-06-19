@@ -1,5 +1,6 @@
 namespace LightenUp.Web.Models.ViewModels;
 
+// #Class SubscriptionPlanViewModel#
 public class SubscriptionPlanViewModel
 {
     public string PlanId { get; set; } = "";
@@ -10,6 +11,7 @@ public class SubscriptionPlanViewModel
     public int EmployeeLimit { get; set; }
 }
 
+// #Class PatientSubscriptionIndexViewModel#
 public class PatientSubscriptionIndexViewModel
 {
     public List<SubscriptionPlanViewModel> Plans { get; set; } = new();
@@ -21,6 +23,7 @@ public class PatientSubscriptionIndexViewModel
     public string? CompanyName { get; set; }
 }
 
+    // #Class HrSubscriptionIndexViewModel#
     public class HrSubscriptionIndexViewModel
     {
         public List<SubscriptionPlanViewModel> Plans { get; set; } = new();
@@ -34,6 +37,7 @@ public class PatientSubscriptionIndexViewModel
         public bool SubscriptionRequired { get; set; }
     }
 
+    // #Class CompanyDivisionViewModel#
     public class CompanyDivisionViewModel
     {
         public int DivisionId { get; set; }

@@ -1,0 +1,182 @@
+/* #Bagian Profil Modal Psikolog# */
+/* Shared profile-style modal shell (Add Schedule, Cancel Partnership, Edit Profile, etc.) */
+
+.prf-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(15,13,40,0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s;
+    box-sizing: border-box;
+}
+.prf-modal-overlay.prf-modal--open {
+    opacity: 1;
+    pointer-events: all;
+}
+.prf-modal {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+    width: 100%;
+    max-width: 600px;
+    max-height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    transform: translateY(28px) scale(0.97);
+    transition: transform 0.22s;
+    overflow: hidden;
+    min-height: 0;
+}
+.prf-modal-overlay.prf-modal--open .prf-modal {
+    transform: translateY(0) scale(1);
+}
+.prf-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+.prf-modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+.prf-modal-close {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-gray);
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    padding: 0;
+    flex-shrink: 0;
+}
+.prf-modal-close:hover { background: #E5E7EB; color: var(--text-dark); }
+.prf-modal-body {
+    padding: 16px 24px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.prf-modal-footer {
+    padding: 14px 24px 18px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    background: #FAFAFA;
+    border-radius: 0 0 20px 20px;
+}
+.prf-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.prf-form-row > .prf-form-group {
+    min-width: 0;
+}
+.prf-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+.prf-form-group label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.prf-form-group input,
+.prf-form-group select,
+.prf-form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 9px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text-dark);
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+}
+.prf-form-group input:focus,
+.prf-form-group select:focus,
+.prf-form-group textarea:focus {
+    border-color: #4338CA;
+    box-shadow: 0 0 0 3px rgba(67,56,202,0.1);
+}
+.prf-form-group input::placeholder { color: #9CA3AF; }
+
+.prf-form-group input[type="date"],
+.prf-form-group input[type="time"] {
+    height: 40px;
+    min-height: 40px;
+    padding: 0 12px;
+    line-height: 40px;
+}
+.prf-form-group input[type="date"]::-webkit-datetime-edit,
+.prf-form-group input[type="time"]::-webkit-datetime-edit {
+    padding: 0;
+    line-height: 40px;
+}
+.prf-form-group input[type="date"]::-webkit-calendar-picker-indicator,
+.prf-form-group input[type="time"]::-webkit-calendar-picker-indicator {
+    margin: 0;
+    padding: 0;
+}
+
+.prf-form-section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--primary-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0;
+    margin-top: 2px;
+}
+.prf-modal-btn {
+    padding: 10px 24px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    transition: background 0.18s, transform 0.12s;
+}
+.prf-modal-btn:active { transform: scale(0.97); }
+.prf-modal-btn--cancel {
+    background: var(--bg-gray);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+.prf-modal-btn--cancel:hover { background: #E5E7EB; color: var(--text-dark); }
+.prf-modal-btn--save {
+    background: linear-gradient(135deg, #4338CA, #7C3AED);
+    color: #fff;
+}
+.prf-modal-btn--save:hover { background: linear-gradient(135deg, #3730A3, #6D28D9); }

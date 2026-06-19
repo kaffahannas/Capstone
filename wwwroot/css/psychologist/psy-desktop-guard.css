@@ -1,0 +1,136 @@
+/* #Bagian Psikolog Desktop Guard — pulihkan layout desktop# */
+
+@media (min-width: 992px) {
+    /* #Bagian Statistik — hero header# */
+    body.psychologist-body .stat-hero {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+        padding: 26px 30px !important;
+        margin-bottom: 20px !important;
+        border-radius: 16px !important;
+        gap: 20px !important;
+        background: linear-gradient(130deg, #1E1B4B 0%, #3730A3 30%, #4F46E5 65%, #7C3AED 100%) !important;
+    }
+
+    body.psychologist-body .stat-hero-left {
+        flex: 1 !important;
+        min-width: 240px !important;
+    }
+
+    body.psychologist-body .stat-hero-eyebrow {
+        font-size: 11px !important;
+        margin-bottom: 4px !important;
+        color: rgba(255, 255, 255, 0.65) !important;
+    }
+
+    body.psychologist-body .stat-hero-title {
+        font-size: 24px !important;
+        margin-bottom: 6px !important;
+        color: #fff !important;
+    }
+
+    body.psychologist-body .stat-hero-sub {
+        font-size: 13px !important;
+        color: rgba(255, 255, 255, 0.58) !important;
+    }
+
+    body.psychologist-body .stat-hero-score {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        width: auto !important;
+        flex-shrink: 0 !important;
+        gap: 16px !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+    }
+
+    body.psychologist-body .stat-score-ring,
+    body.psychologist-body .stat-score-ring svg {
+        width: 80px !important;
+        height: 80px !important;
+    }
+
+    body.psychologist-body .stat-score-pct {
+        font-size: 18px !important;
+        color: #fff !important;
+    }
+
+    body.psychologist-body .stat-score-name {
+        font-size: 14px !important;
+        color: #fff !important;
+    }
+
+    body.psychologist-body .stat-score-label {
+        font-size: 12px !important;
+        color: rgba(255, 255, 255, 0.62) !important;
+    }
+
+    /* KPI row */
+    body.psychologist-body .stat-kpi-row {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 14px !important;
+        margin-bottom: 18px !important;
+    }
+
+    body.psychologist-body .stat-kpi {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 18px 20px 14px !important;
+        border-radius: 14px !important;
+        gap: 10px !important;
+    }
+
+    body.psychologist-body .stat-kpi-body {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+    }
+
+    body.psychologist-body .stat-kpi-icon {
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 11px !important;
+    }
+
+    body.psychologist-body .stat-kpi-value {
+        font-size: 30px !important;
+    }
+
+    body.psychologist-body .stat-kpi-label {
+        font-size: 12px !important;
+    }
+
+    body.psychologist-body .stat-kpi-bar {
+        height: 4px !important;
+    }
+
+    /* Charts */
+    body.psychologist-body .stat-charts-row {
+        grid-template-columns: 340px 1fr !important;
+        gap: 16px !important;
+        margin-bottom: 22px !important;
+    }
+
+    body.psychologist-body .stat-chart-card {
+        padding: 22px 24px !important;
+        border-radius: 14px !important;
+    }
+
+    /* Ringkasan per perusahaan — kartu tidak stretch penuh */
+    body.psychologist-body .stat-division-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 340px)) !important;
+        justify-content: start !important;
+        gap: 14px !important;
+        align-content: start !important;
+    }
+
+    body.psychologist-body .stat-div-card {
+        max-width: 340px !important;
+        width: 100% !important;
+    }
+}

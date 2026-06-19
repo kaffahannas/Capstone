@@ -5,6 +5,14 @@
     Layout = "_LayoutDashboard";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/schedule-edit-schedule.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-edit-schedule-modal.css" asp-append-version="true" />
+}
+
+
+@* #Bagian EditJadwal# *@
+@* #Komponen TombolKembali# *@
 <a class="es-back" asp-action="Scheduling">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Kembali ke Daftar Jadwal
@@ -19,6 +27,7 @@
 </div>
 
 <div class="es-wrap">
+    @* #Komponen FormJadwal# *@
     <form asp-action="EditSchedule" method="post">
         <div class="detail-card es-card">
             @Html.AntiForgeryToken()

@@ -1,3 +1,4 @@
+﻿/* #Bagian Scoped CSS Step3.cshtml# - Views/Onboarding/Step3.cshtml.css */
 .onb-step-logo {
     display: flex;
     align-items: center;
@@ -8,6 +9,10 @@
 .onb-step-logo-img {
     width: 28px;
     height: auto;
+}
+
+.onb-step-logo-img.is-hidden {
+    display: none;
 }
 
 .onb-step-logo-text {

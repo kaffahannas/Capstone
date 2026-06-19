@@ -1,0 +1,201 @@
+/* #Bagian Persetujuan Penugasan Permintaan Admin# */
+.apr-page-header {
+    margin-bottom: 24px;
+}
+
+.apr-page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px;
+}
+
+.apr-page-header .adm-page-sub {
+    color: #6B7280;
+    margin: 0;
+    font-size: 15px;
+}
+
+.apr-empty-premium {
+    text-align: center;
+    padding: 64px 24px;
+    background: #fff;
+    border-radius: 20px;
+    border: 1px dashed #D1D5DB;
+}
+
+.apr-empty-premium-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.apr-empty-premium h3 {
+    margin: 0 0 8px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.apr-empty-premium p {
+    color: #6B7280;
+    font-size: 14px;
+}
+
+.apr-request-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.apr-request-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.apr-request-thead {
+    background: #F9FAFB;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.apr-request-th {
+    padding: 16px;
+    font-weight: 600;
+    color: #4B5563;
+    font-size: 13px;
+}
+
+.apr-request-th--right {
+    text-align: right;
+}
+
+.apr-request-tbody {
+    font-size: 14px;
+}
+
+.apr-request-tr {
+    border-bottom: 1px solid #F3F4F6;
+    transition: background 0.2s;
+}
+
+.apr-request-td {
+    padding: 16px;
+}
+
+.apr-request-td--right {
+    text-align: right;
+    min-width: 240px;
+}
+
+.apr-patient-name {
+    color: #111827;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.apr-patient-tag {
+    font-size: 12px;
+    color: #6B7280;
+    background: #F3F4F6;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.apr-psy-name {
+    color: #374151;
+    font-weight: 500;
+}
+
+.apr-status-psy-add {
+    background: #e0e7ff;
+    color: #3730a3;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.apr-requester-role {
+    font-size: 12px;
+    color: #6B7280;
+    display: block;
+}
+
+.apr-requester-name {
+    color: #111827;
+}
+
+.apr-td-date {
+    color: #6B7280;
+    font-size: 13px;
+}
+
+.apr-action-row {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.apr-action-form {
+    margin: 0;
+}
+
+.apr-btn-approve {
+    background: #10B981;
+    color: white;
+    border: none;
+    font-weight: 600;
+    width: 70px;
+    text-align: center;
+}
+
+.apr-btn-reject {
+    background: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #DC2626;
+    font-weight: 600;
+    width: 70px;
+    text-align: center;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .apr-page-header {
+        margin-bottom: 14px;
+    }
+
+    .apr-page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .apr-empty-premium {
+        padding: 40px 16px;
+    }
+
+    .apr-request-th,
+    .apr-request-td {
+        padding: 12px;
+        font-size: 12px;
+    }
+
+    .apr-request-td--right {
+        min-width: 0;
+    }
+
+    .apr-action-row {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .apr-btn-approve,
+    .apr-btn-reject {
+        width: auto;
+        min-width: 64px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}

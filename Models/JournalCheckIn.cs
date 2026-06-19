@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LightenUp.Web.Models
 {
     // 6-question structured daily check-in (separate from free-write Journal)
+    // #Class JournalCheckIn#
     public class JournalCheckIn
     {
         [Key]

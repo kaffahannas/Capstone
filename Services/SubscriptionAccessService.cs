@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Services;
 
+// #Class SubscriptionAccessService#
 public class SubscriptionAccessService
 {
     private readonly ApplicationDbContext _context;
@@ -13,6 +14,8 @@ public class SubscriptionAccessService
         _context = context;
     }
 
+    // #Bagian Akses Langganan#
+    // #Function HasCompanyActiveSubscriptionAsync#
     public async Task<bool> HasCompanyActiveSubscriptionAsync(int companyId)
     {
         return await _context.CompanySubscriptions
@@ -21,6 +24,7 @@ public class SubscriptionAccessService
                 && s.EndDate >= DateTime.Today);
     }
 
+    // #Function GetActiveCompanySubscriptionAsync#
     public async Task<CompanySubscription?> GetActiveCompanySubscriptionAsync(int companyId)
     {
         return await _context.CompanySubscriptions
@@ -29,6 +33,7 @@ public class SubscriptionAccessService
             .FirstOrDefaultAsync();
     }
 
+    // #Function HasPatientPremiumAccessAsync#
     public async Task<bool> HasPatientPremiumAccessAsync(Patient patient)
     {
         var hasOwn = await _context.Subscriptions
@@ -43,11 +48,14 @@ public class SubscriptionAccessService
         return false;
     }
 
+    // #Function CanUseReferralCodeAsync#
     public async Task<bool> CanUseReferralCodeAsync(int companyId)
     {
         return await HasCompanyActiveSubscriptionAsync(companyId);
     }
 
+    // #Bagian Kode Referral#
+    // #Function GenerateReferralCode#
     public static string GenerateReferralCode()
     {
         const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -55,6 +63,7 @@ public class SubscriptionAccessService
         return new string(Enumerable.Range(0, 6).Select(_ => chars[rnd.Next(chars.Length)]).ToArray());
     }
 
+    // #Function GenerateUniqueReferralCodeAsync#
     public async Task<string> GenerateUniqueReferralCodeAsync()
     {
         string code;

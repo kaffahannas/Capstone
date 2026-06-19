@@ -1,0 +1,45 @@
+/* #Bagian Jadwal Edit HR# */
+.hrsch-edit-wrap {
+    max-width: 640px;
+}
+
+.hrsch-edit-title {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.hrsch-edit-sub {
+    margin: 0 0 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.hrsch-edit-val-summary {
+    background: #FEE2E2;
+    color: #B91C1C;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.hrsch-edit-val-error {
+    color: #DC2626;
+    font-size: 12px;
+}
+
+.hrsch-edit-label-opt {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.hrsch-edit-textarea {
+    margin-bottom: 0;
+}
+
+.hrsch-edit-footer {
+    padding: 0;
+    margin-top: 16px;
+}

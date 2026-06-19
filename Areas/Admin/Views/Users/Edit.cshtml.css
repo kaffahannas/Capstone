@@ -1,20 +1,3 @@
-.usr-edit-card {
-    max-width: 600px;
-}
+/* #Bagian Scoped CSS Edit.cshtml# - lihat wwwroot/css/admin/users-edit.css */
+/* Styles: wwwroot/css/admin/users-edit.css */
 
-.usr-validation-summary {
-    margin-bottom: 16px;
-}
-
-.usr-role-input {
-    background: #F3F4F6;
-    color: #6B7280;
-    border: 1px solid #E5E7EB;
-    padding: 10px;
-    border-radius: var(--adm-radius-sm);
-    cursor: not-allowed;
-}
-
-.usr-form-actions {
-    margin-top: 24px;
-}

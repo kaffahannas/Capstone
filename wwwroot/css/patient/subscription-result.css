@@ -1,0 +1,13 @@
+/* #Bagian Langganan Hasil Pasien# */
+.sub-result-card {
+    text-align: center;
+    padding: 40px;
+}
+
+.sub-result-icon {
+    font-size: 48px;
+}
+
+.sub-result-action {
+    margin-top: 16px;
+}

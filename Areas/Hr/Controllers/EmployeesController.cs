@@ -12,6 +12,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    // #Class EmployeesController#
     [RequiresCompanySubscription]
     public class EmployeesController : Controller
     {
@@ -40,7 +41,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  List
         // ═════════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index(string tab = "Semua", string? search = null,
             string? division = null, string? status = null, int page = 1)
         {
@@ -135,6 +137,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  Detail
         // ═════════════════════════════════════════════
+        // #Function Detail#
         [HttpGet]
         public async Task<IActionResult> Detail(int id, string window = "Week")
         {
@@ -231,6 +234,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  PDF per-employee (print-optimised, browser → Save as PDF)
         // ═════════════════════════════════════════════
+        // #Function EmployeePdf#
         [HttpGet]
         public async Task<IActionResult> EmployeePdf(int id)
         {
@@ -241,6 +245,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             var p = await _context.Patients
                 .Include(x => x.User)
                 .Include(x => x.Company)
+                .Include(x => x.Division)
                 .FirstOrDefaultAsync(x => x.PatientId == id && x.CompanyId == companyId);
             if (p == null) return NotFound();
 
@@ -279,6 +284,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  Edit Symptoms (inline AJAX-friendly POST)
         // ═════════════════════════════════════════════
+        // #Function EditSymptoms#
         [HttpPost]
         public async Task<IActionResult> EditSymptoms(HrEditSymptomsViewModel model)
         {
@@ -294,6 +300,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════════
         //  Add (PendingEmployee)
         // ═════════════════════════════════════════════
+        // #Function Add#
         [HttpGet]
         public async Task<IActionResult> Add()
         {
@@ -307,6 +314,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 .ToListAsync();
             return View(new HrAddClientViewModel());
         }
+
+        // #Function Add POST#
 
         [HttpPost]
         public async Task<IActionResult> Add(HrAddClientViewModel model)
@@ -370,6 +379,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         }
 
         // ─── HR membatalkan psikolog karyawan (Request → PendingCancellationByAdmin) ───
+        // #Function RequestCancelAssignment#
+        // #Bagian Batalkan Psikolog#
         [HttpPost]
         public async Task<IActionResult> RequestCancelAssignment(int assignmentId, string? reason)
         {
@@ -393,6 +404,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             TempData["success"] = "Permintaan pembatalan penugasan psikolog dikirim ke Admin untuk disetujui.";
             return RedirectToAction(nameof(Detail), new { id = a.PatientId });
         }
+
+        // #Function RequestEmployeeRemoval#
 
         [HttpPost]
         [ValidateAntiForgeryToken]

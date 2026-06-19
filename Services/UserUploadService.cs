@@ -3,6 +3,7 @@ namespace LightenUp.Web.Services;
 /// <summary>
 /// Stores user files under wwwroot/uploads/accounts/{userId}/{category}/.
 /// </summary>
+// #Class UserUploadService#
 public class UserUploadService
 {
     private readonly IWebHostEnvironment _env;
@@ -24,10 +25,12 @@ public class UserUploadService
     public const long MaxImageSizeBytes = 5 * 1024 * 1024;      // 5 MB
     public const long MaxDocumentSizeBytes = 10 * 1024 * 1024;   // 10 MB
 
-    /// <summary>Physical folder for an account (for admin cleanup / browsing).</summary>
+    // #Bagian Penyimpanan File#
+    // #Function GetAccountFolderPath#
     public string GetAccountFolderPath(string userId) =>
         Path.Combine(_env.WebRootPath, "uploads", "accounts", SanitizeSegment(userId));
 
+    // #Function SaveAsync#
     public async Task<string?> SaveAsync(
         string userId,
         string category,
@@ -64,7 +67,7 @@ public class UserUploadService
         return $"/uploads/accounts/{safeUserId}/{safeCategory}/{fileName}";
     }
 
-    /// <summary>Save a new file and remove the previous web path if it was under /uploads/.</summary>
+    // #Function ReplaceAsync#
     public async Task<string?> ReplaceAsync(
         string userId,
         string category,
@@ -80,6 +83,7 @@ public class UserUploadService
         return path;
     }
 
+    // #Function TryDeleteByWebPath#
     public void TryDeleteByWebPath(string? webPath)
     {
         if (string.IsNullOrWhiteSpace(webPath)) return;

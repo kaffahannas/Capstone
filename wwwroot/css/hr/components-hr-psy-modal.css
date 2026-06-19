@@ -1,0 +1,340 @@
+/* #Bagian Psikolog Modal HR# */
+/* HR psy-modal shell — directory/detail (psy-modal-content) + schedule form (psy-modal) */
+
+.psy-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 12000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    box-sizing: border-box;
+}
+
+.psy-modal-overlay.is-open {
+    display: flex;
+}
+
+.psy-modal-overlay.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* #Komponen Content Kartu Statistik Psikolog Directory# */
+/* ── Content card (Statistik, Psychologists directory) ── */
+.psy-modal-content {
+    background: #fff;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.psy-modal-overlay.is-active .psy-modal-content {
+    transform: scale(1);
+}
+
+.psy-modal-content .psy-modal-header {
+    background: linear-gradient(135deg, var(--lu-primary) 0%, #6D28D9 100%);
+    padding: 40px 32px;
+    color: #fff;
+    text-align: center;
+    position: relative;
+}
+
+.psy-modal-content .psy-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.psy-modal-content .psy-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.psy-modal-body {
+    padding: 32px;
+}
+
+.psy-modal-section {
+    margin-bottom: 24px;
+}
+
+.psy-modal-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #9CA3AF;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.psy-modal-value {
+    font-size: 15px;
+    color: #374151;
+    line-height: 1.6;
+}
+
+.psy-modal-footer {
+    padding: 24px 32px;
+    background: #F9FAFB;
+    border-top: 1px solid #F3F4F6;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+}
+
+.btn-mitra {
+    background: var(--lu-primary);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+}
+
+.btn-mitra:hover:not(:disabled) {
+    background: #6D28D9;
+}
+
+.btn-mitra:disabled {
+    cursor: default;
+    box-shadow: none;
+}
+
+.btn-mitra--partner:disabled {
+    background: #10B981;
+}
+
+.btn-mitra--pending:disabled {
+    background: #9CA3AF;
+}
+
+.btn-admin {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+    display: inline-block;
+}
+
+.btn-admin:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* #Komponen Form Kartu Jadwal Permintaan Modal# */
+/* ── Form card (Schedules request modal) ── */
+.psy-modal-overlay > .psy-modal,
+.psy-modal-overlay > .modal-container {
+    background: #fff;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 20px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.psy-modal-overlay.is-active > .psy-modal,
+.psy-modal-overlay.is-active > .modal-container {
+    transform: scale(1) translateY(0);
+}
+
+.psy-modal .psy-modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.psy-modal .psy-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.psy-modal .psy-modal-close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 4px 8px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.psy-modal .psy-modal-close:hover {
+    background: #F3F4F6;
+    color: var(--text-dark);
+}
+
+.psy-modal .psy-modal-body {
+    padding: 24px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text-dark);
+    box-sizing: border-box;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    max-width: 100%;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+}
+
+.psy-modal-overlay .btn-outline,
+.hrsch-page-wrap .btn-outline {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #374151;
+    font-family: inherit;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.psy-modal-overlay .btn-outline:hover,
+.hrsch-page-wrap .btn-outline:hover {
+    background: #F9FAFB;
+}
+
+.psy-modal-overlay .btn-fill,
+.hrsch-page-wrap .btn-fill {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: none;
+    background: var(--primary-purple);
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+}
+
+.psy-modal-overlay .btn-fill:hover,
+.hrsch-page-wrap .btn-fill:hover {
+    background: var(--lu-primary-hover);
+}
+
+.psy-modal-overlay .modal-footer,
+.hrsch-idx-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* #Komponen Search Input Jadwal Filter Bar# */
+/* Search input (Schedules filter bar) */
+.psy-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #F9FAFB;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 9px 10px;
+    height: 36px;
+    box-sizing: border-box;
+}
+
+.psy-search-wrap svg {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.psy-search {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13px;
+    font-family: inherit;
+    width: 100%;
+    min-width: 0;
+    color: var(--text-dark);
+    line-height: 1;
+}
+
+.psy-search::placeholder {
+    color: var(--text-muted);
+}

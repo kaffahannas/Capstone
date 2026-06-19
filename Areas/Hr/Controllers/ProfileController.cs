@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
+    // #Class ProfileController#
     [Authorize(Roles = "HR")]
     public class ProfileController : Controller
     {
@@ -40,7 +41,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  Index
         // ═════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index()
         {
             var (user, hr) = await LoadAsync();
@@ -97,6 +99,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  Edit  (fallback full-page, kept for safety)
         // ═════════════════════════════════════════
+        // #Function Edit#
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
@@ -104,16 +107,10 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
             if (hr == null || hr.OnboardingCompletedAt == null) return RedirectToAction("Welcome", "Onboarding");
 
-            ViewBag.ActiveNav = "Profil";
-            return View(new HrProfileEditViewModel
-            {
-                FullName    = user.FullName,
-                Phone       = user.PhoneNumber,
-                EmployeeId  = hr.EmployeeId,
-                Department  = hr.Department,
-                CompanyName = hr.Company?.Name ?? "",
-            });
+            return RedirectToAction(nameof(Index));
         }
+
+        // #Function Edit POST#
 
         [HttpPost]
         [RequestSizeLimit(10_000_000)]
@@ -151,6 +148,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  EditModal  (AJAX — used by profile modal)
         // ═════════════════════════════════════════
+        // #Function EditModal#
         [HttpPost]
         [RequestSizeLimit(10_000_000)]
         public async Task<IActionResult> EditModal(HrProfileEditViewModel model)
@@ -199,6 +197,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  ChangePassword  (AJAX modal)
         // ═════════════════════════════════════════
+        // #Function ChangePassword#
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(

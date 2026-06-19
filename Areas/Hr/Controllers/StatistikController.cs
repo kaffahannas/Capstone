@@ -13,6 +13,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    // #Class StatistikController#
     [RequiresCompanySubscription]
     public class StatistikController : Controller
     {
@@ -46,7 +47,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═══════════════════════════════════════
         //  Overview
         // ═══════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index()
         {
             var hr = await GetHrAsync();
@@ -97,10 +99,13 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═══════════════════════════════════════
         //  Division report
         // ═══════════════════════════════════════
+        // #Function Division#
         [HttpGet]
-        public async Task<IActionResult> Division(string name, int window = 30)
+        public async Task<IActionResult> Division(string name, int window = 30, bool print = false)
         {
             if (window != 7 && window != 30 && window != 90) window = 30;
+            if (print) return RedirectToAction(nameof(DivisionPrint), new { name, window });
+
             var hr = await GetHrAsync();
             if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
             var companyId = hr.CompanyId.Value;
@@ -142,6 +147,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return View(vm);
         }
 
+        // #Function DivisionChartData#
+
         [HttpGet]
         public async Task<IActionResult> DivisionChartData(string name, int window = 30)
         {
@@ -175,9 +182,32 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             });
         }
 
+        // #Function DivisionPrint#
+
+        [HttpGet]
+        public async Task<IActionResult> DivisionPrint(string name, int window = 30)
+        {
+            if (window != 7 && window != 30 && window != 90) window = 30;
+            var hr = await GetHrAsync();
+            if (hr == null || hr.CompanyId == null) return RedirectToAction("Welcome", "Onboarding");
+            var companyId = hr.CompanyId.Value;
+
+            var roster = (await BuildRosterAsync(companyId))
+                .Where(r => string.Equals(r.Division, name, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            ViewBag.Roster = roster;
+            ViewBag.Company = hr.Company?.Name ?? "";
+            ViewBag.DivisionName = name;
+            ViewBag.Window = window;
+            ViewBag.Now = DateTime.Now;
+            return View("DivisionPrint");
+        }
+
         // ═══════════════════════════════════════
         //  Print-optimized view (browser → Save as PDF)
         // ═══════════════════════════════════════
+        // #Function Print#
         [HttpGet]
         public async Task<IActionResult> Print()
         {
@@ -195,6 +225,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═══════════════════════════════════════
         //  CSV export
         // ═══════════════════════════════════════
+        // #Function ExportCsv#
         [HttpGet]
         public async Task<IActionResult> ExportCsv()
         {
@@ -219,6 +250,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         {
             var patients = await _context.Patients
                 .Include(p => p.User)
+                .Include(p => p.Division)
                 .Where(p => p.CompanyId == companyId && p.EmploymentStatus == "active")
                 .OrderBy(p => p.User!.FullName)
                 .ToListAsync();

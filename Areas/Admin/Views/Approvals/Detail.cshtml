@@ -13,6 +13,14 @@
     bool hasDocs     = hasAcademic || hasStr || hasSupport;
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/approvals-detail.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/approvals-approvals-tabs.css" asp-append-version="true" />
+}
+
+
+@* #Bagian TinjauPersetujuan# *@
+@* #Komponen TombolKembali# *@
 <a class="back-link" asp-action="Index">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
     Kembali ke Daftar
@@ -136,7 +144,7 @@
     </div>
 </div>
 
-<!-- ── Decision ── -->
+@* #Komponen Keputusan# *@
 <div class="adm-card">
     <div class="adm-card-title">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>

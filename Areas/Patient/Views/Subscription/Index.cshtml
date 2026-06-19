@@ -5,7 +5,13 @@
 
     var monthly = Model.Plans.FirstOrDefault(p => p.PlanId.Contains("monthly"));
     var yearly  = Model.Plans.FirstOrDefault(p => p.PlanId.Contains("yearly"));
+    var testPlan = Model.Plans.FirstOrDefault(p => p.PlanId == "patient-test");
     var cid     = new System.Globalization.CultureInfo("id-ID");
+}
+@* #Bagian Langganan Pasien# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/subscription-index.css" asp-append-version="true" />
 }
 
 @if (TempData["error"] is string err)
@@ -19,6 +25,7 @@
     <div class="lu-alert-success" role="status">@ok</div>
 }
 
+@* #Komponen Banner Status Langganan# *@
 <!-- ─── Active-subscription status banner ─── -->
 @if (Model.HasActiveSubscription)
 {
@@ -45,12 +52,14 @@ else if (Model.IsB2B)
     </div>
 }
 
+@* #Komponen Hero Langganan# *@
 <!-- ─── Hero ─── -->
 <div class="sub-hero">
     <h1 class="sub-hero-title">Tingkatkan Perjalanan Mentalmu 🌟</h1>
     <p class="sub-hero-sub">Mulai gratis, upgrade kapan saja. Tanpa kontrak, tanpa syarat.</p>
 </div>
 
+@* #Komponen Grid Paket Langganan# *@
 <!-- ─── 3-column pricing grid ─── -->
 <div class="sub-grid">
 
@@ -73,6 +82,39 @@ else if (Model.IsB2B)
             <span class="sub-plan-current">Paket dasar kamu</span>
         </div>
     </div>
+
+    <!-- ── TEST PLAN ── -->
+    @if (testPlan != null)
+    {
+        var testIsActive = Model.HasActiveSubscription && Model.ActivePlanName?.Contains("Test") == true;
+        <div class="sub-plan">
+            <div class="sub-plan-icon">🧪</div>
+            <h3 class="sub-plan-name">Uji Coba</h3>
+            <div class="sub-plan-price">
+                <span class="sub-price-amount">Rp @testPlan.Price.ToString("N0", cid)</span>
+                <span class="sub-price-period">/sekali</span>
+            </div>
+            <ul class="sub-features">
+                <li class="sub-feat sub-feat--ok">Simulasi Pembayaran Duitku</li>
+                <li class="sub-feat sub-feat--ok">Mood tracking harian</li>
+                <li class="sub-feat sub-feat--ok">Jurnal pribadi &amp; statistik</li>
+                <li class="sub-feat sub-feat--ok">Worksheet &amp; check-in</li>
+            </ul>
+            <div class="sub-plan-footer">
+                @if (testIsActive)
+                {
+                    <span class="sub-plan-active">✓ Sedang Aktif</span>
+                }
+                else
+                {
+                    <form asp-action="Checkout" method="post">
+                        <input type="hidden" name="planId" value="@testPlan.PlanId" />
+                        <button type="submit" class="sub-cta-btn">Mulai Test</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
 
     <!-- ── BULANAN (featured) ── -->
     @if (monthly != null)
@@ -108,7 +150,6 @@ else if (Model.IsB2B)
                 else
                 {
                     <form asp-action="Checkout" method="post">
-                        @Html.AntiForgeryToken()
                         <input type="hidden" name="planId" value="@monthly.PlanId" />
                         <button type="submit" class="sub-cta-btn">Mulai Sekarang</button>
                     </form>
@@ -153,7 +194,6 @@ else if (Model.IsB2B)
                 else
                 {
                     <form asp-action="Checkout" method="post">
-                        @Html.AntiForgeryToken()
                         <input type="hidden" name="planId" value="@yearly.PlanId" />
                         <button type="submit" class="sub-cta-btn sub-cta-btn--green">Pilih Tahunan</button>
                     </form>

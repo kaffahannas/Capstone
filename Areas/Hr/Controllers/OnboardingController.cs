@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
+    // #Class OnboardingController#
     [Authorize(Roles = "HR")]
     public class OnboardingController : Controller
     {
@@ -49,6 +50,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return nameof(Success);
         }
 
+        // #Bagian Welcome#
+        // #Function Welcome#
         [HttpGet]
         public async Task<IActionResult> Welcome()
         {
@@ -64,6 +67,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return View();
         }
 
+        // #Function Welcome POST#
+
         [HttpPost]
         public async Task<IActionResult> Welcome(bool _)
         {
@@ -73,6 +78,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return RedirectToAction(NextStepFor(hr, user));
         }
 
+        // #Bagian Foto Profil#
+        // #Function Photo#
         [HttpGet]
         public async Task<IActionResult> Photo()
         {
@@ -85,6 +92,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             ViewBag.ExistingPhotoUrl = user.ProfilePicture;
             return View(new HrOnboardingPhotoViewModel { HasExistingPhoto = !string.IsNullOrEmpty(user.ProfilePicture) });
         }
+
+        // #Function Photo POST#
 
         [HttpPost]
         [RequestSizeLimit(5_000_000)]
@@ -120,6 +129,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return RedirectToAction(nameof(Academic));
         }
 
+        // #Bagian Data Akademik#
+        // #Function Academic#
         [HttpGet]
         public async Task<IActionResult> Academic()
         {
@@ -136,6 +147,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 HasExistingDocument = !string.IsNullOrEmpty(hr.AcademicDocumentUrl)
             });
         }
+
+        // #Function Academic POST#
 
         [HttpPost]
         [RequestSizeLimit(10_000_000)]
@@ -176,6 +189,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return RedirectToAction(nameof(Company));
         }
 
+        // #Bagian Data Perusahaan#
+        // #Function Company#
         [HttpGet]
         public async Task<IActionResult> Company()
         {
@@ -191,6 +206,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 HasExistingSupportDocument = !string.IsNullOrEmpty(hr.SupportDocumentUrl)
             });
         }
+
+        // #Function Company POST#
 
         [HttpPost]
         [RequestSizeLimit(10_000_000)]
@@ -248,6 +265,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return RedirectToAction("Index", "Subscription", new { area = "Hr" });
         }
 
+        // #Bagian Selesai Onboarding#
+        // #Function Success#
         [HttpGet]
         public IActionResult Success() => View();
     }

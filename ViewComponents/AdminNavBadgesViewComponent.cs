@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.ViewComponents;
 
+// #Class AdminNavBadgesViewComponent#
 public class AdminNavBadgesViewComponent : ViewComponent
 {
     private readonly ApplicationDbContext _context;
@@ -14,6 +15,7 @@ public class AdminNavBadgesViewComponent : ViewComponent
         _context = context;
     }
 
+    // #Function InvokeAsync#
     public async Task<IViewComponentResult> InvokeAsync(string type = "Assignments")
     {
         int count = 0;

@@ -1,0 +1,374 @@
+/* #Bagian Penggajian Index Admin# */
+.pay-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.pay-kpi-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #F3F4F6;
+}
+
+.pay-kpi-card--accent {
+    background: linear-gradient(135deg, #312E81, #4338CA);
+    box-shadow: 0 4px 16px rgba(67, 56, 202, 0.25);
+    border: none;
+}
+
+.pay-kpi-label {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9CA3AF;
+}
+
+.pay-kpi-card--accent .pay-kpi-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.pay-kpi-value {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.pay-kpi-value--medium {
+    font-size: 22px;
+}
+
+.pay-kpi-value--purple {
+    color: #4338CA;
+}
+
+.pay-kpi-value--white {
+    color: #fff;
+}
+
+.pay-th-psy {
+    width: 20%;
+}
+
+.pay-th-center {
+    text-align: center;
+}
+
+.pay-th-right {
+    text-align: right;
+}
+
+.pay-th-actions {
+    text-align: right;
+    width: 160px;
+}
+
+.pay-td-center {
+    text-align: center;
+}
+
+.pay-td-right {
+    text-align: right;
+}
+
+.pay-badge-pct {
+    background: #EEF2FF;
+    color: #4338CA;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.pay-badge-sessions {
+    background: #F3F4F6;
+    color: #374151;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.pay-td-count {
+    text-align: center;
+    font-weight: 600;
+}
+
+.pay-badge-completed {
+    background: #D1FAE5;
+    color: #065F46;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.pay-text-muted {
+    color: #9CA3AF;
+    font-size: 13px;
+}
+
+.pay-td-per-session {
+    text-align: right;
+    font-size: 14px;
+    color: #4B5563;
+}
+
+.pay-amount-positive {
+    font-size: 15px;
+    color: #059669;
+}
+
+.pay-action-row {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.pay-btn-transfer {
+    background: #10B981;
+    border-color: #059669;
+    color: #fff;
+}
+
+.pay-note {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #92400E;
+}
+
+.pay-settings-modal::backdrop {
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.pay-settings-modal {
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    max-width: 440px;
+    width: 100%;
+    outline: none;
+    background: #FFFFFF;
+}
+
+.pay-modal-header {
+    padding: 20px 24px;
+    background: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 16px 16px 0 0;
+}
+
+.pay-modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.pay-modal-close {
+    background: #F1F5F9;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    color: #64748B;
+    transition: all 0.2s;
+}
+
+.pay-modal-close:hover {
+    background: #E2E8F0;
+    color: #0F172A;
+}
+
+.pay-modal-form {
+    padding: 24px;
+}
+
+.pay-modal-intro {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: #4B5563;
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+.pay-modal-intro strong {
+    color: #166534;
+}
+
+.pay-modal-field {
+    margin-bottom: 16px;
+}
+
+.pay-modal-field--spaced {
+    margin-bottom: 24px;
+}
+
+.pay-modal-label {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    color: #334155;
+}
+
+.pay-modal-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #CBD5E1;
+    font-size: 14px;
+    color: #1E293B;
+    background: #FFF;
+    transition: all 0.2s;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.pay-modal-input:focus {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.pay-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    .pay-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .pay-kpi-card {
+        padding: 14px 16px;
+    }
+
+    .pay-kpi-label {
+        font-size: 10px;
+    }
+
+    .pay-kpi-value {
+        font-size: 1.35rem;
+    }
+
+    .pay-kpi-value--medium {
+        font-size: 1.05rem;
+    }
+
+    .pay-action-row {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 6px;
+    }
+
+    .pay-action-row .btn {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+
+    .pay-note {
+        font-size: 12px;
+        padding: 12px 14px;
+        line-height: 1.45;
+    }
+
+    .pay-settings-modal {
+        max-width: calc(100vw - 24px);
+        margin: auto;
+    }
+}
+
+@media (max-width: 599.98px) {
+    .pay-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pay-kpi-card--accent {
+        order: -1;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .pay-page {
+        gap: 12px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .pay-page .adm-page-header {
+        margin-bottom: 12px;
+    }
+
+    .pay-page .adm-page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .pay-page .adm-page-sub {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .pay-page .adm-page-sub code {
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    .pay-page > .adm-table-wrap.lu-list-scroll {
+        overflow-y: visible;
+        max-height: none;
+        flex: none;
+    }
+
+    .pay-action-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pay-action-row .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .pay-th-actions {
+        width: auto;
+    }
+
+    .pay-modal-actions {
+        flex-direction: column;
+    }
+
+    .pay-modal-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}

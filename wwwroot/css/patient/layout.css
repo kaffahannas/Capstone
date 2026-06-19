@@ -1,0 +1,477 @@
+/* #Bagian Layout Pasien# */
+/* Patient app shell — sidebar, main, viewport shells */
+* { box-sizing: border-box; }
+
+body.patient-body,
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--lu-bg);
+    color: var(--lu-text);
+    min-height: 100vh;
+}
+
+body.patient-body {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+/* #Komponen App Shell Sidebar + Main# */
+/* App shell: sidebar + main (desktop grid; mobile = site.css offcanvas) */
+body.patient-body .app-shell {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.app-sidebar {
+    background: var(--lu-card);
+    border-right: 1px solid var(--lu-border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* #Komponen Brand Logo Image + Name# */
+/* ─── Brand: logo image + name ─── */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 4px 20px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--lu-border);
+    text-decoration: none;
+    color: var(--lu-primary);
+}
+.brand-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+.brand-name {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--lu-primary);
+    display: block;
+    line-height: 1.2;
+}
+.brand-subtitle {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--lu-text-muted);
+    letter-spacing: 0.3px;
+    margin-top: 1px;
+}
+
+/* #Komponen Nav Items Svg Icon + Label# */
+/* ─── Nav items: SVG icon + label ─── */
+.side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.side-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: var(--lu-text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.18s, color 0.18s;
+}
+.side-nav-item svg { flex-shrink: 0; }
+.side-nav-item:hover { background: var(--lu-gray-100); color: var(--lu-text); }
+.side-nav-item.active {
+    background: var(--lu-primary-soft);
+    color: var(--lu-primary);
+    font-weight: 600;
+}
+.side-nav-item.active svg { stroke: var(--lu-primary); }
+
+/* #Komponen Logout Button# */
+/* ─── Logout button ─── */
+.side-nav-logout {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--lu-border);
+}
+.logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--lu-danger-soft);
+    color: var(--lu-danger-text);
+    border: 1px solid var(--lu-danger-border);
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+}
+.logout-btn:hover { background: var(--lu-danger-tint); color: var(--lu-danger-text-deep); }
+
+/* #Bagian Main Content Area# */
+/* â”€â”€â”€â”€â”€ Main content area â”€â”€â”€â”€â”€ */
+body.patient-body .app-main {
+    padding: 24px 32px;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    max-height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.app-topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.greeting {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+}
+.bell-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid var(--lu-border);
+    background: #fff;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.app-content {
+    max-width: 100%;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* ── Patient viewport shells (_LayoutPatient; components in *.cshtml.css) ── */
+.app-content:has(.db-hero) {
+    max-width: none;
+}
+
+body:has(.st-layout) {
+    overflow: hidden;
+}
+
+.app-shell:has(.st-layout) {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+}
+
+.app-shell:has(.st-layout) .app-sidebar {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow-y: auto;
+}
+
+.app-main:has(.st-layout) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding: clamp(1vh, 1.4vh, 1.8vh) clamp(1.2vw, 2vw, 2rem);
+    box-sizing: border-box;
+}
+
+.app-main:has(.st-layout) .app-topbar {
+    flex-shrink: 0;
+    margin-bottom: clamp(0.6vh, 0.9vh, 1.2vh);
+}
+
+.app-main:has(.st-layout) .greeting {
+    font-size: clamp(1.05rem, 2.2vh, 1.35rem);
+}
+
+.app-content:has(.st-layout) {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-width: none;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+/* #Bagian Responsif Mobile# */
+@media (max-width: 991.98px) {
+    body.patient-body:not(.sidebar-open) {
+        height: 100dvh;
+        overflow: hidden;
+    }
+
+    body.patient-body.sidebar-open {
+        overflow: hidden;
+    }
+
+    /* Must match body.patient-body specificity — grid 240px+1fr leaves app-main in a ~240px column */
+    body.patient-body .app-shell {
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: none;
+        min-height: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    body.patient-body .app-shell > .sidebar-backdrop {
+        flex: none;
+    }
+
+    body.patient-body .app-main {
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 0;
+        height: auto;
+        max-height: none;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    body.patient-body .app-topbar {
+        margin-bottom: 8px;
+        flex-shrink: 0;
+        justify-content: flex-start;
+    }
+
+    body.patient-body .greeting {
+        font-size: 0.8125rem;
+    }
+
+    body.patient-body .app-content,
+    body.patient-body .app-content.lu-scroll-host {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        display: block;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Statistik — scroll ala dashboard, bukan viewport terkunci */
+    body.patient-body .app-main:has(.st-layout) {
+        padding: 10px 12px;
+    }
+
+    body.patient-body .app-content:has(.st-layout) {
+        overflow-y: auto;
+        display: block;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body.patient-body .st-layout {
+        height: auto;
+        max-height: none;
+        overflow: visible;
+    }
+
+    /* Halaman hero — lebar penuh seperti desktop */
+    body.patient-body .app-content:has(.jdw-page),
+    body.patient-body .app-content:has(.tasks-page),
+    body.patient-body .app-content:has(.psy-page),
+    body.patient-body .app-content:has(.sub-hero),
+    body.patient-body .app-content:has(.st-layout),
+    body.patient-body .app-content:has(.pf-page) {
+        max-width: none;
+        width: 100%;
+    }
+
+    .jdw-page,
+    .tasks-page,
+    .psy-page {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .app-shell:has(.st-layout) {
+        height: 100dvh;
+        max-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .app-shell:has(.pf-page),
+    .app-shell:has(.pf-edit-page) {
+        display: flex;
+        flex-direction: column;
+        height: 100dvh;
+        max-height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .app-main:has(.pf-page),
+    .app-main:has(.pf-edit-page) {
+        padding: 1rem;
+        flex: 1 1 auto;
+        min-height: 0;
+        height: auto;
+        max-height: none;
+        overflow: hidden;
+    }
+
+    .app-content:has(.pf-page) {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .app-main,
+    .app-main:has(.st-layout),
+    .app-main:has(.pf-page),
+    .app-main:has(.pf-edit-page) {
+        padding: 0.75rem;
+    }
+
+    .brand-name {
+        font-size: 16px;
+    }
+
+    .side-nav-item {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+.app-content:has(.sub-hero) {
+    max-width: none;
+}
+
+.app-shell:has(.pf-page) {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+}
+
+.app-shell:has(.pf-page) .app-sidebar {
+    height: 100dvh;
+    max-height: 100dvh;
+}
+
+.app-main:has(.pf-page) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding: clamp(1vh, 1.4vh, 1.8vh) clamp(1.2vw, 2vw, 2rem);
+    box-sizing: border-box;
+}
+
+.app-main:has(.pf-page) .app-topbar {
+    flex-shrink: 0;
+    margin-bottom: clamp(0.6vh, 0.9vh, 1.2vh);
+}
+
+.app-main:has(.pf-page) .greeting {
+    font-size: clamp(1.05rem, 2.2vh, 1.35rem);
+}
+
+.app-content:has(.pf-page) {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-width: none;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+    padding-bottom: 1.5rem;
+}
+
+.app-shell:has(.pf-edit-page) {
+    min-height: auto;
+}
+
+.app-shell:has(.pf-edit-page) .app-sidebar {
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.app-main:has(.pf-edit-page) {
+    align-self: start;
+    width: 100%;
+}
+
+.app-content:has(.pf-edit-page) {
+    max-width: none;
+    width: 100%;
+}
+
+/* Patient modal overlay — fixed center (layout.css loads reliably) */
+body.patient-body .hrpf-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(17, 24, 39, .50);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+body.patient-body .hrpf-modal-overlay[hidden] {
+    display: none !important;
+}
+
+body.patient-body .hrpf-modal-overlay.is-open {
+    display: flex !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 10000 !important;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}

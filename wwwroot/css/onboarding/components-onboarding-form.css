@@ -1,0 +1,188 @@
+/* #Bagian Form Onboarding# */
+﻿/* Onboarding form controls, choices, lists */
+/* #Komponen Form Controls# */
+/* ───── Form controls ───── */
+.onb-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.onb-input,
+.onb-select {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    font-family: inherit;
+    color: var(--lu-text);
+    transition: all 0.2s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 0 0 0 1px var(--lu-border);
+}
+.onb-input:focus,
+.onb-select:focus {
+    outline: none;
+    background: #fff;
+    border-color: var(--lu-primary);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 0 0 0 4px var(--lu-primary-soft);
+}
+
+/* #Komponen Two Column Choice Cards Gender# */
+/* ───── Two-column choice cards (gender) ───── */
+.onb-choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+}
+.onb-choice-card {
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 0 0 1px var(--lu-border);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+.onb-choice-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.onb-choice-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -8px rgba(124, 58, 237, 0.15), 0 0 0 1px var(--lu-primary);
+    background: #fff;
+}
+.onb-choice-card:hover::before {
+    opacity: 1;
+}
+.onb-choice-card.selected {
+    border-color: var(--lu-primary);
+    background: #fff;
+    box-shadow: 0 8px 16px -6px rgba(124, 58, 237, 0.25), 0 0 0 1px var(--lu-primary);
+    transform: translateY(-2px);
+}
+/* #Bagian Selected Checkmark Indicator# */
+/* Selected checkmark indicator */
+.onb-choice-card::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--lu-primary) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") no-repeat center;
+    background-size: 12px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.onb-choice-card.selected::after {
+    opacity: 1;
+    transform: scale(1);
+}
+.onb-choice-card .icon {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 12px;
+    transition: transform 0.3s ease;
+}
+.onb-choice-card.selected .icon {
+    transform: scale(1.1);
+}
+.onb-choice-card .label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--lu-text);
+}
+input[type="radio"].onb-choice-input { display: none; }
+
+/* #Bagian Pill Chips For Binary Yes/no Konseling Obat# */
+/* ───── Pill chips for binary yes/no (counseling, medication) ───── */
+.onb-pill-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}
+.onb-pill {
+    flex: 1;
+    padding: 16px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02), 0 0 0 1px var(--lu-border);
+    text-align: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.onb-pill:hover {
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(124, 58, 237, 0.1), 0 0 0 1px var(--lu-primary);
+}
+.onb-pill.selected {
+    border-color: var(--lu-primary);
+    background: var(--lu-primary-soft);
+    color: var(--lu-primary);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
+}
+
+/* #Bagian Radio Daftar Sleep And Checkbox Daftar App Goals Konseling Methods# */
+/* ───── Radio list (sleep) and checkbox list (app goals, counseling methods) ───── */
+.onb-list {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.onb-list li {
+    margin: 0;
+}
+.onb-list label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--lu-border);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+.onb-list label:hover {
+    background: #fff;
+    border-color: #C4B5FD;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+.onb-list input[type="radio"],
+.onb-list input[type="checkbox"] {
+    accent-color: var(--lu-primary);
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+/* #Bagian 3 Column Birthdate Dropdown Row# */
+/* ───── 3-column birthdate dropdown row ───── */
+.onb-date-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}

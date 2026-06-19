@@ -1,0 +1,42 @@
+/* #Bagian Alert Admin# */
+﻿/* Admin alerts */
+/* ═══════════════════════════════════════
+   ALERTS / TOASTS
+   ═══════════════════════════════════════ */
+.adm-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 16px;
+    border-radius: var(--adm-radius-sm);
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.5;
+    animation: slideInDown 0.3s ease;
+}
+.adm-alert.success {
+    background: var(--adm-success-soft);
+    color: var(--adm-success);
+    border: 1px solid #6EE7B7;
+}
+.adm-alert.error {
+    background: var(--adm-danger-soft);
+    color: var(--adm-danger);
+    border: 1px solid #FCA5A5;
+}
+.adm-alert.info {
+    background: var(--adm-info-soft);
+    color: var(--adm-info);
+    border: 1px solid #93C5FD;
+}
+.adm-alert.warning {
+    background: var(--adm-warning-soft);
+    color: var(--adm-warning);
+    border: 1px solid #FCD34D;
+}
+
+@keyframes slideInDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,3 +1,4 @@
+/* #Bagian Site CSS# */
 /* ═══════════════════════════════════════════════════════════════════════════
    LightenUp — Global responsive foundation (all areas & public pages)
    Breakpoint: 992px (desktop sidebar vs mobile offcanvas)
@@ -396,42 +397,72 @@ body.sidebar-open {
         padding: 1rem;
     }
 
-    /* On small screens, allow document-level scroll (avoid clipped lists) */
-    .app-shell,
-    .admin-shell {
+    /* On small screens, allow document-level scroll (avoid clipped lists).
+       Patient, Admin, Psychologist & HR use area layout.css scroll containment — do not override here. */
+    body:not(.patient-body):not(.admin-body):not(.psychologist-body):not(.hr-body) .app-shell {
         height: auto;
         min-height: 100vh;
         min-height: 100dvh;
         overflow: visible;
     }
 
-    .app-main,
-    .admin-main,
-    .main-content {
+    body:not(.patient-body):not(.admin-body):not(.psychologist-body):not(.hr-body) .app-main,
+    body:not(.patient-body):not(.admin-body):not(.psychologist-body):not(.hr-body) .main-content {
         overflow: visible;
         height: auto;
     }
 
-    .app-content,
-    .admin-content,
-    .lu-scroll-host {
+    body:not(.patient-body):not(.admin-body):not(.psychologist-body):not(.hr-body) .app-content,
+    body:not(.patient-body):not(.admin-body):not(.psychologist-body):not(.hr-body) .lu-scroll-host {
         overflow: visible;
     }
 
     .lu-page,
-    .pay-page,
-    .hrem-page,
-    .hrd-page {
+    .pay-page {
         height: auto;
         flex: none;
     }
 
+    body:not(.hr-body) .hrem-page,
+    body:not(.hr-body) .hrd-page {
+        height: auto;
+        flex: none;
+    }
+
+    body.hr-body .hrd-page {
+        flex: none;
+        min-height: auto;
+        height: auto;
+        gap: 10px;
+    }
+
+    body.hr-body .app-content > .hrstat-page,
+    body.hr-body .app-content > .hrsch-page-wrap,
+    body.hr-body .app-content > .hrln-page,
+    body.hr-body .app-content > .hrpsy-page,
+    body.hr-body .app-content > .hrpt-page {
+        flex: none;
+        min-height: auto;
+        height: auto;
+        gap: 10px;
+    }
+
+    body.hr-body .hrd-client-list {
+        flex: none;
+        max-height: none;
+        overflow-y: visible;
+    }
+
     .lu-list-scroll,
     .pay-table-scroll,
-    .hrem-list,
     .psy-client-list,
-    .psy-company-list,
-    .hrd-client-list {
+    .psy-company-list {
+        overflow-y: visible;
+        flex: none;
+    }
+
+    body:not(.hr-body) .hrem-list,
+    body:not(.hr-body) .hrd-client-list {
         overflow-y: visible;
         flex: none;
     }
@@ -1117,4 +1148,22 @@ textarea,
     font-weight: 600;
     color: #374151;
     margin-bottom: 6px;
+}
+
+body.lu-scroll-lock {
+    overflow: hidden;
+}
+
+.is-hidden {
+    display: none !important;
+}
+
+img.is-hidden {
+    display: none;
+}
+
+.lu-alert.is-dismissing,
+.hrsch-idx-alert-success.is-dismissing {
+    opacity: 0;
+    transition: opacity .4s ease;
 }

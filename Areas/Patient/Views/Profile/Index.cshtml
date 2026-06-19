@@ -31,6 +31,11 @@
         _          => "Kondisi mentalmu butuh perhatian segera. Hubungi psikolog kamu."
     };
 }
+@* #Bagian Profil Pasien# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/profile-index.css" asp-append-version="true" />
+}
 
 <div class="pf-page">
 
@@ -41,6 +46,7 @@
 
     <div class="pf-layout">
 
+        @* #Komponen Sidebar Profil# *@
         <aside class="pf-aside" aria-label="Profil pengguna">
 
             <div class="pf-profile-card">
@@ -124,8 +130,10 @@
             </section>
         </aside>
 
+        @* #Komponen Konten Utama Profil# *@
         <div class="pf-profile-main">
 
+            @* #Komponen KPI Profil# *@
             <div class="pf-kpi-grid">
                 <div class="lu-card pf-kpi-card">
                     <div class="pf-kpi-value pf-kpi-value--primary">
@@ -202,6 +210,7 @@
                 </div>
             </div>
 
+            @* #Komponen Informasi Profil# *@
             <section class="lu-card pf-detail-card" aria-label="Informasi profil">
                 <header class="pf-detail-head">
                     <div class="pf-detail-title-wrap">
@@ -310,15 +319,16 @@
                 </div>
             </section>
 
+            @* #Bagian Akses Cepat# *@
             <section class="lu-card pf-quick-section" aria-label="Akses cepat">
                 <h3 class="pf-quick-title">⚡ Akses Cepat</h3>
                 <div class="pf-quick-grid">
 
-                    <a asp-controller="Mood" asp-action="Feeling" class="pf-quick-card pf-quick-card--mood">
+                    <button type="button" class="pf-quick-card pf-quick-card--mood" onclick="openMoodModal()">
                         <span class="pf-quick-ico">😊</span>
                         <div class="pf-quick-label">Lacak Mood & Check-In</div>
                         <div class="pf-quick-sub">Catat perasaan harianmu</div>
-                    </a>
+                    </button>
 
                     <a asp-controller="Jadwal" asp-action="Index" class="pf-quick-card pf-quick-card--jadwal">
                         <span class="pf-quick-ico">📅</span>
@@ -331,6 +341,12 @@
                         <div class="pf-quick-label">Edit Profil</div>
                         <div class="pf-quick-sub">Perbarui data & kontak</div>
                     </a>
+
+                    <a href="/Account/ChangePassword" class="pf-quick-card pf-quick-card--security">
+                        <span class="pf-quick-ico">🔒</span>
+                        <div class="pf-quick-label">Pengaturan Keamanan</div>
+                        <div class="pf-quick-sub">Atur atau ubah password</div>
+                    </a>
                 </div>
             </section>
 
@@ -338,3 +354,29 @@
 
     </div>
 </div>
+
+@section Overlays {
+<!-- Mood Tracker Modal (same as Beranda) -->
+<div class="hrpf-modal-overlay" id="moodModal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle" hidden aria-hidden="true">
+    <div class="hrpf-modal db-modal--mood">
+        <div class="hrpf-modal-head">
+            <div class="hrpf-modal-head-icon">😊</div>
+            <h2 class="hrpf-modal-title" id="moodModalTitle">Lacak Mood</h2>
+            <button type="button" class="hrpf-modal-close" data-hrpf-modal-close aria-label="Tutup">&times;</button>
+        </div>
+        <div class="hrpf-modal-body db-modal-body--iframe">
+            <iframe id="moodIframe" src="" class="db-mood-iframe" title="Lacak Mood"></iframe>
+        </div>
+    </div>
+</div>
+}
+
+@section Scripts {
+    <script src="~/js/shared/animate-bars.js" asp-append-version="true"></script>
+    <script src="~/js/patient/mood-modal.js" asp-append-version="true"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        animateBarFills('.pf-complete-fill, .pf-mood-fill');
+    });
+    </script>
+}

@@ -17,9 +17,15 @@
     };
 }
 
+@* #Bagian Permintaan Psikolog# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/psy-requests-index.css" asp-append-version="true" />
+}
+
 <div class="req-page">
 
-@* ── Hero ── *@
+@* #Komponen Hero Permintaan# *@
 <div class="req-hero">
     <div class="req-hero-left">
         <p class="req-hero-eyebrow">PSIKOLOG · INBOX</p>
@@ -49,7 +55,7 @@
     </div>
 </div>
 
-@* ── Alerts ── *@
+@* #Komponen Alert Pesan# *@
 @if (TempData["success"] is string ok)
 {
     <div class="lu-alert-success" role="status">@ok</div>
@@ -59,7 +65,7 @@
     <div class="lu-alert-error" role="alert">@err</div>
 }
 
-@* ── Filter toolbar ── *@
+@* #Komponen Filter Tab# *@
 <div class="req-toolbar">
     <div class="req-tabs">
         <a class="req-tab @(Model.Tab == "Pending"  ? "req-tab--pending req-tab--active"  : "")" asp-action="Index" asp-route-tab="Pending">
@@ -82,7 +88,7 @@
     <span class="req-count-badge">@total permintaan</span>
 </div>
 
-@* ── Request list ── *@
+@* #Komponen Daftar Permintaan# *@
 <div class="req-list">
 
 @if (!Model.Items.Any())

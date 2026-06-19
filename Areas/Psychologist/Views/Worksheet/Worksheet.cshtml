@@ -15,7 +15,16 @@
     <div class="ws-alert-success">@successMsg</div>
 }
 
-@* ── Hero banner ── *@
+@section Head {
+    <link rel="stylesheet" href="~/css/shared/components-worksheet-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-add-task-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-detail-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet-modal.css" asp-append-version="true" />
+}
+
+
+@* #Bagian Worksheet# *@
+@* #Komponen Hero# *@
 <div class="ws-hero">
     <div class="ws-hero-left">
         <p class="ws-hero-eyebrow">Psikolog · Monitor Tugas</p>
@@ -46,7 +55,7 @@
     </div>
 </div>
 
-@* ── Toolbar ── *@
+@* #Komponen Toolbar# *@
 <div class="ws-toolbar">
     <div class="ws-search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -64,7 +73,7 @@
     </button>
 </div>
 
-@* ── Task list ── *@
+@* #Komponen DaftarTugas# *@
 @if (Model.Tasks == null || Model.Tasks.Count == 0)
 {
     <div class="ws-empty">
@@ -80,7 +89,7 @@
 else
 {
     <div class="ws-task-list" id="wsTaskList">
-        <div class="ws-no-results" id="wsNoResults">
+        <div class="ws-no-results is-hidden" id="wsNoResults">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <p>Tidak ada hasil yang cocok</p>
         </div>
@@ -136,11 +145,11 @@ function wsFilter() {
         var taskMatch   = c.dataset.task.includes(q);
         var statusMatch = wsActiveFilter === 'all' || c.dataset.status === wsActiveFilter;
         var visible     = (nameMatch || taskMatch) && statusMatch;
-        c.style.display = visible ? '' : 'none';
+        c.classList.toggle('is-hidden', !visible);
         if (visible) shown++;
     });
     var noRes = document.getElementById('wsNoResults');
-    if (noRes) noRes.style.display = shown === 0 ? 'flex' : 'none';
+    if (noRes) noRes.classList.toggle('is-hidden', shown !== 0);
 }
 
 function wsSetFilter(btn, filter) {

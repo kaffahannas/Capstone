@@ -1,0 +1,300 @@
+/* #Bagian Onboarding Layout HR# */
+
+/* Override site.css — scoped to HR onboarding only */
+.hr-onboarding-page .onb-wrapper {
+    width: 100%;
+    max-width: 440px;
+    min-height: 0;
+    padding: 24px 24px 28px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.hr-onboarding-page .onb-progress {
+    margin-bottom: 20px;
+}
+
+.hr-onboarding-page .onb-progress-bar {
+    width: var(--bar-w, 0%);
+    transition: width 0.3s;
+}
+
+.hr-onboarding-page .onb-progress-label {
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.hr-onboarding-page .onb-topbar {
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+/* #Komponen Logo Brand# */
+.hr-onboarding-page .onb-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.hr-onboarding-page .onb-brand svg {
+    width: 48px;
+    height: 48px;
+    filter: drop-shadow(0 4px 12px rgba(124, 58, 237, 0.2));
+}
+
+.hr-onboarding-page .onb-brand-name {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--lu-primary);
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+/* #Komponen Langkah Onboarding# */
+.hr-onboarding-page .onb-step {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.hr-onboarding-page .onb-step .onb-title {
+    margin-top: 0;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+}
+
+.hr-onboarding-page .onb-step .onb-subtitle {
+    font-size: 14px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+.hr-onboarding-page .onb-content {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* #Komponen Form Field# */
+.hr-onboarding-page .onb-field {
+    margin-bottom: 16px;
+}
+
+.hr-onboarding-page .onb-field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lu-text);
+    margin-bottom: 6px;
+}
+
+.hr-onboarding-page .onb-input,
+.hr-onboarding-page .onb-select,
+.hr-onboarding-page .onb-textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 11px 14px;
+    font-size: 14px;
+    min-height: 44px;
+}
+
+.hr-onboarding-page .onb-textarea {
+    min-height: 80px;
+}
+
+.hr-onboarding-page .onb-upload-block {
+    margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.hr-onboarding-page .onb-upload-block > .onb-field-label {
+    margin-bottom: 8px;
+}
+
+.hr-onboarding-page .onb-upload-zone {
+    padding: 20px 16px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.hr-onboarding-page .onb-upload-zone:hover {
+    transform: none;
+}
+
+.hr-onboarding-page .onb-upload-placeholder strong {
+    font-size: 14px;
+}
+
+.hr-onboarding-page .onb-upload-placeholder small {
+    font-size: 12px;
+}
+
+.hr-onboarding-page .onb-file-link {
+    max-width: 100%;
+    padding: 12px 16px;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+.hr-onboarding-page .onb-file-link svg {
+    flex-shrink: 0;
+}
+
+/* #Komponen Tombol — override site.css full-width rule# */
+.hr-onboarding-page .onb-footer {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 10px;
+    padding-top: 20px;
+    margin-top: auto;
+    width: 100%;
+}
+
+.hr-onboarding-page .onb-footer > .onb-btn,
+.hr-onboarding-page .onb-footer > a.onb-btn,
+.hr-onboarding-page .onb-footer > button.onb-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    max-width: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 11px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.25;
+    min-height: 44px;
+    box-sizing: border-box;
+    white-space: normal;
+}
+
+@media (max-width: 991.98px) {
+    .hr-onboarding-page .onb-footer > .onb-btn,
+    .hr-onboarding-page .onb-footer > a.onb-btn,
+    .hr-onboarding-page .onb-footer > button.onb-btn {
+        flex: 1 1 0;
+        width: auto;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+.hr-onboarding-page a.onb-btn,
+.hr-onboarding-page a.onb-btn:hover,
+.hr-onboarding-page a.onb-btn:focus-visible {
+    text-decoration: none;
+}
+
+.hr-onboarding-page a.onb-btn-primary,
+.hr-onboarding-page a.onb-btn-primary:hover,
+.hr-onboarding-page a.onb-btn-primary:focus-visible {
+    color: #ffffff;
+}
+
+.hr-onboarding-page .onb-footer--single .onb-btn {
+    flex: 1 1 auto;
+}
+
+.hr-onboarding-page .onb-footer--stacked {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.hr-onboarding-page .onb-welcome-footer {
+    border-top: 0;
+    padding-top: 0;
+}
+
+/* #Bagian Selamat Datang & Sukses HR# */
+.hr-onboarding-page .onb-welcome {
+    padding: 16px 8px 8px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.hr-onboarding-page .onb-welcome--hr h1 {
+    font-size: 24px;
+    line-height: 1.3;
+    margin-bottom: 12px;
+}
+
+.hr-onboarding-page .onb-welcome--hr p {
+    font-size: 14px;
+    max-width: 100%;
+    line-height: 1.55;
+}
+
+.hr-onboarding-page .onb-welcome--success .onb-success-icon-wrap {
+    margin-bottom: 10px;
+}
+
+.hr-onboarding-page .onb-success-icon-wrap svg {
+    width: 64px;
+    height: 64px;
+    display: block;
+    margin: 0 auto;
+}
+
+.hr-onboarding-page .onb-brand-name--success {
+    margin: 0 0 16px;
+    font-size: 1.125rem;
+}
+
+.hr-onboarding-page .onb-success-note {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: var(--lu-text-muted);
+    text-align: center;
+}
+
+.hr-onboarding-page .onb-success-note a {
+    color: var(--lu-primary);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.hr-onboarding-page .onb-success-note a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 479px) {
+    body.hr-onboarding-page {
+        padding: 0;
+    }
+
+    .hr-onboarding-page .onb-wrapper {
+        border-radius: 0;
+        max-width: none;
+        min-height: 100vh;
+        padding: 20px 18px 24px;
+    }
+
+    .hr-onboarding-page .onb-step .onb-title {
+        font-size: 20px;
+    }
+
+    .hr-onboarding-page .onb-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .hr-onboarding-page .onb-footer > .onb-btn,
+    .hr-onboarding-page .onb-footer > a.onb-btn,
+    .hr-onboarding-page .onb-footer > button.onb-btn {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}

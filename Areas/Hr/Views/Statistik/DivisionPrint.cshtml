@@ -1,0 +1,138 @@
+@using LightenUp.Web.Models.ViewModels
+@{
+    var roster = ViewBag.Roster as List<HrRosterRow> ?? new();
+    var companyName = ViewBag.Company as string ?? "";
+    var divisionName = ViewBag.DivisionName as string ?? "";
+    var window = (int)(ViewBag.Window ?? 30);
+    var now = (DateTime)(ViewBag.Now ?? DateTime.Now);
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+    Layout = null;
+
+    int sehat = roster.Count(r => r.MentalHealthStatus == "Sehat");
+    int beresiko = roster.Count(r => r.MentalHealthStatus == "Beresiko");
+    int bahaya = roster.Count(r => r.MentalHealthStatus == "Bahaya");
+    int total = roster.Count;
+}
+@* #Bagian CetakDivisi# *@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <title>Laporan_Divisi_@divisionName.Replace(" ", "_")</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/hr/statistik-print.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="hr-print-doc">
+    <div class="hr-print-sheet">
+        <div class="hr-print-header">
+            <div>
+                <h1 class="hr-print-title">Laporan Kesehatan Mental — Divisi @divisionName</h1>
+                <div class="hr-print-meta">
+                    Perusahaan: <strong>@companyName</strong> &nbsp;|&nbsp;
+                    Divisi: <strong>@divisionName</strong> &nbsp;|&nbsp;
+                    Periode: <strong>@window hari terakhir</strong> &nbsp;|&nbsp;
+                    Tanggal: @now.ToString("dd MMMM yyyy, HH:mm", idCulture)
+                </div>
+            </div>
+            <div class="hr-print-logo">LightenUp<span class="hrst-print-logo-dot">.</span></div>
+        </div>
+
+        <div class="hr-print-kpi-row">
+            <div class="hr-print-chart-box">
+                <canvas id="mainChart"></canvas>
+                <div class="hrst-print-chart-center">
+                    <div class="hrst-print-chart-total">@total</div>
+                    <div class="hrst-print-chart-label">Karyawan</div>
+                </div>
+            </div>
+            <div class="hr-print-stats-grid">
+                <div class="hr-print-kpi-card hr-print-kpi--sehat">
+                    <h3>Sehat</h3>
+                    <div class="val">@sehat</div>
+                </div>
+                <div class="hr-print-kpi-card hr-print-kpi--beresiko">
+                    <h3>Beresiko</h3>
+                    <div class="val">@beresiko</div>
+                </div>
+                <div class="hr-print-kpi-card hr-print-kpi--bahaya">
+                    <h3>Bahaya</h3>
+                    <div class="val">@bahaya</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="hr-print-section-title">Direktori Karyawan — Divisi @divisionName</h2>
+        <table class="hr-print-table">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Nama Lengkap</th>
+                    <th>Email / Kontak</th>
+                    <th>ID Karyawan</th>
+                    <th>Status Mental</th>
+                    <th>Update Terakhir</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!roster.Any())
+                {
+                    <tr class="hr-print-table-empty">
+                        <td colspan="6">Tidak ada karyawan aktif di divisi ini.</td>
+                    </tr>
+                }
+                else
+                {
+                    int i = 1;
+                    foreach (var r in roster)
+                    {
+                        <tr>
+                            <td class="hrst-print-td-num">@i</td>
+                            <td class="hrst-print-td-name">@r.FullName</td>
+                            <td>@r.Email</td>
+                            <td class="hrst-print-td-mono">@(r.EmployeeId ?? "—")</td>
+                            <td><span class="hr-print-badge hr-print-badge--@r.MentalHealthStatus.ToLowerInvariant()">@r.MentalHealthStatus</span></td>
+                            <td>@r.LastCheckDate</td>
+                        </tr>
+                        i++;
+                    }
+                }
+            </tbody>
+        </table>
+
+        <div class="hr-print-footer">
+            Laporan divisi ini digenerate secara otomatis oleh sistem HR Console LightenUp pada @now.ToString("dd/MM/yyyy HH:mm:ss").
+            <br>Data bersifat konfidensial dan hanya ditujukan untuk keperluan internal HR.
+        </div>
+
+        <div class="hr-print-actions no-print">
+            <button type="button" class="hr-print-btn" onclick="window.print()">🖨️ Cetak PDF Sekarang</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            new Chart(document.getElementById('mainChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sehat', 'Beresiko', 'Bahaya'],
+                    datasets: [{
+                        data: [@sehat, @beresiko, @bahaya],
+                        backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    animation: { duration: 0 }
+                }
+            });
+            setTimeout(() => window.print(), 500);
+        });
+    </script>
+</body>
+</html>

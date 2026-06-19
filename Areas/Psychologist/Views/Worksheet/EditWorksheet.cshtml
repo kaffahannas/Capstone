@@ -5,6 +5,13 @@
     Layout = "_LayoutDashboard";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet-modal.css" asp-append-version="true" />
+}
+
+
+@* #Bagian EditWorksheet# *@
 <a class="ew-back" asp-action="Worksheet">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Kembali ke Daftar Worksheet
@@ -19,6 +26,7 @@
 </div>
 
 <div class="ew-wrap">
+    @* #Komponen FormWorksheet# *@
     <form asp-action="EditWorksheet" method="post">
         <div class="detail-card ew-card">
             @Html.AntiForgeryToken()

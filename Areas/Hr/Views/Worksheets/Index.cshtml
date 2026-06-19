@@ -8,6 +8,11 @@
     int countCompleted = Model.Items.Count(w => w.Status == "Completed");
     var modalPatients  = ViewBag.ModalPatients as List<LightenUp.Web.Models.ViewModels.HrSimplePatient> ?? new();
 }
+@* #Bagian RiwayatWorksheet# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/worksheets-index.css" asp-append-version="true" />
+}
 
 <div class="hrws-page">
 
@@ -20,6 +25,7 @@
         </div>
     }
 
+    @* #Komponen Hero# *@
     @* ══════ HERO ══════ *@
     <div class="hrws-hero">
         <div class="hrws-hero-bg" aria-hidden="true"></div>
@@ -73,6 +79,7 @@
         </form>
     </div>
 
+    @* #Komponen DaftarWorksheet# *@
     @* ══════ LIST ══════ *@
     @if (!Model.Items.Any())
     {
@@ -129,6 +136,7 @@
         }
     }
 
+    @* #Komponen ModalPermintaan# *@
     @* ══════ REQUEST MODAL ══════ *@
     <div class="hrpf-modal-overlay" id="hrwsModalOverlay" role="dialog" aria-modal="true" aria-labelledby="hrwsModalTitle">
         <div class="hrpf-modal">
@@ -148,7 +156,7 @@
                 <input type="hidden" name="RequestType" value="Worksheet" />
 
                 <div class="hrpf-modal-body">
-                    <div id="hrwsFormError" class="hrpf-form-error hrws-form-error--hidden" role="alert"></div>
+                    <div id="hrwsFormError" class="hrpf-form-error" role="alert"></div>
 
                     <p class="hrpf-modal-section-title">Pilih Karyawan</p>
 
@@ -219,8 +227,8 @@
     const form       = document.getElementById('hrwsRequestForm');
     const errorBox   = document.getElementById('hrwsFormError');
 
-    function openModal()  { overlay.classList.add('is-open');    document.body.style.overflow = 'hidden'; }
-    function closeModal() { overlay.classList.remove('is-open'); document.body.style.overflow = ''; }
+    function openModal()  { overlay.classList.add('is-open');    document.body.classList.add('lu-scroll-lock'); }
+    function closeModal() { overlay.classList.remove('is-open'); document.body.classList.remove('lu-scroll-lock'); }
 
     document.getElementById('hrwsOpenModal')?.addEventListener('click', openModal);
     document.getElementById('hrwsOpenModalEmpty')?.addEventListener('click', openModal);
@@ -239,7 +247,7 @@
 
         saveBtn.disabled = true;
         saveBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hrpf-spin"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Mengirim…`;
-        errorBox.style.display = 'none';
+        errorBox.classList.remove('is-visible');
 
         try {
             const res  = await fetch('/Hr/Worksheets/RequestModal', { method: 'POST', body: new FormData(form) });
@@ -262,21 +270,23 @@
 
     function showError(msg) {
         errorBox.textContent = msg;
-        errorBox.style.display = 'block';
+        errorBox.classList.add('is-visible');
         errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     function showToast(msg) {
         const t = document.createElement('div');
         t.className = 'hrpf-toast hrpf-toast--ok';
-        t.style.cssText = 'position:fixed;top:20px;right:20px;z-index:900;';
         t.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${msg}`;
         document.body.appendChild(t);
-        setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 350); }, 3200);
+        setTimeout(function () {
+            t.classList.add('is-dismissing');
+            setTimeout(function () { t.remove(); }, 350);
+        }, 3200);
     }
 
     // Auto-dismiss server toast
     const st = document.getElementById('hrwsToast');
-    if (st) setTimeout(() => { st.style.transition = 'opacity .4s'; st.style.opacity = '0'; }, 3200);
+    if (st) setTimeout(function () { st.classList.add('is-dismissing'); }, 3200);
 })();
 </script>
 }

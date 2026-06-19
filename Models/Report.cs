@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LightenUp.Web.Models
 {
     // ─── HR slice 6 & Psy slice 9: escalation reports (bidirectional) ─────
+    // #Class Report#
     public class Report
     {
         [Key]

@@ -1,69 +1,156 @@
 @model LightenUp.Web.Models.ViewModels.HrOnboardingAcademicViewModel
 @{
-    ViewData["Title"] = "Status Akademik";
+    ViewData["Title"] = "Langkah 2";
+    Layout = null;
     var existingDoc = ViewBag.ExistingDocumentUrl as string;
 }
+@* #Bagian OnboardingAkademik# *@
 
-<h1 class="onb-title">Langkah 2: Status Akademik</h1>
-<p class="onb-subtitle">Silakan masukkan informasi akademis Anda.</p>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
 
-<form asp-action="Academic" method="post" enctype="multipart/form-data" class="onb-content">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="auth-wrapper">
+        <div class="auth-container register-card">
 
-    <div style="margin-bottom: 16px;">
-        <label asp-for="LastDegree" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Gelar Terakhir</label>
-        <select asp-for="LastDegree" class="onb-select">
-            <option value="">Pilih kategori</option>
-            <option value="SMA">SMA / Sederajat</option>
-            <option value="D3">D3</option>
-            <option value="S1">S1</option>
-            <option value="S2">S2</option>
-            <option value="S3">S3</option>
-        </select>
-        <span asp-validation-for="LastDegree" class="text-danger"></span>
-    </div>
+            <a asp-action="Photo" class="back-button" title="Kembali">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#1f2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
 
-    <div style="margin-bottom: 16px;">
-        <label asp-for="University" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Universitas Asal</label>
-        <input asp-for="University" class="onb-input" placeholder="Universitas ABCDE" />
-        <span asp-validation-for="University" class="text-danger"></span>
-    </div>
+            @await Html.PartialAsync("_OnboardingBrand")
 
-    <div class="onb-upload-block">
-        <label style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Dokumen pendukung</label>
-        @if (!string.IsNullOrEmpty(existingDoc))
-        {
-            <div class="onb-upload-preview" id="existingDocPreview">
-                @if (existingDoc.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
-                {
-                    <a href="@existingDoc" target="_blank" rel="noopener" class="onb-file-link">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:-3px; margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        Dokumen tersimpan (PDF) &mdash; lihat
-                    </a>
-                }
-                else
-                {
-                    <img src="@existingDoc" alt="Dokumen akademik" class="onb-upload-thumb" />
-                }
-                <p class="onb-upload-hint">File sudah diunggah. Pilih file baru untuk mengganti.</p>
+            <div class="onb-psy-progress-label">Langkah 2 dari 3</div>
+
+            <h1 class="auth-title auth-title--step2">Langkah 2: Status<br />Akademik</h1>
+
+            <div class="progress-container progress-container--step2">
+                <div class="progress-bar progress-bar--step2"></div>
             </div>
+
+            <p class="onb-step-note">Silakan masukkan informasi akademis Anda.</p>
+
+            <form asp-action="Academic" method="post" enctype="multipart/form-data">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="LastDegree" class="form-label">Gelar Terakhir</label>
+                    <select asp-for="LastDegree" class="form-control-custom form-select-custom">
+                        <option value="">Pilih kategori</option>
+                        <option value="SMA">SMA / Sederajat</option>
+                        <option value="D3">D3</option>
+                        <option value="S1">S1</option>
+                        <option value="S2">S2</option>
+                        <option value="S3">S3</option>
+                    </select>
+                    <span asp-validation-for="LastDegree" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="University" class="form-label">Universitas Asal</label>
+                    <input asp-for="University" class="form-control-custom" placeholder="Contoh: Universitas Indonesia" />
+                    <span asp-validation-for="University" class="text-danger"></span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(existingDoc))
+                {
+                    <p class="onb-existing-doc-hint">Dokumen sudah diunggah. Pilih file baru untuk mengganti.</p>
+                }
+
+                <div class="onb-doc-label-wrap">
+                    <label class="form-label">Dokumen pendukung</label>
+                </div>
+
+                <label class="upload-area upload-area--step2" id="uploadArea">
+                    <svg id="uploadIcon" class="upload-icon--step2 upload-icon--default" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg>
+
+                    <div class="upload-text" id="uploadText">Upload file</div>
+                    <div class="upload-subtext" id="uploadSubtext">Format JPG/PDF, maksimal 5 MB</div>
+
+                    <input asp-for="AcademicDocument" type="file" accept="image/jpeg, image/png, application/pdf" class="file-input-hidden" id="fileInput" />
+                </label>
+
+                <div class="validation-center-wrap">
+                    <span asp-validation-for="AcademicDocument" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-submit">Simpan dan Lanjutnya</button>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadIcon = document.getElementById('uploadIcon');
+        const uploadText = document.getElementById('uploadText');
+        const uploadSubtext = document.getElementById('uploadSubtext');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('upload-area--drag');
+                uploadIcon.classList.remove('upload-icon--default');
+                uploadIcon.classList.add('upload-icon--purple');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                if (!uploadArea.classList.contains('has-file')) {
+                    uploadArea.classList.remove('upload-area--drag');
+                    uploadIcon.classList.remove('upload-icon--purple');
+                    uploadIcon.classList.add('upload-icon--default');
+                }
+            }, false);
+        });
+
+        uploadArea.addEventListener('drop', function (e) {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateUI(files[0].name);
+            }
+        }, false);
+
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                updateUI(e.target.files[0].name);
+            }
+        });
+
+        function updateUI(fileName) {
+            uploadText.textContent = fileName;
+            uploadText.classList.add('upload-text--success');
+            uploadSubtext.textContent = 'Dokumen siap diunggah';
+            uploadArea.classList.add('has-file', 'upload-area--has-file');
+            uploadArea.classList.remove('upload-area--drag');
+            uploadIcon.classList.remove('upload-icon--default', 'upload-icon--purple');
+            uploadIcon.classList.add('upload-icon--success');
         }
-        <label class="onb-upload-zone">
-            <input type="file" asp-for="AcademicDocument" accept="image/*,.pdf" class="onb-upload-input" data-preview="academicPreview" />
-            <div class="onb-upload-placeholder">
-                <span class="onb-upload-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                </span>
-                <strong>Upload file</strong>
-                <small>Format JPG/PDF, maksimal 5 MB</small>
-            </div>
-            <div id="academicPreview" class="onb-upload-preview onb-upload-preview-new" hidden></div>
-        </label>
-        <span asp-validation-for="AcademicDocument" class="text-danger"></span>
-    </div>
-
-    <div class="onb-footer">
-        <a asp-action="Photo" class="onb-btn onb-btn-secondary">Sebelumnya</a>
-        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutkan</button>
-    </div>
-</form>
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+/* #Bagian Tambah Task Modal Psikolog# */
+.atm-modal {
+    max-width: 520px;
+}
+
+.atm-title-icon {
+    vertical-align: -3px;
+    margin-right: 8px;
+    color: #4338CA;
+}
+
+.atm-intro {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.atm-validation {
+    color: #B91C1C;
+    font-size: 13px;
+    margin: 0;
+}
+
+.atm-field-error {
+    color: #B91C1C;
+    font-size: 12px;
+}
+
+.atm-save-icon {
+    vertical-align: -2px;
+    margin-right: 6px;
+}

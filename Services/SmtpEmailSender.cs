@@ -25,6 +25,7 @@ namespace LightenUp.Web.Services
             !string.IsNullOrWhiteSpace(FromAddress);
     }
 
+    // #Class SmtpEmailSender#
     public class SmtpEmailSender : IEmailSender
     {
         private readonly SmtpOptions _opts;
@@ -45,6 +46,7 @@ namespace LightenUp.Web.Services
             };
         }
 
+        // #Function SendAsync#
         public async Task SendAsync(string toAddress, string subject, string body, bool isHtml = false)
         {
             if (!_opts.IsConfigured)

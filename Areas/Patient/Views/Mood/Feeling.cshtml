@@ -4,11 +4,14 @@
     ViewData["Title"] = "Apa yang kamu rasakan";
     ViewBag.Step = "1/8";
 }
+@* #Bagian Lacak Mood - Perasaan# *@
 
+@* #Komponen Form Pilih Perasaan# *@
 <h2 class="mood-question">Apa yang kamu rasakan hari ini?</h2>
 <p class="mood-helper">Pilih kategori dibawah ini...</p>
 
 <form asp-action="Feeling" method="post">
+    @await Html.PartialAsync("_SessionHiddenFields", Model)
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="mood-grid">

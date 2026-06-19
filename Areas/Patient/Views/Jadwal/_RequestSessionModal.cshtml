@@ -1,8 +1,10 @@
+@* #Bagian Modal Request Sesi# *@
 @{
     var psyName = ViewBag.PsychologistName as string ?? "Psikolog Anda";
     var patientId = ViewBag.PatientId as int? ?? 0;
     var psyId = ViewBag.PsychologistId as int? ?? 0;
 }
+@* #Komponen Modal Minta Jadwal# *@
 
 <div class="prf-modal-overlay" id="requestSessionModalOverlay" role="dialog" aria-modal="true" aria-labelledby="requestSessionModalTitle">
     <div class="prf-modal prf-modal--jadwal">
@@ -17,7 +19,6 @@
         </div>
 
         <form asp-action="RequestSession" asp-controller="Jadwal" asp-area="Patient" method="post" autocomplete="off">
-            @Html.AntiForgeryToken()
 
             <div class="prf-modal-body">
                 <div class="prf-psy-banner">
@@ -68,7 +69,7 @@
         var overlay = document.getElementById('requestSessionModalOverlay');
         if (!overlay) return;
         overlay.classList.add('prf-modal--open');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('lu-scroll-lock');
         var first = overlay.querySelector('input[type=datetime-local]');
         if (first) setTimeout(function () { first.focus(); }, 60);
     }
@@ -76,7 +77,7 @@
         var overlay = document.getElementById('requestSessionModalOverlay');
         if (!overlay) return;
         overlay.classList.remove('prf-modal--open');
-        document.body.style.overflow = '';
+        document.body.classList.remove('lu-scroll-lock');
     }
     window.openRequestSessionModal = openRequestSessionModal;
     window.closeRequestSessionModal = closeRequestSessionModal;

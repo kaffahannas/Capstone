@@ -3,7 +3,13 @@
     ViewBag.ActiveNav = "Jadwal";
     var psyName = ViewBag.PsychologistName as string ?? "Psikolog";
 }
+@* #Bagian Minta Jadwal Sesi# *@
 
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/jadwal-request-session.css" asp-append-version="true" />
+}
+
+@* #Komponen Form Minta Jadwal# *@
 <div class="jdw-req-wrap">
 <div class="tasks-hero jdw-req-hero">
     <h1>
@@ -15,7 +21,6 @@
 
 <div class="jdw-req-card">
     <form asp-action="RequestSession" method="post">
-        @Html.AntiForgeryToken()
 
         <div class="jdw-req-field">
             <label class="jdw-req-label">

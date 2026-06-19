@@ -1,0 +1,225 @@
+/* #Bagian Dashboard Index Admin# */
+﻿/* Admin dashboard — page-specific overrides (stat cards in components-admin-stat.css) */
+
+.dash-stat-warning {
+    color: var(--adm-warning);
+    font-weight: 600;
+}
+
+.dash-stat-unit {
+    font-size: 14px;
+    color: var(--adm-muted);
+    font-weight: 600;
+}
+
+.dash-stat-pending {
+    color: var(--adm-warning);
+    font-weight: 700;
+}
+
+.dash-alert-assignments {
+    margin-bottom: 24px;
+    border-color: #C4B5FD;
+    background: linear-gradient(135deg, #F5F3FF, #EDE9FE);
+}
+
+.dash-alert-pending {
+    margin-bottom: 24px;
+    border-color: #FCD34D;
+    background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+}
+
+.dash-card-inner-nowrap {
+    flex-wrap: nowrap;
+    gap: 20px;
+}
+
+.dash-alert-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+}
+
+.dash-alert-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.dash-alert-icon--purple {
+    background: rgba(124, 58, 237, 0.15);
+}
+
+.dash-alert-icon--amber {
+    background: rgba(217, 119, 6, 0.15);
+}
+
+.dash-alert-title--purple {
+    font-size: 16px;
+    font-weight: 700;
+    color: #5B21B6;
+    margin-bottom: 2px;
+}
+
+.dash-alert-sub--purple {
+    font-size: 13px;
+    color: #6D28D9;
+}
+
+.dash-alert-title--amber {
+    font-size: 16px;
+    font-weight: 700;
+    color: #92400E;
+    margin-bottom: 2px;
+}
+
+.dash-alert-sub--amber {
+    font-size: 13px;
+    color: #B45309;
+}
+
+.dash-alert-action {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.dash-quick-icon--amber {
+    background: #FEF3C7;
+}
+
+.dash-quick-icon--purple {
+    background: #EDE9FE;
+}
+
+.dash-quick-icon--blue {
+    background: #DBEAFE;
+}
+
+.dash-quick-icon--green {
+    background: #DCFCE7;
+}
+
+.dash-quick-pending-warning {
+    color: var(--adm-warning);
+    font-weight: 700;
+}
+
+.dash-quick-pending-primary {
+    color: var(--adm-primary);
+    font-weight: 700;
+}
+
+/* #Bagian Responsif Mobile Dashboard# */
+@media (max-width: 991.98px) {
+    .dash-stat-unit {
+        font-size: 12px;
+    }
+
+    .adm-quick-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    a.adm-quick-item,
+    a.adm-quick-item:link,
+    a.adm-quick-item:visited {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: var(--adm-text);
+    }
+
+    .dash-card-inner-nowrap {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dash-alert-content {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .dash-alert-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .dash-alert-title--purple,
+    .dash-alert-title--amber {
+        font-size: 14px;
+    }
+
+    .dash-alert-sub--purple,
+    .dash-alert-sub--amber {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .dash-alert-action {
+        width: auto;
+        flex-shrink: 0;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .dash-stat-unit {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 599.98px) {
+    .dash-alert-action {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .dash-alert-assignments,
+    .dash-alert-pending {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .dash-alert-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .dash-alert-content > div:last-child {
+        min-width: 0;
+    }
+
+    .dash-alert-sub--purple,
+    .dash-alert-sub--amber {
+        word-break: break-word;
+    }
+
+    .adm-stat-value .dash-stat-unit {
+        display: block;
+        margin-top: 2px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .dash-alert-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .dash-alert-title--purple,
+    .dash-alert-title--amber {
+        font-size: 13px;
+    }
+}

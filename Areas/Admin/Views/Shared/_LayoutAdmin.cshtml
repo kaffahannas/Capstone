@@ -8,6 +8,8 @@
     var active     = ViewBag.ActiveNav as string ?? "Dashboard";
     var pageTitle  = ViewData["Title"]?.ToString() ?? "Admin";
 }
+
+@* #Bagian LayoutAdmin# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -16,16 +18,17 @@
     <title>@pageTitle · LightenUp Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css?v=@DateTime.Now.Ticks" />
-    <link rel="stylesheet" href="~/css/admin.css?v=@DateTime.Now.Ticks" />
-    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
+    <link rel="stylesheet" href="~/css/admin/admin-overrides.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/admin-desktop-guard.css" asp-append-version="true" />
 </head>
-<body>
+<body class="admin-body">
     <div class="admin-shell app-shell" id="appShell">
         <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
-        <!-- ── SIDEBAR ── -->
+        @* #Komponen Sidebar# *@
         <aside class="admin-sidebar app-sidebar" id="appSidebar" aria-label="Navigasi admin">
             <div class="sidebar-header">
                 <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="admin-brand">
@@ -125,7 +128,7 @@
             </form>
         </aside>
 
-        <!-- ── MAIN ── -->
+        @* #Komponen KontenUtama# *@
         <main class="admin-main app-main">
             <header class="admin-topbar app-topbar">
                 <button type="button" class="sidebar-toggle" id="sidebarToggle"

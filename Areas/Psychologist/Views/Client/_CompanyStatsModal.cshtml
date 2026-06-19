@@ -5,6 +5,9 @@
     var total = sehatCount + beresikoCount + bahayaCount;
 }
 
+
+@* #Bagian ModalStatistikPerusahaan# *@
+@* #Komponen HeaderModal# *@
 <div class="modal-container csm-modal">
     <div class="modal-header csm-header">
         <div class="csm-eyebrow">Statistik Mitra</div>
@@ -12,7 +15,8 @@
         <button class="close-btn" onclick="closeCompanyStatsModal()">&times;</button>
     </div>
 
-    <div class="csm-body">
+    @* #Komponen IsiModal# *@
+<div class="csm-body">
         <div class="csm-count-row">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>

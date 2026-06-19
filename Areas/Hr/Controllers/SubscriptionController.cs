@@ -10,12 +10,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Areas.Hr.Controllers;
 
+// #Class SubscriptionController#
+
 [Area("Hr")]
 [Authorize(Roles = "HR")]
 public class SubscriptionController : Controller
 {
     private static readonly List<SubscriptionPlanViewModel> Plans =
     [
+        new() { PlanId = "company-test", Name = "Paket Test (Rp 10.000)", Price = 10000, DurationMonths = 1, EmployeeLimit = 1, Description = "Paket khusus simulasi pembayaran. 1 slot karyawan, durasi 1 bulan." },
         new() { PlanId = "company-10", Name = "Perusahaan 10 Karyawan", Price = 4500000, DurationMonths = 12, EmployeeLimit = 10, Description = "Hingga 10 karyawan terdaftar. Nilai slot payroll: Rp 450.000/karyawan/bulan." },
         new() { PlanId = "company-25", Name = "Perusahaan 25 Karyawan", Price = 10000000, DurationMonths = 12, EmployeeLimit = 25, Description = "Hingga 25 karyawan terdaftar. Nilai slot payroll: Rp 400.000/karyawan/bulan." },
         new() { PlanId = "company-50", Name = "Perusahaan 50 Karyawan", Price = 18000000, DurationMonths = 12, EmployeeLimit = 50, Description = "Hingga 50 karyawan terdaftar. Nilai slot payroll: Rp 360.000/karyawan/bulan." }
@@ -37,6 +40,8 @@ public class SubscriptionController : Controller
         _duitku = duitku;
         _access = access;
     }
+
+    // #Function Index#
 
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -88,6 +93,8 @@ public class SubscriptionController : Controller
         });
     }
 
+    // #Function CreateDivision#
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateDivision(string name)
@@ -109,6 +116,8 @@ public class SubscriptionController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // #Function DeleteDivision#
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteDivision(int id)
@@ -125,6 +134,8 @@ public class SubscriptionController : Controller
         }
         return RedirectToAction(nameof(Index));
     }
+
+    // #Function Checkout#
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -167,7 +178,7 @@ public class SubscriptionController : Controller
         await _context.SaveChangesAsync();
 
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
-        var callbackUrl = $"{baseUrl}/api/payment/duitku/callback";
+        var callbackUrl = $"{baseUrl}/dk/cb";
         var returnUrl = Url.Action(nameof(Return), "Subscription", new { area = "Hr", orderId }, Request.Scheme)!;
 
         var result = await _duitku.CreatePaymentAsync(new DuitkuCreatePaymentRequest
@@ -194,6 +205,8 @@ public class SubscriptionController : Controller
         return Redirect(result.PaymentUrl);
     }
 
+    // #Function Return#
+
     [HttpGet]
     public async Task<IActionResult> Return(string orderId, bool mock = false)
     {
@@ -212,6 +225,8 @@ public class SubscriptionController : Controller
         return RedirectToAction(nameof(Failed), new { orderId });
     }
 
+    // #Function Success#
+
     [HttpGet]
     public async Task<IActionResult> Success(string orderId)
     {
@@ -227,6 +242,8 @@ public class SubscriptionController : Controller
         ViewBag.ActiveNav = "Langganan";
         return View();
     }
+
+    // #Function Failed#
 
     [HttpGet]
     public IActionResult Failed(string orderId)

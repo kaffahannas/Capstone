@@ -1,0 +1,213 @@
+/* #Bagian Layout Admin# */
+.lay-admin-user-info {
+    text-align: right;
+}
+
+.lay-admin-brand-logo--fallback {
+    background: linear-gradient(135deg, #7C3AED, #5B21B6);
+}
+
+/* site.css sets generic topbar geometry; admin components own chrome styling */
+.admin-shell .admin-topbar {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--adm-border);
+    min-height: auto;
+}
+
+/* Pages with their own hero title — hide duplicate layout heading */
+.admin-shell:has(.adm-page-header) .admin-topbar h2.lu-h2,
+.admin-shell:has(.adm-page-header) .admin-topbar-breadcrumb {
+    display: none;
+}
+
+.adm-page-header {
+    margin-bottom: 24px;
+}
+
+.adm-page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--adm-text);
+    margin: 0 0 8px;
+    letter-spacing: -0.4px;
+}
+
+.adm-page-sub {
+    color: var(--adm-text-secondary);
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* #Bagian Responsif Mobile Admin — scroll ala Patient# */
+@media (max-width: 991.98px) {
+    body.admin-body {
+        height: 100dvh;
+        overflow: hidden;
+        font-size: 14px;
+    }
+
+    body.admin-body.sidebar-open {
+        overflow: hidden;
+    }
+
+    body.admin-body .admin-shell {
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: none;
+        min-height: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    body.admin-body .admin-shell > .sidebar-backdrop {
+        flex: none;
+    }
+
+    body.admin-body .admin-main {
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 0;
+        height: auto;
+        max-height: none;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    body.admin-body .admin-topbar {
+        flex-shrink: 0;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        min-height: 0;
+    }
+
+    body.admin-body .admin-topbar-left {
+        flex: 1;
+        min-width: 0;
+        gap: 0;
+    }
+
+    body.admin-body .admin-topbar h2.lu-h2 {
+        font-size: 0.8125rem;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0;
+    }
+
+    body.admin-body .admin-topbar-breadcrumb {
+        display: none;
+    }
+
+    body.admin-body .admin-user {
+        flex-shrink: 0;
+        gap: 0;
+    }
+
+    body.admin-body .admin-user-info,
+    body.admin-body .lay-admin-user-info {
+        display: none;
+    }
+
+    body.admin-body .admin-user-avatar {
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+    }
+
+    body.admin-body .admin-content,
+    body.admin-body .admin-content.lu-scroll-host {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        display: block;
+        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Prevent flex children from forcing horizontal page overflow */
+    body.admin-body .admin-content > * {
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    /* Single scroll host — disable nested list scroll inside admin */
+    body.admin-body .admin-content .pay-page,
+    body.admin-body .admin-content .lu-page {
+        flex: none;
+        min-height: 0;
+        height: auto;
+    }
+
+    body.admin-body .lu-list-scroll,
+    body.admin-body .pay-page > .adm-table-wrap,
+    body.admin-body .lu-page > .adm-table-wrap {
+        flex: none;
+        overflow-y: visible;
+        max-height: none;
+    }
+
+    body.admin-body .adm-page-header {
+        margin-bottom: 14px;
+    }
+
+    body.admin-body .adm-page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    body.admin-body .adm-page-sub {
+        font-size: 12px;
+    }
+
+    body.admin-body .pay-page,
+    body.admin-body .lu-page {
+        gap: 12px;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* #Bagian Media Query Tablet# */
+@media (max-width: 767.98px) {
+    body.admin-body .admin-main {
+        padding: 12px 14px;
+    }
+
+    body.admin-body .admin-content .adm-table-wrap,
+    body.admin-body .admin-content .apr-request-card,
+    body.admin-body .admin-content .asg-workload-card {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 599.98px) {
+    body.admin-body .admin-main {
+        padding: 10px 12px;
+    }
+
+    body.admin-body .admin-topbar h2.lu-h2 {
+        font-size: 0.9375rem;
+    }
+}

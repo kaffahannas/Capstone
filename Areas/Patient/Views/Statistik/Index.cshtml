@@ -8,14 +8,17 @@
     var triggerLabels = string.Join(",", Model.TopTriggers.Select(t => $"\"{System.Web.HttpUtility.JavaScriptStringEncode(t.Label)}\""));
     var triggerData   = string.Join(",", Model.TopTriggers.Select(t => t.Count));
 }
+@* #Bagian Statistik Pasien# *@
 
 @section Head {
+    <link rel="stylesheet" href="~/css/patient/statistik-index.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 }
 
 <!-- st-layout fills the exact remaining viewport height; charts flex to fill it -->
 <div class="st-layout">
 
+@* #Komponen Topbar KPI# *@
 <!-- ─── Top bar: KPI chips + period selector ─── -->
 <div class="st-topbar">
     <div class="st-kpi-strip">
@@ -41,6 +44,7 @@
     </div>
 </div>
 
+@* #Komponen Tren Mood# *@
 <!-- ─── Mood trend (full width) ─── -->
 <div class="lu-card st-card st-card--trend">
     <div class="st-card-head">
@@ -61,6 +65,7 @@
     }
 </div>
 
+@* #Komponen Radar dan Pemicu# *@
 <!-- ─── Radar + Triggers side-by-side ─── -->
 <div class="st-row2">
     <div class="lu-card st-card">
@@ -84,6 +89,10 @@
     <div class="lu-card st-card">
         <div class="st-card-head">
             <span class="st-card-title">🎯 Pemicu Teratas</span>
+            @if (Model.TopTriggers.Any())
+            {
+                <span class="st-badge">@Model.MoodEntriesWithTriggers dari @Model.MoodEntryCount entri mood</span>
+            }
         </div>
         @if (!Model.TopTriggers.Any())
         {
@@ -94,6 +103,7 @@
         }
         else
         {
+            <p class="st-trigger-hint">Menghitung pemicu utama per sesi (total @Model.MoodEntriesWithTriggers dari @Model.MoodEntryCount lacak mood).</p>
             <div class="st-canvas-wrap st-canvas--square"><canvas id="triggersChart"></canvas></div>
         }
     </div>
@@ -189,7 +199,12 @@
             indexAxis: 'y', responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                x: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: C_GRID } },
+                x: {
+                    beginAtZero: true,
+                    max: @(Math.Max(Model.MoodEntriesWithTriggers, 1)),
+                    ticks: { stepSize: 1, precision: 0 },
+                    grid: { color: C_GRID }
+                },
                 y: { grid: { display: false }, ticks: { font: { size: 10 } } }
             }
         }

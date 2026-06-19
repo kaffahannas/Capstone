@@ -1,0 +1,839 @@
+/* #Bagian Pasien Detail Psikolog# */
+﻿/* Patient detail page (restored from dashboard.css monolith) */
+/* #Bagian Pd Back Komponen Psikolog Detailcss# */
+/* pd-back: components-psy-detail.css */
+
+/* #Bagian Halaman Wrapper# */
+/* Page wrapper */
+.pd-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* #Komponen Hero# */
+/* ΓöÇΓöÇ Hero ΓöÇΓöÇ */
+.pd-hero {
+    border-radius: 18px;
+    padding: 26px 28px 28px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(130deg, #1E1B4B 0%, #312E81 25%, #4338CA 60%, #7C3AED 100%);
+}
+.pd-hero--bahaya   { background: linear-gradient(130deg, #450a0a 0%, #7f1d1d 30%, #B91C1C 70%, #EF4444 100%); }
+.pd-hero--beresiko { background: linear-gradient(130deg, #451a03 0%, #78350f 30%, #B45309 70%, #F59E0B 100%); }
+.pd-hero::before {
+    content: "";
+    position: absolute;
+    top: -50px; right: -30px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    pointer-events: none;
+}
+.pd-hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+
+/* #Komponen Avatar# */
+/* Avatar */
+.pd-hero-av {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 3px solid rgba(255,255,255,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800; color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* #Bagian Identity# */
+/* Identity */
+.pd-hero-id {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.pd-hero-eyebrow {
+    margin: 0;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+.pd-hero-name {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+}
+.pd-hero-meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+.pd-hero-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+}
+
+/* #Bagian Status Center Block# */
+/* Status center block */
+.pd-hero-status-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+.pd-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 7px 18px;
+    border-radius: 999px;
+}
+.pd-status--sehat    { background: rgba(16,185,129,0.22); color: #6EE7B7; border: 1.5px solid rgba(16,185,129,0.4); }
+.pd-status--beresiko { background: rgba(245,158,11,0.22); color: #FDE68A; border: 1.5px solid rgba(245,158,11,0.4); }
+.pd-status--bahaya   { background: rgba(239,68,68,0.22);  color: #FCA5A5; border: 1.5px solid rgba(239,68,68,0.4); }
+.pd-status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.pd-hero-status-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* #Komponen Hero Stats# */
+/* Hero stats */
+.pd-hero-stats {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.pd-hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 13px;
+    padding: 12px 18px;
+    min-width: 80px;
+    text-align: center;
+}
+.pd-hero-stat--mood { background: rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.3); }
+.pd-hero-stat-val { font-size: 24px; font-weight: 800; color: #fff; line-height: 1; }
+.pd-hero-stat-lbl { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.65); white-space: nowrap; }
+
+/* #Bagian 2 Column Grid# */
+/* ΓöÇΓöÇ 2-column grid ΓöÇΓöÇ */
+.pd-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 1fr;          /* single row fills all remaining height */
+    gap: 14px;
+    flex: 1;
+    min-height: 0; overflow-y: auto;
+    align-items: stretch;             /* both columns fill row height */
+}
+.pd-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;   /* scroll internally ΓÇö never overflow the grid */
+    min-height: 0;
+    padding-bottom: 4px;
+}
+.pd-main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;   /* scroll internally ΓÇö never overflow the grid */
+    min-height: 0;
+    padding-bottom: 4px;
+}
+
+/* #Komponen Cards# */
+/* ΓöÇΓöÇ Cards ΓöÇΓöÇ */
+.pd-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s;
+    flex-shrink: 0;   /* never shrink ΓÇö column scrolls instead */
+}
+.pd-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.06); }
+
+/* #Bagian Accent Bar# */
+/* Accent bar */
+.pd-card-accent { height: 4px; width: 100%; flex-shrink: 0; }
+.pd-card--blue   .pd-card-accent { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+.pd-card--amber  .pd-card-accent { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+.pd-card--plain  .pd-card-accent { display: none; }
+
+/* #Komponen Kartu Icon Color# */
+/* Card icon color */
+.pd-card--blue  .pd-card-icon { background: #EFF6FF; color: #3B82F6; }
+.pd-card--amber .pd-card-icon { background: #FFFBEB; color: #D97706; }
+.pd-card--plain .pd-card-icon { background: var(--light-purple); color: var(--primary-purple); }
+
+.pd-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 18px 10px;
+    flex-shrink: 0;
+}
+.pd-card-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.pd-card-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    flex: 1;
+}
+.pd-card-date {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+.pd-card-body {
+    padding: 0 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* #Bagian Field Label/value# */
+/* Field label/value */
+.pd-field { display: flex; flex-direction: column; gap: 2px; }
+.pd-field-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.pd-field-val { font-size: 13px; font-weight: 500; color: var(--text-dark); }
+.pd-field-val--muted { color: var(--text-muted); font-style: italic; font-size: 12.5px; }
+
+/* #Bagian Notes Daftar# */
+/* Notes list */
+.pd-notes-list {
+    margin: 0;
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.pd-notes-list li { font-size: 13px; color: var(--text-dark); }
+
+/* #Komponen Section Label Inside Kartu Body# */
+/* Section label inside card body */
+.pd-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* #Bagian Jurnal Box# */
+/* Journal box */
+.pd-journal-box {
+    background: #F5F3FF;
+    border: 1px solid #DDD6FE;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-size: 13.5px;
+    font-style: italic;
+    color: #4C1D95;
+    line-height: 1.6;
+    position: relative;
+}
+.pd-journal-quote {
+    position: absolute;
+    top: 10px; left: 12px;
+    opacity: 0.25;
+}
+
+/* #Bagian Complaint Box# */
+/* Complaint box */
+.pd-complaint-box {
+    background: var(--bg-gray);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 13px;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+/* #Bagian Mood Period Toggle Pills# */
+/* Mood period toggle pills */
+.pd-period-btns {
+    display: flex;
+    gap: 3px;
+    background: var(--bg-gray);
+    border-radius: 9px;
+    padding: 3px;
+    flex-shrink: 0;
+}
+.pd-period-btn {
+    padding: 4px 11px;
+    border: none;
+    background: transparent;
+    border-radius: 7px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1;
+}
+.pd-period-btn:hover { color: var(--primary-purple); }
+.pd-period-btn.active {
+    background: #fff;
+    color: var(--primary-purple);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+
+/* #Komponen Mood Tracker Kartu Fills Remaining Height In Pd Main# */
+/* Mood tracker card fills remaining height in pd-main */
+.pd-mood-card {
+    flex: 1;
+    min-height: 0;
+}
+.pd-mood-card .pd-card-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* #Komponen Mood Chart Grows To Fill Kartu Body# */
+/* Mood chart ΓÇö grows to fill card body */
+.pd-chart-wrap {
+    flex: 1;
+    min-height: 120px;   /* never collapse below this */
+    height: auto;        /* override any fixed height */
+    position: relative;
+    transition: opacity 0.2s;
+}
+.pd-mood-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-top: 14px;
+    background: var(--bg-gray);
+    border-radius: 12px;
+    padding: 12px 0;
+}
+.pd-mood-leg-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 0 16px;
+}
+.pd-mood-leg-divider { width: 1px; height: 32px; background: var(--border-color); }
+.pd-mood-leg-val { font-size: 20px; font-weight: 800; line-height: 1; }
+.pd-mood-leg-lbl { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+.pd-mood-leg--sehat    .pd-mood-leg-val { color: #10B981; }
+.pd-mood-leg--beresiko .pd-mood-leg-val { color: #F59E0B; }
+.pd-mood-leg--bahaya   .pd-mood-leg-val { color: #EF4444; }
+.pd-empty-mood {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; padding: 40px 0; color: #D1D5DB; text-align: center;
+}
+.pd-empty-mood p { margin: 0; font-size: 13px; color: var(--text-muted); }
+
+/* #Komponen Bottom Row Cards# */
+/* Bottom row cards */
+.pd-bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    flex-shrink: 0;   /* don't squash in the pd-main flex column */
+}
+.pd-session-row { display: flex; flex-direction: column; gap: 4px; }
+.pd-session-time {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 15px; font-weight: 700; color: var(--text-dark);
+}
+.pd-session-note { margin: 0; font-size: 12px; color: var(--text-muted); }
+.pd-ws-count { display: flex; align-items: baseline; gap: 6px; }
+.pd-ws-num { font-size: 32px; font-weight: 800; color: #059669; line-height: 1; }
+.pd-ws-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+/* #Bagian Action Links# */
+/* Action links */
+.pd-action-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s, transform 0.1s;
+}
+.pd-action-link:hover { transform: translateX(2px); }
+.pd-action-link--purple { background: var(--light-purple); color: var(--primary-purple); }
+.pd-action-link--purple:hover { background: #DDD6FE; }
+.pd-action-link--blue { background: #EFF6FF; color: #2563EB; }
+.pd-action-link--blue:hover { background: #DBEAFE; }
+
+/* #Bagian Responsif# */
+@media (max-width: 991.98px) {
+    .pd-back {
+        font-size: 11px;
+        margin-bottom: 8px;
+        max-width: 100%;
+    }
+
+    .pd-page {
+        gap: 10px;
+        overflow: visible;
+    }
+
+    .pd-hero {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .pd-hero-inner {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "av id"
+            "status status"
+            "stats stats";
+        gap: 10px;
+        align-items: start;
+    }
+
+    .pd-hero-av {
+        grid-area: av;
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+        border-width: 2px;
+    }
+
+    .pd-hero-id {
+        grid-area: id;
+        gap: 3px;
+    }
+
+    .pd-hero-eyebrow {
+        font-size: 8px;
+    }
+
+    .pd-hero-name {
+        font-size: 0.875rem;
+    }
+
+    .pd-hero-meta {
+        gap: 8px;
+        margin-top: 0;
+    }
+
+    .pd-hero-meta span {
+        font-size: 9px;
+        gap: 3px;
+    }
+
+    .pd-hero-status-wrap {
+        grid-area: status;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .pd-status-badge {
+        font-size: 10px;
+        padding: 4px 10px;
+        gap: 5px;
+    }
+
+    .pd-status-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .pd-hero-status-label {
+        font-size: 8px;
+    }
+
+    .pd-hero-stats {
+        grid-area: stats;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        justify-content: stretch;
+    }
+
+    .pd-hero-stat {
+        min-width: 0;
+        padding: 6px 8px;
+        border-radius: 8px;
+    }
+
+    .pd-hero-stat-val {
+        font-size: 0.875rem;
+    }
+
+    .pd-hero-stat-lbl {
+        font-size: 8px;
+        white-space: normal;
+        line-height: 1.2;
+    }
+
+    .pd-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        align-items: start;
+        flex: unset;
+        min-height: unset;
+        gap: 10px;
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+    }
+
+    .pd-sidebar,
+    .pd-main {
+        overflow-y: visible;
+        min-height: unset;
+        padding-bottom: 0;
+        gap: 10px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .pd-card {
+        flex-shrink: 1;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .pd-card-head {
+        padding: 10px 12px 8px;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .pd-card-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+    }
+
+    .pd-card-title {
+        font-size: 11px;
+    }
+
+    .pd-card-date {
+        font-size: 9px;
+        width: 100%;
+    }
+
+    .pd-card-body {
+        padding: 0 12px 12px;
+        gap: 8px;
+    }
+
+    .pd-field-label {
+        font-size: 8px;
+    }
+
+    .pd-field-val {
+        font-size: 11px;
+    }
+
+    .pd-section-label {
+        font-size: 8px;
+    }
+
+    .pd-journal-box {
+        padding: 10px 12px;
+        font-size: 11px;
+        border-radius: 8px;
+    }
+
+    .pd-complaint-box {
+        padding: 8px 10px;
+        font-size: 11px;
+        border-radius: 8px;
+    }
+
+    .pd-period-btns {
+        width: 100%;
+        justify-content: stretch;
+        margin-top: 4px;
+    }
+
+    .pd-period-btn {
+        flex: 1;
+        padding: 4px 6px;
+        font-size: 9px;
+        text-align: center;
+    }
+
+    .pd-mood-legend {
+        margin-top: 8px;
+        padding: 8px 0;
+        border-radius: 8px;
+    }
+
+    .pd-mood-leg-item {
+        padding: 0 8px;
+        gap: 2px;
+    }
+
+    .pd-mood-leg-val {
+        font-size: 0.875rem;
+    }
+
+    .pd-mood-leg-lbl {
+        font-size: 8px;
+    }
+
+    .pd-mood-leg-divider {
+        height: 24px;
+    }
+
+    .pd-ws-num {
+        font-size: 1.25rem;
+    }
+
+    .pd-ws-label {
+        font-size: 10px;
+    }
+
+    .pd-session-time {
+        font-size: 12px;
+    }
+
+    .pd-session-note {
+        font-size: 10px;
+    }
+
+    .pd-action-link {
+        padding: 8px 10px;
+        font-size: 11px;
+        border-radius: 8px;
+    }
+
+    .pd-bottom-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .pd-empty-mood {
+        padding: 24px 0;
+        min-height: 100px;
+        gap: 6px;
+    }
+
+    .pd-empty-mood svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .pd-empty-mood p {
+        font-size: 11px;
+    }
+
+    .app-content > .pd-page .pd-mood-card .pd-card-body {
+        min-height: unset;
+        gap: 8px;
+    }
+
+    .app-content > .pd-page .pd-mood-card .pd-chart-wrap {
+        min-height: 140px;
+        height: 160px;
+    }
+
+    .app-content > .pd-page .pd-empty-mood {
+        min-height: 120px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .pd-hero {
+        padding: 10px 12px;
+    }
+
+    .pd-hero-av {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .pd-hero-name {
+        font-size: 0.8125rem;
+    }
+
+    .pd-hero-meta span {
+        font-size: 8px;
+    }
+
+    .pd-hero-stat-val {
+        font-size: 0.8125rem;
+    }
+
+    .pd-card-head {
+        padding: 8px 10px 6px;
+    }
+
+    .pd-card-body {
+        padding: 0 10px 10px;
+    }
+
+    .app-content > .pd-page .pd-mood-card .pd-chart-wrap {
+        min-height: 120px;
+        height: 140px;
+    }
+}
+
+/* Legacy breakpoints — digantikan aturan di atas */
+@media (max-width: 900px) {
+    .pd-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        align-items: start;
+        flex: unset;
+        min-height: unset;
+    }
+
+    .pd-sidebar,
+    .pd-main {
+        overflow-y: visible;
+        min-height: unset;
+        padding-bottom: 0;
+    }
+
+    .pd-card {
+        flex-shrink: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .pd-bottom-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+/* #Komponen Cancel Penugasan Modal Extras# */
+/* Cancel assignment modal extras */
+.pd-cancel-btn {
+    background: #FEF2F2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+    cursor: pointer;
+}
+.pd-cancel-modal { max-width: 480px; }
+.pd-cancel-title { color: #B91C1C; }
+.pd-cancel-title-icon { vertical-align: -3px; margin-right: 8px; }
+.pd-cancel-intro { margin: 0 0 4px; font-size: 13px; color: #6B7280; }
+.pd-cancel-name { font-size: 15px; font-weight: 700; color: #111827; margin: 0 0 20px; }
+.pd-cancel-warn {
+    background: #FEF2F2; border: 1px solid #FECACA; border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: #991B1B;
+}
+.pd-cancel-hint { font-size: 11px; color: #9CA3AF; }
+.pd-cancel-submit { background: #B91C1C; color: #fff; }
+.pd-cancel-submit-icon { vertical-align: -2px; margin-right: 6px; }
+.pd-debug { font-size: 12px; color: gray; margin-top: 10px; }
+.pd-is-hidden { display: none !important; }
+.pd-chart-wrap.is-loading { opacity: 0.4; transition: opacity 0.15s ease; }
+.pd-section-label--spaced { margin-top: 10px; }
+
+/* #Bagian Scroll Via App Content Not Inner Columns# */
+/* Scroll via .app-content (not inner columns) */
+.app-content > .pd-page {
+    flex: unset;
+    min-height: auto;
+    overflow: visible;
+}
+.app-content > .pd-page .pd-grid {
+    flex: unset;
+    min-height: unset;
+    overflow: visible;
+    align-items: start;
+}
+.app-content > .pd-page .pd-sidebar,
+.app-content > .pd-page .pd-main {
+    overflow-y: visible;
+    min-height: unset;
+}
+.app-content > .pd-page .pd-mood-card {
+    flex: unset;
+    min-height: unset;
+}
+.app-content > .pd-page .pd-mood-card .pd-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 360px;
+}
+.app-content > .pd-page .pd-mood-card .pd-chart-wrap {
+    flex: 1;
+    min-height: 260px;
+    height: 280px;
+}
+.app-content > .pd-page .pd-empty-mood {
+    flex: 1;
+    min-height: 200px;
+}

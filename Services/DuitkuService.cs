@@ -33,6 +33,7 @@ public class DuitkuCallbackPayload
     public string? Amount { get; set; }
 }
 
+// #Class DuitkuService#
 public class DuitkuService
 {
     private readonly DuitkuOptions _options;
@@ -53,6 +54,8 @@ public class DuitkuService
         !string.IsNullOrWhiteSpace(_options.MerchantCode) &&
         !string.IsNullOrWhiteSpace(_options.ApiKey);
 
+    // #Bagian Pembayaran#
+    // #Function CreatePaymentAsync#
     public async Task<DuitkuCreatePaymentResult> CreatePaymentAsync(DuitkuCreatePaymentRequest request, CancellationToken ct = default)
     {
         if (_options.UseMock || !IsConfigured)
@@ -63,12 +66,20 @@ public class DuitkuService
                 Success = true,
                 IsMock = true,
                 Reference = "MOCK-" + request.MerchantOrderId,
-                PaymentUrl = request.ReturnUrl + (request.ReturnUrl.Contains('?') ? "&" : "?") + "mock=1&orderId=" + Uri.EscapeDataString(request.MerchantOrderId)
+                PaymentUrl = request.ReturnUrl + (request.ReturnUrl.Contains('?') ? "&" : "?") + "mock=true&orderId=" + Uri.EscapeDataString(request.MerchantOrderId)
             };
         }
 
         var amount = (int)Math.Round(request.Amount, 0);
-        var signature = ComputeSha256($"{_options.MerchantCode}{request.MerchantOrderId}{amount}{_options.ApiKey}");
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+
+        var headerSignatureInput = $"{_options.MerchantCode}{timestamp}{_options.ApiKey}";
+        var headerHash = SHA256.HashData(Encoding.UTF8.GetBytes(headerSignatureInput));
+        var headerSignature = Convert.ToHexString(headerHash).ToLowerInvariant();
+
+        var bodySignatureInput = $"{_options.MerchantCode}{request.MerchantOrderId}{amount}{_options.ApiKey}";
+        var bodyHash = SHA256.HashData(Encoding.UTF8.GetBytes(bodySignatureInput));
+        var signature = Convert.ToHexString(bodyHash).ToLowerInvariant();
 
         var body = new
         {
@@ -87,6 +98,10 @@ public class DuitkuService
         try
         {
             var client = _httpClientFactory.CreateClient("Duitku");
+            client.DefaultRequestHeaders.Add("x-duitku-merchantcode", _options.MerchantCode);
+            client.DefaultRequestHeaders.Add("x-duitku-timestamp", timestamp);
+            client.DefaultRequestHeaders.Add("x-duitku-signature", headerSignature);
+
             var json = JsonSerializer.Serialize(body);
             using var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(_options.InquiryUrl, content, ct);
@@ -123,6 +138,7 @@ public class DuitkuService
         }
     }
 
+    // #Function VerifyCallbackSignature#
     public bool VerifyCallbackSignature(string merchantCode, string amount, string merchantOrderId, string signature)
     {
         if (!IsConfigured) return true;

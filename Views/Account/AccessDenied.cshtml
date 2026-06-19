@@ -3,6 +3,9 @@
     Layout = "_Layout"; 
 }
 
+@* #Bagian Akses Ditolak# *@
+
+@* #Komponen Kartu Akses Ditolak# *@
 <div class="access-denied-page">
     <div class="access-denied-card">
         
@@ -25,6 +28,7 @@
             }
         </p>
 
+        @* #Komponen Form Logout# *@
         <form asp-action="Logout" asp-controller="Account" asp-area="" method="post">
             <button type="submit" class="access-denied-btn">
                 Logout & Ganti Akun

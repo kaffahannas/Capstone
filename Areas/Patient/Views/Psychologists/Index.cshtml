@@ -7,9 +7,15 @@
     var pendingAdminRequest = ViewBag.PendingAdminRequest as PatientAdminAssignmentRequest;
     var hasActivePsychologist = (bool)(ViewBag.HasActivePsychologist ?? false);
 }
+@* #Bagian Pilih Psikolog# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/psychologists-index.css" asp-append-version="true" />
+}
 
 <div class="psy-page">
 
+@* #Komponen Hero Psikolog# *@
 <div class="psy-hero">
     <div class="psy-hero-deco">🩺</div>
     <div class="psy-hero-inner">
@@ -38,11 +44,11 @@
 }
 else if (!hasActivePsychologist && activeAssignment == null)
 {
+    @* #Komponen Minta Admin Menugaskan# *@
     <div class="psy-admin-box">
         <strong>Belum punya psikolog?</strong>
         <p class="psy-admin-desc">Anda bisa memilih psikolog sendiri di bawah, atau minta Admin LightenUp menugaskan berdasarkan beban kerja psikolog.</p>
         <form asp-action="RequestAdminAssignment" method="post" class="psy-admin-form">
-            @Html.AntiForgeryToken()
             <div class="psy-admin-field">
                 <label class="psy-admin-label">Psikolog preferensi (opsional)</label>
                 <select name="preferredPsychologistId" class="psy-admin-select">
@@ -73,6 +79,7 @@ else if (!hasActivePsychologist && activeAssignment == null)
     </div>
 }
 
+@* #Komponen Daftar Psikolog# *@
 <div class="psy-grid">
 @foreach (var psy in Model)
 {

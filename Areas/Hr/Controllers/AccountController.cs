@@ -9,6 +9,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     // HR-site-specific account controller. Same email/password flow as the public Account controller,
     // but the register form auto-assigns the HR role (no role picker shown).
+    // #Class AccountController#
     [Area("Hr")]
     public class AccountController : Controller
     {
@@ -26,8 +27,12 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         }
 
         // ── Register ───────────────────────────
+        // #Function Register#
+        // #Bagian Register#
         [HttpGet]
         public IActionResult Register() => View(new HrRegisterFormViewModel());
+
+        // #Function Register POST#
 
         [HttpPost]
         public async Task<IActionResult> Register(HrRegisterFormViewModel model)

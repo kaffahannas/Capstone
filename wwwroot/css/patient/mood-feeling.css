@@ -1,0 +1,255 @@
+/* #Bagian Mood Perasaan Pasien# */
+.mood-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.mood-card {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    background: var(--lu-border, #E5E7EB);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: 6px;
+    transition: transform 0.1s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.mood-card:hover {
+    transform: scale(1.03);
+}
+
+.mood-card.selected {
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.28);
+    transform: scale(1.02);
+}
+
+.mood-card.overjoyed.selected { border-color: #16A34A; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.28); }
+.mood-card.happy.selected { border-color: #65A30D; box-shadow: 0 0 0 3px rgba(101, 163, 13, 0.28); }
+.mood-card.calm.selected { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.28); }
+.mood-card.neutral.selected { border-color: #64748B; box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.28); }
+.mood-card.disappointed.selected { border-color: #C026D3; box-shadow: 0 0 0 3px rgba(192, 38, 211, 0.28); }
+.mood-card.angry.selected { border-color: #DC2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.28); }
+
+.mood-card .emoji {
+    font-size: 32px;
+}
+
+.mood-card .name {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.mood-hidden-input {
+    display: none;
+}
+
+.mood-feeling-submit {
+    width: 100%;
+    padding: 14px;
+}
+
+.mood-step-label {
+    font-size: 13px;
+    color: var(--lu-text-muted);
+    margin-bottom: 8px;
+}
+
+.mood-question {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0F172A;
+    margin: 0 0 8px;
+    text-align: center;
+}
+
+.mood-helper {
+    font-size: 14px;
+    color: #64748B;
+    text-align: center;
+    margin: 0 0 32px;
+}
+
+.mood-card.overjoyed { background: var(--mood-overjoyed, #D9F99D); }
+.mood-card.happy { background: var(--mood-happy, #A3E635); }
+.mood-card.calm { background: var(--mood-calm, #93C5FD); }
+.mood-card.neutral { background: var(--mood-neutral, #D1D5DB); }
+.mood-card.disappointed { background: var(--mood-disappointed, #FBCFE8); }
+.mood-card.angry { background: var(--mood-angry, #FCA5A5); }
+
+.mood-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid var(--lu-border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.mood-summary .date-label {
+    font-size: 13px;
+    color: var(--lu-text);
+    margin-bottom: 8px;
+}
+
+.mood-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin-top: 24px;
+}
+
+.mood-footer .btn-primary,
+.mood-footer .btn-secondary {
+    flex: 1;
+}
+
+.mood-footer .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 24px;
+    border-radius: 12px;
+    background: #F1F5F9;
+    color: #475569;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mood-footer .btn-secondary:hover {
+    background: #E2E8F0;
+    color: #0F172A;
+}
+
+.mood-footer .btn-primary:hover {
+    background: #E2E8F0;
+    color: #0F172A;
+}
+
+/* #Komponen Popup / Dashboard Modal# */
+/* Popup / dashboard modal */
+.is-popup .mood-wizard-header {
+    display: none !important;
+}
+
+.is-popup .mood-shell form {
+    display: flex;
+    flex-direction: column;
+    min-height: min-content;
+}
+
+.is-popup .mood-shell form .mood-grid {
+    flex: 0 0 auto;
+    align-content: start;
+    margin-bottom: 14px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.is-popup .mood-question {
+    font-size: 18px;
+    margin: 0 0 4px;
+    text-align: center;
+}
+
+.is-popup .mood-card .emoji {
+    font-size: 26px;
+    margin-bottom: 0;
+}
+
+.is-popup .mood-card .name {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.is-popup .mood-helper {
+    font-size: 12px;
+    margin: 0 0 12px;
+    text-align: center;
+}
+
+.is-popup .mood-card {
+    aspect-ratio: auto;
+    min-height: 76px;
+    padding: 10px 6px;
+    border-radius: 12px;
+    border: 2px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.is-popup .mood-card.selected {
+    border-width: 2px;
+}
+
+.is-popup .mood-feeling-submit {
+    margin-top: 4px;
+}
+
+.is-popup .mood-shell form > button[type="submit"],
+.is-popup .mood-shell form .mood-footer {
+    flex-shrink: 0;
+    margin-top: 0;
+}
+
+.is-popup .mood-shell form #scaleRow {
+    flex: 1;
+    align-content: center;
+}
+
+.is-popup .mood-shell .mood-summary {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px 16px;
+    background: #F8FAFC;
+    border-radius: 20px;
+    border: 2px solid #E2E8F0;
+    margin-bottom: 32px;
+}
+
+.is-popup .mood-summary.overjoyed { background: #F0FDF4; border-color: #BBF7D0; }
+.is-popup .mood-summary.happy { background: #ECFCCB; border-color: #D9F99D; }
+.is-popup .mood-summary.calm { background: #EFF6FF; border-color: #BFDBFE; }
+.is-popup .mood-summary.neutral { background: #F8FAFC; border-color: #E2E8F0; }
+.is-popup .mood-summary.disappointed { background: #FDF4FF; border-color: #F5D0FE; }
+.is-popup .mood-summary.angry { background: #FEF2F2; border-color: #FECACA; }
+
+.is-popup .mood-summary .big-emoji {
+    font-size: 80px;
+    margin-bottom: 16px;
+    line-height: 1;
+    animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.is-popup .mood-summary .feeling-label {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 8px;
+}
+
+.is-popup .mood-summary .triggers-label {
+    font-size: 15px;
+    color: #475569;
+    font-weight: 600;
+}
+
+@keyframes pop {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

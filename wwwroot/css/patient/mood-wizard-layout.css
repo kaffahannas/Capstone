@@ -1,0 +1,207 @@
+/* #Bagian Mood Wizard Layout Pasien# */
+.mood-wizard-body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #EDE9FE 0%, #F5F3FF 40%, #EFF6FF 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 16px 40px;
+    font-family: 'Inter', sans-serif;
+}
+
+.mood-wizard-header {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0 16px;
+}
+
+.mood-wizard-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4C1D95;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mood-wizard-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(124,58,237,0.1);
+    color: #7C3AED;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    text-decoration: none;
+    line-height: 1;
+    transition: background 0.15s;
+}
+
+.mood-wizard-close:hover {
+    background: rgba(124,58,237,0.2); color: #4C1D95;
+}
+
+.mood-shell {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--lu-shadow);
+    width: 100%;
+    max-width: 480px;
+}
+
+.mood-wizard-progress {
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 20px;
+}
+
+.mood-wizard-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.mood-wizard-progress-step {
+    font-size: 12px;
+    font-weight: 600;
+    color: #7C3AED;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mood-wizard-progress-pct {
+    font-size: 12px;
+    color: #9CA3AF;
+}
+
+.mood-wizard-progress-track {
+    background: rgba(124, 58, 237, 0.12);
+    border-radius: 99px;
+    height: 6px;
+}
+
+.mood-wizard-progress-fill {
+    background: linear-gradient(90deg, #7C3AED, #6D28D9);
+    border-radius: 99px;
+    height: 6px;
+    transition: width 0.3s;
+    width: var(--bar-w, 0%);
+}
+
+/* #Komponen Iframe / Dashboard Modal White Compact No Scroll# */
+/* iframe / dashboard modal — white, compact, no scroll */
+html.is-popup,
+html.is-popup body {
+    height: auto;
+    overflow: hidden;
+    background: #fff;
+}
+
+.is-popup.mood-wizard-body {
+    min-height: 100% !important;
+    height: auto;
+    overflow: hidden;
+    padding: 0;
+    background: #fff;
+    align-items: stretch;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.is-popup .mood-wizard-progress {
+    flex-shrink: 0;
+    max-width: none;
+    width: 100%;
+    margin: 0 0 10px;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.is-popup .mood-shell {
+    flex: 1 1 auto;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: #fff;
+    padding: 0 16px 16px;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: none;
+}
+
+/* #Komponen Tombol Wizard Mood# */
+.mood-shell .btn-primary,
+.mood-wizard-body .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    background: var(--lu-primary, #7C3AED);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.25;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.mood-shell .btn-primary:hover,
+.mood-wizard-body .btn-primary:hover {
+    background: var(--lu-primary-hover, #6D28D9);
+}
+
+.mood-shell .btn-primary:active,
+.mood-wizard-body .btn-primary:active {
+    transform: scale(0.99);
+}
+
+.mood-shell .btn-secondary,
+.mood-wizard-body .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #F3F4F6;
+    color: var(--lu-text-muted, #6B7280);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    border: 1.5px solid var(--lu-border, #E5E7EB);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mood-shell .btn-secondary:hover,
+.mood-wizard-body .btn-secondary:hover {
+    background: #E5E7EB;
+    color: var(--lu-text, #111827);
+}
+
+.is-popup .mood-shell .btn-primary,
+.is-popup .mood-wizard-body .btn-primary {
+    border-radius: 11px;
+    padding: 12px 16px;
+    font-size: 14px;
+}

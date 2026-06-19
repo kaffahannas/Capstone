@@ -22,7 +22,27 @@
     var totalDanger      = Model.Patients?.Count(p => p.Status?.ToLower() == "bahaya") ?? 0;
 }
 
-@* ── Hero greeting banner ── *@
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/dashboard-index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/client-company-detail-modal.css" asp-append-version="true" />
+}
+
+
+@if (TempData["success"] is string ok)
+{
+    <div class="lu-alert-success" role="status" style="margin-bottom: 24px;">@ok</div>
+}
+@if (TempData["info"] is string info)
+{
+    <div class="lu-alert-info" role="status" style="margin-bottom: 24px;">@info</div>
+}
+@if (TempData["error"] is string err)
+{
+    <div class="lu-alert-danger" role="status" style="margin-bottom: 24px;">@err</div>
+}
+
+@* #Bagian DashboardPsikolog# *@
+@* #Komponen HeroSapaan# *@
 <div class="psy-hero">
     <div class="psy-hero-left">
         <p class="psy-hero-greeting">@greeting, @greetIcon</p>
@@ -37,7 +57,7 @@
     </div>
 </div>
 
-@* ── KPI cards ── *@
+@* #Komponen KartuKPI# *@
 <div class="psy-kpi-row">
     <div class="psy-kpi psy-kpi--clients">
         <div class="psy-kpi-icon">
@@ -83,10 +103,10 @@
     }
 </div>
 
-@* ── Main content grid ── *@
+@* #Bagian KontenUtama# *@
 <div class="psy-dashboard-grid">
 
-    @* Client list card *@
+    @* #Komponen DaftarKlien# *@
     <section class="psy-card psy-client-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
@@ -139,7 +159,38 @@
         </div>
     </section>
 
-    </section>
+    @if (Model.PendingAssignments != null && Model.PendingAssignments.Any())
+    {
+        <section class="psy-card psy-client-card">
+            <header class="psy-card-head">
+                <div class="psy-card-title-wrap">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <h2 class="psy-card-title">Menunggu Persetujuan</h2>
+                    <span class="psy-count-chip psy-count-chip--warning">@Model.PendingAssignments.Count</span>
+                </div>
+            </header>
+
+            <div class="psy-client-list">
+                @foreach (var patient in Model.PendingAssignments)
+                {
+                    var initials = patient.FullName.Length > 0 ? patient.FullName.Substring(0, 1).ToUpper() : "?";
+                    var statusText = patient.Status == "PendingAdminApproval" ? "Menunggu Admin" : "Perlu Persetujuan Anda";
+                    <div class="psy-client-row">
+                        <div class="psy-client-avatar psy-avatar--sehat" style="opacity: 0.6">@initials</div>
+                        <div class="psy-client-info">
+                            <span class="psy-client-name">@patient.FullName</span>
+                            <span class="psy-client-meta">@patient.CompanyName</span>
+                        </div>
+                        <span class="psy-status-chip psy-status--beresiko">@statusText</span>
+                        @if (patient.Status == "PendingPsychologistApproval")
+                        {
+                            <a href="/PsyRequests/Index" class="psy-btn psy-btn--primary psy-btn--sm" style="margin-left: 10px;">Tinjau</a>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
+    }
 
     @if (Model.PendingB2BRequests != null && Model.PendingB2BRequests.Any())
     {
@@ -148,27 +199,27 @@
                 <div class="psy-card-title-wrap">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                     <h2 class="psy-card-title">Permintaan Kemitraan (B2B)</h2>
-                    <span class="psy-count-chip" style="background: #FDE68A; color: #92400E;">@Model.PendingB2BRequests.Count</span>
+                    <span class="psy-count-chip psy-count-chip--warning">@Model.PendingB2BRequests.Count</span>
                 </div>
             </header>
 
             <div class="psy-company-list">
                 @foreach (var req in Model.PendingB2BRequests)
                 {
-                    <div class="psy-company-row" style="cursor: default;">
+                    <div class="psy-company-row psy-company-row--static">
                         <div class="psy-company-logo">@(string.IsNullOrEmpty(req.Company?.Name) ? "?" : req.Company.Name.Substring(0, 1).ToUpper())</div>
                         <div class="psy-company-info">
                             <span class="psy-company-name">@req.Company?.Name</span>
                             <span class="psy-company-sub">Mengajukan kemitraan B2B dengan Anda.</span>
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <form method="post" asp-action="ApprovePartnership" style="margin:0;">
+                        <div class="psy-partnership-actions">
+                            <form method="post" asp-action="ApprovePartnership" class="psy-partnership-form">
                                 <input type="hidden" name="requestId" value="@req.Id" />
-                                <button type="submit" class="psy-btn psy-btn--primary psy-btn--sm" style="background: #10B981; border: none;">Terima</button>
+                                <button type="submit" class="psy-btn psy-btn--primary psy-btn--sm psy-btn--accept">Terima</button>
                             </form>
-                            <form method="post" asp-action="RejectPartnership" style="margin:0;">
+                            <form method="post" asp-action="RejectPartnership" class="psy-partnership-form">
                                 <input type="hidden" name="requestId" value="@req.Id" />
-                                <button type="submit" class="psy-btn psy-btn--outline psy-btn--sm" style="border-color: #EF4444; color: #EF4444;">Tolak</button>
+                                <button type="submit" class="psy-btn psy-btn--outline psy-btn--sm psy-btn--reject">Tolak</button>
                             </form>
                         </div>
                     </div>
@@ -177,7 +228,7 @@
         </section>
     }
 
-    @* Partner companies card *@
+    @* #Komponen PerusahaanMitra# *@
     <section class="psy-card psy-company-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
@@ -215,7 +266,7 @@
 
 </div><!-- /psy-dashboard-grid -->
 
-@* ── Modals ── *@
+@* #Bagian Modal# *@
 <div class="modal-overlay" id="companyDetailModal">
     <!-- content injected via ajax -->
 </div>
@@ -330,13 +381,13 @@
     function filterClients() {
         var sel = document.getElementById("clientFilterSelect").value;
         document.querySelectorAll(".unassigned-item").forEach(function(item) {
-            item.style.display = (sel === "all" || item.dataset.companyid === sel) ? "flex" : "none";
+            item.classList.toggle("is-hidden", !(sel === "all" || item.dataset.companyid === sel));
         });
     }
     function filterClientSearch() {
         var q = document.getElementById("clientSearch").value.toLowerCase();
         document.querySelectorAll(".client-searchable").forEach(function(row) {
-            row.style.display = row.dataset.name.includes(q) ? "" : "none";
+            row.classList.toggle("is-hidden", !row.dataset.name.includes(q));
         });
     }
     document.addEventListener("DOMContentLoaded", function() {
