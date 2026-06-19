@@ -350,7 +350,91 @@ namespace LightenUp.Web.Controllers
         }
 
         // ==========================================
-        // 6. LOGOUT
+        // 6. GOOGLE / EXTERNAL LOGIN
+        // ==========================================
+        [HttpPost]
+        public IActionResult ExternalLogin(string provider)
+        {
+            var redirectUrl = Url.Action("ExternalLoginResult", "Account");
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginResult()
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+                return RedirectToAction("Login");
+
+            // Sign in with existing linked account
+            var result = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey, isPersistent: false);
+            if (result.Succeeded)
+            {
+                var existingUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+                if (existingUser != null) return await RedirectByRole(existingUser);
+            }
+
+            // No linked account — find or create by email
+            var email = info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            var fullName = info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "";
+            if (string.IsNullOrEmpty(email))
+            {
+                TempData["Error"] = "Tidak dapat mengambil email dari Google.";
+                return RedirectToAction("Login");
+            }
+
+            var userByEmail = await _userManager.FindByEmailAsync(email);
+            if (userByEmail != null)
+            {
+                await _userManager.AddLoginAsync(userByEmail, info);
+                await _signInManager.SignInAsync(userByEmail, isPersistent: false);
+                return await RedirectByRole(userByEmail);
+            }
+
+            // Create new Patient account
+            var newUser = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                FullName = fullName,
+                RoleType = "Patient",
+                IsApprovedByAdmin = true
+            };
+
+            var createResult = await _userManager.CreateAsync(newUser);
+            if (createResult.Succeeded)
+            {
+                await _userManager.AddLoginAsync(newUser, info);
+                await _userManager.AddToRoleAsync(newUser, "Patient");
+                _context.Patients.Add(new Patient { UserId = newUser.Id });
+                await _context.SaveChangesAsync();
+                await _signInManager.SignInAsync(newUser, isPersistent: false);
+                return RedirectToAction("Welcome", "Onboarding", new { area = "Patient" });
+            }
+
+            TempData["Error"] = "Gagal membuat akun. Silakan coba lagi.";
+            return RedirectToAction("Login");
+        }
+
+        private async Task<IActionResult> RedirectByRole(ApplicationUser user)
+        {
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin";
+            if (isAdmin) return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            bool isHr = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";
+            if (isHr) return RedirectToAction("Index", "Home", new { area = "Hr" });
+            bool isPsy = await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist";
+            if (isPsy) return RedirectToAction("Index", "Dashboard", new { area = "Psychologist" });
+            var patient = _context.Patients.FirstOrDefault(p => p.UserId == user.Id);
+            if (patient == null || patient.OnboardingCompletedAt == null)
+                return RedirectToAction("Welcome", "Onboarding", new { area = "Patient" });
+            return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
+        }
+
+        // ==========================================
+        // 7. LOGOUT
         // ==========================================
         [HttpPost]
         [Microsoft.AspNetCore.Authorization.Authorize]
