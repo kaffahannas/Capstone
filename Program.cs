@@ -83,11 +83,19 @@ if (!string.IsNullOrWhiteSpace(googleClientId))
     {
         options.ClientId = googleClientId;
         options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
-        // Force Secure + SameSite=None on the correlation cookie so Chrome accepts it
-        // when Google redirects back (cross-site). Without Secure, SameSite=None is rejected.
         options.CorrelationCookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
         options.CorrelationCookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
         options.CorrelationCookie.HttpOnly = true;
+        // On correlation failure redirect to login with a clear message instead of crash page
+        options.Events.OnRemoteFailure = ctx =>
+        {
+            ctx.HandleResponse();
+            var msg = ctx.Failure?.Message?.Contains("Correlation") == true
+                ? "Sesi login Google kedaluwarsa. Silakan coba lagi."
+                : "Login Google gagal. Silakan coba lagi.";
+            ctx.Response.Redirect("/Account/Login?error=" + Uri.EscapeDataString(msg));
+            return Task.CompletedTask;
+        };
     });
 }
 

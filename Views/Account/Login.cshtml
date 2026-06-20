@@ -97,6 +97,14 @@
                 <div class="auth-alert auth-alert--error">@TempData["ExternalError"]</div>
             }
 
+            @{
+                var qError = Context.Request.Query["error"].ToString();
+            }
+            @if (!string.IsNullOrEmpty(qError))
+            {
+                <div class="auth-alert auth-alert--error">@qError</div>
+            }
+
             @* #Komponen Divider Sosial# *@
             <div class="divider"><span>atau masuk dengan</span></div>
 
