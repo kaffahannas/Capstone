@@ -101,40 +101,6 @@ body.hr-body {
 }
 
 
-/* Logout inline di dalam nav-menu — hanya tampil di mobile */
-.hr-nav-logout-inline {
-    display: none;
-    margin: 4px 0 0;
-    padding-top: 8px;
-    border-top: 1px solid var(--lu-border);
-}
-
-.hr-logout-inline-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 1.1vh 12px;
-    background: #FEF2F2;
-    color: #B91C1C;
-    border: 1px solid #FECACA;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background 0.18s;
-}
-
-.hr-logout-inline-btn:hover {
-    background: #FEE2E2;
-}
-
-@media (max-width: 991.98px) {
-    .hr-nav-logout-inline {
-        display: block;
-    }
-}
 
 .hr-nav-logout {
     margin-top: 0;

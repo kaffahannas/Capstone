@@ -105,34 +105,64 @@
     }
 }
 
-/* #Bagian Admin Detail Info Row — tampilan lebih bersih di mobile# */
+/* #Bagian Admin Content Padding Bottom — semua page# */
+/* Pastikan konten bawah tidak terpotong di desktop maupun mobile */
+body.admin-body .admin-content,
+body.admin-body .admin-content.lu-scroll-host {
+    padding-bottom: 40px !important;
+}
+
+/* #Bagian Admin Detail Info Row — tampilan horizontal di mobile# */
 @media (max-width: 767.98px) {
+    /* Ubah info row jadi horizontal: label kiri, nilai kanan */
+    .adm-info-grid {
+        grid-template-columns: 1fr !important;
+    }
+
     .adm-info-row {
-        padding: 14px 4px !important;
-    }
-
-    .adm-info-label {
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        color: var(--adm-primary) !important;
-        opacity: 0.75;
-        letter-spacing: 0.6px !important;
-        margin-bottom: 4px !important;
-    }
-
-    .adm-info-value {
-        font-size: 15px !important;
-        font-weight: 500 !important;
-        color: var(--adm-text) !important;
-    }
-
-    /* Usr detail sidebar actions — stack nicely below main content */
-    .usr-detail-grid,
-    .usr-sidebar {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        padding: 13px 0 !important;
         gap: 12px !important;
     }
 
-    .usr-detail-main {
+    .adm-info-label {
+        flex: 0 0 38% !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: var(--adm-muted) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        padding-top: 2px !important;
+        line-height: 1.4 !important;
+    }
+
+    .adm-info-value {
+        flex: 1 !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        color: var(--adm-text) !important;
+        text-align: right !important;
+        word-break: break-word !important;
+    }
+
+    /* Override nth-child padding dari components-admin-misc.css */
+    .adm-info-row:nth-child(odd),
+    .adm-info-row:nth-child(even) {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+        border-left: none !important;
+    }
+
+    /* Usr detail sidebar — stack rapi di mobile */
+    .usr-detail-grid {
+        gap: 12px !important;
+    }
+
+    .usr-detail-main,
+    .usr-sidebar {
         gap: 12px !important;
     }
 }
