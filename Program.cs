@@ -195,6 +195,13 @@ else
     app.UseHsts();
 }
 
+// Trust Azure reverse proxy — ensures redirect URIs use https:// not http://
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+        | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
