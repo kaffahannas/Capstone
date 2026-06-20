@@ -1,16 +1,20 @@
 using LightenUp.Web.Models;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using DpKey = Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Data
 {
     // #Class ApplicationDbContext#
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IDataProtectionKeyContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
         // #Bagian DbSet Tabel#
         // ==========================================

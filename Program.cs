@@ -17,16 +17,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Persist DataProtection keys to Azure's durable filesystem so correlation cookies
-// survive app restarts and scale-out events (in-memory keys cause "Correlation failed").
-var dpKeysDir = new System.IO.DirectoryInfo(
-    System.IO.Path.Combine(builder.Environment.ContentRootPath, "DataProtection-Keys"));
-dpKeysDir.Create();
-Microsoft.AspNetCore.DataProtection.DataProtectionBuilderExtensions
-    .PersistKeysToFileSystem(
-        Microsoft.AspNetCore.DataProtection.DataProtectionBuilderExtensions
-            .SetApplicationName(builder.Services.AddDataProtection(), "LightenUp"),
-        dpKeysDir);
+// Persist DataProtection keys to SQL DB so correlation cookies survive app restarts
+// and Azure scale-out. Keys stored in DataProtectionKeys table via EF Core.
+{
+    var dp = builder.Services.AddDataProtection();
+    Microsoft.AspNetCore.DataProtection.EntityFrameworkCoreDataProtectionExtensions
+        .PersistKeysToDbContext<LightenUp.Web.Data.ApplicationDbContext>(dp);
+}
 
 // #Bagian Identity#
 // Identity: ApplicationUser + role support (Patient, Psychologist, HR, Admin)
