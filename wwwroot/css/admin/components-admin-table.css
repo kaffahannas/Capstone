@@ -94,6 +94,23 @@
         min-width: 32rem;
     }
 
+    /* Prevent cell text from wrapping vertically — let table scroll horizontally */
+    .adm-table th,
+    .adm-table td {
+        white-space: nowrap;
+    }
+
+    /* Name/email cell: allow two-line stack but no mid-word breaks */
+    .adm-table .adm-user-cell {
+        white-space: normal;
+    }
+    .adm-table .adm-user-name {
+        white-space: nowrap;
+    }
+    .adm-table .adm-user-email {
+        white-space: nowrap;
+    }
+
     .adm-user-cell {
         gap: 8px;
         min-width: 0;
