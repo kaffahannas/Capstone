@@ -349,16 +349,8 @@ namespace LightenUp.Web.Controllers
         }
 
         // ==========================================
-        // 6. GOOGLE / EXTERNAL LOGIN
+        // 6. GOOGLE / EXTERNAL LOGIN  (legacy — replaced by ExternalLoginCallback below)
         // ==========================================
-        [HttpPost]
-        public IActionResult ExternalLogin(string provider)
-        {
-            var redirectUrl = Url.Action("ExternalLoginResult", "Account");
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return Challenge(properties, provider);
-        }
-
         [HttpGet]
         public async Task<IActionResult> ExternalLoginResult()
         {
