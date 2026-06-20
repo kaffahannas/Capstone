@@ -195,12 +195,16 @@ else
     app.UseHsts();
 }
 
-// Trust Azure reverse proxy — ensures redirect URIs use https:// not http://
-app.UseForwardedHeaders(new ForwardedHeadersOptions
+// Trust Azure reverse proxy — ensures redirect URIs and correlation cookies use https://
+// KnownProxies/KnownNetworks are cleared so Azure's dynamic proxy IPs are trusted.
+var forwardedOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
         | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
-});
+};
+forwardedOptions.KnownProxies.Clear();
+forwardedOptions.KnownNetworks.Clear();
+app.UseForwardedHeaders(forwardedOptions);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
