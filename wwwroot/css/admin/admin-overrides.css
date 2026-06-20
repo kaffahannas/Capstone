@@ -121,6 +121,32 @@
     margin-right: auto !important;
 }
 
+/* #Bagian Admin Mobile Scroll Fix# */
+@media (max-width: 991.98px) {
+    /* Allow admin dashboard to scroll on mobile */
+    body.admin-body .app-shell,
+    body.admin-body .admin-shell {
+        height: auto !important;
+        min-height: 100dvh !important;
+        overflow: visible !important;
+    }
+
+    body.admin-body .admin-main,
+    body.admin-body .app-main {
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    body.admin-body .admin-content,
+    body.admin-body .app-content,
+    body.admin-body .lu-scroll-host {
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+}
+
 @media (max-width: 991.98px) {
     .adm-table-wrap > .adm-empty,
     .adm-empty--centered {

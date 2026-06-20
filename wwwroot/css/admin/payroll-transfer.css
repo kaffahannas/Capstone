@@ -385,6 +385,18 @@
         grid-template-columns: 1fr;
         gap: 16px;
         margin-top: 16px;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .pay-transfer-col,
+    .pay-transfer-hero,
+    .pay-breakdown-section,
+    .pay-upload-field,
+    .pay-filter-form {
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     .pay-transfer-hero {

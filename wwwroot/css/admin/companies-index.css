@@ -81,12 +81,23 @@
 
     .cmp-company-name {
         font-size: 13px;
-        word-break: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
     }
 
     .cmp-company-address {
         font-size: 11px;
-        word-break: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+
+    .cmp-company-cell {
+        max-width: 140px;
+        min-width: 0;
     }
 
     .cmp-th-company,
