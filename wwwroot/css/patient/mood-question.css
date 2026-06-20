@@ -12,6 +12,9 @@
     cursor: pointer;
     transition: all 0.15s;
     padding: 8px 4px;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .mq-btn:hover {
@@ -63,4 +66,26 @@
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     margin-bottom: 28px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 400px) {
+    .mq-scale-row {
+        gap: 6px;
+    }
+
+    .mq-btn {
+        border-radius: 10px;
+        padding: 6px 2px;
+        gap: 4px;
+    }
+
+    .mq-emoji {
+        font-size: 18px;
+    }
+
+    .mq-num {
+        font-size: 12px;
+    }
 }
