@@ -98,13 +98,7 @@
 
                     <img src="~/image/lightenuplogo.ico" alt="LightenUp" onerror="this.classList.add('is-hidden')" />
 
-                    <span class="hr-brand-text">
-
-                        <span class="hr-brand-name">LightenUp</span>
-
-                        <small class="hr-brand-sub">HR Console</small>
-
-                    </span>
+                    <span class="hr-brand-name">LightenUp</span>
 
                 </a>
 
@@ -239,19 +233,10 @@
 
                 </button>
 
-                <div class="hr-topbar-title">
-
-                    <h2 class="greeting">@greeting, @fullName 👋</h2>
-
-                    @if (!string.IsNullOrEmpty(companyName))
-
-                    {
-
-                        <small class="topbar-sub">HR @companyName</small>
-
-                    }
-
-                </div>
+                @if (ViewData["Title"] != null)
+                {
+                    <div class="hr-topbar-title"><h1 class="hr-page-title">@ViewData["Title"]</h1></div>
+                }
 
 
             </header>

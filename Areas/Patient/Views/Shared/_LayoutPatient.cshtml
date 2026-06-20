@@ -91,7 +91,10 @@
                 <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="appSidebar">
                     <span class="hamburger" aria-hidden="true"></span>
                 </button>
-                <h2 class="greeting">Hai, @fullName</h2>
+                @if (ViewData["Title"] != null)
+                {
+                    <div class="pat-topbar-title"><h1>@ViewData["Title"]</h1></div>
+                }
             </header>
 
             <div class="app-content lu-scroll-host">

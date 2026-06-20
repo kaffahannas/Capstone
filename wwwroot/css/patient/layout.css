@@ -152,6 +152,19 @@ body.patient-body .app-main {
     flex: 1;
     min-width: 0;
 }
+.pat-topbar-title {
+    flex: 1;
+    min-width: 0;
+}
+.pat-topbar-title h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--lu-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .bell-btn {
     width: 40px;
     height: 40px;

@@ -101,6 +101,39 @@
     body.admin-body .admin-content.lu-scroll-host {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 48px !important;
+    }
+}
+
+/* #Bagian Admin Detail Info Row — tampilan lebih bersih di mobile# */
+@media (max-width: 767.98px) {
+    .adm-info-row {
+        padding: 14px 4px !important;
+    }
+
+    .adm-info-label {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: var(--adm-primary) !important;
+        opacity: 0.75;
+        letter-spacing: 0.6px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .adm-info-value {
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        color: var(--adm-text) !important;
+    }
+
+    /* Usr detail sidebar actions — stack nicely below main content */
+    .usr-detail-grid,
+    .usr-sidebar {
+        gap: 12px !important;
+    }
+
+    .usr-detail-main {
+        gap: 12px !important;
     }
 }
 
