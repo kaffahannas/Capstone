@@ -470,6 +470,14 @@ namespace LightenUp.Web.Controllers
         [IgnoreAntiforgeryToken]
         public IActionResult ExternalLogin(string provider, string? flow, string? fullName, string? accountType, string? returnUrl = null)
         {
+            // Guard: reject if provider is not configured (e.g. missing Azure App Settings)
+            var schemes = _signInManager.GetExternalAuthenticationSchemesAsync().Result;
+            if (!schemes.Any(s => s.Name.Equals(provider, StringComparison.OrdinalIgnoreCase)))
+            {
+                TempData["ExternalError"] = $"Login dengan {provider} belum dikonfigurasi. Hubungi administrator.";
+                return RedirectToAction(flow == "register" ? "Register" : "Login");
+            }
+
             // Validate register flow data before redirecting to provider
             if (flow == "register")
             {
