@@ -116,3 +116,6 @@ wwwroot/uploads/
 # Optional: keep empty upload folders in git
 # !wwwroot/uploads/**/
 # !wwwroot/uploads/**/.gitkeep
+
+# DataProtection keys — generated at runtime, never commit
+DataProtection-Keys/
