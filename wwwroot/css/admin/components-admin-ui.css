@@ -32,6 +32,14 @@
         max-width: 100%;
     }
 
+    /* Badges inside table cells must stay single-line so the table scrolls horizontally */
+    .adm-table td .badge,
+    .adm-table th .badge {
+        white-space: nowrap;
+        word-break: normal;
+        max-width: none;
+    }
+
     .adm-profile-badges,
     .adm-profile-badges .badge {
         justify-content: center;
