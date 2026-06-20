@@ -16,7 +16,7 @@ body.hr-body {
 }
 
 .hr-shell .hr-sidebar.sidebar.app-sidebar {
-    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     min-height: 0;
     display: flex;
