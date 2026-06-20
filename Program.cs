@@ -37,6 +37,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 // Admin console runs on a separate host where /Identity/* is blocked — send auth challenges to AdminAuth.
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/Login";
+
     options.Events.OnRedirectToLogin = context =>
     {
         var adminHost = context.HttpContext.RequestServices
@@ -51,7 +54,8 @@ builder.Services.ConfigureApplicationCookie(options =>
             return Task.CompletedTask;
         }
 
-        context.Response.Redirect(context.RedirectUri);
+        var customReturnUrl = context.Request.PathBase + context.Request.Path + context.Request.QueryString;
+        context.Response.Redirect($"/Account/Login?ReturnUrl={Uri.EscapeDataString(customReturnUrl)}");
         return Task.CompletedTask;
     };
 
@@ -67,7 +71,7 @@ builder.Services.ConfigureApplicationCookie(options =>
             return Task.CompletedTask;
         }
 
-        context.Response.Redirect(context.RedirectUri);
+        context.Response.Redirect("/Account/Login");
         return Task.CompletedTask;
     };
 });
