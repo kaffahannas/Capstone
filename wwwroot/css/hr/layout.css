@@ -114,6 +114,37 @@ body.hr-body {
     stroke: var(--lu-primary);
 }
 
+/* Mobile topbar logout icon — hidden on desktop (sidebar has full logout button) */
+.hr-topbar-logout { display: none; }
+
+@media (max-width: 991.98px) {
+    .hr-topbar-logout {
+        display: flex;
+        flex-shrink: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hr-topbar-logout-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #FEF2F2;
+        color: #B91C1C;
+        border: 1px solid #FECACA;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.18s;
+    }
+
+    .hr-topbar-logout-btn:hover {
+        background: #FEE2E2;
+    }
+}
+
 .hr-nav-logout {
     margin-top: 0;
     flex-shrink: 0;

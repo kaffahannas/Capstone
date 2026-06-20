@@ -168,6 +168,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             if (req == null) return NotFound();
 
             req.PsychologistId = psychologistId;
+            req.Status = "Approved";
             req.RespondedDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 

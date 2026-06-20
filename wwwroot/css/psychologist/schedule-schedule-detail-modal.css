@@ -3,6 +3,14 @@
     max-width: 520px;
     padding: 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.sdm-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .sdm-header {
