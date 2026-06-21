@@ -182,9 +182,4 @@
     }
 }
 
-@media (max-width: 479.98px) {
-    .adm-mental-grid,
-    .cmp-mental-grid-spaced {
-        grid-template-columns: 1fr;
-    }
-}
+/* Stat cards tetap 2 kolom bahkan di layar sangat kecil */

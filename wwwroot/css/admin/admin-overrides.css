@@ -109,7 +109,7 @@
 /* Pastikan konten bawah tidak terpotong di desktop maupun mobile */
 body.admin-body .admin-content,
 body.admin-body .admin-content.lu-scroll-host {
-    padding-bottom: 40px !important;
+    padding-bottom: 64px !important;
 }
 
 /* #Bagian Admin Detail Info Row — tampilan horizontal di mobile# */
