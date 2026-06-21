@@ -299,7 +299,7 @@
         font-size: 12px;
         padding: 12px 14px;
         line-height: 1.45;
-        margin-bottom: 80px; /* ruang ekstra agar catatan tidak terpotong saat scroll ke bawah */
+        margin-bottom: 16px;
     }
 
     .pay-settings-modal {
