@@ -113,7 +113,16 @@
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         overscroll-behavior-y: contain !important;
-        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: 0 !important;  /* padding-bottom di flex scroll container tidak reliable di Chrome lama */
+    }
+
+    /* ::after sebagai spacer nyata — lebih reliable dari padding-bottom di flex scroll container */
+    body.admin-body .admin-content::after,
+    body.admin-body .admin-content.lu-scroll-host::after {
+        content: '' !important;
+        display: block !important;
+        height: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+        flex-shrink: 0 !important;
     }
 }
 
