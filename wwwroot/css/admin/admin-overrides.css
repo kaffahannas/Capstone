@@ -89,27 +89,30 @@
 }
 
 /* #Bagian Admin Mobile Scroll Fix# */
-/* admin-main harus punya tinggi terdefinisi agar admin-content bisa jadi scroll container */
+/* admin-main flex:1 1 0 membatasi tinggi; admin-content flex:1 1 0 + overflow-y:auto = scroll */
 @media (max-width: 991.98px) {
     body.admin-body .admin-main {
-        flex: 1 1 0 !important; /* flex-basis: 0 agar admin-main tidak grow infinite */
+        flex: 1 1 0 !important;
         min-height: 0 !important;
         overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    body.admin-body .admin-topbar {
+        flex-shrink: 0 !important;
     }
 
     body.admin-body .admin-content,
     body.admin-body .admin-content.lu-scroll-host {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        overflow-x: hidden !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        padding-bottom: 48px !important;
+        overscroll-behavior-y: contain !important;
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
     }
-}
-
-/* #Bagian Admin Content Padding Bottom — semua page# */
-/* Pastikan konten bawah tidak terpotong di desktop maupun mobile */
-body.admin-body .admin-content,
-body.admin-body .admin-content.lu-scroll-host {
-    padding-bottom: 64px !important;
 }
 
 /* #Bagian Admin Detail Info Row — tampilan horizontal di mobile# */
