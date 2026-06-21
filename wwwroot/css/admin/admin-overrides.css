@@ -88,7 +88,27 @@
     }
 }
 
-/* Mobile scroll sudah ditangani admin.css — tidak perlu override di sini */
+/* #Bagian Admin Mobile Scroll Fix# */
+@media (max-width: 991.98px) {
+    body.admin-body .admin-main {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    body.admin-body .admin-content,
+    body.admin-body .admin-content.lu-scroll-host {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 48px !important;
+    }
+}
+
+/* #Bagian Admin Content Padding Bottom — semua page desktop + mobile# */
+body.admin-body .admin-content,
+body.admin-body .admin-content.lu-scroll-host {
+    padding-bottom: 64px !important;
+}
 
 /* #Bagian Admin Detail Info Row — tampilan horizontal di mobile# */
 @media (max-width: 767.98px) {
