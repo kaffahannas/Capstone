@@ -196,6 +196,12 @@
     min-width: 480px; /* lebar minimum agar kolom punya ruang */
 }
 
+.cmp-hr-table .cmp-th-status,
+.cmp-hr-table td:nth-child(3) {
+    min-width: 90px; /* STATUS kolom cukup lebar agar badge Aktif rata dengan header */
+    text-align: center;
+}
+
 .cmp-hr-cell {
     white-space: nowrap;
 }
