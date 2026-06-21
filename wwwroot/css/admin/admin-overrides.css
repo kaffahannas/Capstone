@@ -89,40 +89,43 @@
 }
 
 /* #Bagian Admin Mobile Scroll Fix# */
-/* admin-main flex:1 1 0 membatasi tinggi; admin-content flex:1 1 0 + overflow-y:auto = scroll */
+/* Ganti flex-scroll-container dengan document scroll — lebih reliable di semua mobile browser */
 @media (max-width: 991.98px) {
-    body.admin-body .admin-main {
-        flex: 1 1 0 !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
-        display: flex !important;
-        flex-direction: column !important;
+    /* Izinkan body dan shell scroll secara natural */
+    body.admin-body {
+        height: auto !important;
+        min-height: 100dvh !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
     }
 
-    body.admin-body .admin-topbar {
-        flex-shrink: 0 !important;
+    body.admin-body .admin-shell {
+        height: auto !important;
+        min-height: 100dvh !important;
+        overflow: visible !important;
+    }
+
+    body.admin-body .admin-main {
+        flex: 1 !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
     }
 
     body.admin-body .admin-content,
     body.admin-body .admin-content.lu-scroll-host {
-        flex: 1 !important;
-        height: 0 !important;          /* paksa flex engine batasi tinggi, bukan content height */
+        height: auto !important;
         min-height: 0 !important;
-        max-height: none !important;
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        overscroll-behavior-y: contain !important;
-        padding-bottom: 0 !important;  /* padding-bottom di flex scroll container tidak reliable di Chrome lama */
+        overflow: visible !important;
+        padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)) !important;
     }
 
-    /* ::after sebagai spacer nyata — lebih reliable dari padding-bottom di flex scroll container */
-    body.admin-body .admin-content::after,
-    body.admin-body .admin-content.lu-scroll-host::after {
-        content: '' !important;
-        display: block !important;
-        height: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
-        flex-shrink: 0 !important;
+    /* Topbar sticky agar tetap di atas saat scroll */
+    body.admin-body .admin-topbar {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 200 !important;
+        background: #fff !important;
     }
 }
 
