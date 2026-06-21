@@ -88,46 +88,7 @@
     }
 }
 
-/* #Bagian Admin Mobile Scroll Fix# */
-/* Ganti flex-scroll-container dengan document scroll — lebih reliable di semua mobile browser */
-@media (max-width: 991.98px) {
-    /* Izinkan body dan shell scroll secara natural */
-    body.admin-body {
-        height: auto !important;
-        min-height: 100dvh !important;
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-    }
-
-    body.admin-body .admin-shell {
-        height: auto !important;
-        min-height: 100dvh !important;
-        overflow: visible !important;
-    }
-
-    body.admin-body .admin-main {
-        flex: 1 !important;
-        height: auto !important;
-        min-height: 0 !important;
-        overflow: visible !important;
-    }
-
-    body.admin-body .admin-content,
-    body.admin-body .admin-content.lu-scroll-host {
-        height: auto !important;
-        min-height: 0 !important;
-        overflow: visible !important;
-        padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)) !important;
-    }
-
-    /* Topbar sticky agar tetap di atas saat scroll */
-    body.admin-body .admin-topbar {
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 200 !important;
-        background: #fff !important;
-    }
-}
+/* Mobile scroll sudah ditangani admin.css — tidak perlu override di sini */
 
 /* #Bagian Admin Detail Info Row — tampilan horizontal di mobile# */
 @media (max-width: 767.98px) {
