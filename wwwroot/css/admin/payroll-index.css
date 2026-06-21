@@ -1,4 +1,13 @@
 /* #Bagian Penggajian Index Admin# */
+
+/* Wrapper plain — tidak pakai lu-page/pay-page agar tidak jadi fixed-height flex container */
+.pay-index-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
 .pay-kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
