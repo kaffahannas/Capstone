@@ -472,6 +472,19 @@ body.psychologist-body .main-content:has(.app-content .psy-client-card) .dashboa
     .main-content {
         margin-left: 0;
     }
+
+    /* #Scheduling timeline — buang internal scroll agar app-content yang scroll# */
+    body.psychologist-body .sch-timeline {
+        overflow-y: visible;
+        overflow-x: visible;
+        flex: none;
+    }
+
+    /* #Tambah padding bawah agar konten tidak terpotong# */
+    body.psychologist-body .app-content,
+    body.psychologist-body .app-content.lu-scroll-host {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    }
 }
 
 @media (max-width: 767.98px) {
