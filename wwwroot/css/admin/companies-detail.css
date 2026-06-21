@@ -184,20 +184,18 @@
 
 /* Stat cards tetap 2 kolom bahkan di layar sangat kecil */
 
-/* #Komponen HR Manager Table Mobile Scroll# */
-@media (max-width: 767.98px) {
-    /* Bungkus tabel HR dengan scroll container agar bisa geser kanan-kiri */
-    .adm-card:has(.cmp-hr-table) {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
+/* #Komponen HR Manager Table Scroll# */
+/* Wrapper div di HTML agar tabel bisa digeser kanan-kiri di semua browser */
+.cmp-hr-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
 
-    .cmp-hr-table {
-        min-width: 480px; /* lebar minimum agar kolom tidak terlalu sempit */
-        white-space: nowrap;
-    }
+.cmp-hr-table-scroll .cmp-hr-table {
+    min-width: 480px; /* lebar minimum agar kolom punya ruang */
+}
 
-    .cmp-hr-cell {
-        white-space: nowrap;
-    }
+.cmp-hr-cell {
+    white-space: nowrap;
 }
