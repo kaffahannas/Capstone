@@ -401,6 +401,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 if (string.IsNullOrWhiteSpace(w.Note) && string.IsNullOrWhiteSpace(w.ProofImagePath))
                 {
                     TempData["error"] = "Status tidak dapat diubah menjadi Selesai karena pasien belum mengisi worksheet.";
+                    var referer = Request.Headers["Referer"].ToString();
+                    if (!string.IsNullOrEmpty(referer)) return Redirect(referer);
                     return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
                 }
 
@@ -420,6 +422,11 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             }
 
             await _context.SaveChangesAsync();
+            var referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(referer))
+            {
+                return Redirect(referer);
+            }
             return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
         }
     }
