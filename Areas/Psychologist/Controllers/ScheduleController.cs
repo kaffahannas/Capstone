@@ -140,7 +140,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 SlotValue = slotValue
             });
             await _context.SaveChangesAsync();
-            TempData["success"] = "Jadwal konseling baru ditambahkan.";
+            TempData["ScheduleSuccess"] = "Jadwal konseling baru ditambahkan.";
 
             if (model.ReturnPatientId.HasValue)
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = model.ReturnPatientId.Value });
@@ -187,7 +187,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (!ModelState.IsValid)
             {
-                TempData["error"] = "Data tidak valid. Harap periksa kembali isian Anda.";
+                TempData["ScheduleError"] = "Data tidak valid. Harap periksa kembali isian Anda.";
                 return PartialView("_EditScheduleModal", model);
             }
 
@@ -199,13 +199,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             {
                 if (string.IsNullOrWhiteSpace(model.MeetingLink))
                 {
-                    TempData["error"] = "Link Google Meet wajib diisi untuk menandai sesi sebagai selesai.";
+                    TempData["ScheduleError"] = "Link Google Meet wajib diisi untuk menandai sesi sebagai selesai.";
                     return PartialView("_EditScheduleModal", model);
                 }
 
                 if (model.ProofFile == null && string.IsNullOrWhiteSpace(s.ProofOfCompletionPath))
                 {
-                    TempData["error"] = "Bukti penyelesaian wajib diunggah untuk menandai sesi sebagai selesai.";
+                    TempData["ScheduleError"] = "Bukti penyelesaian wajib diunggah untuk menandai sesi sebagai selesai.";
                     return PartialView("_EditScheduleModal", model);
                 }
             }
@@ -230,9 +230,9 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             s.MeetingLink = string.IsNullOrWhiteSpace(model.MeetingLink) ? null : model.MeetingLink;
 
             await _context.SaveChangesAsync();
-            TempData["success"] = "Jadwal sesi berhasil diperbarui.";
+
+            TempData["ScheduleSuccess"] = "Jadwal sesi berhasil diperbarui.";
             return PartialView("_EditScheduleModal", model);
-        }
 
         // #Function CancelSchedule#
 

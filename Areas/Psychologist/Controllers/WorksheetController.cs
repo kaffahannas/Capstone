@@ -145,7 +145,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (!ModelState.IsValid)
             {
-                TempData["error"] = "Data tidak valid.";
+                TempData["WorksheetError"] = "Data tidak valid.";
                 return RedirectToAction(nameof(EditWorksheetModal), new { id = model.WorksheetId });
             }
 
@@ -159,7 +159,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             w.Deadline = model.DeadlineDate.Date.Add(model.DeadlineTime);
 
             await _context.SaveChangesAsync();
-            TempData["success"] = "Worksheet berhasil diperbarui.";
+            TempData["WorksheetSuccess"] = "Worksheet berhasil diperbarui.";
             return RedirectToAction(nameof(WorksheetDetailModal), new { id = model.WorksheetId });
         }
 
@@ -403,23 +403,23 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             {
                 if (string.IsNullOrWhiteSpace(w.Note) && string.IsNullOrWhiteSpace(w.ProofImagePath))
                 {
-                    TempData["error"] = "Status tidak dapat diubah menjadi Selesai karena pasien belum mengisi worksheet.";
+                    TempData["WorksheetError"] = "Status tidak dapat diubah menjadi Selesai karena pasien belum mengisi worksheet.";
                     return RedirectToAction(nameof(WorksheetDetailModal), new { id = w.WorksheetId });
                 }
 
                 w.Status = "Completed";
                 w.ReviewedAt = DateTime.UtcNow;
-                TempData["success"] = "Worksheet diselesaikan.";
+                TempData["WorksheetSuccess"] = "Worksheet diselesaikan.";
             }
             else if (submitAction == "Revision")
             {
                 w.Status = "NeedsRevision";
                 w.ReviewedAt = null;
-                TempData["success"] = "Worksheet dikembalikan ke pasien untuk direvisi.";
+                TempData["WorksheetSuccess"] = "Worksheet dikembalikan ke pasien untuk direvisi.";
             }
             else
             {
-                TempData["success"] = "Catatan disimpan.";
+                TempData["WorksheetSuccess"] = "Catatan disimpan.";
             }
 
             await _context.SaveChangesAsync();

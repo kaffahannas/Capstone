@@ -22,13 +22,13 @@
         <input type="hidden" asp-for="ReturnUrl" />
 
         <div class="sem-body">
-            @if (TempData["success"] != null)
+            @if (TempData["ScheduleSuccess"] != null)
             {
-                <div class="toast-success" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["success"]</div>
+                <div class="toast-success" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["ScheduleSuccess"]</div>
             }
-            @if (TempData["error"] != null)
+            @if (TempData["ScheduleError"] != null)
             {
-                <div class="toast-error" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["error"]</div>
+                <div class="toast-error" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["ScheduleError"]</div>
             }
             <p class="sem-intro">Ubah detail waktu atau catatan untuk sesi <strong>@Model.PatientName</strong>.</p>
 

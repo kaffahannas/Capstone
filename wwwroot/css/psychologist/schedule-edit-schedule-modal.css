@@ -56,6 +56,8 @@
 .sem-body {
     padding: 20px 24px 24px;
     overflow-x: hidden;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px);
 }
 
 .sem-intro {

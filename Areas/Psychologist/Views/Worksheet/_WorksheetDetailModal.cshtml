@@ -27,6 +27,14 @@
     </div>
 
     <div class="wdm-body">
+        @if (TempData["WorksheetSuccess"] != null)
+        {
+            <div class="toast-success" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["WorksheetSuccess"]</div>
+        }
+        @if (TempData["WorksheetError"] != null)
+        {
+            <div class="toast-error" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["WorksheetError"]</div>
+        }
         <div class="wdm-top">
             <div class="wdm-patient-row">
                 <div class="wdm-avatar">
@@ -44,6 +52,12 @@
             <div class="wdm-field">
                 <div class="wdm-field-label">Nama Tugas</div>
                 <div class="wdm-field-val">@Model.TaskName</div>
+            </div>
+            <div class="wdm-field">
+                <div class="wdm-field-label">Catatan Pasien</div>
+                <div class="wdm-note-box">
+                    @(string.IsNullOrEmpty(Model.PatientNote) ? "—" : Model.PatientNote)
+                </div>
             </div>
             <div class="wdm-field">
                 <div class="wdm-field-label">Deskripsi</div>
