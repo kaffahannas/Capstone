@@ -527,9 +527,9 @@
     /* #Bagian Psikolog — jangan override grid asli; cegah kartu stretch# */
     body.hr-body .psy-dir-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
         justify-content: start !important;
-        gap: 32px !important;
+        gap: 20px !important;
         padding: 8px 0 32px !important;
         max-width: 100% !important;
     }

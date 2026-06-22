@@ -185,7 +185,10 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
 
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                TempData["error"] = "Data tidak valid. Harap periksa kembali isian Anda.";
+                return RedirectToAction(nameof(Scheduling));
+            }
 
             var s = await _context.Schedules
                 .FirstOrDefaultAsync(x => x.ScheduleId == model.ScheduleId && x.PsychologistId == psyId.Value);
@@ -195,14 +198,14 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             {
                 if (string.IsNullOrWhiteSpace(model.MeetingLink))
                 {
-                    ModelState.AddModelError("MeetingLink", "Link Google Meet wajib diisi untuk menandai sesi sebagai selesai.");
-                    return View(model);
+                    TempData["error"] = "Link Google Meet wajib diisi untuk menandai sesi sebagai selesai.";
+                    return RedirectToAction(nameof(Scheduling));
                 }
 
                 if (model.ProofFile == null && string.IsNullOrWhiteSpace(s.ProofOfCompletionPath))
                 {
-                    ModelState.AddModelError("ProofFile", "Bukti penyelesaian wajib diunggah untuk menandai sesi sebagai selesai.");
-                    return View(model);
+                    TempData["error"] = "Bukti penyelesaian wajib diunggah untuk menandai sesi sebagai selesai.";
+                    return RedirectToAction(nameof(Scheduling));
                 }
             }
 

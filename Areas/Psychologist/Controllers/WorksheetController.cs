@@ -401,8 +401,12 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 if (string.IsNullOrWhiteSpace(w.Note) && string.IsNullOrWhiteSpace(w.ProofImagePath))
                 {
                     TempData["error"] = "Status tidak dapat diubah menjadi Selesai karena pasien belum mengisi worksheet.";
-                    if (!string.IsNullOrEmpty(returnUrl)) return Redirect(returnUrl);
-                    return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
+                    var referer = Request.Headers["Referer"].ToString();
+                    if (!string.IsNullOrEmpty(referer) && referer.Contains("PatientWorksheetHistory", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
 
                 w.Status = "Completed";
@@ -421,11 +425,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             }
 
             await _context.SaveChangesAsync();
-            if (!string.IsNullOrEmpty(returnUrl))
+            
+            var reqReferer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(reqReferer) && reqReferer.Contains("PatientWorksheetHistory", StringComparison.OrdinalIgnoreCase))
             {
-                return Redirect(returnUrl);
+                return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
             }
-            return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
+            return RedirectToAction(nameof(Index));
         }
     }
 }
