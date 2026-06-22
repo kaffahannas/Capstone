@@ -398,6 +398,12 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (submitAction == "Complete")
             {
+                if (string.IsNullOrWhiteSpace(w.Note) && string.IsNullOrWhiteSpace(w.ProofImagePath))
+                {
+                    TempData["error"] = "Status tidak dapat diubah menjadi Selesai karena pasien belum mengisi worksheet.";
+                    return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
+                }
+
                 w.Status = "Completed";
                 w.ReviewedAt = DateTime.UtcNow;
                 TempData["success"] = "Worksheet diselesaikan.";
@@ -414,7 +420,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Worksheet));
+            return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
         }
     }
 }

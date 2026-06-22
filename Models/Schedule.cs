@@ -32,6 +32,7 @@ namespace LightenUp.Web.Models
 
         public string? MeetingLink { get; set; }
         public string? Notes { get; set; }
+        public string? ProofOfCompletionPath { get; set; }
 
         // --- Audit Trail for Payroll ---
         [Column(TypeName = "decimal(5,2)")]

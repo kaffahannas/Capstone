@@ -528,7 +528,7 @@
     body.hr-body .psy-dir-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 320px)) !important;
         justify-content: start !important;
-        gap: 24px !important;
+        gap: 40px !important;
         padding: 8px 0 32px !important;
         max-width: 100% !important;
     }

@@ -27,9 +27,8 @@
     var active = ViewBag.ActiveNav as string ?? "Beranda";
 
 
-
-    var hour = DateTime.Now.Hour;
-
+    var wibTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Jakarta"));
+    var hour = wibTime.Hour;
     var greeting = hour switch
 
     {

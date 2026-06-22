@@ -85,6 +85,8 @@ namespace LightenUp.Web.Models.ViewModels
         [Required] public string Status { get; set; } = "Scheduled";
         public string? Notes { get; set; }
         public string? MeetingLink { get; set; }
+        public Microsoft.AspNetCore.Http.IFormFile? ProofFile { get; set; }
+        public string? ExistingProofPath { get; set; }
     }
 
     // #Class WorksheetDetailViewModel#

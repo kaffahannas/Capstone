@@ -4,7 +4,8 @@
     Layout = "_LayoutDashboard";
     ViewData["Title"] = "Dashboard Psikolog";
     var cid = new System.Globalization.CultureInfo("id-ID");
-    var hour = DateTime.Now.Hour;
+    var wibTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Jakarta"));
+    var hour = wibTime.Hour;
     var greeting = hour switch {
         >= 4 and < 11 => "Selamat pagi",
         >= 11 and < 15 => "Selamat siang",

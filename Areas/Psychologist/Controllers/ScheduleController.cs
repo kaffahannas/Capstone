@@ -19,11 +19,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env;
 
-        public ScheduleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ScheduleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
+            _env = env;
         }
 
         private async Task<int?> CurrentPsychologistIdAsync()
@@ -166,7 +168,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 DurationMinutes = s.DurationMinutes,
                 Status = s.Status,
                 Notes = s.Notes,
-                MeetingLink = s.MeetingLink
+                MeetingLink = s.MeetingLink,
+                ExistingProofPath = s.ProofOfCompletionPath
             };
 
             return View(model);
@@ -187,6 +190,34 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             var s = await _context.Schedules
                 .FirstOrDefaultAsync(x => x.ScheduleId == model.ScheduleId && x.PsychologistId == psyId.Value);
             if (s == null) return NotFound();
+
+            if (model.Status == "Completed")
+            {
+                if (string.IsNullOrWhiteSpace(model.MeetingLink))
+                {
+                    ModelState.AddModelError("MeetingLink", "Link Google Meet wajib diisi untuk menandai sesi sebagai selesai.");
+                    return View(model);
+                }
+
+                if (model.ProofFile == null && string.IsNullOrWhiteSpace(s.ProofOfCompletionPath))
+                {
+                    ModelState.AddModelError("ProofFile", "Bukti penyelesaian wajib diunggah untuk menandai sesi sebagai selesai.");
+                    return View(model);
+                }
+            }
+
+            if (model.ProofFile != null)
+            {
+                var uploadsFolder = System.IO.Path.Combine(_env.WebRootPath, "uploads", "proofs");
+                System.IO.Directory.CreateDirectory(uploadsFolder);
+                var uniqueName = Guid.NewGuid().ToString() + "_" + System.IO.Path.GetFileName(model.ProofFile.FileName);
+                var filePath = System.IO.Path.Combine(uploadsFolder, uniqueName);
+                using (var fs = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+                {
+                    await model.ProofFile.CopyToAsync(fs);
+                }
+                s.ProofOfCompletionPath = "/uploads/proofs/" + uniqueName;
+            }
 
             s.SessionStart = model.SessionStart;
             s.DurationMinutes = model.DurationMinutes;

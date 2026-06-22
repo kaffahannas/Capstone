@@ -61,6 +61,14 @@
                 <a href="@Model.MeetingLink" target="_blank" rel="noopener" class="sdm-meet-link">@Model.MeetingLink</a>
             </div>
         }
+
+        @if (!string.IsNullOrEmpty(Model.ProofOfCompletionPath))
+        {
+            <div class="sdm-field">
+                <div class="sdm-field-label">Bukti Penyelesaian</div>
+                <a href="@Model.ProofOfCompletionPath" target="_blank" style="font-size: 13px; color: #065F46; text-decoration: underline; background: #D1FAE5; padding: 4px 10px; border-radius: 6px; display: inline-block;">📄 Lihat Bukti</a>
+            </div>
+        }
         
         @if (!string.IsNullOrEmpty(Model.Notes))
         {

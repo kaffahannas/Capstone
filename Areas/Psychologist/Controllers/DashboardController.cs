@@ -143,6 +143,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .Select(p => (int?)p.PsychologistId).FirstOrDefaultAsync();
         }
 
+
+
         // #Function Statistics#
 
         [HttpGet]

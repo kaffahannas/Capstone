@@ -3,8 +3,9 @@
     ViewData["Title"] = "Beranda";
     ViewBag.ActiveNav = "Beranda";
     var idCulture = new System.Globalization.CultureInfo("id-ID");
-    var today     = DateTime.Now.ToString("d MMMM yyyy", idCulture);
-    var hour      = DateTime.Now.Hour;
+    var wibTime   = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Jakarta"));
+    var today     = wibTime.ToString("d MMMM yyyy", idCulture);
+    var hour      = wibTime.Hour;
     var greet     = hour < 12 ? "Selamat pagi" : hour < 15 ? "Selamat siang" : hour < 19 ? "Selamat sore" : "Selamat malam";
 
     // Distribution percentages

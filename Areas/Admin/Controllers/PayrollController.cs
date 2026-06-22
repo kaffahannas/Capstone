@@ -279,6 +279,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 breakdown.Add(new {
                     PatientName = firstSched.Patient?.User?.FullName ?? "Unknown",
                     Sessions = schedCount,
+                    Schedules = g.ToList(),
                     SlotValue = subscriptionValue,
                     MaxSessions = maxSessions,
                     Percentage = pct,
