@@ -527,11 +527,12 @@
     /* #Bagian Psikolog — jangan override grid asli; cegah kartu stretch# */
     body.hr-body .psy-dir-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fill, 320px) !important;
-        justify-content: start !important;
-        gap: 36px !important;
-        padding: 8px 0 32px !important;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+        justify-content: center !important;
+        gap: 48px !important;
+        padding: 8px 0 48px !important;
         max-width: 100% !important;
+        margin: 0 auto !important;
     }
 
     body.hr-body .psy-dir-card {
@@ -540,6 +541,7 @@
         text-align: center !important;
         width: 100% !important;
         max-width: 320px !important;
+        margin: 0 auto !important;
     }
 
     body.hr-body .psy-dir-avatar-wrap {
