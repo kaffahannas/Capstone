@@ -186,7 +186,40 @@ window.openEditWorksheetModal = async function(id) {
     }
 }
 window.closeWorksheetDetailModal = function() {
+    const hasSuccess = document.getElementById('worksheetDetailModal').querySelector('.toast-success') !== null;
     document.getElementById('worksheetDetailModal').classList.remove('active');
+    if (hasSuccess) {
+        window.location.reload();
+    }
+}
+window.submitWorksheetDetailForm = async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    // Add the submit button value manually since FormData doesn't include it automatically on submit interception
+    if (e.submitter && e.submitter.name) {
+        formData.append(e.submitter.name, e.submitter.value);
+    }
+    
+    try {
+        const res = await fetch(form.action, {
+            method: form.method,
+            body: formData
+        });
+        
+        // If the server redirected to a modal GET endpoint, render it. 
+        // Otherwise, reload or navigate.
+        if (res.redirected && !res.url.includes("DetailModal") && !res.url.includes("EditModal")) {
+            window.location.href = res.url;
+        } else if (res.ok) {
+            const html = await res.text();
+            document.getElementById('worksheetDetailModal').innerHTML = html;
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Gagal memproses worksheet.");
+    }
 }
 </script>
 }

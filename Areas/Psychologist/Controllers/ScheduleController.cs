@@ -150,7 +150,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         // #Function EditSchedule#
 
         [HttpGet]
-        public async Task<IActionResult> EditSchedule(int id)
+        public async Task<IActionResult> EditSchedule(int id, string? returnUrl = null)
         {
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
@@ -169,7 +169,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 Status = s.Status,
                 Notes = s.Notes,
                 MeetingLink = s.MeetingLink,
-                ExistingProofPath = s.ProofOfCompletionPath
+                ExistingProofPath = s.ProofOfCompletionPath,
+                ReturnUrl = returnUrl
             };
 
             return View(model);
@@ -187,7 +188,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["error"] = "Data tidak valid. Harap periksa kembali isian Anda.";
-                return RedirectToAction(nameof(Scheduling));
+                return PartialView("_EditScheduleModal", model);
             }
 
             var s = await _context.Schedules
@@ -199,13 +200,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 if (string.IsNullOrWhiteSpace(model.MeetingLink))
                 {
                     TempData["error"] = "Link Google Meet wajib diisi untuk menandai sesi sebagai selesai.";
-                    return RedirectToAction(nameof(Scheduling));
+                    return PartialView("_EditScheduleModal", model);
                 }
 
                 if (model.ProofFile == null && string.IsNullOrWhiteSpace(s.ProofOfCompletionPath))
                 {
                     TempData["error"] = "Bukti penyelesaian wajib diunggah untuk menandai sesi sebagai selesai.";
-                    return RedirectToAction(nameof(Scheduling));
+                    return PartialView("_EditScheduleModal", model);
                 }
             }
 
@@ -230,7 +231,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             await _context.SaveChangesAsync();
             TempData["success"] = "Jadwal sesi berhasil diperbarui.";
-            return RedirectToAction(nameof(Scheduling));
+            return PartialView("_EditScheduleModal", model);
         }
 
         // #Function CancelSchedule#

@@ -144,7 +144,10 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
 
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                TempData["error"] = "Data tidak valid.";
+                return RedirectToAction(nameof(EditWorksheetModal), new { id = model.WorksheetId });
+            }
 
             var w = await _context.Worksheets
                 .FirstOrDefaultAsync(x => x.WorksheetId == model.WorksheetId && x.PsychologistId == psyId.Value);
@@ -157,7 +160,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             await _context.SaveChangesAsync();
             TempData["success"] = "Worksheet berhasil diperbarui.";
-            return RedirectToAction(nameof(Worksheet));
+            return RedirectToAction(nameof(WorksheetDetailModal), new { id = model.WorksheetId });
         }
 
         // #Function Worksheet#
@@ -401,12 +404,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 if (string.IsNullOrWhiteSpace(w.Note) && string.IsNullOrWhiteSpace(w.ProofImagePath))
                 {
                     TempData["error"] = "Status tidak dapat diubah menjadi Selesai karena pasien belum mengisi worksheet.";
-                    var referer = Request.Headers["Referer"].ToString();
-                    if (!string.IsNullOrEmpty(referer) && referer.Contains("PatientWorksheetHistory", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
-                    }
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(WorksheetDetailModal), new { id = w.WorksheetId });
                 }
 
                 w.Status = "Completed";
@@ -425,13 +423,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             }
 
             await _context.SaveChangesAsync();
-            
-            var reqReferer = Request.Headers["Referer"].ToString();
-            if (!string.IsNullOrEmpty(reqReferer) && reqReferer.Contains("PatientWorksheetHistory", StringComparison.OrdinalIgnoreCase))
-            {
-                return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
-            }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(WorksheetDetailModal), new { id = w.WorksheetId });
         }
     }
 }

@@ -529,7 +529,7 @@
         display: grid !important;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
         justify-content: start !important;
-        gap: 20px !important;
+        gap: 32px !important;
         padding: 8px 0 32px !important;
         max-width: 100% !important;
     }

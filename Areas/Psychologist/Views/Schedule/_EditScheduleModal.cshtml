@@ -15,12 +15,21 @@
     </div>
 
         @* #Komponen FormJadwal# *@
-        <form asp-action="EditSchedule" asp-area="Psychologist" asp-controller="Schedule" method="post" autocomplete="off" enctype="multipart/form-data">
+        <form id="editScheduleForm" asp-action="EditSchedule" asp-area="Psychologist" asp-controller="Schedule" method="post" autocomplete="off" enctype="multipart/form-data" onsubmit="submitEditScheduleForm(event)">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="ScheduleId" />
         <input type="hidden" asp-for="PatientName" />
+        <input type="hidden" asp-for="ReturnUrl" />
 
         <div class="sem-body">
+            @if (TempData["success"] != null)
+            {
+                <div class="toast-success" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["success"]</div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="toast-error" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["error"]</div>
+            }
             <p class="sem-intro">Ubah detail waktu atau catatan untuk sesi <strong>@Model.PatientName</strong>.</p>
 
             <div asp-validation-summary="ModelOnly" class="sem-validation"></div>
@@ -40,7 +49,7 @@
 
             <div class="sem-field">
                 <label asp-for="Status" class="sem-label">Status Sesi</label>
-                <select asp-for="Status" class="sem-input" id="editScheduleStatusSelect" onchange="document.getElementById('proofUploadContainer').style.display = this.value === 'Completed' ? 'block' : 'none';">
+                <select asp-for="Status" class="sem-input" id="editScheduleStatusSelect" onchange="toggleProofUpload(this.value)">
                     <option value="Scheduled">Akan Datang</option>
                     <option value="Completed">Selesai</option>
                     <option value="Cancelled">Dibatalkan</option>
