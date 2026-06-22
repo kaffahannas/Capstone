@@ -194,11 +194,7 @@ using (var scope = app.Services.CreateScope())
             }
         }
 
-        // 3. Seed domain data (Companies, Psychologists, Patients, Schedules, ...)
-        // if (app.Environment.IsDevelopment())
-        // {
-        //     await DbInitializer.SeedAsync(context, userManager);
-        // }
+
     }
     catch (Exception ex)
     {
