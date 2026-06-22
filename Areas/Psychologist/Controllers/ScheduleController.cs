@@ -233,6 +233,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             TempData["ScheduleSuccess"] = "Jadwal sesi berhasil diperbarui.";
             return PartialView("_EditScheduleModal", model);
+        }
 
         // #Function CancelSchedule#
 
