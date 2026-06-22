@@ -40,14 +40,14 @@
 
             <div class="sem-field">
                 <label asp-for="Status" class="sem-label">Status Sesi</label>
-                <select asp-for="Status" class="sem-input" id="editScheduleStatusSelect" onchange="toggleProofUpload()">
+                <select asp-for="Status" class="sem-input" id="editScheduleStatusSelect" onchange="document.getElementById('proofUploadContainer').style.display = this.value === 'Completed' ? 'block' : 'none';">
                     <option value="Scheduled">Akan Datang</option>
                     <option value="Completed">Selesai</option>
                     <option value="Cancelled">Dibatalkan</option>
                 </select>
             </div>
 
-            <div class="sem-field" id="proofUploadContainer" style="display: none;">
+            <div class="sem-field" id="proofUploadContainer" style="display: @(Model.Status == "Completed" ? "block" : "none");">
                 <label asp-for="ProofFile" class="sem-label">Bukti Penyelesaian (Wajib untuk Status Selesai)</label>
                 <input asp-for="ProofFile" type="file" class="sem-input" accept="image/*,application/pdf" />
                 <span asp-validation-for="ProofFile" class="sem-field-error"></span>
@@ -79,19 +79,3 @@
     </form>
 </div>
 
-<script>
-    function toggleProofUpload() {
-        var statusSelect = document.getElementById('editScheduleStatusSelect');
-        var proofContainer = document.getElementById('proofUploadContainer');
-        if (statusSelect && proofContainer) {
-            if (statusSelect.value === 'Completed') {
-                proofContainer.style.display = 'block';
-            } else {
-                proofContainer.style.display = 'none';
-            }
-        }
-    }
-    
-    // Run on load
-    setTimeout(toggleProofUpload, 100);
-</script>

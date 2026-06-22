@@ -383,7 +383,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         // #Function ReviewWorksheet POST#
 
         [HttpPost]
-        public async Task<IActionResult> ReviewWorksheet(LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel model, string submitAction)
+        public async Task<IActionResult> ReviewWorksheet(LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel model, string submitAction, string? returnUrl)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
@@ -401,8 +401,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 if (string.IsNullOrWhiteSpace(w.Note) && string.IsNullOrWhiteSpace(w.ProofImagePath))
                 {
                     TempData["error"] = "Status tidak dapat diubah menjadi Selesai karena pasien belum mengisi worksheet.";
-                    var errReferer = Request.Headers["Referer"].ToString();
-                    if (!string.IsNullOrEmpty(errReferer)) return Redirect(errReferer);
+                    if (!string.IsNullOrEmpty(returnUrl)) return Redirect(returnUrl);
                     return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
                 }
 
@@ -422,10 +421,9 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             }
 
             await _context.SaveChangesAsync();
-            var succReferer = Request.Headers["Referer"].ToString();
-            if (!string.IsNullOrEmpty(succReferer))
+            if (!string.IsNullOrEmpty(returnUrl))
             {
-                return Redirect(succReferer);
+                return Redirect(returnUrl);
             }
             return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
         }
