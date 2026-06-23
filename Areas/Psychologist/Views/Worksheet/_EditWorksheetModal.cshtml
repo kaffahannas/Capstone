@@ -1,3 +1,4 @@
+@* #Bagian ModalEditWorksheet# *@
 @model LightenUp.Web.Models.ViewModels.PsyWorksheetEditViewModel
 
 <div class="modal-container wem-modal">
@@ -7,7 +8,12 @@
     </div>
 
     <div class="wem-body">
-        <form asp-action="EditWorksheet" asp-area="Psychologist" asp-controller="Worksheet" method="post">
+        @if (TempData["error"] != null)
+        {
+            <div class="toast-error" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["error"]</div>
+        }
+        @* #Komponen FormWorksheet# *@
+        <form asp-action="EditWorksheet" asp-area="Psychologist" asp-controller="Worksheet" method="post" onsubmit="submitWorksheetDetailForm(event)">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="WorksheetId" />
             <input type="hidden" asp-for="PatientName" />

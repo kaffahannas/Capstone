@@ -1,4 +1,4 @@
-﻿@model LightenUp.Web.Models.ViewModels.LoginViewModel
+@model LightenUp.Web.Models.ViewModels.LoginViewModel
 
 @{
     ViewData["Title"] = "Masuk";
@@ -17,52 +17,61 @@
 </head>
 <body class="auth-page login-page">
 
+    @* #Bagian Login# *@
     <div class="auth-wrapper">
-
-        <div class="logo-container">
-            <svg width="65" height="65" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 5L90 27V73L50 95L10 73V27L50 5Z" fill="url(#hexGradient)" />
-                <circle cx="50" cy="50" r="18" fill="white" />
-                <line x1="50" y1="14" x2="50" y2="22" stroke="white" stroke-width="3" stroke-linecap="round" />
-                <line x1="50" y1="78" x2="50" y2="86" stroke="white" stroke-width="3" stroke-linecap="round" />
-                <line x1="14" y1="50" x2="22" y2="50" stroke="white" stroke-width="3" stroke-linecap="round" />
-                <line x1="78" y1="50" x2="86" y2="50" stroke="white" stroke-width="3" stroke-linecap="round" />
-                <line x1="25" y1="25" x2="30" y2="30" stroke="white" stroke-width="3" stroke-linecap="round" />
-                <line x1="75" y1="75" x2="70" y2="70" stroke="white" stroke-width="3" stroke-linecap="round" />
-                <line x1="25" y1="75" x2="30" y2="70" stroke="white" stroke-width="3" stroke-linecap="round" />
-                <line x1="75" y1="25" x2="70" y2="30" stroke="white" stroke-width="3" stroke-linecap="round" />
-                <defs>
-                    <linearGradient id="hexGradient" x1="10" y1="5" x2="90" y2="95" gradientUnits="userSpaceOnUse">
-                        <stop offset="0" stop-color="#C4B5FD" />
-                        <stop offset="1" stop-color="#8CE0FF" />
-                    </linearGradient>
-                </defs>
-            </svg>
-            <span class="app-name">LightenUp</span>
-        </div>
 
         <div class="auth-container login-card">
 
+            @* #Komponen Logo Brand# *@
+            <div class="logo-container logo-container--in-card">
+                <svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M50 5L90 27V73L50 95L10 73V27L50 5Z" fill="url(#hexGradient)" />
+                    <circle cx="50" cy="50" r="18" fill="white" />
+                    <line x1="50" y1="14" x2="50" y2="22" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    <line x1="50" y1="78" x2="50" y2="86" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    <line x1="14" y1="50" x2="22" y2="50" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    <line x1="78" y1="50" x2="86" y2="50" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    <line x1="25" y1="25" x2="30" y2="30" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    <line x1="75" y1="75" x2="70" y2="70" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    <line x1="25" y1="75" x2="30" y2="70" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    <line x1="75" y1="25" x2="70" y2="30" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    <defs>
+                        <linearGradient id="hexGradient" x1="10" y1="5" x2="90" y2="95" gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#C4B5FD" />
+                            <stop offset="1" stop-color="#8CE0FF" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="app-name app-name--in-card">LightenUp</span>
+            </div>
+
             <h1 class="auth-title text-center auth-title--login">Masuk ke Akun Anda</h1>
 
+            @* #Komponen Form Login# *@
             <form asp-action="Login" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                 <div class="form-group">
                     <label asp-for="Email" class="form-label">Email</label>
-                    <input asp-for="Email" class="form-control-custom" placeholder="johndoe@lightenup.com" />
+                    <input asp-for="Email" class="form-control-custom" placeholder="johndoe@lightenup.com" autocomplete="email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group form-group--password">
                     <label asp-for="Password" class="form-label">Kata Sandi</label>
-                    <input asp-for="Password" type="password" class="form-control-custom" placeholder="••••••••" id="passwordInput" />
-                    <span class="password-toggle" onclick="togglePassword()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                            <line x1="1" y1="1" x2="23" y2="23"></line>
-                        </svg>
-                    </span>
+                    <div class="password-field">
+                        <input asp-for="Password" type="password" class="form-control-custom" placeholder="••••••••" id="passwordInput" autocomplete="current-password" />
+                        <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="Tampilkan kata sandi">
+                            <svg class="password-toggle-icon password-toggle-icon--hide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                            <svg class="password-toggle-icon password-toggle-icon--show" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
@@ -77,24 +86,45 @@
                 <button type="submit" class="btn-submit">Masuk</button>
             </form>
 
+            @* #Komponen Alert Pesan# *@
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="auth-alert auth-alert--success">@TempData["SuccessMessage"]</div>
+            }
+
+            @if (TempData["ExternalError"] != null)
+            {
+                <div class="auth-alert auth-alert--error">@TempData["ExternalError"]</div>
+            }
+
+            @{
+                var qError = Context.Request.Query["error"].ToString();
+            }
+            @if (!string.IsNullOrEmpty(qError))
+            {
+                <div class="auth-alert auth-alert--error">@qError</div>
+            }
+
+            @* #Komponen Divider Sosial# *@
             <div class="divider"><span>atau masuk dengan</span></div>
 
+            @* #Komponen Login Sosial Google# *@
             <div class="social-login-group">
-                <button type="button" class="btn-social">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                    </svg> Google
-                </button>
-                <button type="button" class="btn-social">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.982h-1.514c-1.49 0-1.953.932-1.953 1.89v2.248h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" fill="#1877F2" />
-                    </svg> Facebook
-                </button>
+                <form asp-action="ExternalLogin" asp-controller="Account" method="post" class="social-login-form">
+                    <input type="hidden" name="provider" value="Google" />
+                    <button type="submit" class="btn-social">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                        </svg> Google
+                    </button>
+                </form>
+
             </div>
 
+            @* #Komponen Footer Daftar# *@
             <div class="auth-footer">Tidak memiliki akun? <a href="/Account/Register">Daftar Sekarang</a></div>
         </div>
     </div>
@@ -105,7 +135,9 @@
     <script>
         function togglePassword() {
             const pwdInput = document.getElementById('passwordInput');
-            if (pwdInput.type === "password") { pwdInput.type = "text"; } else { pwdInput.type = "password"; }
+            const isHidden = pwdInput.type === 'password';
+            pwdInput.type = isHidden ? 'text' : 'password';
+            document.querySelector('.login-card')?.classList.toggle('password-visible', isHidden);
         }
     </script>
 </body>

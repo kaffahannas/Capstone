@@ -1,0 +1,595 @@
+/* #Bagian Mobile Compact HR — skala kecil seperti Patient/Psikolog# */
+
+@media (max-width: 991.98px) {
+    body.hr-body .app-topbar {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        margin-bottom: 0;
+        background: transparent;
+        border-bottom: none;
+    }
+
+    body.hr-body .sidebar-toggle {
+        margin: 0;
+        flex-shrink: 0;
+        border: none;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+    }
+
+    body.hr-body .hr-topbar-title {
+        flex: 1;
+        min-width: 0;
+    }
+
+    body.hr-body .greeting {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Halaman dengan hero / page header — sembunyikan greeting duplikat */
+    body.hr-body .hr-shell:has(.app-content .hrd-hero) .hr-topbar-title,
+    body.hr-body .hr-shell:has(.app-content .hrws-hero) .hr-topbar-title,
+    body.hr-body .hr-shell:has(.app-content .hrpf-hero) .hr-topbar-title,
+    body.hr-body .hr-shell:has(.app-content .sch-hero) .hr-topbar-title,
+    body.hr-body .hr-shell:has(.app-content .stat-hero) .hr-topbar-title,
+    body.hr-body .hr-shell:has(.app-content .hrln-hero) .hr-topbar-title,
+    body.hr-body .hr-shell:has(.app-content .hr-page-header) .hr-topbar-title {
+        display: none;
+    }
+
+    body.hr-body .hr-shell:has(.app-content .hrd-hero) .app-topbar,
+    body.hr-body .hr-shell:has(.app-content .hrws-hero) .app-topbar,
+    body.hr-body .hr-shell:has(.app-content .hrpf-hero) .app-topbar,
+    body.hr-body .hr-shell:has(.app-content .sch-hero) .app-topbar,
+    body.hr-body .hr-shell:has(.app-content .stat-hero) .app-topbar,
+    body.hr-body .hr-shell:has(.app-content .hrln-hero) .app-topbar,
+    body.hr-body .hr-shell:has(.app-content .hr-page-header) .app-topbar {
+        margin-bottom: 8px;
+        padding-bottom: 0;
+    }
+
+    /* #Komponen Hero# */
+    body.hr-body .hrd-hero,
+    body.hr-body .hrws-hero,
+    body.hr-body .hrpf-hero,
+    body.hr-body .sch-hero,
+    body.hr-body .stat-hero,
+    body.hr-body .hrln-hero {
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+
+    body.hr-body .hrd-hero-inner,
+    body.hr-body .hrws-hero-inner,
+    body.hr-body .hrpf-hero-inner {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    body.hr-body .hrd-add-btn,
+    body.hr-body .hrws-hero-btn,
+    body.hr-body .sch-hero-btn {
+        height: 30px;
+        padding: 0 12px;
+        font-size: 10px;
+    }
+
+    /* #Komponen Scorecard / KPI# */
+    body.hr-body .hrd-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+    }
+
+    body.hr-body .sch-hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+    }
+
+    body.hr-body .hrws-hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+    }
+
+    body.hr-body .hrpf-hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+    }
+
+    body.hr-body .hrd-stat,
+    body.hr-body .hrws-stat,
+    body.hr-body .hrpf-stat {
+        padding: 6px 4px;
+        min-width: 0;
+        border-radius: 8px;
+        gap: 2px;
+    }
+
+    body.hr-body .hrd-stat-ico {
+        margin-bottom: 2px;
+    }
+
+    body.hr-body .hrd-stat-ico svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    body.hr-body .hrd-stat-val {
+        font-size: 0.875rem;
+    }
+
+    body.hr-body .hrd-stat-lbl {
+        font-size: 8px;
+        line-height: 1.2;
+        white-space: normal;
+    }
+
+    body.hr-body .hrd-hero-left {
+        width: 100%;
+        min-width: 0;
+    }
+
+    body.hr-body .hrpf-stat-val {
+        font-size: 0.875rem;
+        max-width: none;
+    }
+
+    body.hr-body .hrpf-stat-val--sm {
+        font-size: 0.6875rem;
+    }
+
+    body.hr-body .hrpf-stat-lbl {
+        font-size: 8px;
+        line-height: 1.2;
+        white-space: normal;
+    }
+
+    body.hr-body .hrd-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        margin: 0 0 10px;
+        padding: 0;
+    }
+
+    body.hr-body .hrd-metric {
+        padding: 8px 10px;
+        border-radius: 10px;
+        border-width: 1px;
+    }
+
+    body.hr-body .hrd-metric-head {
+        margin-bottom: 6px;
+    }
+
+    body.hr-body .hrd-metric-ico {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+    }
+
+    body.hr-body .hrd-metric-ico svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    body.hr-body .hrd-metric-badge {
+        font-size: 8px;
+        padding: 2px 6px;
+    }
+
+    body.hr-body .hrd-metric-val {
+        font-size: 1rem;
+        letter-spacing: 0;
+    }
+
+    body.hr-body .hrd-metric-lbl {
+        font-size: 9px;
+        margin-top: 2px;
+    }
+
+    body.hr-body .hrd-search-input,
+    body.hr-body .hrd-select {
+        height: 32px;
+        font-size: 12px;
+        box-sizing: border-box;
+    }
+
+    body.hr-body .hrd-search-input {
+        padding: 6px 10px 6px 32px;
+    }
+
+    body.hr-body .hrd-select {
+        padding: 6px 8px;
+    }
+
+    body.hr-body .hrd-filter-row {
+        gap: 6px;
+    }
+
+    body.hr-body .hrd-client-card-head {
+        padding: 12px 14px 10px;
+    }
+
+    body.hr-body .hrd-client-card-title {
+        font-size: 12px;
+    }
+
+    body.hr-body .hrd-client-empty {
+        padding: 24px 16px;
+    }
+
+    body.hr-body .hrd-client-empty-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+
+    body.hr-body .hrd-client-empty-title {
+        font-size: 12px;
+    }
+
+    body.hr-body .hrd-client-empty-sub {
+        font-size: 10px;
+        margin-bottom: 0;
+    }
+
+    /* Filter & search */
+    body.hr-body .hrem-card-head,
+    body.hr-body .hrws-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 14px;
+    }
+
+    body.hr-body .hrem-head-right {
+        margin-left: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    body.hr-body .hrem-search-wrap,
+    body.hr-body .hrws-search-form,
+    body.hr-body .hrws-search-wrap {
+        width: 100%;
+        max-width: none;
+    }
+
+    body.hr-body .hrem-search-input,
+    body.hr-body .hrws-search {
+        width: 100%;
+        max-width: none;
+        height: 32px;
+        box-sizing: border-box;
+        font-size: 12px;
+    }
+
+    body.hr-body .hrem-search-input:focus {
+        width: 100%;
+    }
+
+    body.hr-body .hrem-select {
+        width: 100%;
+        height: 32px;
+        box-sizing: border-box;
+    }
+
+    body.hr-body .hrem-tabs,
+    body.hr-body .hrws-filter-tabs {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 6px;
+    }
+
+    body.hr-body .hrem-tabs::-webkit-scrollbar,
+    body.hr-body .hrws-filter-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.hr-body .hrem-tab,
+    body.hr-body .hrws-tab {
+        flex-shrink: 0;
+        padding: 6px 10px;
+    }
+
+    /* Profil hero */
+    body.hr-body .hrpf-hero-inner {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "avatar identity"
+            "stats stats";
+        align-items: start;
+        gap: 10px 12px;
+    }
+
+    body.hr-body .hrpf-av-wrap {
+        grid-area: avatar;
+    }
+
+    body.hr-body .hrpf-hero-id {
+        grid-area: identity;
+        min-width: 0;
+    }
+
+    body.hr-body .hrpf-hero-stats {
+        grid-area: stats;
+        align-self: stretch;
+    }
+
+    body.hr-body .hrpf-av-ring {
+        inset: -3px;
+    }
+
+    body.hr-body .hrpf-av-fallback,
+    body.hr-body .hrpf-av-img {
+        width: 52px;
+        height: 52px;
+        font-size: 18px;
+    }
+
+    body.hr-body .hrpf-hero-row {
+        flex-wrap: wrap;
+        gap: 6px;
+        width: 100%;
+    }
+
+    body.hr-body .hrpf-status-hint {
+        font-size: 9px;
+        margin-top: 6px;
+    }
+
+    body.hr-body .hrpf-edit-btn {
+        height: 28px;
+        padding: 0 10px;
+        font-size: 9px;
+    }
+
+    body.hr-body .hrpf-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    body.hr-body .hrpf-card {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    /* Empty state */
+    body.hr-body .hrem-empty,
+    body.hr-body .hrws-empty {
+        text-align: center;
+        padding: 32px 16px;
+    }
+
+    body.hr-body .lu-card {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    body.hr-body .hrd-alert {
+        padding: 10px 12px;
+        font-size: 11px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+    }
+
+    body.hr-body .hrd-alert-link {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    body.hr-body .hrws-search-form {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    body.hr-body .stat-hero {
+        flex-direction: column;
+        align-items: stretch;
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+    }
+
+    body.hr-body .stat-hero-title {
+        font-size: 0.875rem;
+    }
+
+    body.hr-body .stat-hero-sub {
+        font-size: 10px;
+    }
+
+    body.hr-body .stat-hero-eyebrow {
+        font-size: 9px;
+    }
+
+    body.hr-body .stat-hero-actions {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    body.hr-body .stat-hero-score {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    body.hr-body .stat-kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    /* #Komponen Hero Langganan# */
+    body.hr-body .hrln-hero-inner {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    body.hr-body .hrln-hero-title {
+        font-size: 0.875rem;
+    }
+
+    body.hr-body .hrln-hero-sub {
+        font-size: 10px;
+    }
+
+    body.hr-body .hrln-hero-eyebrow {
+        font-size: 9px;
+    }
+
+    body.hr-body .hrln-hero-status {
+        min-width: 0;
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 10px;
+        gap: 8px;
+    }
+
+    body.hr-body .hrln-hero-status-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    body.hr-body .hrln-hero-status-plan {
+        font-size: 11px;
+    }
+
+    body.hr-body .hrln-hero-status-days {
+        font-size: 9px;
+    }
+
+    /* #Komponen Tab Laporan# */
+    body.hr-body .hrpt-tab-bar {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    body.hr-body .hrpt-tab-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.hr-body .hrpt-tab {
+        flex-shrink: 0;
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    body.hr-body .hrd-client-card,
+    body.hr-body .hrd-action-card,
+    body.hr-body .hrd-sidebar-card {
+        border-radius: 12px;
+    }
+
+    body.hr-body .hrd-psy-search-input {
+        height: 32px;
+        font-size: 12px;
+    }
+
+    /* #Komponen Filter Jadwal — selaraskan Worksheet# */
+    body.hr-body .sch-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+
+    body.hr-body .sch-filter-tabs {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 6px;
+    }
+
+    body.hr-body .sch-filter-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.hr-body .sch-filter-tab {
+        flex-shrink: 0;
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+
+    body.hr-body .hrsch-idx-search-form {
+        margin-left: 0;
+        width: 100%;
+        flex: none;
+    }
+
+    body.hr-body .hrsch-idx-search-wrap,
+    body.hr-body .psy-search-wrap {
+        width: 100%;
+        max-width: none;
+        height: 32px;
+        min-height: 32px;
+        padding: 6px 10px;
+        box-sizing: border-box;
+    }
+
+    body.hr-body .psy-search {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    /* #Komponen Form Divisi Langganan# */
+    body.hr-body .hrln-add-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    body.hr-body .hrln-add-input {
+        height: 32px;
+        padding: 6px 10px 6px 32px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    body.hr-body .hrln-add-input::placeholder {
+        font-size: 12px;
+    }
+
+    body.hr-body .hrln-add-btn {
+        width: 100%;
+        justify-content: center;
+        height: 32px;
+        padding: 0 12px;
+        font-size: 11px;
+        border-radius: 8px;
+    }
+}

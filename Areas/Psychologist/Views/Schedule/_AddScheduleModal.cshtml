@@ -3,6 +3,8 @@
     var openOnLoad = ViewBag.OpenAddScheduleModal == true;
 }
 
+
+@* #Bagian ModalTambahJadwal# *@
 <div class="prf-modal-overlay" id="addScheduleModalOverlay" role="dialog" aria-modal="true" aria-labelledby="addScheduleModalTitle">
     <div class="prf-modal asm-modal">
         <div class="prf-modal-header">
@@ -15,12 +17,13 @@
             </button>
         </div>
 
+        @* #Komponen FormJadwal# *@
         <form asp-action="AddSchedule" method="post" autocomplete="off">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ReturnFilter" />
             <input type="hidden" asp-for="ReturnPatientId" />
 
-            <div class="prf-modal-body">
+            <div class="prf-modal-body" style="max-height: 60vh; overflow-y: auto;">
                 <p class="asm-intro">Buat jadwal sesi baru untuk salah satu pasien aktif Anda.</p>
 
                 <div asp-validation-summary="ModelOnly" class="asm-validation"></div>
@@ -84,7 +87,7 @@
         var overlay = document.getElementById('addScheduleModalOverlay');
         if (!overlay) return;
         overlay.classList.add('prf-modal--open');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('lu-scroll-lock');
         var first = overlay.querySelector('select, input:not([type=hidden])');
         if (first) setTimeout(function () { first.focus(); }, 60);
     }
@@ -92,7 +95,7 @@
         var overlay = document.getElementById('addScheduleModalOverlay');
         if (!overlay) return;
         overlay.classList.remove('prf-modal--open');
-        document.body.style.overflow = '';
+        document.body.classList.remove('lu-scroll-lock');
     }
     window.openAddScheduleModal = openAddScheduleModal;
     window.closeAddScheduleModal = closeAddScheduleModal;

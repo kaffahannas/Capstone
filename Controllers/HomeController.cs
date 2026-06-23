@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LightenUp.Web.Controllers
 {
+    // #Class HomeController#
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -13,16 +14,19 @@ namespace LightenUp.Web.Controllers
             _logger = logger;
         }
 
+        // #Function Index#
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Login", "Account");
         }
 
+        // #Function Privacy#
         public IActionResult Privacy()
         {
             return View();
         }
 
+        // #Function Error#
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

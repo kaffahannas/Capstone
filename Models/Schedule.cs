@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LightenUp.Web.Models
 {
+    // #Class Schedule#
     public class Schedule
     {
         [Key]
@@ -31,6 +32,7 @@ namespace LightenUp.Web.Models
 
         public string? MeetingLink { get; set; }
         public string? Notes { get; set; }
+        public string? ProofOfCompletionPath { get; set; }
 
         // --- Audit Trail for Payroll ---
         [Column(TypeName = "decimal(5,2)")]

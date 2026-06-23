@@ -10,6 +10,14 @@
     }
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/approvals-index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/approvals-approvals-tabs.css" asp-append-version="true" />
+}
+
+
+@* #Bagian PersetujuanAkun# *@
+@* #Komponen HeaderHalaman# *@
 <div class="adm-page-header apr-page-header">
     <h1>Manajemen Persetujuan</h1>
     <p class="adm-page-sub">Kelola persetujuan akun pengguna dan permintaan pemberhentian karyawan dari HR.</p>
@@ -29,12 +37,10 @@
 
 @if (!Model.Items.Any())
 {
-    <div class="adm-table-wrap">
-        <div class="adm-empty">
-            <div class="adm-empty-icon">✅</div>
-            <div class="adm-empty-title">Tidak ada akun menunggu persetujuan</div>
-            <div class="adm-empty-sub">Psikolog baru akan muncul di sini setelah menyelesaikan onboarding.</div>
-        </div>
+    <div class="adm-empty-state-premium apr-empty-premium">
+        <div class="icon apr-empty-premium-icon">✅</div>
+        <h3>Tidak ada akun menunggu persetujuan</h3>
+        <p>Psikolog baru akan muncul di sini setelah menyelesaikan onboarding.</p>
     </div>
 }
 else

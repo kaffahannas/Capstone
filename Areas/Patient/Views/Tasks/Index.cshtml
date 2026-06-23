@@ -18,9 +18,16 @@
         ("Tahunan",  "Tahunan")
     };
 }
+@* #Bagian Daftar Tugas# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/tasks-index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/tasks-detail-modal.css" asp-append-version="true" />
+}
 
 <div class="tasks-page">
 
+@* #Komponen Hero Tugas# *@
 <div class="tasks-hero">
     <div class="tasks-hero-deco">📝</div>
     <div class="tasks-hero-inner">
@@ -41,6 +48,7 @@
     }
 
     <form method="get" id="filterForm" class="tasks-filter-form">
+        @* #Komponen Filter Tugas# *@
         <div class="tasks-toolbar">
             <label class="task-search tasks-search-label">
                 <span class="icon">🔍</span>
@@ -87,6 +95,7 @@
 }
 else
 {
+    @* #Komponen Daftar Kartu Tugas# *@
     <div class="custom-scroll tasks-list-scroll">
         @foreach (var t in Model.Items)
         {
@@ -126,11 +135,14 @@ else
 </div>
 </div>
 
+@section Overlays {
+@* #Komponen Modal Tugas# *@
 <div class="hrpf-modal-overlay" id="taskModalOverlay">
     <div class="hrpf-modal tasks-modal" id="taskModalContainer">
         <!-- Modal content loaded via AJAX -->
     </div>
 </div>
+}
 
 @section Scripts {
     <script>
@@ -140,7 +152,9 @@ else
                 if (!res.ok) throw new Error('Network error');
                 const html = await res.text();
                 document.getElementById('taskModalContainer').innerHTML = html;
-                document.getElementById('taskModalOverlay').classList.add('is-open');
+                const overlay = document.getElementById('taskModalOverlay');
+                overlay.classList.add('is-open');
+                document.body.classList.add('lu-scroll-lock');
                 
                 const scripts = document.getElementById('taskModalContainer').getElementsByTagName('script');
                 for (let i = 0; i < scripts.length; i++) {
@@ -153,6 +167,7 @@ else
         }
         function closeTaskModal() {
             document.getElementById('taskModalOverlay').classList.remove('is-open');
+            document.body.classList.remove('lu-scroll-lock');
         }
     </script>
 }

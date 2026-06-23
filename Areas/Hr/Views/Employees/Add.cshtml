@@ -4,6 +4,11 @@
     ViewBag.ActiveNav = "Klien";
     var referralCode = ViewBag.ReferralCode as string;
 }
+@* #Bagian TambahKlien# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/employees-add.css" asp-append-version="true" />
+}
 
 @* ── Back link ── *@
 <a class="pd-back" asp-controller="Employees" asp-action="Index">

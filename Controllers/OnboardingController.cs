@@ -10,6 +10,7 @@ using System.Linq;
 namespace LightenUp.Web.Controllers
 {
     [Authorize] // Hanya user yang sudah login yang bisa mengakses
+    // #Class OnboardingController#
     public class OnboardingController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -23,9 +24,8 @@ namespace LightenUp.Web.Controllers
             _uploads = uploads;
         }
 
-        // ==========================================
-        // HALAMAN WELCOME
-        // ==========================================
+        // #Bagian Welcome#
+        // #Function Welcome#
         [HttpGet]
         public async Task<IActionResult> Welcome()
         {
@@ -36,15 +36,15 @@ namespace LightenUp.Web.Controllers
             return View();
         }
 
-        // ==========================================
-        // LANGKAH 1: FOTO DIRI
-        // ==========================================
+        // #Bagian Langkah1 Foto#
+        // #Function Step1 GET#
         [HttpGet]
         public IActionResult Step1()
         {
             return View();
         }
 
+        // #Function Step1 POST#
         [HttpPost]
         public async Task<IActionResult> Step1(OnboardingStep1ViewModel model)
         {
@@ -71,15 +71,15 @@ namespace LightenUp.Web.Controllers
             return View(model);
         }
 
-        // ==========================================
-        // LANGKAH 2: STATUS AKADEMIK
-        // ==========================================
+        // #Bagian Langkah2 Akademik#
+        // #Function Step2 GET#
         [HttpGet]
         public IActionResult Step2()
         {
             return View();
         }
 
+        // #Function Step2 POST#
         [HttpPost]
         public async Task<IActionResult> Step2(OnboardingStep2ViewModel model)
         {
@@ -114,15 +114,15 @@ namespace LightenUp.Web.Controllers
             return View(model);
         }
 
-        // ==========================================
-        // LANGKAH 3: NOMOR SIPP & STR
-        // ==========================================
+        // #Bagian Langkah3 Lisensi#
+        // #Function Step3 GET#
         [HttpGet]
         public IActionResult Step3()
         {
             return View();
         }
 
+        // #Function Step3 POST#
         [HttpPost]
         public async Task<IActionResult> Step3(OnboardingStep3ViewModel model)
         {
@@ -159,9 +159,8 @@ namespace LightenUp.Web.Controllers
             return View(model);
         }
 
-        // ==========================================
-        // HALAMAN SUKSES (AKHIR ONBOARDING)
-        // ==========================================
+        // #Bagian Selesai Onboarding#
+        // #Function Success#
         [HttpGet]
         public IActionResult Success()
         {

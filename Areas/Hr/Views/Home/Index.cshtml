@@ -3,8 +3,9 @@
     ViewData["Title"] = "Beranda";
     ViewBag.ActiveNav = "Beranda";
     var idCulture = new System.Globalization.CultureInfo("id-ID");
-    var today     = DateTime.Now.ToString("d MMMM yyyy", idCulture);
-    var hour      = DateTime.Now.Hour;
+    var wibTime   = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Jakarta"));
+    var today     = wibTime.ToString("d MMMM yyyy", idCulture);
+    var hour      = wibTime.Hour;
     var greet     = hour < 12 ? "Selamat pagi" : hour < 15 ? "Selamat siang" : hour < 19 ? "Selamat sore" : "Selamat malam";
 
     // Distribution percentages
@@ -12,9 +13,28 @@
     double beresikoPct = Model.ActiveCount > 0 ? Math.Round(100.0 * Model.BeresikoCount / Model.ActiveCount, 1) : 0;
     double bahayaPct   = Model.ActiveCount > 0 ? Math.Round(100.0 * Model.BahayaCount   / Model.ActiveCount, 1) : 0;
 }
+@* #Bagian BerandaHR# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/home-index.css" asp-append-version="true" />
+}
 
 <div class="hrd-page">
 
+    @if (TempData["success"] is string okHr)
+    {
+        <div class="lu-alert-success" role="alert" style="margin-bottom: 24px;">@okHr</div>
+    }
+    @if (TempData["info"] is string infoHr)
+    {
+        <div class="lu-alert-info" role="alert" style="margin-bottom: 24px;">@infoHr</div>
+    }
+    @if (TempData["error"] is string errHr)
+    {
+        <div class="lu-alert-danger" role="alert" style="margin-bottom: 24px;">@errHr</div>
+    }
+
+    @* #Komponen Hero# *@
     @* ── Hero ── *@
     <div class="hrd-hero">
         <div class="hrd-hero-bg" aria-hidden="true"></div>
@@ -89,6 +109,7 @@
         </div>
     }
 
+    @* #Komponen KartuMetrik# *@
     @* ── 4 Metric Cards ── *@
     <div class="hrd-metrics">
 
@@ -138,6 +159,7 @@
 
     </div>
 
+    @* #Komponen GridUtama# *@
     @* ── Main grid ── *@
     <div class="hrd-grid">
 
@@ -404,6 +426,7 @@
 
 </div>
 
+@section Modals {
 @Html.AntiForgeryToken()
 
 @* ── Toast ── *@
@@ -412,6 +435,7 @@
     <span id="brdToastMsg"></span>
 </div>
 
+@* #Komponen ModalLaporan# *@
 @* ═══════════════════════════════════════════
    MODAL 1 — Buat Laporan ke Psikolog
    ═══════════════════════════════════════════ *@
@@ -532,8 +556,10 @@
         </div>
     </div>
 </div>
+}
 
 @section Scripts {
+<script src="~/js/shared/animate-bars.js" asp-append-version="true"></script>
 <script>
 (function () {
     // ════════════════════════════════════════════
@@ -543,7 +569,7 @@
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.add('is-open');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('lu-scroll-lock');
         // auto-focus first input
         const first = el.querySelector('input,select,textarea');
         if (first) setTimeout(() => first.focus(), 120);
@@ -553,7 +579,7 @@
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.remove('is-open');
-        document.body.style.overflow = '';
+        document.body.classList.remove('lu-scroll-lock');
     };
 
     // Close on overlay click or Escape
@@ -817,13 +843,7 @@
         filterClientRows(input?.value.trim().toLowerCase() || '', divSel?.value || '', statusSel.value));
 
     // ─── Animate distribution bars on load ───
-    requestAnimationFrame(() => {
-        document.querySelectorAll('.hrd-dist-fill').forEach(el => {
-            const target = el.style.getPropertyValue('--bar-w');
-            el.style.setProperty('--bar-w', '0%');
-            requestAnimationFrame(() => { el.style.setProperty('--bar-w', target); });
-        });
-    });
+    animateBarFills('.hrd-dist-fill');
 
 })();
 </script>

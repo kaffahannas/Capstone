@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Filters;
 
 /// <summary>Blocks HR feature actions when the company has no active B2B subscription.</summary>
+// #Class RequiresCompanySubscriptionAttribute#
 public class RequiresCompanySubscriptionAttribute : ActionFilterAttribute
 {
+    // #Function OnActionExecutionAsync#
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var db = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();

@@ -4,7 +4,9 @@
     ViewData["Title"] = "Pemicu";
     ViewBag.Step = "2/8";
 }
+@* #Bagian Lacak Mood - Pemicu# *@
 
+@* #Komponen Form Pilih Pemicu# *@
 <h2 class="mood-question">
     <a asp-action="Feeling" asp-route-feeling="@Model.Feeling" asp-route-triggers="@string.Join(",", Model.Triggers)" asp-route-note="@Model.Note"
        class="mood-back-link">←</a>
@@ -36,7 +38,7 @@
     </div>
     
     <div class="mood-trig-custom-wrap">
-        <input type="text" name="Triggers" id="CustomTrigger" value="@customTriggerStr" placeholder="Atau ketik pemicu lainnya..."
+        <input type="text" name="customTriggers" id="CustomTrigger" value="@customTriggerStr" placeholder="Atau ketik pemicu lainnya..."
                class="mood-trig-custom-input" />
     </div>
     
@@ -48,11 +50,10 @@
 @section Scripts {
     <script>
         document.querySelectorAll('.trigger-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-                const cb = chip.querySelector('input');
-                cb.checked = !cb.checked;
-                chip.classList.toggle('selected', cb.checked);
-            });
+            const cb = chip.querySelector('input');
+            const sync = () => chip.classList.toggle('selected', cb.checked);
+            sync();
+            cb.addEventListener('change', sync);
         });
     </script>
 }

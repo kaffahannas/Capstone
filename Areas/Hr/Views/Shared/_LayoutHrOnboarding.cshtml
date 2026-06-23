@@ -4,6 +4,7 @@
     var pageTitle = ViewData["Title"] as string ?? "Onboarding HR";
     var hideChrome = ViewBag.HideChrome as bool? ?? false;
 }
+@* #Bagian LayoutOnboardingHR# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -12,15 +13,25 @@
     <title>@pageTitle - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/onboarding.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-shell.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-typography.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-form.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-actions.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-upload.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/onboarding/components-onboarding-responsive.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/onboarding-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/onboarding-welcome.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hr/onboarding-success.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
 </head>
-<body>
+<body class="hr-onboarding-page">
     <div class="onb-wrapper">
         @if (!hideChrome)
         {
+            @* #Komponen ProgressBar# *@
             <div class="onb-topbar">
-                <span>Onboarding HR</span>
+                <span>Data HR</span>
                 <a class="close-btn" asp-controller="Account" asp-action="Login" asp-area="" title="Keluar">&times;</a>
             </div>
 
@@ -47,13 +58,13 @@
                 const preview = previewId ? document.getElementById(previewId) : null;
                 const placeholder = input.closest('.onb-upload-zone').querySelector('.onb-upload-placeholder');
                 if (!preview || !input.files?.length) {
-                    if (placeholder) placeholder.style.display = 'flex';
+                    if (placeholder) placeholder.classList.remove('is-hidden');
                     if (preview) preview.hidden = true;
                     return;
                 }
                 const file = input.files[0];
                 preview.hidden = false;
-                if (placeholder) placeholder.style.display = 'none';
+                if (placeholder) placeholder.classList.add('is-hidden');
                 if (file.type === 'application/pdf') {
                     preview.innerHTML = `
                         <a href="javascript:void(0)" class="onb-file-link">

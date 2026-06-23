@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class PatientProfileViewModel#
     public class PatientProfileViewModel
     {
         // Header
@@ -50,6 +51,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int MoodStreakDays { get; set; }   // consecutive days with mood logged
     }
 
+    // #Class PatientProfileEditViewModel#
     public class PatientProfileEditViewModel
     {
         [Required(ErrorMessage = "Nama lengkap wajib diisi.")]

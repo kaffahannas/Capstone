@@ -9,12 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Areas.Patient.Controllers;
 
+// #Class SubscriptionController#
+
 [Area("Patient")]
 [Authorize(Roles = "Patient")]
 public class SubscriptionController : Controller
 {
     private static readonly List<SubscriptionPlanViewModel> Plans =
     [
+        new() { PlanId = "patient-test", Name = "Paket Test (Rp 10.000)", Price = 10000, DurationMonths = 1, Description = "Paket khusus simulasi pembayaran. Durasi 1 bulan." },
         new() { PlanId = "basic-monthly", Name = "Basic Bulanan", Price = 99000, DurationMonths = 1, Description = "Mood tracking, jurnal, dan statistik dasar." },
         new() { PlanId = "premium-monthly", Name = "Premium Bulanan", Price = 199000, DurationMonths = 1, Description = "Semua fitur Basic + prioritas worksheet dan laporan lanjutan." },
         new() { PlanId = "premium-yearly", Name = "Premium Tahunan", Price = 1990000, DurationMonths = 12, Description = "Premium 12 bulan (hemat ~17%)." }
@@ -36,6 +39,8 @@ public class SubscriptionController : Controller
         _duitku = duitku;
         _access = access;
     }
+
+    // #Function Index#
 
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -70,6 +75,8 @@ public class SubscriptionController : Controller
             CompanyName = companyName
         });
     }
+
+    // #Function Checkout#
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -117,7 +124,7 @@ public class SubscriptionController : Controller
         await _context.SaveChangesAsync();
 
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
-        var callbackUrl = $"{baseUrl}/api/payment/duitku/callback";
+        var callbackUrl = $"{baseUrl}/dk/cb";
         var returnUrl = Url.Action(nameof(Return), "Subscription", new { area = "Patient", orderId }, Request.Scheme)!;
 
         var result = await _duitku.CreatePaymentAsync(new DuitkuCreatePaymentRequest
@@ -144,6 +151,8 @@ public class SubscriptionController : Controller
         return Redirect(result.PaymentUrl);
     }
 
+    // #Function Return#
+
     [HttpGet]
     public async Task<IActionResult> Return(string orderId, bool mock = false)
     {
@@ -162,6 +171,8 @@ public class SubscriptionController : Controller
         return RedirectToAction(nameof(Failed), new { orderId });
     }
 
+    // #Function Success#
+
     [HttpGet]
     public async Task<IActionResult> Success(string orderId)
     {
@@ -170,6 +181,8 @@ public class SubscriptionController : Controller
         ViewBag.PlanName = payment.PlanName;
         return View();
     }
+
+    // #Function Failed#
 
     [HttpGet]
     public IActionResult Failed(string orderId)

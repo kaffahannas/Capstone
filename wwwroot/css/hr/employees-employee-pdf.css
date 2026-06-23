@@ -1,0 +1,38 @@
+/* #Bagian Karyawan PDF HR# */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.hrpdf-subtitle {
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.hrpdf-meta {
+    text-align: right;
+}
+
+.hrpdf-company {
+    font-weight: 600;
+}
+
+.hrpdf-date {
+    color: #6b7280;
+    font-size: 11px;
+}
+
+.hrpdf-info-full {
+    grid-column: 1 / -1;
+}
+
+.hrpdf-symptoms {
+    font-weight: 400;
+}
+
+.hrpdf-empty {
+    color: #9ca3af;
+}

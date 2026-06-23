@@ -2,9 +2,15 @@
 @{
     ViewData["Title"] = "Edit Profil";
     ViewBag.ActiveNav = "Profil";
-    var photoSrc = string.IsNullOrEmpty(Model.CurrentProfilePicture)
-        ? "/lib/bootstrap-icons/icons/person-circle.svg"
-        : Model.CurrentProfilePicture;
+    var hasPhoto = !string.IsNullOrEmpty(Model.CurrentProfilePicture);
+    var photoInitial = !string.IsNullOrEmpty(Model.FullName)
+        ? Model.FullName.Trim()[0].ToString().ToUpper()
+        : "?";
+}
+@* #Bagian Edit Profil Pasien# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/profile-edit.css" asp-append-version="true" />
 }
 
 <div class="pf-edit-page">
@@ -26,9 +32,17 @@
 
             <div class="pf-edit-sidebar">
 
+                @* #Komponen Foto Profil# *@
                 <div class="lu-card pf-edit-photo-card">
                     <div class="pf-edit-photo-preview-wrap pf-edit-photo-wrap-centered">
-                        <img id="pfPhotoPreview" class="pf-edit-photo-preview" src="@photoSrc" alt="Foto profil" />
+                        @if (hasPhoto)
+                        {
+                            <img id="pfPhotoPreview" class="pf-edit-photo-preview" src="@Model.CurrentProfilePicture" alt="Foto profil" />
+                        }
+                        else
+                        {
+                            <div id="pfPhotoPreview" class="pf-edit-photo-preview pf-edit-photo-preview--placeholder" role="img" aria-label="Foto profil">@photoInitial</div>
+                        }
                         <label class="pf-edit-photo-change" title="Ganti foto">
                             📷
                             <input asp-for="ProfilePicture" type="file" accept="image/*" id="pfPhotoInput" class="pf-edit-upload-input" />
@@ -76,6 +90,7 @@
 
             </div>
 
+            @* #Komponen Form Data Diri# *@
             <div class="pf-edit-main">
 
                 <section class="lu-card pf-edit-panel pf-edit-panel--personal">
@@ -187,6 +202,14 @@
             input.addEventListener('change', function () {
                 var file = input.files && input.files[0];
                 if (!file) return;
+                if (preview.tagName !== 'IMG') {
+                    var img = document.createElement('img');
+                    img.id = 'pfPhotoPreview';
+                    img.className = 'pf-edit-photo-preview';
+                    img.alt = 'Foto profil';
+                    preview.replaceWith(img);
+                    preview = img;
+                }
                 preview.src = URL.createObjectURL(file);
             });
         })();

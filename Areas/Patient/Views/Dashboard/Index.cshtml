@@ -8,7 +8,22 @@
     var calMonthLabel = ViewBag.CalendarMonthLabel as string ?? Model.MonthYearLabel;
     var cid = new System.Globalization.CultureInfo("id-ID");
 }
+@* #Bagian Dashboard Pasien# *@
 
+@if (TempData["success"] is string okPat)
+{
+    <div class="lu-alert-success" role="alert" style="margin-bottom: 24px;">@okPat</div>
+}
+@if (TempData["info"] is string infoPat)
+{
+    <div class="lu-alert-info" role="alert" style="margin-bottom: 24px;">@infoPat</div>
+}
+@if (TempData["error"] is string errPat)
+{
+    <div class="lu-alert-danger" role="alert" style="margin-bottom: 24px;">@errPat</div>
+}
+
+@* #Komponen Hero Banner# *@
 <!-- ─── Hero banner ─── -->
 <div class="db-hero">
     <div class="db-hero-text">
@@ -59,6 +74,7 @@
     </div>
 </div>
 
+@* #Komponen Widget Kalender# *@
 <!-- ─── Calendar widget ─── -->
 <div class="lu-card db-cal">
     <div class="db-cal-head">
@@ -127,6 +143,7 @@
     </div>
 </div>
 
+@* #Komponen Grid Kartu Dashboard# *@
 <!-- ─── Three dashboard cards ─── -->
 <div class="dash-grid">
 
@@ -143,7 +160,7 @@
                 <span class="db-empty-icon" aria-hidden="true">🌸</span>
                 <p>Belum ada mood tercatat</p>
                 <div class="db-card-actions db-card-actions--center-mt">
-                    <button class="btn-pill" onclick="openMoodModal()">+ Lacak Mood</button>
+                    <button type="button" class="btn-pill" onclick="openMoodModal()">+ Lacak Mood</button>
                 </div>
             </div>
         }
@@ -174,20 +191,20 @@
                 <span class="db-empty-icon" aria-hidden="true">📖</span>
                 <p>Belum ada jurnal hari ini</p>
                 <div class="db-card-actions db-card-actions--center-mt">
-                    <button type="button" class="btn-pill" onclick="openJournalModal()">+ Tulis Jurnal</button>
+                    <button type="button" class="btn-pill" data-hrpf-modal-open="journalModal">+ Tulis Jurnal</button>
                 </div>
             </div>
         }
         else
         {
-            <a href="#" onclick="openJournalModal(); return false;" class="db-journal-link">
+            <a href="#" data-hrpf-modal-open="journalModal" class="db-journal-link" onclick="return false;">
                 <div class="db-journal-preview">
                     <h4>@(Model.LatestJournalTitle ?? "Jurnal hari ini")</h4>
                     <p>@Model.LatestJournalSnippet</p>
                 </div>
             </a>
             <div class="db-card-actions">
-                <button type="button" class="btn-pill" onclick="openJournalModal()">+ Tulis / Edit</button>
+                <button type="button" class="btn-pill" data-hrpf-modal-open="journalModal">+ Tulis / Edit</button>
             </div>
         }
     </div>
@@ -288,17 +305,20 @@
         }
     </div>
 
+</div>
+
+@section Overlays {
+@* #Komponen Modal Jurnal# *@
 <!-- ─── Journal Modal ─── -->
-<div class="hrpf-modal-overlay" id="journalModal" role="dialog" aria-modal="true" aria-labelledby="journalModalTitle">
+<div class="hrpf-modal-overlay" id="journalModal" role="dialog" aria-modal="true" aria-labelledby="journalModalTitle" hidden aria-hidden="true">
     <div class="hrpf-modal db-modal--journal">
         <div class="hrpf-modal-head">
             <div class="hrpf-modal-head-icon">📝</div>
             <h2 class="hrpf-modal-title" id="journalModalTitle">Tulis Jurnal</h2>
-            <button type="button" class="hrpf-modal-close" onclick="closeJournalModal()" aria-label="Tutup">&times;</button>
+            <button type="button" class="hrpf-modal-close" data-hrpf-modal-close aria-label="Tutup">&times;</button>
         </div>
 
         <form method="post" asp-controller="Journal" asp-action="Write" autocomplete="off" class="db-modal-form">
-            @Html.AntiForgeryToken()
             <input type="hidden" name="JournalId" value="@Model.LatestJournalId" />
             
             <div class="hrpf-modal-body">
@@ -313,47 +333,29 @@
             </div>
             
             <div class="hrpf-modal-foot">
-                <button type="button" class="hrpf-modal-cancel" onclick="closeJournalModal()">Batal</button>
+                <button type="button" class="hrpf-modal-cancel" data-hrpf-modal-close>Batal</button>
                 <button type="submit" class="hrpf-modal-save">Simpan Jurnal</button>
             </div>
         </form>
     </div>
 </div>
 
+@* #Komponen Modal Mood# *@
 <!-- ─── Mood Tracker Modal (iframe) ─── -->
-<div class="hrpf-modal-overlay" id="moodModal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle">
+<div class="hrpf-modal-overlay" id="moodModal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle" hidden aria-hidden="true">
     <div class="hrpf-modal db-modal--mood">
         <div class="hrpf-modal-head">
             <div class="hrpf-modal-head-icon">😊</div>
             <h2 class="hrpf-modal-title" id="moodModalTitle">Lacak Mood</h2>
-            <button type="button" class="hrpf-modal-close" onclick="closeMoodModal()" aria-label="Tutup">&times;</button>
+            <button type="button" class="hrpf-modal-close" data-hrpf-modal-close aria-label="Tutup">&times;</button>
         </div>
         <div class="hrpf-modal-body db-modal-body--iframe">
-            <iframe id="moodIframe" src="" class="db-mood-iframe"></iframe>
+            <iframe id="moodIframe" src="" class="db-mood-iframe" title="Lacak Mood"></iframe>
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        function openJournalModal() {
-            document.getElementById('journalModal').classList.add('is-open');
-        }
-        function closeJournalModal() {
-            document.getElementById('journalModal').classList.remove('is-open');
-        }
-
-        function openMoodModal() {
-            var iframe = document.getElementById('moodIframe');
-            if (!iframe.getAttribute('src')) {
-                iframe.setAttribute('src', '/Patient/Mood/Feeling');
-            }
-            document.getElementById('moodModal').classList.add('is-open');
-        }
-        function closeMoodModal() {
-            document.getElementById('moodModal').classList.remove('is-open');
-        }
-    </script>
 }
 
-</div>
+@section Scripts {
+    <script src="~/js/patient/mood-modal.js" asp-append-version="true"></script>
+}

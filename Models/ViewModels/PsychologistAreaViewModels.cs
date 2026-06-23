@@ -5,6 +5,7 @@ using LightenUp.Web.Models;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class PsychologistDashboardViewModel#
     public class PsychologistDashboardViewModel
     {
         public string PsychologistName { get; set; } = string.Empty;
@@ -16,6 +17,7 @@ namespace LightenUp.Web.Models.ViewModels
         public List<CompanyPsychologistRequest> PendingB2BRequests { get; set; } = new List<CompanyPsychologistRequest>();
     }
 
+    // #Class PatientListItem#
     public class PatientListItem
     {
         public int PatientId { get; set; }
@@ -32,6 +34,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int AssignmentId { get; set; }
     }
 
+    // #Class PatientDetailViewModel#
     public class PatientDetailViewModel
     {
         public int PatientId { get; set; }
@@ -45,6 +48,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string Complaint { get; set; } = string.Empty;
     }
 
+    // #Class StatisticsViewModel#
     public class StatisticsViewModel
     {
         public int TotalClients { get; set; }
@@ -53,12 +57,14 @@ namespace LightenUp.Web.Models.ViewModels
         public int DangerCount { get; set; }
     }
 
+    // #Class WorksheetViewModel#
     public class WorksheetViewModel
     {
         public int TotalActivities { get; set; }
         public List<WorksheetItemViewModel> Tasks { get; set; } = new List<WorksheetItemViewModel>();
     }
 
+    // #Class WorksheetItemViewModel#
     public class WorksheetItemViewModel
     {
         public int TaskId { get; set; }
@@ -69,6 +75,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string StatusClass { get; set; } = string.Empty;
     }
 
+    // #Class PsyScheduleEditViewModel#
     public class PsyScheduleEditViewModel
     {
         public int ScheduleId { get; set; }
@@ -78,8 +85,12 @@ namespace LightenUp.Web.Models.ViewModels
         [Required] public string Status { get; set; } = "Scheduled";
         public string? Notes { get; set; }
         public string? MeetingLink { get; set; }
+        public Microsoft.AspNetCore.Http.IFormFile? ProofFile { get; set; }
+        public string? ExistingProofPath { get; set; }
+        public string? ReturnUrl { get; set; }
     }
 
+    // #Class WorksheetDetailViewModel#
     public class WorksheetDetailViewModel
     {
         public int TaskId { get; set; }
@@ -91,6 +102,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string PsychologistNote { get; set; } = string.Empty;
     }
 
+    // #Class PsychologistProfileViewModel#
     public class PsychologistProfileViewModel
     {
         public string FullName { get; set; } = string.Empty;
@@ -104,6 +116,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string SippNumber { get; set; } = string.Empty;
     }
 
+    // #Class PayslipAssignmentRow#
     public class PayslipAssignmentRow
     {
         public string PatientName { get; set; } = string.Empty;
@@ -119,6 +132,7 @@ namespace LightenUp.Web.Models.ViewModels
         public decimal PsyShare { get; set; }
     }
     
+    // #Class PayslipViewModel#
     public class PayslipViewModel
     {
         public string MonthName { get; set; } = string.Empty;

@@ -14,6 +14,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
     // The "X" button on each screen saves nothing and bounces the user to /Account/Logout
     // (or to the dashboard if onboarding is already complete).
     [Area("Patient")]
+    // #Class OnboardingController#
     [Authorize(Roles = "Patient")]
     public class OnboardingController : Controller
     {
@@ -64,7 +65,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 0 — Welcome
         // ═════════════════════════════════════════════════════════════════
-        [HttpGet]
+        // #Function Welcome#
+                [HttpGet]
         public async Task<IActionResult> Welcome()
         {
             var patient = await GetCurrentPatientAsync();
@@ -78,6 +80,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             return View();
         }
 
+        // #Function Welcome POST#
+
         [HttpPost]
         public async Task<IActionResult> Welcome(bool _)
         {
@@ -89,6 +93,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 1 — Gender
         // ═════════════════════════════════════════════════════════════════
+        // #Function Gender#
         [HttpGet]
         public async Task<IActionResult> Gender()
         {
@@ -99,6 +104,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.Progress = new OnboardingProgress { Current = 1 };
             return View(new OnboardingGenderViewModel { Gender = patient.Gender ?? "" });
         }
+
+        // #Function Gender POST#
 
         [HttpPost]
         public async Task<IActionResult> Gender(OnboardingGenderViewModel model)
@@ -119,6 +126,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 2 — Birthdate
         // ═════════════════════════════════════════════════════════════════
+        // #Function Birthdate#
         [HttpGet]
         public async Task<IActionResult> Birthdate()
         {
@@ -136,6 +144,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             }
             return View(vm);
         }
+
+        // #Function Birthdate POST#
 
         [HttpPost]
         public async Task<IActionResult> Birthdate(OnboardingBirthdateViewModel model)
@@ -170,6 +180,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 3 — Relationship
         // ═════════════════════════════════════════════════════════════════
+        // #Function Relationship#
         [HttpGet]
         public async Task<IActionResult> Relationship()
         {
@@ -180,6 +191,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.Progress = new OnboardingProgress { Current = 3 };
             return View(new OnboardingRelationshipViewModel { RelationshipStatus = patient.RelationshipStatus ?? "" });
         }
+
+        // #Function Relationship POST#
 
         [HttpPost]
         public async Task<IActionResult> Relationship(OnboardingRelationshipViewModel model)
@@ -200,6 +213,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 4 — Spiritual
         // ═════════════════════════════════════════════════════════════════
+        // #Function Spiritual#
         [HttpGet]
         public async Task<IActionResult> Spiritual()
         {
@@ -210,6 +224,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.Progress = new OnboardingProgress { Current = 4 };
             return View(new OnboardingSpiritualViewModel { SpiritualActivity = patient.SpiritualActivity ?? "" });
         }
+
+        // #Function Spiritual POST#
 
         [HttpPost]
         public async Task<IActionResult> Spiritual(OnboardingSpiritualViewModel model)
@@ -230,6 +246,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 5 — Counseling history (with conditional follow-up)
         // ═════════════════════════════════════════════════════════════════
+        // #Function CounselingHistory#
         [HttpGet]
         public async Task<IActionResult> CounselingHistory()
         {
@@ -248,6 +265,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             };
             return View(vm);
         }
+
+        // #Function CounselingHistory POST#
 
         [HttpPost]
         public async Task<IActionResult> CounselingHistory(OnboardingCounselingViewModel model)
@@ -286,6 +305,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 6 — Medication
         // ═════════════════════════════════════════════════════════════════
+        // #Function Medication#
         [HttpGet]
         public async Task<IActionResult> Medication()
         {
@@ -296,6 +316,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.Progress = new OnboardingProgress { Current = 6 };
             return View(new OnboardingMedicationViewModel { HasMedicationHistory = patient.HasMedicationHistory });
         }
+
+        // #Function Medication POST#
 
         [HttpPost]
         public async Task<IActionResult> Medication(OnboardingMedicationViewModel model)
@@ -316,6 +338,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 7 — Sleep quality
         // ═════════════════════════════════════════════════════════════════
+        // #Function SleepQuality#
         [HttpGet]
         public async Task<IActionResult> SleepQuality()
         {
@@ -326,6 +349,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.Progress = new OnboardingProgress { Current = 7 };
             return View(new OnboardingSleepViewModel { SleepQuality = patient.SleepQuality ?? "" });
         }
+
+        // #Function SleepQuality POST#
 
         [HttpPost]
         public async Task<IActionResult> SleepQuality(OnboardingSleepViewModel model)
@@ -346,6 +371,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 8 — App goals (multi-select)
         // ═════════════════════════════════════════════════════════════════
+        // #Function AppGoals#
         [HttpGet]
         public async Task<IActionResult> AppGoals()
         {
@@ -362,6 +388,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             };
             return View(vm);
         }
+
+        // #Function AppGoals POST#
 
         [HttpPost]
         public async Task<IActionResult> AppGoals(OnboardingAppGoalsViewModel model)
@@ -382,6 +410,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 9 — Referral code (optional; can also be set later from profile)
         // ═════════════════════════════════════════════════════════════════
+        // #Function ReferralCode#
         [HttpGet]
         public async Task<IActionResult> ReferralCode()
         {
@@ -392,6 +421,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.Progress = new OnboardingProgress { Current = 9 };
             return View(new OnboardingReferralViewModel());
         }
+
+        // #Function ReferralCode POST#
 
         [HttpPost]
         public async Task<IActionResult> ReferralCode(OnboardingReferralViewModel model)
@@ -448,6 +479,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Step 10 — Terms & Conditions → completes onboarding
         // ═════════════════════════════════════════════════════════════════
+        // #Function Terms#
         [HttpGet]
         public async Task<IActionResult> Terms()
         {
@@ -458,6 +490,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.Progress = new OnboardingProgress { Current = 10 };
             return View(new OnboardingTermsViewModel());
         }
+
+        // #Function Terms POST#
 
         [HttpPost]
         public async Task<IActionResult> Terms(OnboardingTermsViewModel model)

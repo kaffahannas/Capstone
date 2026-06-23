@@ -1,0 +1,210 @@
+/* #Bagian Tugas Detail Modal Pasien# */
+/* Patient Tasks detail modal — matches Tasks/Detail.cshtml styling */
+.tasks-modal {
+    max-width: 560px;
+    overflow: hidden;
+}
+
+.tasks-modal .hrpf-modal-head {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--lu-border);
+}
+
+.tasks-modal .hrpf-modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--lu-text);
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    line-height: 1.35;
+}
+
+.tsk-modal-body {
+    padding: 20px 24px 24px;
+    max-height: min(78vh, 720px);
+    overflow-y: auto;
+}
+
+.tsk-modal-error {
+    background: #FEE2E2;
+    color: #B91C1C;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.task-summary-card {
+    border: 1.5px solid var(--lu-primary-soft);
+    border-radius: 14px;
+    padding: 18px 20px;
+    background: #fff;
+    margin-bottom: 16px;
+}
+
+.task-summary-title,
+.tsk-modal-summary-title {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--lu-text);
+}
+
+.task-summary-desc,
+.tsk-modal-summary-desc {
+    color: #6B7280;
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.task-summary-meta,
+.tsk-modal-summary-meta {
+    font-size: 13px;
+    color: #6B7280;
+    line-height: 1.5;
+}
+
+.task-submit-panel {
+    background: linear-gradient(135deg, #F5F3FF, #EDE9FE);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(124, 58, 237, 0.12);
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.06);
+}
+
+.task-submit-panel h3,
+.tsk-modal-note-heading {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--lu-primary);
+}
+
+.tsk-modal-note-heading {
+    margin-top: 4px;
+}
+
+.upload-dropzone {
+    display: block;
+    border: 2px dashed rgba(124, 58, 237, 0.45);
+    border-radius: 14px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    background: #fff;
+    margin-bottom: 16px;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.upload-dropzone:hover {
+    border-color: var(--lu-primary);
+    background: #FAFAFF;
+}
+
+.upload-dropzone img {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+.upload-dropzone input[type="file"] {
+    display: none;
+}
+
+.upload-dropzone .placeholder {
+    color: var(--lu-text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.upload-dropzone .placeholder p {
+    margin: 0;
+}
+
+.upload-dropzone .placeholder small {
+    color: #9CA3AF;
+    font-size: 11px;
+}
+
+.task-upload-icon,
+.tsk-modal-upload-ico {
+    font-size: 36px;
+    margin-bottom: 8px;
+    line-height: 1;
+}
+
+.task-upload-hint,
+.tsk-modal-upload-hint {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: #6B7280;
+}
+
+.task-preview-hidden,
+.tsk-modal-preview-hidden {
+    display: none;
+}
+
+.tsk-modal-textarea,
+.task-submit-panel .mood-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: 1px solid #D1D5DB;
+    padding: 12px 14px;
+    min-height: 110px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.tsk-modal-textarea:focus,
+.task-submit-panel .mood-textarea:focus {
+    border-color: var(--lu-primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+.task-submit-actions,
+.tsk-modal-submit-wrap {
+    margin-top: 16px;
+}
+
+.task-submit-btn,
+.tsk-modal-submit-btn {
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    background: var(--lu-primary);
+    color: #fff;
+    font-family: inherit;
+    transition: background 0.15s;
+}
+
+.task-submit-btn:hover,
+.tsk-modal-submit-btn:hover {
+    background: var(--lu-primary-hover, #6D28D9);
+}
+
+.tsk-modal-proof {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.tsk-modal-empty {
+    color: #9CA3AF;
+}
+
+.tsk-modal-section-title {
+    margin-top: 20px;
+}

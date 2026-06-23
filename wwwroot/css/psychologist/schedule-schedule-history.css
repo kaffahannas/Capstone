@@ -1,0 +1,87 @@
+/* #Bagian Jadwal Riwayat Psikolog# */
+.sh-header {
+    margin-bottom: 20px;
+}
+
+.sh-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.sh-search {
+    display: flex;
+    align-items: center;
+    background: #F9FAFB;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 16px;
+    width: 100%;
+    max-width: 400px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.sh-search svg {
+    margin-right: 10px;
+}
+
+.sh-search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 14px;
+}
+
+.sh-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--primary-purple);
+    color: white;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.sh-empty {
+    padding: 40px;
+    text-align: center;
+    color: #9CA3AF;
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+}
+
+.sh-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sh-notes {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .sh-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .sh-search {
+        width: 100%;
+    }
+
+    .sh-add-btn {
+        justify-content: center;
+        width: 100%;
+    }
+}

@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class LoginViewModel#
     public class LoginViewModel
     {
         [Required(ErrorMessage = "Email wajib diisi")]
@@ -14,5 +15,7 @@ namespace LightenUp.Web.Models.ViewModels
 
         [Display(Name = "Ingat Saya")]
         public bool RememberMe { get; set; }
+
+        public string? ReturnUrl { get; set; }
     }
 }

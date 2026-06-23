@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LightenUp.Web.Models
 {
     /// <summary>DuitKu payment attempt (B2C patient or B2B company subscription).</summary>
+    // #Class PaymentTransaction#
     public class PaymentTransaction
     {
         [Key]

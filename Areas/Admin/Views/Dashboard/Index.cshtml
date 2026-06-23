@@ -4,7 +4,27 @@
     ViewBag.ActiveNav = "Dashboard";
 }
 
-<!-- ── KPI Grid ── -->
+@* #Komponen KartuKPI# *@
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/dashboard-index.css" asp-append-version="true" />
+}
+
+
+@* #Bagian DashboardAdmin# *@
+
+@if (TempData["success"] is string okAdm)
+{
+    <div class="lu-alert-success" role="alert" style="margin-bottom: 24px;">@okAdm</div>
+}
+@if (TempData["info"] is string infoAdm)
+{
+    <div class="lu-alert-info" role="alert" style="margin-bottom: 24px;">@infoAdm</div>
+}
+@if (TempData["error"] is string errAdm)
+{
+    <div class="lu-alert-danger" role="alert" style="margin-bottom: 24px;">@errAdm</div>
+}
+
 <div class="adm-stat-grid">
     <div class="adm-stat-card accent-purple">
         <div class="adm-stat-icon">👥</div>
@@ -50,7 +70,7 @@
     </div>
 </div>
 
-<!-- ── Pending Assignments Alert ── -->
+@* #Komponen AlertPenugasan# *@
 @if (Model.PendingAssignmentsTotal > 0)
 {
     <div class="adm-card dash-alert-assignments">
@@ -72,7 +92,7 @@
     </div>
 }
 
-<!-- ── Pending Alert ── -->
+@* #Komponen AlertPersetujuan# *@
 @if (Model.PendingTotal > 0)
 {
     <div class="adm-card dash-alert-pending">
@@ -93,14 +113,14 @@
     </div>
 }
 
-<!-- ── Quick Actions ── -->
+@* #Komponen AksiCepat# *@
 <div class="adm-card">
     <div class="adm-card-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Akses Cepat
     </div>
     <div class="adm-quick-grid">
-        <a class="adm-quick-item" asp-area="Admin" asp-controller="Approvals" asp-action="Index">
+        <a class="adm-quick-item adm-quick-item--amber" asp-area="Admin" asp-controller="Approvals" asp-action="Index">
             <div class="adm-quick-icon dash-quick-icon--amber">📋</div>
             <div class="adm-quick-label">Persetujuan</div>
             <div class="adm-quick-sub">
@@ -111,19 +131,19 @@
             </div>
         </a>
 
-        <a class="adm-quick-item" asp-area="Admin" asp-controller="Users" asp-action="Index">
+        <a class="adm-quick-item adm-quick-item--purple" asp-area="Admin" asp-controller="Users" asp-action="Index">
             <div class="adm-quick-icon dash-quick-icon--purple">👤</div>
             <div class="adm-quick-label">Pengguna</div>
             <div class="adm-quick-sub">@Model.TotalUsers terdaftar</div>
         </a>
 
-        <a class="adm-quick-item" asp-area="Admin" asp-controller="Companies" asp-action="Index">
+        <a class="adm-quick-item adm-quick-item--blue" asp-area="Admin" asp-controller="Companies" asp-action="Index">
             <div class="adm-quick-icon dash-quick-icon--blue">🏢</div>
             <div class="adm-quick-label">Perusahaan</div>
             <div class="adm-quick-sub">@Model.TotalCompanies mitra</div>
         </a>
 
-        <a class="adm-quick-item" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
+        <a class="adm-quick-item adm-quick-item--purple" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
             <div class="adm-quick-icon dash-quick-icon--purple">📋</div>
             <div class="adm-quick-label">Penugasan</div>
             <div class="adm-quick-sub">
@@ -134,7 +154,7 @@
             </div>
         </a>
 
-        <a class="adm-quick-item" asp-area="Admin" asp-controller="Payroll" asp-action="Index">
+        <a class="adm-quick-item adm-quick-item--green" asp-area="Admin" asp-controller="Payroll" asp-action="Index">
             <div class="adm-quick-icon dash-quick-icon--green">💰</div>
             <div class="adm-quick-label">Payroll</div>
             <div class="adm-quick-sub">Transfer psikolog</div>

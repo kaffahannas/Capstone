@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    // #Class AssignmentsController#
     [Authorize(Roles = "Admin")]
     public class AssignmentsController : Controller
     {
@@ -32,6 +33,9 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             _workload = workload;
             _pricing = pricing;
         }
+
+        // #Bagian Daftar Penugasan#
+        // #Function Index#
 
         [HttpGet]
         public async Task<IActionResult> Index(string tab = "b2b")
@@ -73,6 +77,9 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         }
 
 
+        // #Bagian Penugasan B2B#
+        // #Function AssignB2BPsychologist#
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignB2BPsychologist(int requestId, int psychologistId)
@@ -81,12 +88,15 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             if (req == null) return NotFound();
 
             req.PsychologistId = psychologistId;
+            req.Status = "Approved";
             req.RespondedDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             TempData["success"] = "Permintaan kemitraan telah diteruskan ke psikolog terpilih.";
             return RedirectToAction(nameof(Index), new { tab = "b2b" });
         }
+
+        // #Function DismissB2BRequest#
 
         [HttpPost]
         [ValidateAntiForgeryToken]

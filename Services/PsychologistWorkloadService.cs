@@ -14,6 +14,7 @@ public class PsychologistWorkloadInfo
     public string WorkloadLevel { get; set; } = "normal"; // low | normal | high
 }
 
+// #Class PsychologistWorkloadService#
 public class PsychologistWorkloadService
 {
     private readonly ApplicationDbContext _context;
@@ -23,6 +24,8 @@ public class PsychologistWorkloadService
         _context = context;
     }
 
+    // #Bagian Beban Kerja#
+    // #Function GetActiveCaseloadCountsAsync#
     public async Task<(Dictionary<int, int> Total, Dictionary<int, int> B2B, Dictionary<int, int> Public)> GetActiveCaseloadCountsAsync()
     {
         var assignments = await _context.Assignments
@@ -44,6 +47,7 @@ public class PsychologistWorkloadService
         return (total, b2b, pub);
     }
 
+    // #Function GetApprovedPsychologistsWithWorkloadAsync#
     public async Task<List<PsychologistWorkloadInfo>> GetApprovedPsychologistsWithWorkloadAsync(bool b2bOnly = false)
     {
         var (total, b2b, pub) = await GetActiveCaseloadCountsAsync();
@@ -76,6 +80,7 @@ public class PsychologistWorkloadService
         }).ToList();
     }
 
+    // #Function WorkloadLabel#
     public static string WorkloadLabel(string level) => level switch
     {
         "low" => "Ringan (<5)",

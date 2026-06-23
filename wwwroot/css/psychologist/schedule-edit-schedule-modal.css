@@ -1,0 +1,214 @@
+/* #Bagian Edit Jadwal Modal Psikolog# */
+.sem-modal {
+    max-width: 520px;
+    padding: 0;
+    overflow: hidden;
+    overflow-x: hidden;
+}
+
+.sem-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #E5E7EB;
+    margin-bottom: 0;
+}
+
+.sem-header .close-btn {
+    position: static;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 22px;
+    line-height: 1;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #6B7280;
+}
+
+.sem-header .close-btn:hover {
+    background: #F3F4F6;
+    color: #111827;
+}
+
+.sem-title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+    text-align: left;
+    width: auto;
+}
+
+.sem-title-icon {
+    vertical-align: -3px;
+    margin-right: 8px;
+    color: #4338CA;
+}
+
+.sem-body {
+    padding: 20px 24px 24px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px);
+}
+
+.sem-intro {
+    margin: 0 0 18px;
+    font-size: 13.5px;
+    color: #6B7280;
+    line-height: 1.5;
+}
+
+.sem-intro strong {
+    color: #111827;
+}
+
+.sem-validation {
+    background: #FEE2E2;
+    color: #B91C1C;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.sem-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.sem-field {
+    margin-bottom: 16px;
+    min-width: 0;
+}
+
+.sem-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+.sem-input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #111827;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.sem-input:focus {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+select.sem-input {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+}
+
+.sem-textarea {
+    resize: vertical;
+    min-height: 88px;
+    line-height: 1.5;
+}
+
+.sem-field-error {
+    display: block;
+    color: #DC2626;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.sem-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6;
+}
+
+.sem-btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    margin: 0;
+    border: 1px solid #E5E7EB;
+    color: #4B5563;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 20px;
+    background: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.sem-btn-back:hover {
+    background: #F9FAFB;
+    border-color: #D1D5DB;
+}
+
+.sem-btn-save {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    margin: 0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 22px;
+    border: none;
+    color: #fff;
+    background: #4338CA;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+    transition: background 0.15s;
+}
+
+.sem-btn-save:hover {
+    background: #3730A3;
+}
+
+/* #Bagian Media Query# */
+@media (max-width: 520px) {
+    .sem-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sem-actions {
+        flex-direction: column-reverse;
+    }
+
+    .sem-btn-back,
+    .sem-btn-save {
+        width: 100%;
+    }
+}

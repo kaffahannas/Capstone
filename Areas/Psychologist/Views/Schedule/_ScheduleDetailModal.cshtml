@@ -20,6 +20,9 @@
     };
 }
 
+
+@* #Bagian ModalDetailJadwal# *@
+@* #Komponen HeaderModal# *@
 <div class="modal-container sdm-modal">
     <div class="modal-header sdm-header">
         <h2 class="modal-title sdm-title">Detail Jadwal Konseling</h2>
@@ -37,7 +40,7 @@
                     <div class="sdm-patient-co">@(Model.Patient?.Company?.Name ?? "Perusahaan belum diatur")</div>
                 </div>
             </div>
-            <span class="psy-status-chip psy-status--@statusClass">@statusLabel</span>
+            <span class="sdm-status sdm-status--@statusClass">@statusLabel</span>
         </div>
 
         <div class="sdm-meta-grid">
@@ -58,6 +61,14 @@
                 <a href="@Model.MeetingLink" target="_blank" rel="noopener" class="sdm-meet-link">@Model.MeetingLink</a>
             </div>
         }
+
+        @if (!string.IsNullOrEmpty(Model.ProofOfCompletionPath))
+        {
+            <div class="sdm-field">
+                <div class="sdm-field-label">Bukti Penyelesaian</div>
+                <a href="@Model.ProofOfCompletionPath" target="_blank" style="font-size: 13px; color: #065F46; text-decoration: underline; background: #D1FAE5; padding: 4px 10px; border-radius: 6px; display: inline-block;">📄 Lihat Bukti</a>
+            </div>
+        }
         
         @if (!string.IsNullOrEmpty(Model.Notes))
         {
@@ -70,20 +81,22 @@
         }
 
         <div class="sdm-actions">
-            <button type="button" class="btn-outline sdm-action-btn sdm-action-btn--close" onclick="closeScheduleDetailModal()">Tutup</button>
-            @if (Model.Status != "Cancelled" && Model.Status != "Completed")
-            {
-                <form asp-action="CancelSchedule" asp-area="Psychologist" asp-controller="Schedule" asp-route-id="@Model.ScheduleId" method="post" class="sdm-cancel-form">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn-outline sdm-action-btn sdm-action-btn--cancel" onclick="return confirm('Apakah Anda yakin ingin membatalkan jadwal ini?');">
-                        Batalkan Jadwal
-                    </button>
-                </form>
-            }
-            <a href="@Url.Action("EditSchedule", "Schedule", new { id = Model.ScheduleId })" class="btn-outline sdm-action-btn sdm-action-btn--edit">
-                Edit Jadwal
-            </a>
-            <a href="@Url.Action("PatientScheduleHistory", "Schedule", new { id = Model.PatientId })" class="btn-fill sdm-action-btn">
+            <div class="sdm-actions-row">
+                <button type="button" class="sdm-action-btn sdm-action-btn--close" onclick="closeScheduleDetailModal()">Tutup</button>
+                @if (Model.Status != "Cancelled" && Model.Status != "Completed")
+                {
+                    <form asp-action="CancelSchedule" asp-area="Psychologist" asp-controller="Schedule" asp-route-id="@Model.ScheduleId" method="post" class="sdm-cancel-form">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="sdm-action-btn sdm-action-btn--cancel" onclick="return confirm('Apakah Anda yakin ingin membatalkan jadwal ini?');">
+                            Batalkan Jadwal
+                        </button>
+                    </form>
+                }
+                <button type="button" class="sdm-action-btn sdm-action-btn--edit" onclick="openEditScheduleModal(@Model.ScheduleId)">
+                    Edit Jadwal
+                </button>
+            </div>
+            <a href="@Url.Action("PatientScheduleHistory", "Schedule", new { id = Model.PatientId })" class="sdm-history-btn">
                 Lihat Riwayat Lengkap Klien
             </a>
         </div>

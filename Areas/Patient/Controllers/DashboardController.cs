@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
+    // #Class DashboardController#
     [Authorize(Roles = "Patient")]
     public class DashboardController : Controller
     {
@@ -20,6 +21,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        // #Function Index#
 
         public async Task<IActionResult> Index(string view = "Mingguan", int offset = 0)
         {

@@ -10,6 +10,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 {
     // Flow: Feeling → Triggers → Note → Question(1-5) → Summary → Save
     [Area("Patient")]
+    // #Class MoodController#
     [Authorize(Roles = "Patient")]
     public class MoodController : Controller
     {
@@ -30,6 +31,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Step 1 — Feeling ════════════════════════════════════════════
+        // #Function Feeling#
+        // #Bagian Langkah1 Perasaan#
         [HttpGet]
         public async Task<IActionResult> Feeling()
         {
@@ -44,7 +47,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             if (existing != null)
             {
                 vm.Feeling       = existing.Feeling;
-                vm.Triggers      = string.IsNullOrEmpty(existing.Triggers) ? new() : existing.Triggers.Split(',').ToList();
+                vm.Triggers      = MoodOptions.SanitizeTriggerList(MoodOptions.ParseStoredTriggers(existing.Triggers));
                 vm.Note          = existing.Note;
                 vm.FocusScore    = existing.FocusScore    ?? 0;
                 vm.AnxietyScore  = existing.AnxietyScore  ?? 0;
@@ -57,6 +60,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             return View(vm);
         }
 
+        // #Function Feeling POST#
+
         [HttpPost]
         public IActionResult Feeling(MoodTrackerSessionViewModel model)
         {
@@ -66,10 +71,13 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 ViewBag.ActiveNav = "Beranda";
                 return View(model);
             }
+            model.Triggers = MoodOptions.SanitizeTriggerList(model.Triggers);
             return RedirectToAction(nameof(Triggers), MakeRouteValues(model));
         }
 
         // ═══ Step 2 — Triggers ═══════════════════════════════════════════
+        // #Function Triggers#
+        // #Bagian Langkah2 Pemicu#
         [HttpGet]
         public IActionResult Triggers(string feeling, string? triggers, string? note,
             int focusScore = 0, int anxietyScore = 0, int sleepScore = 0, int mindLoadScore = 0, int emotionScore = 0)
@@ -79,21 +87,20 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             return View(new MoodTrackerSessionViewModel
             {
                 Feeling = feeling, Note = note,
-                Triggers = string.IsNullOrEmpty(triggers) ? new() : triggers.Split(',').ToList(),
+                Triggers = MoodOptions.SanitizeTriggerList(MoodOptions.ParseStoredTriggers(triggers)),
                 FocusScore = focusScore, AnxietyScore = anxietyScore,
                 SleepScore = sleepScore, MindLoadScore = mindLoadScore, EmotionScore = emotionScore
             });
         }
 
-        [HttpPost, ActionName("Triggers")]
-        public IActionResult TriggersPost(MoodTrackerSessionViewModel model)
-        {
-            if (model.Triggers != null)
-            {
-                model.Triggers.RemoveAll(string.IsNullOrWhiteSpace);
-            }
+        // #Function TriggersPost#
 
-            if (model.Triggers == null || model.Triggers.Count == 0)
+        [HttpPost, ActionName("Triggers")]
+        public IActionResult TriggersPost(MoodTrackerSessionViewModel model, string? customTriggers)
+        {
+            model.Triggers = MoodOptions.SanitizeTriggerList(model.Triggers, customTriggers);
+
+            if (model.Triggers.Count == 0)
             {
                 ModelState.AddModelError(nameof(model.Triggers), "Pilih minimal satu pemicu atau ketik pemicu lainnya.");
                 ViewBag.ActiveNav = "Beranda";
@@ -103,6 +110,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Step 3 — Note (optional) ════════════════════════════════════
+        // #Function Note#
+        // #Bagian Langkah3 Catatan#
         [HttpGet]
         public IActionResult Note(string feeling, string? triggers, string? note,
             int focusScore = 0, int anxietyScore = 0, int sleepScore = 0, int mindLoadScore = 0, int emotionScore = 0)
@@ -112,11 +121,13 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             return View(new MoodTrackerSessionViewModel
             {
                 Feeling = feeling, Note = note,
-                Triggers = string.IsNullOrEmpty(triggers) ? new() : triggers.Split(',').ToList(),
+                Triggers = MoodOptions.SanitizeTriggerList(MoodOptions.ParseStoredTriggers(triggers)),
                 FocusScore = focusScore, AnxietyScore = anxietyScore,
                 SleepScore = sleepScore, MindLoadScore = mindLoadScore, EmotionScore = emotionScore
             });
         }
+
+        // #Function NotePost#
 
         [HttpPost, ActionName("Note")]
         public IActionResult NotePost(MoodTrackerSessionViewModel model)
@@ -126,6 +137,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Steps 4-8 — Questionnaire (5 questions, score 1-5) ══════════
+        // #Function Question#
+        // #Bagian Langkah4 Kuesioner#
         [HttpGet]
         public IActionResult Question(string feeling, string? triggers, string? note, int questionStep = 1,
             int focusScore = 0, int anxietyScore = 0, int sleepScore = 0, int mindLoadScore = 0, int emotionScore = 0)
@@ -136,11 +149,13 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             return View(new MoodTrackerSessionViewModel
             {
                 Feeling = feeling, Note = note, QuestionStep = questionStep,
-                Triggers = string.IsNullOrEmpty(triggers) ? new() : triggers.Split(',').ToList(),
+                Triggers = MoodOptions.SanitizeTriggerList(MoodOptions.ParseStoredTriggers(triggers)),
                 FocusScore = focusScore, AnxietyScore = anxietyScore,
                 SleepScore = sleepScore, MindLoadScore = mindLoadScore, EmotionScore = emotionScore
             });
         }
+
+        // #Function QuestionPost#
 
         [HttpPost, ActionName("Question")]
         public IActionResult QuestionPost(MoodTrackerSessionViewModel model)
@@ -164,6 +179,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         }
 
         // ═══ Summary + Save ═══════════════════════════════════════════════
+        // #Function Summary#
+        // #Bagian Ringkasan Simpan#
         [HttpGet]
         public IActionResult Summary(string feeling, string? triggers, string? note,
             int focusScore = 0, int anxietyScore = 0, int sleepScore = 0, int mindLoadScore = 0, int emotionScore = 0)
@@ -173,11 +190,13 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             return View(new MoodTrackerSessionViewModel
             {
                 Feeling = feeling, Note = note,
-                Triggers = string.IsNullOrEmpty(triggers) ? new() : triggers.Split(',').ToList(),
+                Triggers = MoodOptions.SanitizeTriggerList(MoodOptions.ParseStoredTriggers(triggers)),
                 FocusScore = focusScore, AnxietyScore = anxietyScore,
                 SleepScore = sleepScore, MindLoadScore = mindLoadScore, EmotionScore = emotionScore
             });
         }
+
+        // #Function SummaryPost#
 
         [HttpPost, ActionName("Summary")]
         public async Task<IActionResult> SummaryPost(MoodTrackerSessionViewModel model)
@@ -188,6 +207,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 model.QuestionStep = 1;
                 return RedirectToAction(nameof(Question), MakeRouteValues(model));
             }
+
+            model.Triggers = MoodOptions.SanitizeTriggerList(model.Triggers);
 
             if (!ModelState.IsValid)
             {
@@ -210,7 +231,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 {
                     PatientId     = patient.PatientId,
                     Feeling       = model.Feeling,
-                    Triggers      = string.Join(",", model.Triggers ?? new()),
+                    Triggers      = MoodOptions.SerializeTriggers(model.Triggers),
                     Note          = string.IsNullOrWhiteSpace(model.Note) ? null : model.Note,
                     FocusScore    = ToNullable(model.FocusScore),
                     AnxietyScore  = ToNullable(model.AnxietyScore),
@@ -224,7 +245,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             else
             {
                 existing.Feeling       = model.Feeling;
-                existing.Triggers      = string.Join(",", model.Triggers ?? new());
+                existing.Triggers      = MoodOptions.SerializeTriggers(model.Triggers);
                 existing.Note          = string.IsNullOrWhiteSpace(model.Note) ? null : model.Note;
                 existing.FocusScore    = ToNullable(model.FocusScore);
                 existing.AnxietyScore  = ToNullable(model.AnxietyScore);
@@ -242,7 +263,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         private static object MakeRouteValues(MoodTrackerSessionViewModel m) => new
         {
             feeling       = m.Feeling,
-            triggers      = string.Join(",", m.Triggers ?? new()),
+            triggers      = MoodOptions.SerializeTriggers(m.Triggers),
             note          = m.Note,
             questionStep  = m.QuestionStep,
             focusScore    = m.FocusScore,

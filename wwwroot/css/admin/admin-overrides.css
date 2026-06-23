@@ -1,0 +1,223 @@
+/* #Bagian Admin Overrides — dimuat terakhir, fix visual mobile# */
+
+/* #Komponen Akses Cepat — warna kartu# */
+.adm-quick-item--amber {
+    border-color: #FDE68A !important;
+    background: linear-gradient(180deg, #FFFBEB 0%, #FFFFFF 65%) !important;
+}
+
+.adm-quick-item--amber .adm-quick-icon {
+    background: #FEF3C7 !important;
+}
+
+.adm-quick-item--purple {
+    border-color: #DDD6FE !important;
+    background: linear-gradient(180deg, #FAF5FF 0%, #FFFFFF 65%) !important;
+}
+
+.adm-quick-item--purple .adm-quick-icon {
+    background: #EDE9FE !important;
+}
+
+.adm-quick-item--blue {
+    border-color: #BFDBFE !important;
+    background: linear-gradient(180deg, #EFF6FF 0%, #FFFFFF 65%) !important;
+}
+
+.adm-quick-item--blue .adm-quick-icon {
+    background: #DBEAFE !important;
+}
+
+.adm-quick-item--green {
+    border-color: #BBF7D0 !important;
+    background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 65%) !important;
+}
+
+.adm-quick-item--green .adm-quick-icon {
+    background: #DCFCE7 !important;
+}
+
+@media (max-width: 991.98px) {
+    body.admin-body .adm-quick-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+
+    body.admin-body a.adm-quick-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        color: var(--adm-text) !important;
+        padding: 12px 8px !important;
+        border-radius: 12px !important;
+        border: 1px solid var(--adm-border) !important;
+        box-sizing: border-box !important;
+        min-width: 0 !important;
+    }
+
+    body.admin-body .adm-quick-icon {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+        font-size: 18px !important;
+        flex-shrink: 0 !important;
+    }
+
+    body.admin-body .adm-quick-label {
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: var(--adm-text) !important;
+    }
+
+    body.admin-body .adm-quick-sub {
+        font-size: 10px !important;
+        color: var(--adm-muted) !important;
+        line-height: 1.3 !important;
+    }
+
+    body.admin-body .adm-quick-item:last-child:nth-child(odd) {
+        grid-column: 1 / -1 !important;
+        max-width: calc(50% - 4px) !important;
+        justify-self: center !important;
+    }
+}
+
+/* #Bagian Admin Mobile Scroll Fix# */
+@media (max-width: 991.98px) {
+    body.admin-body .admin-main {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    body.admin-body .admin-content,
+    body.admin-body .admin-content.lu-scroll-host {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 48px !important;
+    }
+}
+
+/* #Bagian Admin Content Padding Bottom — semua page desktop + mobile# */
+body.admin-body .admin-content,
+body.admin-body .admin-content.lu-scroll-host {
+    padding-bottom: 64px !important;
+}
+
+/* #Bagian Admin Detail Info Row — tampilan horizontal di mobile# */
+@media (max-width: 767.98px) {
+    /* Ubah info row jadi horizontal: label kiri, nilai kanan */
+    .adm-info-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .adm-info-row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        padding: 13px 0 !important;
+        gap: 12px !important;
+    }
+
+    .adm-info-label {
+        flex: 0 0 38% !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: var(--adm-muted) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        padding-top: 2px !important;
+        line-height: 1.4 !important;
+    }
+
+    .adm-info-value {
+        flex: 1 !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        color: var(--adm-text) !important;
+        text-align: right !important;
+        word-break: break-word !important;
+    }
+
+    /* Override nth-child padding dari components-admin-misc.css */
+    .adm-info-row:nth-child(odd),
+    .adm-info-row:nth-child(even) {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+        border-left: none !important;
+    }
+
+    /* Usr detail sidebar — stack rapi di mobile */
+    .usr-detail-grid {
+        gap: 12px !important;
+    }
+
+    .usr-detail-main,
+    .usr-sidebar {
+        gap: 12px !important;
+    }
+}
+
+/* #Komponen Empty State — teks tengah di card# */
+.adm-table-wrap > .adm-empty,
+.adm-empty--centered {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.adm-empty--centered .adm-empty-icon,
+.adm-table-wrap > .adm-empty .adm-empty-icon {
+    display: block !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.adm-empty--centered .adm-empty-title,
+.adm-table-wrap > .adm-empty .adm-empty-title {
+    width: 100% !important;
+    text-align: center !important;
+}
+
+.adm-empty--centered .adm-empty-sub,
+.adm-table-wrap > .adm-empty .adm-empty-sub {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+@media (max-width: 991.98px) {
+    .adm-table-wrap > .adm-empty,
+    .adm-empty--centered {
+        min-height: 180px !important;
+        padding: 32px 20px !important;
+    }
+
+    .adm-empty--centered .adm-empty-icon,
+    .adm-table-wrap > .adm-empty .adm-empty-icon {
+        font-size: 40px !important;
+    }
+
+    .adm-empty--centered .adm-empty-title,
+    .adm-table-wrap > .adm-empty .adm-empty-title {
+        font-size: 15px !important;
+    }
+
+    .adm-empty--centered .adm-empty-sub,
+    .adm-table-wrap > .adm-empty .adm-empty-sub {
+        font-size: 12px !important;
+        max-width: 280px !important;
+    }
+}

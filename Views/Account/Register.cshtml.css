@@ -1,3 +1,4 @@
+﻿/* #Bagian Scoped CSS Register.cshtml# - Views/Account/Register.cshtml.css */
 /* Register page header — back button no longer overlaps title */
 .register-header {
     display: flex;
@@ -35,18 +36,13 @@
 }
 
 .register-card .form-label {
-    margin-bottom: 4px;
-    font-size: 12.5px;
+    margin-bottom: 6px;
+    font-size: 0.8125rem;
     letter-spacing: 0.01em;
 }
 
 .register-card .form-control-custom {
-    padding: 6px 0 10px;
-    font-size: 15px;
-}
-
-.register-card .form-control-custom::placeholder {
-    color: #9CA3AF;
+    font-size: 0.9375rem;
 }
 
 /* Role selection */

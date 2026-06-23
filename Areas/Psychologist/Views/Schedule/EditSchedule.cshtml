@@ -5,6 +5,14 @@
     Layout = "_LayoutDashboard";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/schedule-edit-schedule.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-edit-schedule-modal.css" asp-append-version="true" />
+}
+
+
+@* #Bagian EditJadwal# *@
+@* #Komponen TombolKembali# *@
 <a class="es-back" asp-action="Scheduling">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Kembali ke Daftar Jadwal
@@ -19,7 +27,8 @@
 </div>
 
 <div class="es-wrap">
-    <form asp-action="EditSchedule" method="post">
+    @* #Komponen FormJadwal# *@
+    <form asp-action="EditSchedule" method="post" enctype="multipart/form-data">
         <div class="detail-card es-card">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ScheduleId" />
@@ -51,9 +60,22 @@
             </div>
 
             <div class="form-group es-field">
-                <label asp-for="MeetingLink" class="form-label es-label">Link Google Meet <small class="es-label-hint">(Opsional)</small></label>
+                <label asp-for="MeetingLink" class="form-label es-label">Link Google Meet <small class="es-label-hint">(Wajib jika Selesai)</small></label>
                 <input asp-for="MeetingLink" type="url" class="form-control es-input" placeholder="https://meet.google.com/..." />
                 <span asp-validation-for="MeetingLink" class="es-field-error"></span>
+            </div>
+
+            <div class="form-group es-field" id="proofGroup">
+                <label class="form-label es-label">Bukti Penyelesaian <small class="es-label-hint">(Wajib jika Selesai)</small></label>
+                @if (!string.IsNullOrEmpty(Model.ExistingProofPath))
+                {
+                    <div style="margin-bottom: 8px;">
+                        <a href="@Model.ExistingProofPath" target="_blank" style="font-size: 13px; color: #4338ca; text-decoration: underline;">📄 Lihat Bukti Saat Ini</a>
+                    </div>
+                    <input type="hidden" asp-for="ExistingProofPath" />
+                }
+                <input type="file" asp-for="ProofFile" class="form-control es-input" accept="image/*,application/pdf" />
+                <span asp-validation-for="ProofFile" class="es-field-error"></span>
             </div>
 
             <div class="form-group es-field">
@@ -72,4 +94,19 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const statusSelect = document.getElementById('Status');
+        const proofGroup = document.getElementById('proofGroup');
+        
+        function toggleProofGroup() {
+            if (statusSelect.value === 'Completed') {
+                proofGroup.style.display = 'block';
+            } else {
+                proofGroup.style.display = 'none';
+            }
+        }
+        
+        statusSelect.addEventListener('change', toggleProofGroup);
+        toggleProofGroup();
+    </script>
 }

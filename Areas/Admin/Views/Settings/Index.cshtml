@@ -7,9 +7,15 @@
 @if (TempData["success"] is string ok)  { <div class="adm-alert success">✅ @ok</div> }
 @if (TempData["error"]   is string err) { <div class="adm-alert error">⚠️ @err</div> }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/settings-index.css" asp-append-version="true" />
+}
+
+
+@* #Bagian PengaturanAdmin# *@
 <div class="set-grid">
 
-    <!-- ── Profile form ── -->
+    @* #Komponen FormProfil# *@
     <form asp-action="UpdateProfile" method="post" class="adm-card">
         <div class="adm-card-title">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -51,7 +57,7 @@
         </div>
     </form>
 
-    <!-- ── Change password form ── -->
+    @* #Komponen FormGantiPassword# *@
     <form asp-action="ChangePassword" method="post" class="adm-card">
         <div class="adm-card-title">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>

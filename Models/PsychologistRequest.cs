@@ -8,6 +8,7 @@ namespace LightenUp.Web.Models
     // ─── HR slice 5 & Patient: requests to psychologist ─────
     // Created by HR ("+" buttons on /Hr/Worksheets and /Hr/Schedules)
     // OR by Patient (choose session via /Patient/Psychologists/RequestSession).
+    // #Class PsychologistRequest#
     public class PsychologistRequest
     {
         [Key]

@@ -13,16 +13,19 @@ using System.Threading.Tasks;
 namespace LightenUp.Web.Areas.Psychologist.Controllers
 {
     [Area("Psychologist")]
+    // #Class ScheduleController#
     [Authorize(Roles = "Psychologist")]
     public class ScheduleController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env;
 
-        public ScheduleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ScheduleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
+            _env = env;
         }
 
         private async Task<int?> CurrentPsychologistIdAsync()
@@ -50,6 +53,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .ToListAsync();
         }
 
+        // #Function AddSchedule#
+
         [HttpGet]
         public async Task<IActionResult> AddSchedule(int? patientId = null)
         {
@@ -57,6 +62,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = patientId.Value, add = true });
             return RedirectToAction(nameof(Scheduling), new { add = true, patientId });
         }
+
+        // #Function AddSchedule POST#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -133,15 +140,17 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 SlotValue = slotValue
             });
             await _context.SaveChangesAsync();
-            TempData["success"] = "Jadwal konseling baru ditambahkan.";
+            TempData["ScheduleSuccess"] = "Jadwal konseling baru ditambahkan.";
 
             if (model.ReturnPatientId.HasValue)
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = model.ReturnPatientId.Value });
             return RedirectToAction(nameof(Scheduling), new { filter = model.ReturnFilter ?? "Semua" });
         }
 
+        // #Function EditSchedule#
+
         [HttpGet]
-        public async Task<IActionResult> EditSchedule(int id)
+        public async Task<IActionResult> EditSchedule(int id, string? returnUrl = null)
         {
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
@@ -159,11 +168,15 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 DurationMinutes = s.DurationMinutes,
                 Status = s.Status,
                 Notes = s.Notes,
-                MeetingLink = s.MeetingLink
+                MeetingLink = s.MeetingLink,
+                ExistingProofPath = s.ProofOfCompletionPath,
+                ReturnUrl = returnUrl
             };
 
             return View(model);
         }
+
+        // #Function EditSchedule POST#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -173,11 +186,42 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
 
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                TempData["ScheduleError"] = "Data tidak valid. Harap periksa kembali isian Anda.";
+                return PartialView("_EditScheduleModal", model);
+            }
 
             var s = await _context.Schedules
                 .FirstOrDefaultAsync(x => x.ScheduleId == model.ScheduleId && x.PsychologistId == psyId.Value);
             if (s == null) return NotFound();
+
+            if (model.Status == "Completed")
+            {
+                if (string.IsNullOrWhiteSpace(model.MeetingLink))
+                {
+                    TempData["ScheduleError"] = "Link Google Meet wajib diisi untuk menandai sesi sebagai selesai.";
+                    return PartialView("_EditScheduleModal", model);
+                }
+
+                if (model.ProofFile == null && string.IsNullOrWhiteSpace(s.ProofOfCompletionPath))
+                {
+                    TempData["ScheduleError"] = "Bukti penyelesaian wajib diunggah untuk menandai sesi sebagai selesai.";
+                    return PartialView("_EditScheduleModal", model);
+                }
+            }
+
+            if (model.ProofFile != null)
+            {
+                var uploadsFolder = System.IO.Path.Combine(_env.WebRootPath, "uploads", "proofs");
+                System.IO.Directory.CreateDirectory(uploadsFolder);
+                var uniqueName = Guid.NewGuid().ToString() + "_" + System.IO.Path.GetFileName(model.ProofFile.FileName);
+                var filePath = System.IO.Path.Combine(uploadsFolder, uniqueName);
+                using (var fs = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+                {
+                    await model.ProofFile.CopyToAsync(fs);
+                }
+                s.ProofOfCompletionPath = "/uploads/proofs/" + uniqueName;
+            }
 
             s.SessionStart = model.SessionStart;
             s.DurationMinutes = model.DurationMinutes;
@@ -186,9 +230,12 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             s.MeetingLink = string.IsNullOrWhiteSpace(model.MeetingLink) ? null : model.MeetingLink;
 
             await _context.SaveChangesAsync();
-            TempData["success"] = "Jadwal sesi berhasil diperbarui.";
-            return RedirectToAction(nameof(Scheduling));
+
+            TempData["ScheduleSuccess"] = "Jadwal sesi berhasil diperbarui.";
+            return PartialView("_EditScheduleModal", model);
         }
+
+        // #Function CancelSchedule#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -210,6 +257,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return RedirectToAction(nameof(Scheduling));
         }
+
+        // #Function MarkNoShow#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -235,6 +284,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return RedirectToAction(nameof(Scheduling));
         }
+
+        // #Function Scheduling#
 
         [HttpGet]
         public async Task<IActionResult> Scheduling(string filter = "Semua", bool add = false, int? patientId = null)
@@ -291,6 +342,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View("Scheduling");
         }
 
+        // #Function ScheduleHistory#
+
         [HttpGet]
         public async Task<IActionResult> ScheduleHistory()
         {
@@ -308,6 +361,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View();
         }
 
+        // #Function ScheduleDetailModal#
+
         [HttpGet]
         public async Task<IActionResult> ScheduleDetailModal(int id)
         {
@@ -323,6 +378,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return PartialView("_ScheduleDetailModal", schedule);
         }
+
+        // #Function EditScheduleModal#
 
         [HttpGet]
         public async Task<IActionResult> EditScheduleModal(int id)
@@ -348,6 +405,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             return PartialView("_EditScheduleModal", model);
         }
+
+        // #Function PatientScheduleHistory#
 
         [HttpGet]
         public async Task<IActionResult> PatientScheduleHistory(int id, bool add = false)

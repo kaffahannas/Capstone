@@ -5,6 +5,14 @@
     int totalCount = Model.Count();
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/approvals-cancellation-requests.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/approvals-approvals-tabs.css" asp-append-version="true" />
+}
+
+
+@* #Bagian PersetujuanPembatalan# *@
+@* #Komponen HeaderHalaman# *@
 <div class="adm-page-header apr-page-header">
     <h1>Manajemen Persetujuan</h1>
     <p class="adm-page-sub">Kelola persetujuan akun pengguna dan permintaan pemberhentian karyawan dari HR.</p>

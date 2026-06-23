@@ -1,4 +1,5 @@
-﻿/**
+﻿// #Bagian App Shell Global#
+/**
  * LightenUp — global responsive app shell (sidebar offcanvas ≤ 992px)
  */
 (function () {
@@ -6,6 +7,7 @@
 
     const BP = 992;
 
+    // #Function initAppShell#
     function initAppShell() {
         const shell = document.getElementById('appShell') || document.querySelector('.app-shell, .admin-shell');
         const sidebar = document.getElementById('appSidebar')
@@ -64,5 +66,26 @@
         document.addEventListener('DOMContentLoaded', initAppShell);
     } else {
         initAppShell();
+    }
+})();
+
+/* Portal modal overlays to <body> so position:fixed is not clipped by overflow:hidden ancestors */
+(function () {
+    'use strict';
+
+    function portalModalsToBody() {
+        document.querySelectorAll(
+            '.hrpf-modal-overlay, .prf-modal-overlay, .psy-modal-overlay, .modal-overlay'
+        ).forEach(function (el) {
+            if (el.parentElement !== document.body) {
+                document.body.appendChild(el);
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', portalModalsToBody);
+    } else {
+        portalModalsToBody();
     }
 })();

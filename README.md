@@ -1,6 +1,6 @@
 # LightenUp
 
-**LightenUp** is an ASP.NET Core 8 MVC platform for workplace mental-health support. It connects **patients**, **psychologists**, **HR managers**, and **platform administrators** in one system—with mood tracking, counseling schedules, worksheets, company analytics, subscriptions (Duitku), and a separate admin console.
+**LightenUp** is an ASP.NET Core 10 MVC platform for workplace mental-health support. It connects **patients**, **psychologists**, **HR managers**, and **platform administrators** in one system—with mood tracking, counseling schedules, worksheets, company analytics, subscriptions (Duitku), and a separate admin console.
 
 ## Features by role
 
@@ -15,7 +15,7 @@ Admin runs on a **separate host/port** in development so `/Admin/*` is not expos
 
 ## Tech stack
 
-- ASP.NET Core 8 MVC (Areas: Patient, Hr, Psychologist, Admin, AdminAuth)
+- ASP.NET Core 10 MVC (Areas: Patient, Hr, Psychologist, Admin, AdminAuth)
 - ASP.NET Core Identity + SQL Server (LocalDB by default)
 - Entity Framework Core migrations
 - Duitku payment gateway (mock mode for local dev)
@@ -23,7 +23,7 @@ Admin runs on a **separate host/port** in development so `/Admin/*` is not expos
 
 ## Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - SQL Server LocalDB (Windows) or update `ConnectionStrings:DefaultConnection` in `appsettings.json`
 - [EF Core CLI](https://learn.microsoft.com/en-us/ef/core/cli/dotnet): `dotnet tool install --global dotnet-ef`
 

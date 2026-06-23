@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 namespace LightenUp.Web.Models.ViewModels
 {
     // ─── HR site register form (no role picker) ───
+    // #Class HrRegisterFormViewModel#
     public class HrRegisterFormViewModel
     {
         [Required(ErrorMessage = "Nama HR wajib diisi")]
@@ -17,6 +18,7 @@ namespace LightenUp.Web.Models.ViewModels
 
     // ─── HR onboarding 3-step wizard ───
 
+    // #Class HrOnboardingProgress#
     public class HrOnboardingProgress
     {
         public int Current { get; set; }
@@ -25,6 +27,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 1: Photo
+    // #Class HrOnboardingPhotoViewModel#
     public class HrOnboardingPhotoViewModel
     {
         public IFormFile? Photo { get; set; }
@@ -32,6 +35,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 2: Academic
+    // #Class HrOnboardingAcademicViewModel#
     public class HrOnboardingAcademicViewModel
     {
         [Required(ErrorMessage = "Gelar terakhir wajib dipilih.")]
@@ -45,6 +49,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // Step 3: Register company (referral code is created after subscription payment)
+    // #Class HrOnboardingCompanyViewModel#
     public class HrOnboardingCompanyViewModel
     {
         public string? CompanyName { get; set; }

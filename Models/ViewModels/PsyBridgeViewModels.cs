@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace LightenUp.Web.Models.ViewModels
 {
     // ─── PsychologistRequest inbox ───
+    // #Class PsyRequestListItem#
     public class PsyRequestListItem
     {
         public int Id { get; set; }
@@ -21,17 +22,20 @@ namespace LightenUp.Web.Models.ViewModels
         public string? RespondedNote { get; set; }
     }
 
+    // #Class PsyRequestsViewModel#
     public class PsyRequestsViewModel
     {
         public string Tab { get; set; } = "Pending";
         public List<PsyRequestListItem> Items { get; set; } = new();
     }
 
+    // #Class PsyNavBadgesViewModel#
     public class PsyNavBadgesViewModel
     {
         public int Count { get; set; }
     }
 
+    // #Class PsyRespondViewModel#
     public class PsyRespondViewModel
     {
         public int Id { get; set; }
@@ -42,6 +46,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Worksheet review (psy approves a worksheet) ───
+    // #Class PsyWorksheetReviewViewModel#
     public class PsyWorksheetReviewViewModel
     {
         public int WorksheetId { get; set; }
@@ -57,6 +62,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Settings (AcceptsB2B toggle) ───
+    // #Class PsySettingsViewModel#
     public class PsySettingsViewModel
     {
         public bool AcceptsB2B { get; set; }

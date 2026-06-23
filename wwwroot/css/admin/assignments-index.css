@@ -1,0 +1,415 @@
+/* #Bagian Penugasan Index Admin# */
+.adm-empty-state-premium {
+    text-align: center;
+    padding: 64px 24px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    border: 1px dashed #D1D5DB;
+    margin-top: 16px;
+}
+
+.adm-empty-state-premium .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #9CA3AF;
+    display: inline-block;
+    background: #F3F4F6;
+    width: 96px;
+    height: 96px;
+    line-height: 96px;
+    border-radius: 50%;
+}
+
+.adm-empty-state-premium h3 {
+    margin: 0 0 8px;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.adm-empty-state-premium p {
+    margin: 0;
+    color: #6B7280;
+    font-size: 14px;
+}
+
+.asg-page-header {
+    margin-bottom: 24px;
+}
+
+.asg-page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px;
+}
+
+.asg-page-header .adm-page-sub {
+    color: #6B7280;
+    margin: 0;
+    font-size: 15px;
+}
+
+.asg-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    background: #fff;
+    padding: 12px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.asg-tab {
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.asg-tab--active {
+    background: #4338CA;
+    color: white;
+}
+
+.asg-tab--inactive {
+    background: #F3F4F6;
+    color: #4B5563;
+}
+
+.asg-tab-badge {
+    background: #EF4444;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-left: 6px;
+}
+
+.asg-alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+.asg-alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+.asg-request-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid #F3F4F6;
+}
+
+.asg-request-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.asg-patient-name {
+    font-size: 18px;
+    color: #111827;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.asg-patient-meta {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 12px;
+}
+
+.asg-company-tag {
+    background: #F3F4F6;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+    color: #374151;
+    margin-right: 8px;
+}
+
+.asg-reason-box {
+    background: #FFFBEB;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #FEF3C7;
+    color: #92400E;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.asg-reason-label {
+    font-weight: 600;
+}
+
+.asg-preference {
+    font-size: 14px;
+    margin: 0;
+    color: #4B5563;
+}
+
+.asg-preference strong {
+    color: #4338CA;
+}
+
+.asg-assign-grid {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 16px;
+    align-items: end;
+}
+
+.asg-field-label {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.asg-select {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+}
+
+.asg-select:focus {
+    border-color: #4338CA;
+    box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+}
+
+.asg-btn-assign {
+    background: #4338CA;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    height: 42px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(67, 56, 202, 0.3);
+}
+
+.asg-btn-assign:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.4);
+}
+
+.asg-btn-dismiss {
+    background: #F3F4F6;
+    color: #4B5563;
+    border: 1px solid #E5E7EB;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    height: 42px;
+    transition: all 0.2s;
+}
+
+.asg-btn-dismiss:hover {
+    background: #E5E7EB;
+}
+
+.asg-workload-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.asg-workload-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.asg-workload-thead {
+    background: #F9FAFB;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.asg-workload-th {
+    padding: 16px;
+    font-weight: 600;
+    color: #4B5563;
+    font-size: 13px;
+}
+
+.asg-workload-th--center {
+    text-align: center;
+}
+
+.asg-workload-tbody {
+    font-size: 14px;
+}
+
+.asg-workload-tr {
+    border-bottom: 1px solid #F3F4F6;
+    transition: background 0.2s;
+}
+
+.asg-workload-td {
+    padding: 16px;
+}
+
+.asg-workload-td--center {
+    text-align: center;
+    color: #374151;
+}
+
+.asg-psy-name {
+    color: #111827;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.asg-caseload-total {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.asg-badge-low {
+    background: #D1FAE5;
+    color: #065F46;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.asg-badge-high {
+    background: #FEE2E2;
+    color: #991B1B;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.asg-badge-normal {
+    background: #FEF3C7;
+    color: #92400E;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .asg-page-header {
+        margin-bottom: 14px;
+    }
+
+    .asg-page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .asg-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .asg-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .asg-tab {
+        flex-shrink: 0;
+        white-space: nowrap;
+        font-size: 12px;
+        padding: 7px 12px;
+    }
+
+    .asg-tab-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+        margin-left: 3px;
+    }
+
+    .asg-request-card {
+        padding: 16px;
+        margin-bottom: 14px;
+    }
+
+    .asg-request-header {
+        gap: 12px;
+        margin-bottom: 14px;
+        padding-bottom: 14px;
+    }
+
+    .asg-patient-name {
+        font-size: 16px;
+    }
+
+    .asg-assign-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .asg-btn-assign,
+    .asg-btn-dismiss {
+        width: 100%;
+        height: auto;
+        padding: 10px 16px;
+    }
+
+    .asg-workload-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .asg-workload-th,
+    .asg-workload-td {
+        padding: 12px;
+        font-size: 12px;
+    }
+
+    .adm-empty-state-premium {
+        padding: 40px 16px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .asg-tab {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}

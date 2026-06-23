@@ -3,8 +3,16 @@
     ViewData["Title"] = "Laporkan ke HR";
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/client-report-to-hr.css" asp-append-version="true" />
+}
+
+
+@* #Bagian LaporanHR# *@
+@* #Komponen TombolKembali# *@
 <a href="javascript:history.back()" class="back-link">← Kembali</a>
 
+@* #Komponen KartuPlaceholder# *@
 <div class="rth-card">
     <div class="rth-icon">📋</div>
     <h2 class="rth-title">Laporkan ke HR</h2>

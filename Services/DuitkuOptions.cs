@@ -1,5 +1,6 @@
 namespace LightenUp.Web.Services;
 
+// #Class DuitkuOptions#
 public class DuitkuOptions
 {
     public const string SectionName = "Duitku";

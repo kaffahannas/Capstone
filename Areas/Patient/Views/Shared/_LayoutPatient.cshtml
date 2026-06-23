@@ -6,6 +6,7 @@
     var fullName = user?.FullName ?? "Sahabat";
     var active = ViewBag.ActiveNav as string ?? "Beranda";
 }
+@* #Bagian Layout Pasien# *@
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -14,18 +15,25 @@
     <title>@ViewData["Title"] - LightenUp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/patient.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-ui.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-prf-modal.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
+    <link rel="stylesheet" href="~/css/patient/components-patient-mobile-text.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patient/components-patient-mobile-compact.css" asp-append-version="true" />
 </head>
-<body>
+<body class="patient-body">
     <div class="app-shell" id="appShell">
         <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
+        @* #Komponen Sidebar Navigasi# *@
         <aside class="app-sidebar" id="appSidebar" aria-label="Navigasi utama">
             <div class="sidebar-header">
                 <a class="brand" asp-controller="Dashboard" asp-action="Index">
-                    <img src="~/image/lightenuplogo.ico" alt="LightenUp" class="brand-logo" onerror="this.style.display='none'" />
+                    <img src="~/image/lightenuplogo.ico" alt="LightenUp" class="brand-logo" onerror="this.classList.add('is-hidden')" />
                     <span class="brand-name">LightenUp</span>
                 </a>
                 <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Tutup menu">&times;</button>
@@ -77,12 +85,16 @@
             </form>
         </aside>
 
+        @* #Komponen Area Konten Utama# *@
         <div class="app-main">
             <header class="app-topbar">
                 <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="appSidebar">
                     <span class="hamburger" aria-hidden="true"></span>
                 </button>
-                <h2 class="greeting">Hai, @fullName</h2>
+                @if (ViewData["Title"] != null)
+                {
+                    <div class="pat-topbar-title"><h1>@ViewData["Title"]</h1></div>
+                }
             </header>
 
             <div class="app-content lu-scroll-host">
@@ -91,8 +103,11 @@
         </div>
     </div>
 
+    @await RenderSectionAsync("Overlays", required: false)
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/patient/hrpf-modal.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

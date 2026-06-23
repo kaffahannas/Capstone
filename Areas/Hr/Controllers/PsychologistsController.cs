@@ -11,6 +11,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    // #Class PsychologistsController#
     [RequiresCompanySubscription]
     public class PsychologistsController : Controller
     {
@@ -35,7 +36,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  Directory — approved + AcceptsB2B
         // ═════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index()
         {
             var hr = await GetHrAsync();
@@ -78,6 +80,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return View(vm);
         }
 
+        // #Function Profile#
+
         [HttpGet]
         public async Task<IActionResult> Profile(int id)
         {
@@ -109,6 +113,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
                 HasPendingRequest = hasPending
             });
         }
+
+        // #Function RequestPartnership#
 
         [HttpPost]
         public async Task<IActionResult> RequestPartnership(int id)
@@ -153,6 +159,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // #Function RequestFromAdmin#
+
         [HttpPost]
         public async Task<IActionResult> RequestFromAdmin(string? notes)
         {
@@ -184,6 +192,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         }
 
         // ─── HR: melihat permintaan pembatalan dari psikolog (B2B) ───
+        // #Function PendingCancellations#
+        // #Bagian Lihat Permintaan#
         [HttpGet]
         public async Task<IActionResult> PendingCancellations()
         {
@@ -204,6 +214,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         }
 
         // ─── HR menyetujui pembatalan B2B partnership ───
+        // #Function ApproveCancellation#
+        // #Bagian Setujui Pembatalan#
         [HttpPost]
         public async Task<IActionResult> ApproveCancellation(int assignmentId)
         {
@@ -227,6 +239,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         }
 
         // ─── HR menolak pembatalan B2B partnership ───
+        // #Function RejectCancellation#
+        // #Bagian Tolak Pembatalan#
         [HttpPost]
         public async Task<IActionResult> RejectCancellation(int assignmentId)
         {

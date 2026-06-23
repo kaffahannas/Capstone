@@ -25,6 +25,14 @@
     };
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-history.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-detail-modal.css" asp-append-version="true" />
+}
+
+
+@* #Bagian RiwayatWorksheet# *@
+@* #Komponen TombolKembali# *@
 <a href="@backUrl" class="back-link">← Kembali ke @(string.IsNullOrEmpty(companyName) ? "Beranda" : "Detail Perusahaan")</a>
 
 <div class="dashboard-header wh-header">
@@ -82,7 +90,7 @@
     if (input) input.addEventListener('input', () => {
         const q = input.value.trim().toLowerCase();
         document.querySelectorAll('#wsList .history-card').forEach(c => {
-            c.style.display = c.dataset.search.includes(q) ? '' : 'none';
+            c.classList.toggle('is-hidden', !c.dataset.search.includes(q));
         });
     });
 </script>

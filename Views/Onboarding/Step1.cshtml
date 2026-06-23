@@ -5,6 +5,8 @@
     Layout = null;
 }
 
+@* #Bagian Onboarding Langkah 1# *@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -26,15 +28,14 @@
                 </svg>
             </a>
 
-            <!-- Logo Memanggil File Gambar .ico -->
-            <div class="onb-step-logo">
-                <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" class="onb-step-logo-img" onerror="this.style.display='none'" />
-                <span class="onb-step-logo-text">LightenUp</span>
-            </div>
+            @await Html.PartialAsync("_PsyOnboardingBrand")
+
+            <div class="onb-psy-progress-label">Langkah 1 dari 3</div>
 
             <h1 class="auth-title auth-title--step1">Langkah 1: Masukkan<br />Foto Diri</h1>
             
             <!-- Indikator Progres -->
+            @* #Komponen Progres Langkah 1# *@
             <div class="progress-container mt-3">
                 <div class="progress-bar progress-step-1"></div>
             </div>
@@ -43,9 +44,10 @@
                 Catatan: Pastikan foto yang dilampirkan adalah foto yang bersifat formal & terlihat profesional, untuk menjaga kredibilitas penyedia layanan psikologi.
             </p>
 
+            @* #Komponen Form Upload Foto# *@
             <form asp-action="Step1" method="post" enctype="multipart/form-data">
                 
-                <!-- Area Upload (Bisa di-klik atau Drag & Drop) -->
+                @* #Komponen Area Upload# *@
                 <label class="upload-area" id="uploadArea">
                     <svg class="upload-icon" id="uploadIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -54,7 +56,7 @@
                         <polyline points="9 15 12 12 15 15"></polyline>
                     </svg>
                     
-                    <img id="imagePreview" style="display: none; width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 4px solid var(--primary-purple);" />
+                    <img id="imagePreview" class="onb-step-preview" alt="" />
                     
                     <div class="upload-text" id="uploadText">
                         Upload file
@@ -127,8 +129,8 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         document.getElementById('imagePreview').src = e.target.result;
-                        document.getElementById('imagePreview').style.display = 'block';
-                        document.getElementById('uploadIcon').style.display = 'none';
+                        document.getElementById('imagePreview').classList.add('is-visible');
+                        document.getElementById('uploadIcon').classList.add('is-hidden');
                     };
                     reader.readAsDataURL(file);
                 }

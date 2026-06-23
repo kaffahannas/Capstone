@@ -2,6 +2,9 @@
     var activeTab = ViewBag.ActiveTab as string ?? "Index";
 }
 
+
+@* #Bagian TabPersetujuan# *@
+@* #Komponen NavigasiTab# *@
 <div class="adm-tabs">
     <a class="adm-tab @(activeTab == "Index" ? "active" : "")"
        asp-action="Index">

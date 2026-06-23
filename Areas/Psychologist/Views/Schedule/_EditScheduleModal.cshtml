@@ -1,8 +1,10 @@
-@model LightenUp.Web.Models.ViewModels.EditScheduleViewModel
+@model LightenUp.Web.Models.ViewModels.PsyScheduleEditViewModel
 @{
-    // This is loaded via AJAX into the #scheduleDetailModal container.
+    // Loaded via AJAX into the #scheduleDetailModal container.
 }
 
+
+@* #Bagian ModalEditJadwal# *@
 <div class="modal-container sem-modal">
     <div class="modal-header sem-header">
         <h2 class="modal-title sem-title">
@@ -12,32 +14,56 @@
         <button type="button" class="close-btn" onclick="closeScheduleDetailModal()">&times;</button>
     </div>
 
-    <form asp-action="EditSchedule" asp-area="Psychologist" asp-controller="Schedule" method="post" autocomplete="off">
+        @* #Komponen FormJadwal# *@
+        <form id="editScheduleForm" asp-action="EditSchedule" asp-area="Psychologist" asp-controller="Schedule" method="post" autocomplete="off" enctype="multipart/form-data" onsubmit="submitEditScheduleForm(event)">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="ScheduleId" />
+        <input type="hidden" asp-for="PatientName" />
+        <input type="hidden" asp-for="ReturnUrl" />
 
         <div class="sem-body">
-            <p class="sem-intro">Ubah detail waktu atau catatan untuk sesi ini.</p>
+            @if (TempData["ScheduleSuccess"] != null)
+            {
+                <div class="toast-success" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["ScheduleSuccess"]</div>
+            }
+            @if (TempData["ScheduleError"] != null)
+            {
+                <div class="toast-error" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["ScheduleError"]</div>
+            }
+            <p class="sem-intro">Ubah detail waktu atau catatan untuk sesi <strong>@Model.PatientName</strong>.</p>
 
             <div asp-validation-summary="ModelOnly" class="sem-validation"></div>
 
             <div class="sem-grid">
                 <div>
-                    <label asp-for="SessionDate" class="sem-label">Tanggal</label>
-                    <input asp-for="SessionDate" type="date" class="sem-input" />
-                    <span asp-validation-for="SessionDate" class="sem-field-error"></span>
+                    <label asp-for="SessionStart" class="sem-label">Waktu Mulai</label>
+                    <input asp-for="SessionStart" type="datetime-local" class="sem-input" />
+                    <span asp-validation-for="SessionStart" class="sem-field-error"></span>
                 </div>
                 <div>
-                    <label asp-for="SessionTime" class="sem-label">Jam</label>
-                    <input asp-for="SessionTime" type="time" class="sem-input" />
-                    <span asp-validation-for="SessionTime" class="sem-field-error"></span>
+                    <label asp-for="DurationMinutes" class="sem-label">Durasi (menit)</label>
+                    <input asp-for="DurationMinutes" type="number" min="15" max="240" class="sem-input" />
+                    <span asp-validation-for="DurationMinutes" class="sem-field-error"></span>
                 </div>
             </div>
 
             <div class="sem-field">
-                <label asp-for="DurationMinutes" class="sem-label">Durasi (menit)</label>
-                <input asp-for="DurationMinutes" type="number" min="15" max="240" class="sem-input" />
-                <span asp-validation-for="DurationMinutes" class="sem-field-error"></span>
+                <label asp-for="Status" class="sem-label">Status Sesi</label>
+                <select asp-for="Status" class="sem-input" id="editScheduleStatusSelect" onchange="toggleProofUpload(this.value)">
+                    <option value="Scheduled">Akan Datang</option>
+                    <option value="Completed">Selesai</option>
+                    <option value="Cancelled">Dibatalkan</option>
+                </select>
+            </div>
+
+            <div class="sem-field" id="proofUploadContainer" style="display: @(Model.Status == "Completed" ? "block" : "none");">
+                <label asp-for="ProofFile" class="sem-label">Bukti Penyelesaian (Wajib untuk Status Selesai)</label>
+                <input asp-for="ProofFile" type="file" class="sem-input" accept="image/*,application/pdf" />
+                <span asp-validation-for="ProofFile" class="sem-field-error"></span>
+                @if (!string.IsNullOrEmpty(Model.ExistingProofPath))
+                {
+                    <p class="sem-intro" style="margin-top: 8px; font-size: 12px;">Sudah ada bukti yang diunggah.</p>
+                }
             </div>
 
             <div class="sem-field">
@@ -61,3 +87,4 @@
         </div>
     </form>
 </div>
+

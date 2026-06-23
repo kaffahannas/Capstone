@@ -1,111 +1,162 @@
 @model LightenUp.Web.Models.ViewModels.HrOnboardingCompanyViewModel
 @{
-    ViewData["Title"] = "Data Perusahaan";
+    ViewData["Title"] = "Langkah 3";
+    Layout = null;
     var existingDoc = ViewBag.ExistingSupportDocumentUrl as string;
 }
+@* #Bagian OnboardingPerusahaan# *@
 
-<h1 class="onb-title">Langkah 3: Data Perusahaan</h1>
-<p class="onb-subtitle">Daftarkan perusahaan Anda. Kode referral untuk karyawan akan dibuat otomatis setelah langganan perusahaan aktif.</p>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
 
-<form asp-action="Company" method="post" enctype="multipart/form-data" class="onb-content">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="auth-wrapper">
+        <div class="auth-container register-card">
 
-    <div style="margin-bottom: 14px;">
-        <label asp-for="CompanyAddress" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Lokasi Perusahaan</label>
-        <textarea asp-for="CompanyAddress" rows="2" class="onb-textarea" placeholder="Jl. Ki Hajar Dewantara, Kota Jababeka, Cikarang Baru, Bekasi"></textarea>
-        <span asp-validation-for="CompanyAddress" class="text-danger"></span>
-    </div>
+            <a asp-action="Academic" class="back-button" title="Kembali">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#1f2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
 
-    <div style="margin-bottom: 14px;">
-        <label asp-for="CompanyName" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nama Perusahaan</label>
-        <input asp-for="CompanyName" class="onb-input" placeholder="PT. ABDI JAYA" />
-        <span asp-validation-for="CompanyName" class="text-danger"></span>
-    </div>
+            @await Html.PartialAsync("_OnboardingBrand")
 
-    <div style="margin-bottom: 14px;">
-        <label asp-for="RegistrationNumber" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Nomor Perusahaan</label>
-        <input asp-for="RegistrationNumber" class="onb-input" placeholder="20171274-2020-02-1002" />
-    </div>
+            <div class="onb-psy-progress-label">Langkah 3 dari 3</div>
 
-    <div class="onb-upload-block">
-        <label style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Scan Dokumen Pendukung</label>
-        @if (!string.IsNullOrEmpty(existingDoc))
-        {
-            <div class="onb-upload-preview" id="existingSupportPreview">
-                @if (existingDoc.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
-                {
-                    <a href="@existingDoc" target="_blank" rel="noopener" class="onb-file-link">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:-3px; margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        Dokumen tersimpan (PDF) &mdash; lihat
-                    </a>
-                }
-                else
-                {
-                    <img src="@existingDoc" alt="Dokumen pendukung" class="onb-upload-thumb" />
-                }
-                <p class="onb-upload-hint">File sudah diunggah. Pilih file baru untuk mengganti.</p>
+            <h1 class="auth-title auth-title--step3">Langkah 3: Data<br />Perusahaan</h1>
+
+            <div class="progress-container progress-container--step3">
+                <div class="progress-bar progress-bar--step3"></div>
             </div>
-        }
-        <label class="upload-area" id="uploadArea">
-            <svg class="upload-icon" id="uploadIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                <polyline points="13 2 13 9 20 9"></polyline>
-            </svg>
-            
-            <div class="upload-text" id="uploadText">Upload file</div>
-            <div class="upload-subtext" id="uploadSubtext">Format JPG/PDF, maksimal 5 MB</div>
 
-            <input asp-for="SupportDocument" type="file" accept="image/*,.pdf" class="file-input-hidden" id="fileInput" />
-        </label>
+            <p class="onb-step-note">
+                Daftarkan perusahaan Anda. Kode referral untuk karyawan akan dibuat otomatis setelah langganan perusahaan aktif.
+            </p>
+
+            <form asp-action="Company" method="post" enctype="multipart/form-data">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="CompanyAddress" class="form-label">Lokasi Perusahaan</label>
+                    <textarea asp-for="CompanyAddress" class="form-control-custom form-textarea-no-resize" rows="2" placeholder="Jl. Ki Hajar Dewantara, Kota Jababeka..."></textarea>
+                    <span asp-validation-for="CompanyAddress" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CompanyName" class="form-label">Nama Perusahaan</label>
+                    <input asp-for="CompanyName" class="form-control-custom" placeholder="Contoh: PT. ABDI JAYA" />
+                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="RegistrationNumber" class="form-label">Nomor Perusahaan</label>
+                    <input asp-for="RegistrationNumber" class="form-control-custom" placeholder="20171274-2020-02-1002" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(existingDoc))
+                {
+                    <p class="onb-existing-doc-hint">Dokumen sudah diunggah. Pilih file baru untuk mengganti.</p>
+                }
+
+                <div class="onb-doc-label-wrap--step3">
+                    <label class="form-label">Scan Dokumen Pendukung</label>
+                </div>
+
+                <label class="upload-area upload-area--step3" id="uploadArea">
+                    <svg id="uploadIcon" class="upload-icon--step3 upload-icon--default" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg>
+
+                    <div class="upload-text" id="uploadText">Upload file</div>
+                    <div class="upload-subtext" id="uploadSubtext">Format JPG/PDF, maksimal 5 MB</div>
+
+                    <input asp-for="SupportDocument" type="file" accept="image/jpeg, image/png, application/pdf" class="file-input-hidden" id="fileInput" />
+                </label>
+
+                <div class="validation-center-wrap">
+                    <span asp-validation-for="SupportDocument" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Department" class="form-label">Divisi yang Anda kelola</label>
+                    <input asp-for="Department" class="form-control-custom" placeholder="HR &amp; GA" />
+                    <span asp-validation-for="Department" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-submit">Simpan dan Lanjutnya</button>
+            </form>
+
+        </div>
     </div>
 
-    <div style="margin-top: 16px;">
-        <label asp-for="Department" style="display:block; font-size:13px; color:#6B7280; margin-bottom:6px;">Divisi yang Anda kelola</label>
-        <input asp-for="Department" class="onb-input" placeholder="HR & GA" />
-        <span asp-validation-for="Department" class="text-danger"></span>
-    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
-    <div class="onb-footer">
-        <a asp-action="Academic" class="onb-btn onb-btn-secondary">Sebelumnya</a>
-        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutkan</button>
-    </div>
-</form>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
+    <script>
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const uploadIcon = document.getElementById('uploadIcon');
         const uploadText = document.getElementById('uploadText');
         const uploadSubtext = document.getElementById('uploadSubtext');
 
-        if (!uploadArea) return;
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
 
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => { uploadArea.addEventListener(eventName, preventDefaults, false); });
         function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
 
-        ['dragenter', 'dragover'].forEach(eventName => { uploadArea.addEventListener(eventName, () => {
-            uploadArea.classList.add('dragover');
-        }, false); });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('upload-area--drag');
+                uploadIcon.classList.remove('upload-icon--default');
+                uploadIcon.classList.add('upload-icon--purple');
+            }, false);
+        });
 
-        ['dragleave', 'drop'].forEach(eventName => { uploadArea.addEventListener(eventName, () => {
-            uploadArea.classList.remove('dragover');
-        }, false); });
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                if (!uploadArea.classList.contains('has-file')) {
+                    uploadArea.classList.remove('upload-area--drag');
+                    uploadIcon.classList.remove('upload-icon--purple');
+                    uploadIcon.classList.add('upload-icon--default');
+                }
+            }, false);
+        });
 
-        uploadArea.addEventListener('drop', function(e) {
-            let dt = e.dataTransfer; let files = dt.files;
-            if (files.length > 0) { fileInput.files = files; updateUI(files[0].name); }
+        uploadArea.addEventListener('drop', function (e) {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateUI(files[0].name);
+            }
         }, false);
 
-        fileInput.addEventListener('change', function(e) {
-            if (e.target.files.length > 0) updateUI(e.target.files[0].name);
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                updateUI(e.target.files[0].name);
+            }
         });
 
         function updateUI(fileName) {
             uploadText.textContent = fileName;
             uploadText.classList.add('upload-text--success');
             uploadSubtext.textContent = 'Dokumen siap diunggah';
-            uploadArea.classList.add('has-file');
+            uploadArea.classList.add('has-file', 'upload-area--has-file');
+            uploadArea.classList.remove('upload-area--drag');
+            uploadIcon.classList.remove('upload-icon--default', 'upload-icon--purple');
+            uploadIcon.classList.add('upload-icon--success');
         }
-    });
-</script>
+    </script>
+</body>
+</html>

@@ -8,6 +8,13 @@
     var payouts = ViewBag.Payouts as List<LightenUp.Web.Models.MonthlyPayout>;
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/payroll-transfer.css" asp-append-version="true" />
+}
+
+
+@* #Bagian TransferPayroll# *@
+@* #Komponen TombolKembali# *@
 <a class="adm-back-link" asp-action="Index">← Kembali ke Daftar Payroll</a>
 
 <div class="adm-page-header">
@@ -98,7 +105,21 @@
                                     <tr class="pay-breakdown-tr">
                                         <td class="pay-breakdown-td pay-breakdown-td--name">@b.PatientName</td>
                                         <td class="pay-breakdown-td pay-breakdown-td--right">@(((decimal)b.SlotValue).ToString("C0", new System.Globalization.CultureInfo("id-ID")))</td>
-                                        <td class="pay-breakdown-td pay-breakdown-td--center">@b.Sessions <span class="pay-breakdown-sessions-muted">dari @b.MaxSessions</span></td>
+                                        <td class="pay-breakdown-td pay-breakdown-td--center">
+                                            @b.Sessions <span class="pay-breakdown-sessions-muted">dari @b.MaxSessions</span>
+                                            @if (b.Schedules != null)
+                                            {
+                                                <div style="margin-top: 8px; text-align: left; display: flex; flex-direction: column; gap: 4px; align-items: center;">
+                                                    @foreach (var sched in (IEnumerable<LightenUp.Web.Models.Schedule>)b.Schedules)
+                                                    {
+                                                        if (!string.IsNullOrEmpty(sched.ProofOfCompletionPath))
+                                                        {
+                                                            <a href="@sched.ProofOfCompletionPath" target="_blank" style="font-size: 11px; background: #EEF2FF; color: #4338CA; padding: 2px 8px; border-radius: 4px; text-decoration: none; border: 1px solid #C7D2FE;">📄 Sesi @sched.SessionStart.ToString("dd/MM")</a>
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                        </td>
                                         <td class="pay-breakdown-td pay-breakdown-td--right">@perSessionValue.ToString("C0", new System.Globalization.CultureInfo("id-ID"))</td>
                                         <td class="pay-breakdown-td pay-breakdown-td--earning">
                                             @(((decimal)b.Earning).ToString("C0", new System.Globalization.CultureInfo("id-ID"))) 
@@ -119,6 +140,7 @@
             </div>
 
             <!-- Upload Action -->
+            @* #Komponen FormTransfer# *@
             <form asp-action="UploadPayoutProof" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="psychologistId" value="@Model.PsychologistId" />

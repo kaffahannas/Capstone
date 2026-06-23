@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace LightenUp.Web.Models.ViewModels
 {
     // Shared across all mood tracker steps. Hidden fields carry data forward.
+    // #Class MoodTrackerSessionViewModel#
     public class MoodTrackerSessionViewModel
     {
         [Required(ErrorMessage = "Pilih perasaan kamu.")]
@@ -34,6 +35,7 @@ namespace LightenUp.Web.Models.ViewModels
         };
     }
 
+    // #Class MoodOptions#
     public static class MoodOptions
     {
         public static readonly (string Value, string Label, string Emoji)[] Feelings = new[]
@@ -66,8 +68,59 @@ namespace LightenUp.Web.Models.ViewModels
                 if (t.Value == value) return t.Label;
             return value;
         }
+
+        /// <summary>Parse stored trigger CSV; normalize labels to keys and trim.</summary>
+        public static IEnumerable<string> ParseStoredTriggers(string? triggersCsv)
+        {
+            if (string.IsNullOrWhiteSpace(triggersCsv)) yield break;
+
+            foreach (var raw in triggersCsv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                var key = NormalizeTriggerKey(raw);
+                if (!string.IsNullOrEmpty(key))
+                    yield return key;
+            }
+        }
+
+        public static string NormalizeTriggerKey(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
+
+            foreach (var t in Triggers)
+            {
+                if (string.Equals(t.Value, raw, StringComparison.OrdinalIgnoreCase))
+                    return t.Value;
+                if (string.Equals(t.Label, raw, StringComparison.OrdinalIgnoreCase))
+                    return t.Value;
+            }
+
+            return raw.Trim();
+        }
+
+        public static List<string> SanitizeTriggerList(IEnumerable<string>? triggers, string? customTrigger = null)
+        {
+            var raw = new List<string>();
+            if (triggers != null)
+            {
+                foreach (var t in triggers)
+                {
+                    if (!string.IsNullOrWhiteSpace(t))
+                        raw.Add(t.Trim());
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(customTrigger))
+                raw.Add(customTrigger.Trim());
+
+            return ParseStoredTriggers(string.Join(",", raw))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        public static string SerializeTriggers(IEnumerable<string>? triggers, string? customTrigger = null)
+            => string.Join(",", SanitizeTriggerList(triggers, customTrigger));
     }
 
+    // #Class MoodQuestions#
     public static class MoodQuestions
     {
         public static readonly (string Field, string Question, string Hint)[] All = new[]

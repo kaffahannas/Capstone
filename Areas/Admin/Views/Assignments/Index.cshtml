@@ -7,11 +7,19 @@
     var idCulture = new System.Globalization.CultureInfo("id-ID");
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/assignments-index.css" asp-append-version="true" />
+}
+
+
+@* #Bagian PenugasanPsikolog# *@
+@* #Komponen HeaderHalaman# *@
 <div class="adm-page-header asg-page-header">
     <h1>Penugasan Psikolog</h1>
     <p class="adm-page-sub">Kelola permintaan pasien yang belum mendapatkan psikolog dan pantau distribusi beban kerja psikolog.</p>
 </div>
 
+@* #Komponen NavigasiTab# *@
 <div class="adm-tabs">
 
     <a class="adm-tab @(Model.Tab == "b2b" ? "active" : "")"

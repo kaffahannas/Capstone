@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class HrProfileViewModel#
     public class HrProfileViewModel
     {
         // ── Personal ──────────────────────────────
@@ -34,6 +35,7 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime? ActiveUntil { get; set; }
     }
 
+    // #Class HrProfileEditViewModel#
     public class HrProfileEditViewModel
     {
         [Required(ErrorMessage = "Nama lengkap wajib diisi.")]

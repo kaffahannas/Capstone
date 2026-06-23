@@ -1,38 +1,139 @@
 @model LightenUp.Web.Models.ViewModels.HrOnboardingPhotoViewModel
 @{
-    ViewData["Title"] = "Foto Diri";
+    ViewData["Title"] = "Langkah 1";
+    Layout = null;
     var existingPhoto = ViewBag.ExistingPhotoUrl as string;
 }
+@* #Bagian OnboardingFoto# *@
 
-<h1 class="onb-title">Langkah 1: Masukkan Foto Diri</h1>
-<p class="onb-subtitle">Pastikan foto yang dilampirkan adalah foto yang bersifat formal &amp; terlihat professional, untuk menjaga kredibilitas penyedia layanan psikologi.</p>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
 
-<form asp-action="Photo" method="post" enctype="multipart/form-data" class="onb-content">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="auth-wrapper">
+        <div class="auth-container register-card">
 
-    <div class="onb-upload-block">
-        @if (!string.IsNullOrEmpty(existingPhoto))
-        {
-            <div class="onb-upload-preview" id="existingPhotoPreview">
-                <img src="@existingPhoto" alt="Foto profil" class="onb-upload-thumb onb-upload-thumb-round" />
-                <p class="onb-upload-hint">Foto sudah diunggah. Pilih file baru untuk mengganti.</p>
+            <a asp-action="Welcome" class="back-button" title="Kembali">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+
+            @await Html.PartialAsync("_OnboardingBrand")
+
+            <div class="onb-psy-progress-label">Langkah 1 dari 3</div>
+
+            <h1 class="auth-title auth-title--step1">Langkah 1: Masukkan<br />Foto Diri</h1>
+
+            @* #Komponen Progres Langkah 1# *@
+            <div class="progress-container mt-3">
+                <div class="progress-bar progress-step-1"></div>
             </div>
+
+            <p class="onb-step-note">
+                Catatan: Pastikan foto yang dilampirkan adalah foto yang bersifat formal &amp; terlihat profesional, untuk menjaga kredibilitas penyedia layanan psikologi.
+            </p>
+
+            @if (!string.IsNullOrEmpty(existingPhoto))
+            {
+                <div class="onb-existing-hint">
+                    <img src="@existingPhoto" alt="Foto profil" class="onb-step-preview is-visible" />
+                    <p>Foto sudah diunggah. Pilih file baru untuk mengganti.</p>
+                </div>
+            }
+
+            @* #Komponen Form Upload Foto# *@
+            <form asp-action="Photo" method="post" enctype="multipart/form-data">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger validation-center"></div>
+
+                <label class="upload-area" id="uploadArea">
+                    <svg class="upload-icon" id="uploadIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <polyline points="9 15 12 12 15 15"></polyline>
+                    </svg>
+
+                    <img id="imagePreview" class="onb-step-preview" alt="" />
+
+                    <div class="upload-text" id="uploadText">Upload file</div>
+                    <div class="upload-subtext" id="uploadSubtext">Format JPG/PNG, maksimal 2MB</div>
+
+                    <input asp-for="Photo" type="file" accept="image/jpeg, image/png" class="file-input-hidden" id="fileInput" />
+                </label>
+
+                <span asp-validation-for="Photo" class="text-danger mb-3 validation-center"></span>
+
+                <button type="submit" class="btn-submit btn-submit--step1">Simpan dan Lanjutnya</button>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
-        <label class="onb-upload-zone">
-            <input type="file" asp-for="Photo" accept="image/*" class="onb-upload-input" data-preview="photoPreview" />
-            <div class="onb-upload-placeholder">
-                <span class="onb-upload-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                </span>
-                <strong>Upload foto</strong>
-                <small>Format JPG, maksimal 2MB</small>
-            </div>
-            <div id="photoPreview" class="onb-upload-preview onb-upload-preview-new" hidden></div>
-        </label>
-        <span asp-validation-for="Photo" class="text-danger"></span>
-    </div>
 
-    <div class="onb-footer">
-        <button type="submit" class="onb-btn onb-btn-primary">Simpan dan Lanjutkan</button>
-    </div>
-</form>
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+        });
+
+        uploadArea.addEventListener('drop', function (e) {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateUI(files[0]);
+            }
+        }, false);
+
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                updateUI(e.target.files[0]);
+            }
+        });
+
+        function updateUI(file) {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreview').classList.add('is-visible');
+                    document.getElementById('uploadIcon').classList.add('is-hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            document.getElementById('uploadText').textContent = file.name;
+            document.getElementById('uploadText').classList.add('upload-text--success');
+            document.getElementById('uploadSubtext').textContent = 'Foto siap diunggah';
+            uploadArea.classList.add('has-file');
+        }
+    </script>
+</body>
+</html>

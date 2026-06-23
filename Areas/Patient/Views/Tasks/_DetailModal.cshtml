@@ -1,9 +1,10 @@
 @model LightenUp.Web.Models.ViewModels.TaskDetailViewModel
-@using LightenUp.Web.Models.ViewModels
+@* #Bagian Modal Detail Tugas# *@
 
 @{
     var indoDeadline = Model.Deadline.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("id-ID"));
 }
+@* #Komponen Modal Detail Tugas# *@
 
 <div class="hrpf-modal-head">
     <div class="hrpf-modal-title">@Model.TaskName</div>
@@ -17,9 +18,9 @@
     }
 
     <div class="task-summary-card">
-        <h2 class="tsk-modal-summary-title">@Model.TaskName</h2>
-        <p class="tsk-modal-summary-desc">@Model.Description</p>
-        <div class="tsk-modal-summary-meta">
+        <h2 class="task-summary-title">@Model.TaskName</h2>
+        <p class="task-summary-desc">@Model.Description</p>
+        <div class="task-summary-meta">
             Status: <strong class="@WorksheetStatus.CssClass(Model.Status)">@Model.StatusLabel</strong>
             &middot; Deadline: <strong>@indoDeadline</strong>
             &middot; Oleh: <strong>@Model.PsychologistName</strong>
@@ -65,18 +66,18 @@
                 else
                 {
                     <div class="placeholder" id="placeholder">
-                        <div class="tsk-modal-upload-ico">📷</div>
+                        <div class="task-upload-icon">📷</div>
                         <p>Klik untuk memilih foto<br/><small>JPG, PNG, WEBP, GIF — max 20MB</small></p>
                     </div>
-                    <img id="preview" class="tsk-modal-preview-hidden" alt="Foto" />
+                    <img id="preview" class="task-preview-hidden" alt="Foto" />
                 }
             </label>
 
-            <h3 class="tsk-modal-note-heading">Deskripsikan Perasaanmu</h3>
-            <textarea name="Note" class="mood-textarea tsk-modal-textarea" placeholder="Ceritakan bagaimana perasaanmu setelah mengerjakan tugas ini...">@Model.Note</textarea>
+            <h3 class="task-note-heading">Deskripsikan Perasaanmu</h3>
+            <textarea name="Note" class="mood-textarea" placeholder="Ceritakan bagaimana perasaanmu setelah mengerjakan tugas ini...">@Model.Note</textarea>
 
-            <div class="tsk-modal-submit-wrap">
-                <button type="submit" class="btn-primary tsk-modal-submit-btn">Simpan</button>
+            <div class="task-submit-actions">
+                <button type="submit" class="btn-primary task-submit-btn">Simpan</button>
             </div>
         </form>
     }
@@ -91,10 +92,9 @@
             const url = URL.createObjectURL(file);
             const img = document.getElementById('preview');
             img.src = url;
-            img.style.display = '';
-            img.classList.remove('tsk-modal-preview-hidden');
+            img.classList.remove('task-preview-hidden', 'tsk-modal-preview-hidden');
             const ph = document.getElementById('placeholder');
-            if (ph) ph.style.display = 'none';
+            if (ph) ph.classList.add('task-preview-hidden', 'tsk-modal-preview-hidden');
         });
     }
 </script>

@@ -15,7 +15,13 @@
     <div class="adm-alert success">✅ @ok</div>
 }
 
-<div class="lu-page pay-page">
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/payroll-index.css" asp-append-version="true" />
+}
+
+
+@* #Bagian PayrollPsikolog# *@
+<div class="pay-index-wrap">
 <div class="adm-page-header">
     <h1>Payroll Psikolog</h1>
     <p class="adm-page-sub">
@@ -24,7 +30,7 @@
     </p>
 </div>
 
-@* KPI summary strip *@
+@* #Komponen KartuKPI# *@
 <div class="pay-kpi-grid">
     <div class="pay-kpi-card">
         <p class="pay-kpi-label">Total Psikolog</p>
@@ -40,7 +46,13 @@
     </div>
 </div>
 
-<div class="adm-table-wrap lu-list-scroll">
+<div class="pay-note">
+    <strong>ℹ️ Catatan:</strong>
+    Bayaran aktual ditransfer setelah bulan berakhir. Proyeksi di atas berdasarkan sesi yang telah berstatus <em>Completed</em> dalam bulan berjalan.
+    Biaya langganan diambil dari subscription aktif pasien/perusahaan dan payment terkait.
+</div>
+
+<div class="adm-table-wrap">
     <table class="adm-table">
         <thead>
             <tr>
@@ -93,7 +105,7 @@
                 </td>
                 <td class="pay-td-right">
                     <div class="pay-action-row">
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="openSettingsModal(@r.PsychologistId, '@r.FullName', @r.DefaultPsychologistPercentage)">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="openSettingsModal(@r.PsychologistId, '@r.FullName', @r.DefaultPsychologistPercentage.ToString("G", System.Globalization.CultureInfo.InvariantCulture))">
                             Pengaturan
                         </button>
                         <a asp-action="Transfer" asp-route-id="@r.PsychologistId" class="btn btn-sm btn-primary pay-btn-transfer">
@@ -107,11 +119,6 @@
     </table>
 </div>
 
-<div class="pay-note">
-    <strong>ℹ️ Catatan:</strong>
-    Bayaran aktual ditransfer setelah bulan berakhir. Proyeksi di atas berdasarkan sesi yang telah berstatus <em>Completed</em> dalam bulan berjalan.
-    Biaya langganan diambil dari subscription aktif pasien/perusahaan dan payment terkait.
-</div>
 </div>
 
 <dialog id="settingsModal" class="pay-settings-modal" oncancel="closeSettingsModal()">

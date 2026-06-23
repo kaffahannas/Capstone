@@ -1,0 +1,109 @@
+/* #Bagian Shell Onboarding# */
+/* Onboarding shell — body, wrapper, topbar, progress */
+* { box-sizing: border-box; }
+
+/* #Bagian Animated Gradient Background# */
+/* Animated Gradient Background */
+@keyframes gradientBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--lu-text);
+    min-height: 100vh;
+    /* #Bagian Soft Premium Animated Gradient# */
+    /* Soft, premium animated gradient */
+    background: linear-gradient(-45deg, #EEF2FF, #E0E7FF, #F3E8FF, #F8FAFC);
+    background-size: 400% 400%;
+    animation: gradientBg 15s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* #Bagian Glassmorphism Container# */
+/* Glassmorphism Container */
+.onb-wrapper {
+    width: 100%;
+    max-width: 540px;
+    min-height: 580px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 32px 36px 40px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    position: relative;
+    overflow: hidden;
+}
+
+/* #Bagian Top Bar Data Pribadi + X Close# */
+/* ───── Top bar: "Data Pribadi" + X close ───── */
+.onb-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--lu-text);
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+.onb-topbar .close-btn {
+    background: rgba(0, 0, 0, 0.04);
+    border: none;
+    cursor: pointer;
+    color: var(--lu-text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.onb-topbar .close-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--lu-error);
+    transform: rotate(90deg);
+}
+
+/* #Komponen Progress Bar# */
+/* ───── Progress bar ───── */
+.onb-progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+}
+.onb-progress-bar {
+    height: 100%;
+    width: var(--bar-w, 0%);
+    background: linear-gradient(90deg, #8B5CF6, #6D28D9);
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+.onb-progress-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lu-primary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}

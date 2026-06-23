@@ -5,6 +5,8 @@
     Layout = null;
 }
 
+@* #Bagian Onboarding Langkah 3# *@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -26,11 +28,9 @@
                 </svg>
             </a>
 
-            <!-- Logo -->
-            <div class="onb-step-logo">
-                <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" class="onb-step-logo-img" onerror="this.style.display='none'" />
-                <span class="onb-step-logo-text">LightenUp</span>
-            </div>
+            @await Html.PartialAsync("_PsyOnboardingBrand")
+
+            <div class="onb-psy-progress-label">Langkah 3 dari 3</div>
 
             <h1 class="auth-title auth-title--step3">Langkah 3: Status<br />Praktek</h1>
             
@@ -43,6 +43,7 @@
                 Silakan masukkan informasi pendukung keabsahan praktek psikologi Anda.
             </p>
 
+            @* #Komponen Form Praktek# *@
             <form asp-action="Step3" method="post" enctype="multipart/form-data">
                 
                 <div class="form-group">
@@ -67,7 +68,7 @@
                     <label class="form-label">Scan Dokumen Pendukung</label>
                 </div>
 
-                <!-- Area Upload Dokumen -->
+                @* #Komponen Upload STR# *@
                 <label class="upload-area upload-area--step3" id="uploadArea">
                     <svg id="uploadIcon" class="upload-icon--step3 upload-icon--default" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>

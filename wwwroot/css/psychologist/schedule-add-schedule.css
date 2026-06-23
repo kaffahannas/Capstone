@@ -1,0 +1,95 @@
+/* #Bagian Tambah Jadwal Psikolog# */
+.as-header {
+    margin-bottom: 20px;
+}
+
+.as-card {
+    max-width: 560px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.as-validation {
+    color: #B91C1C;
+    margin-bottom: 12px;
+}
+
+.as-field {
+    margin-bottom: 16px;
+}
+
+.as-input {
+    padding: 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.as-input--textarea {
+    font-family: inherit;
+}
+
+.as-datetime-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.as-label-block {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: var(--lu-text);
+}
+
+.as-field-error {
+    color: #B91C1C;
+    font-size: 12px;
+}
+
+.as-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.as-btn-cancel {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid var(--primary-purple);
+    color: var(--primary-purple);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.as-btn-submit {
+    flex: 1;
+    padding: 12px;
+    background: var(--primary-purple);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* #Bagian Responsif Mobile# */
+@media (max-width: 767.98px) {
+    .as-card {
+        max-width: 100%;
+        padding: 16px;
+    }
+
+    .as-datetime-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .as-actions {
+        flex-direction: column;
+    }
+}

@@ -17,6 +17,9 @@
     };
 }
 
+
+@* #Bagian ModalDetailWorksheet# *@
+@* #Komponen HeaderModal# *@
 <div class="modal-container wdm-modal">
     <div class="modal-header wdm-header">
         <h2 class="modal-title wdm-title">Tinjau Worksheet</h2>
@@ -24,6 +27,14 @@
     </div>
 
     <div class="wdm-body">
+        @if (TempData["WorksheetSuccess"] != null)
+        {
+            <div class="toast-success" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["WorksheetSuccess"]</div>
+        }
+        @if (TempData["WorksheetError"] != null)
+        {
+            <div class="toast-error" style="position: relative; margin-bottom: 15px; border-radius: 8px;">@TempData["WorksheetError"]</div>
+        }
         <div class="wdm-top">
             <div class="wdm-patient-row">
                 <div class="wdm-avatar">
@@ -41,6 +52,12 @@
             <div class="wdm-field">
                 <div class="wdm-field-label">Nama Tugas</div>
                 <div class="wdm-field-val">@Model.TaskName</div>
+            </div>
+            <div class="wdm-field">
+                <div class="wdm-field-label">Catatan Pasien</div>
+                <div class="wdm-note-box">
+                    @(string.IsNullOrEmpty(Model.PatientNote) ? "—" : Model.PatientNote)
+                </div>
             </div>
             <div class="wdm-field">
                 <div class="wdm-field-label">Deskripsi</div>
@@ -63,7 +80,7 @@
             }
         </div>
 
-        <form method="post" action="/Psychologist/Worksheet/ReviewWorksheet" class="wdm-feedback-form">
+        <form id="worksheetDetailForm" method="post" asp-action="ReviewWorksheet" asp-controller="Worksheet" asp-area="Psychologist" class="wdm-feedback-form" onsubmit="submitWorksheetDetailForm(event)">
             <input type="hidden" name="WorksheetId" value="@Model.WorksheetId" />
             <input type="hidden" name="TaskName" value="@Model.TaskName" />
             <input type="hidden" name="PatientName" value="@Model.PatientName" />

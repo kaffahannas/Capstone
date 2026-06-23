@@ -1,0 +1,47 @@
+/* #Bagian Halaman HR# */
+﻿/* HR inner-page wrappers and headers */
+.hr-page-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 100%;
+}
+.hr-page-wrap--wide { max-width: 1080px; }
+.hr-page-wrap--narrow { max-width: 620px; }
+
+.hr-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.hr-page-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lu-text-muted);
+    text-decoration: none;
+    margin-bottom: 6px;
+    transition: color 0.15s;
+}
+.hr-page-back:hover { color: var(--lu-primary); }
+.hr-page-back svg { flex-shrink: 0; }
+
+.hr-page-title-group { display: flex; flex-direction: column; gap: 2px; }
+.hr-page-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--lu-text);
+    line-height: 1.2;
+}
+.hr-page-sub {
+    margin: 0;
+    font-size: 13px;
+    color: var(--lu-text-muted);
+}
+.hr-page-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+

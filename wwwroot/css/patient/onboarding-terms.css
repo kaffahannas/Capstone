@@ -1,0 +1,15 @@
+/* #Bagian Onboarding Syarat Pasien# */
+.onb-terms-accept {
+    margin-top: 16px;
+}
+
+.onb-terms-accept label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 13px;
+}
+
+.onb-terms-accept input[type="checkbox"] {
+    margin-top: 3px;
+}

@@ -3,6 +3,8 @@
     Layout = null;
 }
 
+@* #Bagian Onboarding Sukses# *@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -17,23 +19,26 @@
 
     <div class="auth-wrapper">
         <div class="auth-container register-card register-card--onb-success">
-            
-            <!-- Logo Mini -->
-            <div class="onb-success-logo">
-                <img src="~/image/lightenuplogo.ico" alt="LightenUp Logo" class="onb-success-logo-img" onerror="this.style.display='none'" />
-                <span class="onb-success-logo-text">LightenUp</span>
-            </div>
+
+            @* #Komponen Ikon Sukses# *@
+            <svg class="onb-success-icon" width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="50" cy="50" r="50" fill="#E0E7FF" />
+                <circle cx="50" cy="50" r="35" fill="#7C3AED" />
+                <path d="M40 50L46.5 56.5L60 43" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+
+            <p class="onb-success-brand">LightenUp</p>
 
             <h1 class="auth-title auth-title--onb-success">Data berhasil<br />ditambahkan!</h1>
-            
-            <!-- Indikator Progres Full (Warna Ungu Penuh) -->
-            <div class="onb-success-progress"></div>
+
+            <div class="onb-success-progress" role="presentation"></div>
 
             <p class="onb-success-desc">
                 Anda telah berhasil melengkapi data diri. Namun, fitur lengkap memerlukan persetujuan (Approval) dari Admin terlebih dahulu.
             </p>
 
-            <a href="/Account/PendingApproval" class="btn-submit btn-submit--onb-outline">Lihat Status Akun</a>
+            @* #Komponen Status Akun# *@
+            <a href="/Account/PendingApproval" class="btn-submit btn-submit--onb-success">Lihat Status Akun</a>
 
         </div>
     </div>

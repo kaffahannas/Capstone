@@ -23,6 +23,13 @@
     }
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/users-detail.css" asp-append-version="true" />
+}
+
+
+@* #Bagian DetailPengguna# *@
+@* #Komponen TombolKembali# *@
 <a class="back-link" asp-action="Index">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
     Daftar Pengguna
@@ -37,6 +44,7 @@
     <div class="usr-detail-main">
 
         <!-- Profile hero -->
+        @* #Komponen ProfilPengguna# *@
         <div class="adm-card">
             <div class="adm-profile-hero">
                 @if (!string.IsNullOrEmpty(Model.ProfilePicture))

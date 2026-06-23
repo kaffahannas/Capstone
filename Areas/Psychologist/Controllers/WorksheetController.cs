@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace LightenUp.Web.Areas.Psychologist.Controllers
 {
     [Area("Psychologist")]
+    // #Class WorksheetController#
     [Authorize(Roles = "Psychologist")]
     public class WorksheetController : Controller
     {
@@ -57,6 +58,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             _            => (dbStatus,             "")
         };
 
+        // #Function AddTask#
+
         [HttpGet]
         public async Task<IActionResult> AddTask(int? patientId = null)
         {
@@ -64,6 +67,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 return RedirectToAction(nameof(PatientWorksheetHistory), new { id = patientId.Value, add = true });
             return RedirectToAction(nameof(Worksheet), new { add = true, patientId });
         }
+
+        // #Function AddTask POST#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -102,6 +107,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return RedirectToAction(nameof(Worksheet));
         }
 
+        // #Function EditWorksheet#
+
         [HttpGet]
         public async Task<IActionResult> EditWorksheet(int id)
         {
@@ -127,6 +134,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View(model);
         }
 
+        // #Function EditWorksheet POST#
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditWorksheet(LightenUp.Web.Models.ViewModels.PsyWorksheetEditViewModel model)
@@ -135,7 +144,10 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
 
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                TempData["WorksheetError"] = "Data tidak valid.";
+                return RedirectToAction(nameof(EditWorksheetModal), new { id = model.WorksheetId });
+            }
 
             var w = await _context.Worksheets
                 .FirstOrDefaultAsync(x => x.WorksheetId == model.WorksheetId && x.PsychologistId == psyId.Value);
@@ -147,9 +159,11 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             w.Deadline = model.DeadlineDate.Date.Add(model.DeadlineTime);
 
             await _context.SaveChangesAsync();
-            TempData["success"] = "Worksheet berhasil diperbarui.";
-            return RedirectToAction(nameof(Worksheet));
+            TempData["WorksheetSuccess"] = "Worksheet berhasil diperbarui.";
+            return RedirectToAction(nameof(WorksheetDetailModal), new { id = model.WorksheetId });
         }
+
+        // #Function Worksheet#
 
         [HttpGet]
         public async Task<IActionResult> Worksheet(bool add = false, int? patientId = null)
@@ -207,6 +221,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             });
         }
 
+        // #Function WorksheetDetailModal#
+
         [HttpGet]
         public async Task<IActionResult> WorksheetDetailModal(int id)
         {
@@ -234,6 +250,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return PartialView("_WorksheetDetailModal", model);
         }
 
+        // #Function EditWorksheetModal#
+
         [HttpGet]
         public async Task<IActionResult> EditWorksheetModal(int id)
         {
@@ -259,6 +277,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return PartialView("_EditWorksheetModal", model);
         }
 
+        // #Function WorksheetHistory#
+
         [HttpGet]
         public async Task<IActionResult> WorksheetHistory()
         {
@@ -276,8 +296,10 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View();
         }
 
+        // #Function PatientWorksheetHistory#
+
         [HttpGet]
-        public async Task<IActionResult> PatientWorksheetHistory(int id, bool add = false)
+        public async Task<IActionResult> PatientWorksheetHistory(int id, bool add = false, int? open = null)
         {
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
@@ -303,6 +325,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 id,
                 addForm,
                 openModal: add,
+                openWorksheetId: open,
                 patientName: patient.User?.FullName ?? "—",
                 worksheets: worksheets);
         }
@@ -311,6 +334,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             int patientId,
             LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel? addForm = null,
             bool openModal = false,
+            int? openWorksheetId = null,
             string? patientName = null,
             List<Worksheet>? worksheets = null)
         {
@@ -340,37 +364,29 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 ReturnPatientId = patientId
             };
             ViewBag.OpenAddTaskModal = openModal;
+            ViewBag.OpenWorksheetId = openWorksheetId;
             return View("PatientWorksheetHistory");
         }
+
+        // #Function ReviewWorksheet#
 
         [HttpGet]
         public async Task<IActionResult> ReviewWorksheet(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
-            var psy = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
-            if (psy == null) return NotFound();
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction("Login", "Account", new { area = "" });
 
             var w = await _context.Worksheets
-                .Include(x => x.Patient).ThenInclude(p => p!.User)
-                .FirstOrDefaultAsync(x => x.WorksheetId == id && x.PsychologistId == psy.PsychologistId);
+                .FirstOrDefaultAsync(x => x.WorksheetId == id && x.PsychologistId == psyId);
             if (w == null) return NotFound();
 
-            return View(new LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel
-            {
-                WorksheetId = w.WorksheetId,
-                PatientName = w.Patient?.User?.FullName ?? "—",
-                TaskName = w.TaskName,
-                Description = w.Description,
-                ProofImagePath = w.ProofImagePath,
-                PatientNote = w.Note,
-                Status = w.Status,
-                PsychologistFeedback = w.PsychologistFeedback
-            });
+            return RedirectToAction(nameof(PatientWorksheetHistory), new { id = w.PatientId, open = w.WorksheetId });
         }
 
+        // #Function ReviewWorksheet POST#
+
         [HttpPost]
-        public async Task<IActionResult> ReviewWorksheet(LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel model, string submitAction)
+        public async Task<IActionResult> ReviewWorksheet(LightenUp.Web.Models.ViewModels.PsyWorksheetReviewViewModel model, string submitAction, string? returnUrl)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
@@ -385,23 +401,29 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (submitAction == "Complete")
             {
+                if (string.IsNullOrWhiteSpace(w.Note) && string.IsNullOrWhiteSpace(w.ProofImagePath))
+                {
+                    TempData["WorksheetError"] = "Status tidak dapat diubah menjadi Selesai karena pasien belum mengisi worksheet.";
+                    return RedirectToAction(nameof(WorksheetDetailModal), new { id = w.WorksheetId });
+                }
+
                 w.Status = "Completed";
                 w.ReviewedAt = DateTime.UtcNow;
-                TempData["success"] = "Worksheet diselesaikan.";
+                TempData["WorksheetSuccess"] = "Worksheet diselesaikan.";
             }
             else if (submitAction == "Revision")
             {
                 w.Status = "NeedsRevision";
                 w.ReviewedAt = null;
-                TempData["success"] = "Worksheet dikembalikan ke pasien untuk direvisi.";
+                TempData["WorksheetSuccess"] = "Worksheet dikembalikan ke pasien untuk direvisi.";
             }
             else
             {
-                TempData["success"] = "Catatan disimpan.";
+                TempData["WorksheetSuccess"] = "Catatan disimpan.";
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Worksheet));
+            return RedirectToAction(nameof(WorksheetDetailModal), new { id = w.WorksheetId });
         }
     }
 }

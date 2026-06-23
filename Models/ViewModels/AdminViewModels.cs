@@ -4,6 +4,7 @@ using LightenUp.Web.Services;
 namespace LightenUp.Web.Models.ViewModels
 {
     // ─── Dashboard ───
+    // #Class AdminDashboardViewModel#
     public class AdminDashboardViewModel
     {
         public int TotalUsers { get; set; }
@@ -22,6 +23,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Approvals queue ───
+    // #Class AdminApprovalItem#
     public class AdminApprovalItem
     {
         public string UserId { get; set; } = "";
@@ -34,12 +36,14 @@ namespace LightenUp.Web.Models.ViewModels
         public string? Specialization { get; set; }      // For Psychologist
     }
 
+    // #Class AdminApprovalsViewModel#
     public class AdminApprovalsViewModel
     {
         public string Tab { get; set; } = "All";   // All / Psychologist / HR
         public List<AdminApprovalItem> Items { get; set; } = new();
     }
 
+    // #Class AdminApprovalDetailViewModel#
     public class AdminApprovalDetailViewModel
     {
         public string UserId { get; set; } = "";
@@ -70,6 +74,7 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime SubmittedAt { get; set; }
     }
 
+    // #Class AdminApprovalActionViewModel#
     public class AdminApprovalActionViewModel
     {
         public string UserId { get; set; } = "";
@@ -78,6 +83,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Users ───
+    // #Class AdminUserItem#
     public class AdminUserItem
     {
         public string UserId { get; set; } = "";
@@ -89,6 +95,7 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime? CreatedAt { get; set; }
     }
 
+    // #Class AdminUsersListViewModel#
     public class AdminUsersListViewModel
     {
         public string? Search { get; set; }
@@ -100,6 +107,7 @@ namespace LightenUp.Web.Models.ViewModels
         public List<AdminUserItem> Items { get; set; } = new();
     }
 
+    // #Class AdminUserDetailViewModel#
     public class AdminUserDetailViewModel
     {
         public string UserId { get; set; } = "";
@@ -139,6 +147,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? EmergencyContactPhone { get; set; }
     }
 
+    // #Class AdminUserEditViewModel#
     public class AdminUserEditViewModel
     {
         [Required]
@@ -157,6 +166,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Companies ───
+    // #Class AdminCompanyItem#
     public class AdminCompanyItem
     {
         public int CompanyId { get; set; }
@@ -169,12 +179,14 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime CreatedAt { get; set; }
     }
 
+    // #Class AdminCompaniesListViewModel#
     public class AdminCompaniesListViewModel
     {
         public string? Search { get; set; }
         public List<AdminCompanyItem> Items { get; set; } = new();
     }
 
+    // #Class AdminCompanyDetailViewModel#
     public class AdminCompanyDetailViewModel
     {
         public int CompanyId { get; set; }
@@ -193,6 +205,7 @@ namespace LightenUp.Web.Models.ViewModels
     }
 
     // ─── Settings ───
+    // #Class AdminSettingsViewModel#
     public class AdminSettingsViewModel
     {
         public string FullName { get; set; } = "";
@@ -200,6 +213,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? Phone { get; set; }
     }
 
+    // #Class AdminChangePasswordViewModel#
     public class AdminChangePasswordViewModel
     {
         [Required, DataType(DataType.Password)]
@@ -212,11 +226,13 @@ namespace LightenUp.Web.Models.ViewModels
         public string ConfirmPassword { get; set; } = "";
     }
 
+    // #Class AdminNavBadgesViewModel#
     public class AdminNavBadgesViewModel
     {
         public int Count { get; set; }
     }
 
+    // #Class AdminAssignmentsIndexViewModel#
     public class AdminAssignmentsIndexViewModel
     {
         public string Tab { get; set; } = "psy";

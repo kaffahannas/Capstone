@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    // #Class ApprovalsController#
     [Authorize(Roles = "Admin")]
     public class ApprovalsController : Controller
     {
@@ -40,6 +41,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewBag.CountCancellations = await _context.Assignments.CountAsync(a => a.Status == "PendingCancellationByAdmin");
         }
 
+        // #Bagian Persetujuan Akun#
+        // #Function Index#
         [HttpGet]
         public async Task<IActionResult> Index(string tab = "All")
         {
@@ -86,6 +89,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewData["Title"] = "Persetujuan";
             return View(new AdminApprovalsViewModel { Tab = tab, Items = items });
         }
+
+        // #Function Detail#
 
         [HttpGet]
         public async Task<IActionResult> Detail(string id)
@@ -142,6 +147,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return View(vm);
         }
 
+        // #Function Approve#
+
         [HttpPost]
         public async Task<IActionResult> Approve(AdminApprovalActionViewModel model)
         {
@@ -161,6 +168,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             TempData["success"] = $"{user.FullName} ({user.RoleType}) disetujui.";
             return RedirectToAction(nameof(Index));
         }
+
+        // #Function Reject#
 
         [HttpPost]
         public async Task<IActionResult> Reject(AdminApprovalActionViewModel model)
@@ -189,6 +198,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         }
 
         // --- EMPLOYEE REMOVAL REQUESTS ---
+        // #Function EmployeeRemovals#
+        // #Bagian Permintaan Hapus Karyawan#
         [HttpGet]
         public async Task<IActionResult> EmployeeRemovals()
         {
@@ -204,6 +215,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewData["Title"] = "Pemberhentian Karyawan";
             return View(requests);
         }
+
+        // #Function ApproveEmployeeRemoval#
 
         [HttpPost]
         public async Task<IActionResult> ApproveEmployeeRemoval(int id, string note)
@@ -243,6 +256,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(EmployeeRemovals));
         }
 
+        // #Function RejectEmployeeRemoval#
+
         [HttpPost]
         public async Task<IActionResult> RejectEmployeeRemoval(int id, string note)
         {
@@ -262,6 +277,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         }
 
         // --- ASSIGNMENT & CANCELLATION REQUESTS ---
+        // #Function AssignmentRequests#
+        // #Bagian Permintaan Batalkan Penugasan#
         [HttpGet]
         public async Task<IActionResult> AssignmentRequests()
         {
@@ -280,6 +297,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return View(pendingAssignments);
         }
 
+        // #Function CancellationRequests#
+
         [HttpGet]
         public async Task<IActionResult> CancellationRequests()
         {
@@ -297,6 +316,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewData["Title"] = "Persetujuan Pembatalan HR";
             return View(pendingCancellations);
         }
+
+        // #Function ApproveAssignment#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -324,6 +345,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             TempData["success"] = "Permintaan disetujui.";
             return RedirectToAction(returnAction);
         }
+
+        // #Function RejectAssignment#
 
         [HttpPost]
         [ValidateAntiForgeryToken]

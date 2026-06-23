@@ -1,16 +1,22 @@
 using LightenUp.Web.Models;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using DpKey = Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    // #Class ApplicationDbContext#
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IDataProtectionKeyContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
+
+        // #Bagian DbSet Tabel#
         // ==========================================
         // DAFTAR TABEL DATABASE (DbSet)
         // ==========================================
@@ -46,10 +52,12 @@ namespace LightenUp.Web.Data
         public DbSet<PsychologistPayrollSetting> PayrollSettings { get; set; }
         public DbSet<MonthlyPayout> MonthlyPayouts { get; set; }
 
+        // #Bagian Fluent API Relasi#
         // ==========================================
         // KONFIGURASI RELASI (Fluent API)
         // ==========================================
 
+        // #Function OnModelCreating#
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

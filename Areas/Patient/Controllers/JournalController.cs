@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
+    // #Class JournalController#
     [Authorize(Roles = "Patient")]
     public class JournalController : Controller
     {
@@ -31,8 +32,11 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Daily Check-In — Intro
         // ═════════════════════════════════════════════════════════════════
-        [HttpGet]
+        // #Function CheckIn#
+                [HttpGet]
         public IActionResult CheckIn() => View();
+
+        // #Function CheckInStart#
 
         [HttpPost, ActionName("CheckIn")]
         public IActionResult CheckInStart()
@@ -44,6 +48,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         // ═════════════════════════════════════════════════════════════════
         //  Daily Check-In — Question 1..6
         // ═════════════════════════════════════════════════════════════════
+        // #Function Question#
         [HttpGet]
         public IActionResult Question(int step, JournalCheckInSessionViewModel model)
         {
@@ -51,6 +56,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             model.Step = step;
             return View(model);
         }
+
+        // #Function QuestionPost#
 
         [HttpPost, ActionName("Question")]
         public async Task<IActionResult> QuestionPost(JournalCheckInSessionViewModel model)
@@ -116,12 +123,15 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             return RedirectToAction(nameof(CheckInSaved));
         }
 
+        // #Function CheckInSaved#
+
         [HttpGet]
         public IActionResult CheckInSaved() => View();
 
         // ═════════════════════════════════════════════════════════════════
         //  Free-Write — one editable entry per day
         // ═════════════════════════════════════════════════════════════════
+        // #Function Write#
         [HttpGet]
         public async Task<IActionResult> Write(int? id)
         {
@@ -147,6 +157,8 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.ActiveNav = "Beranda";
             return View(vm);
         }
+
+        // #Function Write POST#
 
         [HttpPost]
         public async Task<IActionResult> Write(JournalWriteViewModel model)

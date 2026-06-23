@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class PsyAddScheduleViewModel#
     public class PsyAddScheduleViewModel
     {
         [Required(ErrorMessage = "Pilih pasien.")]
@@ -33,6 +34,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int? ReturnPatientId { get; set; }
     }
 
+    // #Class PsyAddTaskViewModel#
     public class PsyAddTaskViewModel
     {
         [Required(ErrorMessage = "Pilih pasien.")]
@@ -56,6 +58,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int? ReturnPatientId { get; set; }
     }
 
+    // #Class PsyWorksheetEditViewModel#
     public class PsyWorksheetEditViewModel
     {
         [Required]
@@ -76,6 +79,7 @@ namespace LightenUp.Web.Models.ViewModels
         public TimeSpan DeadlineTime { get; set; } = new TimeSpan(23, 59, 0);
     }
 
+    // #Class PsyPatientOption#
     public class PsyPatientOption
     {
         public int PatientId { get; set; }
@@ -83,6 +87,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? CompanyName { get; set; }
     }
 
+    // #Class PsyProfileExtViewModel#
     public class PsyProfileExtViewModel
     {
         // Wraps PsychologistProfileViewModel + extra real-time stats
@@ -118,6 +123,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string? BankDetailsPdfPath { get; set; }
     }
 
+    // #Class EditProfileViewModel#
     public class EditProfileViewModel
     {
         [Required]
@@ -135,6 +141,7 @@ namespace LightenUp.Web.Models.ViewModels
         public Microsoft.AspNetCore.Http.IFormFile? BankDocumentFile { get; set; }
     }
 
+    // #Class EditScheduleViewModel#
     public class EditScheduleViewModel
     {
         public int ScheduleId { get; set; }

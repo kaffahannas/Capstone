@@ -14,6 +14,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 {
     [Area("Hr")]
     [Authorize(Roles = "HR")]
+    // #Class ReportsController#
     [RequiresCompanySubscription]
     public class ReportsController : Controller
     {
@@ -44,7 +45,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  Index — Draft + Sent tabs
         // ═════════════════════════════════════════
-        [HttpGet]
+        // #Function Index#
+                [HttpGet]
         public async Task<IActionResult> Index(string tab = "All")
         {
             var hr = await GetHrAsync();
@@ -80,6 +82,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  Create — POPULATED from patient data
         // ═════════════════════════════════════════
+        // #Function Create#
         [HttpGet]
         public async Task<IActionResult> Create(int patientId)
         {
@@ -106,6 +109,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return View(vm);
         }
 
+        // #Function Edit#
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -124,6 +129,8 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             ViewBag.ActiveNav = "Laporan";
             return View("Create", vm);
         }
+
+        // #Function EditModal#
 
         [HttpGet]
         public async Task<IActionResult> EditModal(int id)
@@ -147,9 +154,12 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  Save as Draft / Send
         // ═════════════════════════════════════════
+        // #Function Save#
         [HttpPost]
         public async Task<IActionResult> Save(HrReportCreateViewModel model) =>
             await UpsertAndOptionallySend(model, send: false);
+
+        // #Function Send#
 
         [HttpPost]
         public async Task<IActionResult> Send(HrReportCreateViewModel model) =>
@@ -236,6 +246,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
         // ═════════════════════════════════════════
         //  CreateModal  (AJAX — used by Employee Detail modal)
         // ═════════════════════════════════════════
+        // #Function CreateModal#
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateModal(

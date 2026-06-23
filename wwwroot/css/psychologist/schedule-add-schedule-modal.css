@@ -1,0 +1,32 @@
+/* #Bagian Tambah Jadwal Modal Psikolog# */
+.asm-modal {
+    max-width: 520px;
+}
+
+.asm-title-icon {
+    vertical-align: -3px;
+    margin-right: 8px;
+    color: #4338CA;
+}
+
+.asm-intro {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.asm-validation {
+    color: #B91C1C;
+    font-size: 13px;
+    margin: 0;
+}
+
+.asm-field-error {
+    color: #B91C1C;
+    font-size: 12px;
+}
+
+.asm-save-icon {
+    vertical-align: -2px;
+    margin-right: 6px;
+}

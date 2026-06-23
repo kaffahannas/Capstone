@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LightenUp.Web.Models
 {
+    // #Class HrEmployeeRemovalRequest#
     public class HrEmployeeRemovalRequest
     {
         [Key]

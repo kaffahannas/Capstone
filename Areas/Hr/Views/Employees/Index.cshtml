@@ -10,9 +10,15 @@
     int totalBeresiko = Model.Items.Count(e => e.Status == "Beresiko");
     int totalBahaya   = Model.Items.Count(e => e.Status == "Bahaya");
 }
+@* #Bagian DaftarKlien# *@
+
+@section Head {
+    <link rel="stylesheet" href="~/css/hr/employees-index.css" asp-append-version="true" />
+}
 
 <div class="hrem-page">
 
+    @* #Komponen Hero# *@
     @* ── Hero ── *@
     <div class="hrd-hero hrem-hero">
         <div class="hrd-hero-bg" aria-hidden="true"></div>
@@ -65,6 +71,7 @@
         </div>
     }
 
+    @* #Komponen DaftarKlien# *@
     @* ── Main card ── *@
     <div class="hrem-card">
 

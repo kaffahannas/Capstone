@@ -1,0 +1,101 @@
+/* #Bagian Mobile Text Scale HR — teks lebih kecil, layout desktop tetap# */
+
+@media (max-width: 991.98px) {
+    body.hr-body {
+        font-size: 12px;
+    }
+
+    body.hr-body .greeting {
+        font-size: 0.8125rem;
+    }
+
+    body.hr-body .topbar-sub {
+        font-size: 10px;
+    }
+
+    body.hr-body .nav-item {
+        font-size: 12px;
+    }
+
+    body.hr-body .hrd-hero-title,
+    body.hr-body .hrws-hero-title,
+    body.hr-body .hrpf-hero-name,
+    body.hr-body .sch-hero-title {
+        font-size: 0.875rem;
+    }
+
+    body.hr-body .hrd-hero-eyebrow,
+    body.hr-body .hrws-hero-eyebrow,
+    body.hr-body .hrpf-hero-eyebrow,
+    body.hr-body .sch-hero-eyebrow {
+        font-size: 9px;
+    }
+
+    body.hr-body .hrd-hero-sub,
+    body.hr-body .hrws-hero-sub,
+    body.hr-body .hrpf-hero-dept,
+    body.hr-body .sch-hero-sub {
+        font-size: 10px;
+    }
+
+    body.hr-body .hrd-stat-val,
+    body.hr-body .hrws-stat-val {
+        font-size: 0.9375rem;
+    }
+
+    body.hr-body .hrd-stat-lbl,
+    body.hr-body .hrws-stat-lbl {
+        font-size: 8px;
+    }
+
+    body.hr-body .hrd-metric-val {
+        font-size: 1.125rem;
+    }
+
+    body.hr-body .hrd-metric-lbl {
+        font-size: 9px;
+    }
+
+    body.hr-body .hrem-card-title,
+    body.hr-body .hrd-client-card-title,
+    body.hr-body .lu-card-title {
+        font-size: 11px;
+    }
+
+    body.hr-body .hrem-tab,
+    body.hr-body .hrws-tab {
+        font-size: 10px;
+    }
+
+    body.hr-body .hrem-row-name,
+    body.hr-body .hrws-row-patient {
+        font-size: 11px;
+    }
+
+    body.hr-body .hrem-row-meta,
+    body.hr-body .hrws-row-date {
+        font-size: 9px;
+    }
+
+    body.hr-body .hrpf-stat-val {
+        font-size: 0.9375rem;
+    }
+
+    body.hr-body .hrpf-stat-lbl {
+        font-size: 8px;
+    }
+
+    body.hr-body .hrpf-card-title {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    body.hr-body {
+        font-size: 11px;
+    }
+
+    body.hr-body .greeting {
+        font-size: 0.75rem;
+    }
+}

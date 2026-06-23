@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LightenUp.Web.Models.ViewModels
 {
+    // #Class HrReportListItem#
     public class HrReportListItem
     {
         public int ReportId { get; set; }
@@ -12,12 +13,14 @@ namespace LightenUp.Web.Models.ViewModels
         public DateTime? EmailSentAt { get; set; }
     }
 
+    // #Class HrReportListViewModel#
     public class HrReportListViewModel
     {
         public string Tab { get; set; } = "All";   // All / Draft / Sent
         public List<HrReportListItem> Items { get; set; } = new();
     }
 
+    // #Class HrReportCreateViewModel#
     public class HrReportCreateViewModel
     {
         public int? ReportId { get; set; }  // null = new, else editing existing draft

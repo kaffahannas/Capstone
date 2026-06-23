@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LightenUp.Web.Models
 {
     /// <summary>B2B company plan purchased by HR; activates referral code for employees.</summary>
+    // #Class CompanySubscription#
     public class CompanySubscription
     {
         [Key]

@@ -4,7 +4,9 @@
     ViewBag.Step = "3/8";
     var triggerCsv = string.Join(",", Model.Triggers);
 }
+@* #Bagian Lacak Mood - Catatan# *@
 
+@* #Komponen Form Catatan Mood# *@
 <h2 class="mood-question">
     <a asp-action="Triggers" asp-route-feeling="@Model.Feeling" asp-route-triggers="@triggerCsv" asp-route-note="@Model.Note"
        class="mood-back-link">←</a>

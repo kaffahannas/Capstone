@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LightenUp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    // #Class PayrollController#
     [Authorize(Roles = "Admin")]
     public class PayrollController : Controller
     {
@@ -28,6 +29,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             _uploads = uploads;
             _pricing = pricing;
         }
+
+        // #Function Index#
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -127,6 +130,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return View(rows);
         }
 
+        // #Function Edit#
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -153,6 +158,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             ViewBag.Payouts = payouts;
             return View(setting);
         }
+
+        // #Function Edit POST#
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -204,6 +211,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             TempData["success"] = "Pengaturan default persentase disimpan.";
             return RedirectToAction(nameof(Index));
         }
+
+        // #Function Transfer#
 
         [HttpGet]
         public async Task<IActionResult> Transfer(int id, int? month, int? year)
@@ -270,6 +279,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 breakdown.Add(new {
                     PatientName = firstSched.Patient?.User?.FullName ?? "Unknown",
                     Sessions = schedCount,
+                    Schedules = g.ToList(),
                     SlotValue = subscriptionValue,
                     MaxSessions = maxSessions,
                     Percentage = pct,
@@ -287,6 +297,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             
             return View(setting ?? new PsychologistPayrollSetting { PsychologistId = id });
         }
+
+        // #Function UploadPayoutProof#
 
         [HttpPost]
         [ValidateAntiForgeryToken]

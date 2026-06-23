@@ -9,12 +9,18 @@
     int pctBahaya  = total > 0 ? (int)Math.Round(Model.BahayaCount  * 100.0 / total) : 0;
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/css/admin/companies-detail.css" asp-append-version="true" />
+}
+
+
+@* #Bagian DetailPerusahaan# *@
 <a class="back-link" asp-action="Index">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
     Daftar Perusahaan
 </a>
 
-<!-- ── Company header + info ── -->
+@* #Komponen HeaderPerusahaan# *@
 <div class="adm-card cmp-header-card">
     <div class="cmp-header-row">
         <div class="cmp-header-icon">🏢</div>
@@ -57,7 +63,7 @@
     </div>
 </div>
 
-<!-- ── Mental health stats ── -->
+@* #Komponen StatistikKesehatan# *@
 <div class="adm-mental-grid cmp-mental-grid-spaced">
     <div class="adm-mental-card cmp-mental-card--total">
         <div class="cmp-stat-label">Total Pasien</div>
@@ -80,7 +86,7 @@
     </div>
 </div>
 
-<!-- ── HR table ── -->
+@* #Komponen TabelHR# *@
 <div class="adm-card">
     <div class="adm-card-header">
         <div class="adm-card-title cmp-card-title-flush">
@@ -98,6 +104,7 @@
     }
     else
     {
+        <div class="cmp-hr-table-scroll">
         <table class="adm-table cmp-hr-table">
             <thead>
                 <tr>
@@ -133,5 +140,6 @@
                 }
             </tbody>
         </table>
+        </div>
     }
 </div>
