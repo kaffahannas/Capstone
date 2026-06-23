@@ -13,10 +13,7 @@
 </div>
 
 <div class="adm-tabs">
-    <a class="adm-tab @(Model.Tab == "patient" ? "active" : "")"
-       asp-action="Index" asp-route-tab="patient">
-        Permintaan Pasien @if (Model.PendingPatientRequestCount > 0) { <span class="nav-badge asg-tab-badge">@Model.PendingPatientRequestCount</span> }
-    </a>
+
     <a class="adm-tab @(Model.Tab == "b2b" ? "active" : "")"
        asp-action="Index" asp-route-tab="b2b">
         Kemitraan B2B @if (Model.PendingB2BRequestCount > 0) { <span class="nav-badge asg-tab-badge">@Model.PendingB2BRequestCount</span> }
@@ -36,69 +33,7 @@
     <div class="adm-alert asg-alert-error">⚠️ @err</div>
 }
 
-@if (Model.Tab == "patient")
-{
-    if (!Model.PatientAdminRequests.Any())
-    {
-        <div class="adm-empty-state-premium">
-            <div class="icon">📬</div>
-            <h3>Belum ada permintaan dari pasien</h3>
-            <p>Pasien yang meminta dicarikan psikolog oleh admin akan muncul di sini.</p>
-        </div>
-    }
-    else
-    {
-        foreach (var req in Model.PatientAdminRequests)
-        {
-            <div class="adm-card asg-request-card">
-                <div class="asg-request-header">
-                    <div>
-                        <strong class="asg-patient-name">@(req.Patient?.User?.FullName ?? "—")</strong>
-                        <div class="asg-patient-meta">
-                            <span class="asg-company-tag">@(req.Patient?.CompanyId != null ? (req.Patient.Company?.Name ?? "B2B") : "Publik (B2C)")</span>
-                            @req.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm", idCulture)
-                        </div>
-                        @if (!string.IsNullOrEmpty(req.Reason))
-                        {
-                            <div class="asg-reason-box">
-                                <strong class="asg-reason-label">Keluhan/Alasan:</strong> @req.Reason
-                            </div>
-                        }
-                        @if (req.PreferredPsychologist != null)
-                        {
-                            <p class="asg-preference">Preferensi Pasien: <strong>@(req.PreferredPsychologist.User?.FullName)</strong></p>
-                        }
-                    </div>
-                </div>
-
-                <form asp-action="AssignPatient" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="requestId" value="@req.Id" />
-                    <div class="asg-assign-grid">
-                        <div>
-                            <label class="asg-field-label">Pilih Psikolog (Berdasarkan Beban Kerja)</label>
-                            <select name="psychologistId" required class="asg-select">
-                                @foreach (var psy in Model.Psychologists)
-                                {
-                                    var selected = req.PreferredPsychologistId == psy.PsychologistId;
-                                    var wlClass = psy.WorkloadLevel == "low" ? "🟢 Sedikit" : (psy.WorkloadLevel == "high" ? "🔴 Padat" : "🟡 Normal");
-                                    <option value="@psy.PsychologistId" selected="@selected">
-                                        @wlClass — @psy.FullName (@psy.ActiveCaseload Pasien Aktif)
-                                    </option>
-                                }
-                            </select>
-                        </div>
-                        <button type="submit" class="asg-btn-assign"
-                                onclick="return confirm('Tugaskan psikolog ke pasien ini?')">Tugaskan</button>
-                        <button formaction="@Url.Action("DismissPatientRequest")" type="submit" class="asg-btn-dismiss" formnovalidate
-                                onclick="return confirm('Tutup permintaan ini tanpa menugaskan?')">Abaikan</button>
-                    </div>
-                </form>
-            </div>
-        }
-    }
-}
-else if (Model.Tab == "workload")
+@if (Model.Tab == "workload")
 {
     <div class="adm-card asg-workload-card">
         <table class="adm-table asg-workload-table">

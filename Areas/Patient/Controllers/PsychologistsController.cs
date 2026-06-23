@@ -12,7 +12,6 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 {
     [Area("Patient")]
     [Authorize(Roles = "Patient")]
-    [RequiresPatientPremium]
     public class PsychologistsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,75 +28,111 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             _activation = activation;
         }
 
-        // ─── Daftar psikolog yang bisa dipilih pasien ───
+        // ─── Daftar psikolog — terbuka untuk semua pasien ───
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
 
-            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            var patient = await _context.Patients
+                .Include(p => p.Company).ThenInclude(c => c!.PartneredPsychologists)
+                .FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (patient == null) return RedirectToAction("Welcome", "Onboarding", new { area = "Patient" });
-
-            // Already has an active psychologist?
-            var activeAssignment = await _context.Assignments
-                .Include(a => a.Psychologist).ThenInclude(p => p!.User)
-                .FirstOrDefaultAsync(a => a.PatientId == patient.PatientId &&
-                    (a.Status == "Active" || a.Status == "PendingPsychologistApproval" || a.Status == "PendingAdminApproval"));
-
-            var pendingAdminRequest = await _context.PatientAdminAssignmentRequests
-                .FirstOrDefaultAsync(r => r.PatientId == patient.PatientId && r.Status == "Pending");
 
             var hasActivePsychologist = await _context.Assignments
                 .AnyAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
 
-            // All available psychologists (approved, accepting B2B if employee; any if B2C)
             IQueryable<PsychologistModel> query = _context.Psychologists
                 .Include(p => p.User)
                 .Where(p => p.User != null && p.User.IsApprovedByAdmin);
 
-            if (patient.CompanyId != null)
-                query = query.Where(p => p.AcceptsB2B);
+            // B2B: hanya tampilkan panel mitra perusahaan
+            if (patient.CompanyId != null && patient.Company?.PartneredPsychologists != null)
+            {
+                var panelIds = patient.Company.PartneredPsychologists.Select(p => p.PsychologistId).ToHashSet();
+                query = query.Where(p => panelIds.Contains(p.PsychologistId));
+            }
 
             var psychologists = await query.OrderBy(p => p.User!.FullName).ToListAsync();
 
-            ViewBag.ActiveAssignment = activeAssignment;
-            ViewBag.PendingAdminRequest = pendingAdminRequest;
             ViewBag.HasActivePsychologist = hasActivePsychologist;
             ViewBag.PatientId = patient.PatientId;
+            ViewBag.IsB2B = patient.CompanyId != null;
             ViewBag.ActiveNav = "Psikolog";
-            ViewData["Title"] = "Pilih Psikolog";
+            ViewData["Title"] = "Cari Psikolog";
             return View(psychologists);
         }
 
-        // ─── Pasien memilih psikolog (Request → PendingPsychologistApproval) ───
+        // ─── Pasien beli/pilih psikolog → langsung Active ───
         [HttpPost]
-        public new async Task<IActionResult> Request(int psychologistId)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BuyPsychologist(int psychologistId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
 
-            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            var patient = await _context.Patients
+                .Include(p => p.Company).ThenInclude(c => c!.PartneredPsychologists)
+                .FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (patient == null) return NotFound();
 
             var psy = await _context.Psychologists.FindAsync(psychologistId);
             if (psy == null) return NotFound();
 
-            // Prevent duplicate
+            // Cegah duplikat assignment aktif
             var existing = await _context.Assignments.AnyAsync(a =>
                 a.PatientId == patient.PatientId &&
-                (a.Status == "Active" || a.Status == "PendingPsychologistApproval" || a.Status == "PendingAdminApproval"));
+                (a.Status == "Active" || a.Status == "PendingCancellation" || a.Status == "PendingCancellationByHr"));
             if (existing)
             {
-                TempData["error"] = "Anda sudah memiliki psikolog aktif atau permintaan yang sedang diproses.";
+                TempData["error"] = "Anda sudah memiliki psikolog aktif.";
                 return RedirectToAction(nameof(Index));
             }
 
+            // B2B: pastikan psikolog ada di panel mitra
+            if (patient.CompanyId != null)
+            {
+                var inPanel = patient.Company?.PartneredPsychologists.Any(p => p.PsychologistId == psychologistId) ?? false;
+                if (!inPanel)
+                {
+                    TempData["error"] = "Psikolog tidak tersedia dalam panel perusahaan Anda.";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else if (patient.SponsorType == "Psychologist" && patient.SponsorPsychologistId != null)
+            {
+                // Mitra klinik: harus sesuai dengan sponsor
+                if (patient.SponsorPsychologistId != psychologistId)
+                {
+                    TempData["error"] = "Anda hanya dapat memilih psikolog klinik Anda.";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                // B2C Publik: Buat Subscription
+                // Note: Implementasi payment gateway (Duitku) idealnya dipanggil di sini.
+                // Untuk simulasi, kita langsung buat Subscription aktif.
+                var subscription = new Subscription
+                {
+                    PatientId = patient.PatientId,
+                    PsychologistId = psychologistId,
+                    PlanName = "1-on-1 Counseling",
+                    Status = "Active",
+                    StartDate = DateTime.UtcNow,
+                    EndDate = DateTime.UtcNow.AddMonths(1),
+                    MaxSessionsPerMonth = psy.SessionTokensPerMonth > 0 ? psy.SessionTokensPerMonth : 4
+                };
+                _context.Subscriptions.Add(subscription);
+            }
+
+            // Langsung Active — tidak perlu approval
             var assignment = new PatientPsychologistAssignment
             {
                 PatientId = patient.PatientId,
                 PsychologistId = psychologistId,
-                Status = "PendingPsychologistApproval",
+                Status = "Active",
                 AssignedAt = DateTime.UtcNow,
                 RequestedByUserId = user.Id,
                 RequestedByRole = "Patient"
@@ -106,53 +141,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             _context.Assignments.Add(assignment);
             await _context.SaveChangesAsync();
 
-            TempData["success"] = "Permintaan pilihan psikolog berhasil dikirim. Menunggu persetujuan psikolog.";
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RequestAdminAssignment(int? preferredPsychologistId, string? reason)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
-
-            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.UserId == user.Id);
-            if (patient == null) return NotFound();
-
-            var hasActive = await _context.Assignments
-                .AnyAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
-            if (hasActive)
-            {
-                TempData["error"] = "Anda sudah memiliki psikolog aktif.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            if (await _activation.PatientHasBlockingAssignmentAsync(patient.PatientId))
-            {
-                TempData["error"] = "Masih ada permintaan penugasan yang sedang diproses.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var existingRequest = await _context.PatientAdminAssignmentRequests
-                .AnyAsync(r => r.PatientId == patient.PatientId && r.Status == "Pending");
-            if (existingRequest)
-            {
-                TempData["error"] = "Permintaan ke Admin sudah dikirim sebelumnya.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            _context.PatientAdminAssignmentRequests.Add(new PatientAdminAssignmentRequest
-            {
-                PatientId = patient.PatientId,
-                PreferredPsychologistId = preferredPsychologistId,
-                Reason = reason,
-                Status = "Pending",
-                CreatedAt = DateTime.UtcNow
-            });
-            await _context.SaveChangesAsync();
-
-            TempData["success"] = "Permintaan penugasan ke Admin berhasil dikirim. Tim LightenUp akan menugaskan psikolog untuk Anda.";
+            TempData["success"] = "Psikolog berhasil dipilih. Anda sekarang bisa menjadwalkan sesi.";
             return RedirectToAction(nameof(Index));
         }
     }

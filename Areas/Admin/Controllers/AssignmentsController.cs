@@ -34,28 +34,14 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string tab = "patient")
+        public async Task<IActionResult> Index(string tab = "b2b")
         {
-            var pendingPatientCount = await _context.PatientAdminAssignmentRequests.CountAsync(r => r.Status == "Pending");
             var pendingB2BCount = await _context.CompanyPsychologistRequests.CountAsync(r => r.PsychologistId == null && r.Status == "Pending");
 
-            var patientRequests = new List<PatientAdminAssignmentRequest>();
             var b2bRequests = new List<CompanyPsychologistRequest>();
             List<PsychologistWorkloadInfo> psychologists = new();
             
-            if (tab == "patient")
-            {
-                patientRequests = await _context.PatientAdminAssignmentRequests
-                    .Include(r => r.Patient).ThenInclude(p => p!.User)
-                    .Include(r => r.Patient).ThenInclude(p => p!.Company)
-                    .Include(r => r.PreferredPsychologist).ThenInclude(p => p!.User)
-                    .Where(r => r.Status == "Pending")
-                    .OrderByDescending(r => r.CreatedAt)
-                    .ToListAsync();
-
-                psychologists = await _workload.GetApprovedPsychologistsWithWorkloadAsync(b2bOnly: false);
-            }
-            else if (tab == "workload")
+            if (tab == "workload")
             {
                 psychologists = await _workload.GetApprovedPsychologistsWithWorkloadAsync(b2bOnly: false);
             }
@@ -69,84 +55,23 @@ namespace LightenUp.Web.Areas.Admin.Controllers
 
                 psychologists = await _workload.GetApprovedPsychologistsWithWorkloadAsync(b2bOnly: true);
             }
+            else 
+            {
+                // Fallback tab
+                tab = "b2b";
+            }
 
             ViewBag.ActiveNav = "Assignments";
             ViewData["Title"] = "Penugasan Psikolog";
             return View(new AdminAssignmentsIndexViewModel
             {
                 Tab = tab,
-                PatientAdminRequests = patientRequests,
                 B2BRequests = b2bRequests,
                 Psychologists = psychologists,
-                PendingPatientRequestCount = pendingPatientCount,
                 PendingB2BRequestCount = pendingB2BCount
             });
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignPatient(int requestId, int psychologistId, decimal? psychologistRevenuePercentage, string? note)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var req = await _context.PatientAdminAssignmentRequests
-                .Include(r => r.Patient)
-                .FirstOrDefaultAsync(r => r.Id == requestId && r.Status == "Pending");
-            if (req == null) return NotFound();
-
-            if (await _activation.PatientHasBlockingAssignmentAsync(req.PatientId))
-            {
-                TempData["error"] = "Pasien sudah memiliki penugasan aktif atau permintaan lain yang sedang diproses.";
-                return RedirectToAction(nameof(Index), new { tab = "patient" });
-            }
-
-            var psy = await _context.Psychologists.FindAsync(psychologistId);
-            if (psy == null)
-            {
-                TempData["error"] = "Psikolog tidak ditemukan.";
-                return RedirectToAction(nameof(Index), new { tab = "patient" });
-            }
-
-            var assignment = new PatientPsychologistAssignment
-            {
-                PatientId = req.PatientId,
-                PsychologistId = psychologistId,
-                AssignedAt = DateTime.UtcNow,
-                RequestedByUserId = req.Patient!.UserId,
-                RequestedByRole = "Patient"
-            };
-
-            await _activation.ActivateAsync(assignment, user?.Id, note, psychologistRevenuePercentage);
-            _context.Assignments.Add(assignment);
-
-            req.Status = "Assigned";
-            req.AssignedPsychologistId = psychologistId;
-            req.AssignedByAdminUserId = user?.Id;
-            req.DecisionAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-            TempData["success"] = "Pasien berhasil ditugaskan ke psikolog.";
-            return RedirectToAction(nameof(Index), new { tab = "patient" });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DismissPatientRequest(int requestId, string? note)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var req = await _context.PatientAdminAssignmentRequests
-                .FirstOrDefaultAsync(r => r.Id == requestId && r.Status == "Pending");
-            if (req == null) return NotFound();
-
-            req.Status = "Dismissed";
-            req.AssignedByAdminUserId = user?.Id;
-            req.DecisionAt = DateTime.UtcNow;
-            if (!string.IsNullOrWhiteSpace(note))
-                req.Reason = (req.Reason ?? "") + (string.IsNullOrEmpty(req.Reason) ? "" : " | ") + note;
-
-            await _context.SaveChangesAsync();
-            TempData["success"] = "Permintaan pasien ditutup.";
-            return RedirectToAction(nameof(Index), new { tab = "patient" });
-        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

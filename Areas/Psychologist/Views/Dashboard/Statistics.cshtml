@@ -21,6 +21,13 @@
     var arcOffset = (int)Math.Round(207.35 * (1 - healthScore / 100.0));
 }
 
+@{
+    ViewData["ActiveTab"] = "Semua";
+    ViewData["SemuaUrl"] = Url.Action("Statistics", "Dashboard", new { area = "Psychologist" });
+    ViewData["MitraUrl"] = Url.Action("Statistik", "Monitoring", new { area = "Psychologist" });
+}
+<partial name="_MitraTabs" />
+
 @* ── Hero banner ── *@
 <div class="stat-hero">
     <div class="stat-hero-left">

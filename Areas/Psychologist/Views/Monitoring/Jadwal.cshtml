@@ -1,0 +1,54 @@
+@model List<LightenUp.Web.Models.Schedule>
+
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Jadwal Klien Klinik";
+}
+
+<div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
+    @{
+        ViewData["ActiveTab"] = "Mitra";
+        ViewData["SemuaUrl"] = Url.Action("Scheduling", "Schedule", new { area = "Psychologist" });
+        ViewData["MitraUrl"] = Url.Action("Jadwal", "Monitoring", new { area = "Psychologist" });
+    }
+    <partial name="_MitraTabs" />
+    <section class="psy-card">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap">
+                <h2 class="psy-card-title">Jadwal Klien Klinik</h2>
+                <span class="psy-count-chip">@Model.Count</span>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">← Daftar Klien</a>
+            </div>
+        </header>
+        <div style="padding:0 16px 16px;">
+            @if (!Model.Any())
+            {
+                <p style="padding:24px 0; color:var(--color-text-secondary); text-align:center;">Tidak ada jadwal mendatang untuk klien klinik.</p>
+            }
+            else
+            {
+                <table class="table table-hover" style="margin:0;">
+                    <thead>
+                        <tr>
+                            <th>Klien</th>
+                            <th>Tanggal & Waktu</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model)
+                        {
+                            <tr>
+                                <td>@(s.Patient?.User?.FullName ?? "—")</td>
+                                <td>@s.SessionStart.ToString("dd MMM yyyy, HH:mm")</td>
+                                <td><span class="badge bg-secondary">@s.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </section>
+</div>

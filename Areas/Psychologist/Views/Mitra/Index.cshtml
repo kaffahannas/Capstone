@@ -1,0 +1,91 @@
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Mitra LightenUp";
+    var psy = ViewBag.Psy as LightenUp.Web.Models.Psychologist;
+    var activeSub = ViewBag.ActiveSub as LightenUp.Web.Models.PsychologistSubscription;
+    bool isMitraActive = ViewBag.IsMitraActive == true;
+    int clientCount = ViewBag.ClientCount ?? 0;
+}
+
+<div style="max-width:800px; margin:0 auto; padding:24px 16px;">
+
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success mb-3">@TempData["success"]</div>
+    }
+    @if (TempData["info"] != null)
+    {
+        <div class="alert alert-info mb-3">@TempData["info"]</div>
+    }
+
+    <div class="psy-card" style="margin-bottom:20px;">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap">
+                <h2 class="psy-card-title">Add-on Mitra</h2>
+            </div>
+        </header>
+        <div style="padding:20px;">
+            @if (isMitraActive)
+            {
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
+                    <div class="stat-card">
+                        <div class="stat-label">Status</div>
+                        <div class="stat-value" style="color:#15803d;">Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Berlaku hingga</div>
+                        <div class="stat-value">@activeSub!.EndDate.ToString("dd MMM yyyy")</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Klien Klinik</div>
+                        <div class="stat-value">@clientCount / @activeSub.PatientLimit</div>
+                    </div>
+                </div>
+
+                <div style="padding:16px; background:var(--color-background-secondary, #f9fafb); border-radius:8px; margin-bottom:16px;">
+                    <div style="font-size:13px; font-weight:600; margin-bottom:8px;">Kode Referal Anda</div>
+                    @if (!string.IsNullOrEmpty(psy?.MitraReferralCode))
+                    {
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span style="font-size:22px; font-weight:800; letter-spacing:4px; color:var(--color-text-primary);">@psy.MitraReferralCode</span>
+                            <button onclick="navigator.clipboard.writeText('@psy.MitraReferralCode')" class="btn btn-sm btn-outline-secondary">Salin</button>
+                        </div>
+                        <p style="font-size:12px; color:var(--color-text-secondary); margin-top:6px;">Bagikan kode ini ke pasien klinik Anda. Mereka masukkan kode ini saat onboarding atau di profil mereka.</p>
+                    }
+                    else
+                    {
+                        <p style="font-size:12px; color:var(--color-text-secondary); margin-bottom:8px;">Belum ada kode referal. Generate sekarang.</p>
+                    }
+                    <form method="post" asp-action="GenerateReferralCode" style="margin-top:8px;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            @(string.IsNullOrEmpty(psy?.MitraReferralCode) ? "Generate Kode Referal" : "Generate Ulang Kode")
+                        </button>
+                    </form>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Index" class="btn btn-primary">Monitoring Klien Klinik</a>
+                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Statistik" class="btn btn-outline-secondary">Statistik</a>
+                </div>
+            }
+            else
+            {
+                <div style="text-align:center; padding:32px 16px;">
+                    <div style="font-size:40px; margin-bottom:12px;">🏥</div>
+                    <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Punya pasien di klinik sendiri?</h3>
+                    <p style="font-size:13px; color:var(--color-text-secondary); max-width:440px; margin:0 auto 20px;">
+                        Aktifkan add-on Mitra untuk mendapatkan kode referal, monitoring status kesehatan mental klien klinik Anda, dan akses dashboard laporan — tanpa mengganggu alur pasien reguler Anda.
+                    </p>
+                    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:16px;">
+                        <div style="padding:10px 16px; border:1px solid var(--color-border-secondary); border-radius:8px; font-size:12px;">✅ Kode referal sendiri</div>
+                        <div style="padding:10px 16px; border:1px solid var(--color-border-secondary); border-radius:8px; font-size:12px;">✅ Dashboard monitoring klien</div>
+                        <div style="padding:10px 16px; border:1px solid var(--color-border-secondary); border-radius:8px; font-size:12px;">✅ Cetak laporan</div>
+                    </div>
+                    <a href="#" class="btn btn-primary" style="opacity:.5; cursor:not-allowed;" title="Hubungi LightenUp untuk aktivasi">Aktifkan Mitra</a>
+                    <p style="font-size:11px; color:var(--color-text-secondary); margin-top:8px;">Hubungi admin LightenUp atau tunggu pembayaran diproses.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

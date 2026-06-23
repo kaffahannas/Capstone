@@ -27,7 +27,7 @@ public class AdminNavBadgesViewComponent : ViewComponent
         }
         else if (type == "Assignments")
         {
-            var patientPending = await _context.PatientAdminAssignmentRequests.CountAsync(r => r.Status == "Pending");
+            var patientPending = 0;
             var b2bPending = await _context.CompanyPsychologistRequests.CountAsync(r => r.PsychologistId == null && r.Status == "Pending");
             count = patientPending + b2bPending;
         }

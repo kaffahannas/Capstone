@@ -7,6 +7,12 @@
 }
 
 <div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
+    @{
+        ViewData["ActiveTab"] = "Semua";
+        ViewData["SemuaUrl"] = Url.Action("Index", "Client", new { area = "Psychologist" });
+        ViewData["MitraUrl"] = Url.Action("Index", "Monitoring", new { area = "Psychologist" });
+    }
+    <partial name="_MitraTabs" />
     <section class="psy-card psy-client-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">

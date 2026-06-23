@@ -36,32 +36,18 @@
         <strong>📨 Permintaan ke Admin sedang diproses.</strong> Tim LightenUp akan menugaskan psikolog untuk Anda.
     </div>
 }
-else if (!hasActivePsychologist && activeAssignment == null)
+@if (activeAssignment == null && !(ViewBag.IsB2B ?? false))
 {
-    <div class="psy-admin-box">
-        <strong>Belum punya psikolog?</strong>
-        <p class="psy-admin-desc">Anda bisa memilih psikolog sendiri di bawah, atau minta Admin LightenUp menugaskan berdasarkan beban kerja psikolog.</p>
-        <form asp-action="RequestAdminAssignment" method="post" class="psy-admin-form">
-            @Html.AntiForgeryToken()
-            <div class="psy-admin-field">
-                <label class="psy-admin-label">Psikolog preferensi (opsional)</label>
-                <select name="preferredPsychologistId" class="psy-admin-select">
-                    <option value="">— Tidak ada preferensi —</option>
-                    @foreach (var psy in Model)
-                    {
-                        <option value="@psy.PsychologistId">@(psy.User?.FullName)</option>
-                    }
-                </select>
-            </div>
-            <div class="psy-admin-field psy-admin-field--wide">
-                <label class="psy-admin-label">Catatan (opsional)</label>
-                <input type="text" name="reason" placeholder="Kebutuhan atau preferensi jadwal..." class="psy-admin-input" />
-            </div>
-            <button type="submit" class="btn-primary psy-admin-submit"
-                    onclick="return confirm('Kirim permintaan penugasan ke Admin?')">
-                Minta Admin Menugaskan
-            </button>
-        </form>
+    <div class="psy-info-box" style="margin-bottom: 24px; padding: 16px; background: #eef2ff; border-radius: 8px; border: 1px solid #c7d2fe;">
+        <strong>Pilih Psikolog Anda</strong>
+        <p style="margin: 0; color: #4b5563; font-size: 0.95rem;">Pilih psikolog yang sesuai dengan kebutuhan Anda. Anda akan diminta untuk melakukan pembayaran bulanan untuk mengaktifkan sesi 1-on-1 dan akses worksheet.</p>
+    </div>
+}
+else if (activeAssignment == null && (ViewBag.IsB2B ?? false))
+{
+    <div class="psy-info-box" style="margin-bottom: 24px; padding: 16px; background: #f0fdf4; border-radius: 8px; border: 1px solid #bbf7d0;">
+        <strong>Akses Karyawan Aktif</strong>
+        <p style="margin: 0; color: #4b5563; font-size: 0.95rem;">Pilih dari panel psikolog yang telah disediakan oleh perusahaan Anda. Semua biaya ditanggung oleh perusahaan.</p>
     </div>
 }
 
@@ -109,15 +95,33 @@ else if (!hasActivePsychologist && activeAssignment == null)
             }
         </div>
 
+        <div style="margin-top: 16px; margin-bottom: 16px; padding: 12px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-size: 1.1rem; font-weight: bold; color: #111827;">
+                Rp @((psy.PricePerMonth ?? 0).ToString("N0")) <span style="font-size: 0.85rem; font-weight: normal; color: #6b7280;">/ bulan</span>
+            </div>
+            <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+                Termasuk @(psy.SessionTokensPerMonth > 0 ? psy.SessionTokensPerMonth : 4) sesi per bulan
+            </div>
+        </div>
+
         @if (activeAssignment == null && pendingAdminRequest == null)
         {
-            <form asp-action="Request" method="post" class="psy-request-form">
-                <input type="hidden" name="psychologistId" value="@psy.PsychologistId" />
-                <button type="submit" class="btn-primary psy-select-btn"
-                    onclick="return confirm('Kirim permintaan ke psikolog @(psy.User?.FullName ?? "")?')">
-                    Pilih Psikolog Ini
+            @if (ViewBag.IsB2B ?? false)
+            {
+                <form asp-action="BuyPsychologist" method="post" class="psy-request-form">
+                    <input type="hidden" name="psychologistId" value="@psy.PsychologistId" />
+                    <button type="submit" class="btn-primary psy-select-btn"
+                        onclick="return confirm('Pilih psikolog @(psy.User?.FullName ?? "") sebagai psikolog Anda?')">
+                        Pilih Psikolog Ini
+                    </button>
+                </form>
+            }
+            else
+            {
+                <button type="button" class="btn-primary psy-select-btn" onclick="openBuyModal(@psy.PsychologistId, '@(psy.User?.FullName)', @(psy.PricePerMonth ?? 0))">
+                    Beli Psikolog Ini
                 </button>
-            </form>
+            }
         }
         else
         {
@@ -134,5 +138,46 @@ else if (!hasActivePsychologist && activeAssignment == null)
     </div>
 }
 </div>
+
+<!-- Payment Modal (Simulation) -->
+<div id="buyModal" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 24px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+        <h3 style="margin-top: 0;">Selesaikan Pembayaran</h3>
+        <p>Anda akan berlangganan dengan <strong id="modalPsyName">Dr. X</strong></p>
+        <div style="padding: 16px; background: #f3f4f6; border-radius: 8px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span>Harga per bulan</span>
+                <strong id="modalPsyPrice">Rp 0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; padding-top: 8px; margin-top: 8px;">
+                <span>Total Pembayaran</span>
+                <strong id="modalTotalPrice">Rp 0</strong>
+            </div>
+        </div>
+        <form asp-action="BuyPsychologist" method="post" style="display: flex; gap: 12px; justify-content: flex-end;">
+            <input type="hidden" name="psychologistId" id="modalPsyId" />
+            <button type="button" class="btn-secondary" onclick="closeBuyModal()">Batal</button>
+            <button type="submit" class="btn-primary">Bayar & Aktifkan</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openBuyModal(id, name, price) {
+        document.getElementById('modalPsyId').value = id;
+        document.getElementById('modalPsyName').textContent = name;
+        
+        const formattedPrice = 'Rp ' + price.toLocaleString('id-ID');
+        document.getElementById('modalPsyPrice').textContent = formattedPrice;
+        document.getElementById('modalTotalPrice').textContent = formattedPrice;
+        
+        const modal = document.getElementById('buyModal');
+        modal.style.display = 'flex';
+    }
+    
+    function closeBuyModal() {
+        document.getElementById('buyModal').style.display = 'none';
+    }
+</script>
 
 </div>

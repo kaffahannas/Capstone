@@ -226,15 +226,6 @@ public static class DummyDataSeed
                 AppliedPercentage = 40
             });
 
-        context.PatientAdminAssignmentRequests.Add(new PatientAdminAssignmentRequest
-        {
-            PatientId = patientMaya.PatientId,
-            PreferredPsychologistId = psychDina.PsychologistId,
-            Reason = "Butuh psikolog perempuan untuk konseling awal.",
-            Status = "Pending",
-            CreatedAt = utcNow.AddDays(-1)
-        });
-
         context.HrEmployeeRemovalRequests.Add(new HrEmployeeRemovalRequest
         {
             PatientId = patientBudi.PatientId,

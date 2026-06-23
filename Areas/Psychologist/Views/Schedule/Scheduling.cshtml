@@ -57,6 +57,13 @@
     <div class="sch-alert-success">@successMsg</div>
 }
 
+@{
+    ViewData["ActiveTab"] = "Semua";
+    ViewData["SemuaUrl"] = Url.Action("Scheduling", "Schedule", new { area = "Psychologist" });
+    ViewData["MitraUrl"] = Url.Action("Jadwal", "Monitoring", new { area = "Psychologist" });
+}
+<partial name="_MitraTabs" />
+
 @* ── Hero banner ── *@
 <div class="sch-hero">
     <div class="sch-hero-left">

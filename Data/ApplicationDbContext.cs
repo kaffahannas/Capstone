@@ -27,7 +27,7 @@ namespace LightenUp.Web.Data
         public DbSet<CompanySubscription> CompanySubscriptions { get; set; }
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<PatientPsychologistAssignment> Assignments { get; set; }
-        public DbSet<PatientAdminAssignmentRequest> PatientAdminAssignmentRequests { get; set; }
+        public DbSet<PsychologistSubscription> PsychologistSubscriptions { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Worksheet> Worksheets { get; set; }
         public DbSet<MoodTracker> MoodTrackers { get; set; }
@@ -105,33 +105,40 @@ namespace LightenUp.Web.Data
                 .Property(a => a.PsychologistRevenuePercentage)
                 .HasColumnType("decimal(5,2)");
 
-            // 1d. PatientAdminAssignmentRequest FKs — Restrict
-            builder.Entity<PatientAdminAssignmentRequest>()
-                .HasOne(r => r.Patient)
-                .WithMany()
-                .HasForeignKey(r => r.PatientId)
+            // 1d. PsychologistSubscription FKs
+            builder.Entity<PsychologistSubscription>()
+                .HasOne(s => s.Psychologist)
+                .WithMany(p => p.MitraSubscriptions)
+                .HasForeignKey(s => s.PsychologistId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<PatientAdminAssignmentRequest>()
-                .HasOne(r => r.PreferredPsychologist)
+            builder.Entity<PaymentTransaction>()
+                .HasOne(p => p.PsychologistSubscription)
+                .WithMany(s => s.Payments)
+                .HasForeignKey(p => p.PsychologistSubscriptionId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // 1e. Patient sponsor psychologist FK
+            builder.Entity<Patient>()
+                .HasOne(p => p.SponsorPsychologist)
                 .WithMany()
-                .HasForeignKey(r => r.PreferredPsychologistId)
+                .HasForeignKey(p => p.SponsorPsychologistId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
-            builder.Entity<PatientAdminAssignmentRequest>()
-                .HasOne(r => r.AssignedPsychologist)
+            // 1f. Subscription -> Psychologist (B2C terikat ke 1 psikolog)
+            builder.Entity<Subscription>()
+                .HasOne(s => s.Psychologist)
                 .WithMany()
-                .HasForeignKey(r => r.AssignedPsychologistId)
+                .HasForeignKey(s => s.PsychologistId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
-            builder.Entity<PatientAdminAssignmentRequest>()
-                .HasOne(r => r.AssignedByAdmin)
-                .WithMany()
-                .HasForeignKey(r => r.AssignedByAdminUserId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
+            // 1g. MitraReferralCode unique (filtered: ignores NULLs)
+            builder.Entity<Psychologist>()
+                .HasIndex(p => p.MitraReferralCode)
+                .IsUnique()
+                .HasFilter("[MitraReferralCode] IS NOT NULL");
 
             // 2. Relasi Schedule (Jadwal)
             builder.Entity<Schedule>()

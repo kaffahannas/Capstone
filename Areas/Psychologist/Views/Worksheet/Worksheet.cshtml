@@ -15,6 +15,13 @@
     <div class="ws-alert-success">@successMsg</div>
 }
 
+@{
+    ViewData["ActiveTab"] = "Semua";
+    ViewData["SemuaUrl"] = Url.Action("Worksheet", "Worksheet", new { area = "Psychologist" });
+    ViewData["MitraUrl"] = Url.Action("Worksheet", "Monitoring", new { area = "Psychologist" });
+}
+<partial name="_MitraTabs" />
+
 @* ── Hero banner ── *@
 <div class="ws-hero">
     <div class="ws-hero-left">

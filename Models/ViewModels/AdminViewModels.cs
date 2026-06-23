@@ -18,8 +18,7 @@ namespace LightenUp.Web.Models.ViewModels
 
         public int PendingAdminAssignments { get; set; }
         public int PendingCancellationByAdmin { get; set; }
-        public int PendingPatientAdminRequests { get; set; }
-        public int PendingAssignmentsTotal => PendingAdminAssignments + PendingCancellationByAdmin + PendingPatientAdminRequests;
+        public int PendingAssignmentsTotal => PendingAdminAssignments + PendingCancellationByAdmin;
     }
 
     // ─── Approvals queue ───
@@ -222,12 +221,10 @@ namespace LightenUp.Web.Models.ViewModels
     {
         public string Tab { get; set; } = "psy";
         public List<PatientPsychologistAssignment> PendingAssignments { get; set; } = new();
-        public List<PatientAdminAssignmentRequest> PatientAdminRequests { get; set; } = new();
         public List<PsychologistWorkloadInfo> Psychologists { get; set; } = new();
         public List<CompanyPsychologistRequest> B2BRequests { get; set; } = new();
         public int PendingPsyCount { get; set; }
         public int PendingCancelCount { get; set; }
-        public int PendingPatientRequestCount { get; set; }
         public int PendingB2BRequestCount { get; set; }
     }
 }

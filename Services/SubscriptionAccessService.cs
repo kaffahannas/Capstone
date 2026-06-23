@@ -31,16 +31,40 @@ public class SubscriptionAccessService
 
     public async Task<bool> HasPatientPremiumAccessAsync(Patient patient)
     {
+        // Sumber 1: B2C — punya langganan psikolog pribadi aktif
         var hasOwn = await _context.Subscriptions
             .AnyAsync(s => s.PatientId == patient.PatientId
                 && s.Status == "Active"
                 && s.EndDate >= DateTime.Today);
         if (hasOwn) return true;
 
+        // Sumber 2: B2B — ditanggung perusahaan (HR per-seat)
         if (patient.CompanyId != null)
             return await HasCompanyActiveSubscriptionAsync(patient.CompanyId.Value);
 
+        // Sumber 3: Pasien klinik Mitra — ditanggung psikolog Mitra
+        if (patient.SponsorPsychologistId != null)
+            return await HasPsychologistMitraActiveAsync(patient.SponsorPsychologistId.Value);
+
         return false;
+    }
+
+    public async Task<bool> HasPsychologistMitraActiveAsync(int psychologistId)
+    {
+        return await _context.PsychologistSubscriptions
+            .AnyAsync(s => s.PsychologistId == psychologistId
+                && s.Status == "Active"
+                && s.EndDate >= DateTime.Today);
+    }
+
+    public async Task<PsychologistSubscription?> GetActivePsychologistSubscriptionAsync(int psychologistId)
+    {
+        return await _context.PsychologistSubscriptions
+            .Where(s => s.PsychologistId == psychologistId
+                && s.Status == "Active"
+                && s.EndDate >= DateTime.Today)
+            .OrderByDescending(s => s.EndDate)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<bool> CanUseReferralCodeAsync(int companyId)
@@ -59,7 +83,8 @@ public class SubscriptionAccessService
     {
         string code;
         do { code = GenerateReferralCode(); }
-        while (await _context.CompanyDivisions.AnyAsync(c => c.ReferralCode == code));
+        while (await _context.CompanyDivisions.AnyAsync(c => c.ReferralCode == code)
+            || await _context.Psychologists.AnyAsync(p => p.MitraReferralCode == code));
         return code;
     }
 }

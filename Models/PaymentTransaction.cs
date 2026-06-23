@@ -27,6 +27,10 @@ namespace LightenUp.Web.Models
         [ForeignKey("CompanySubscriptionId")]
         public virtual CompanySubscription? CompanySubscription { get; set; }
 
+        public int? PsychologistSubscriptionId { get; set; }
+        [ForeignKey("PsychologistSubscriptionId")]
+        public virtual PsychologistSubscription? PsychologistSubscription { get; set; }
+
         [Required, MaxLength(100)]
         public string MerchantOrderId { get; set; } = string.Empty;
 

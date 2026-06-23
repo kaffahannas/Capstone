@@ -1,0 +1,73 @@
+@model LightenUp.Web.Models.Patient
+
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = $"Detail — {Model.User?.FullName}";
+    var recentMoods = ViewBag.RecentMoods as List<LightenUp.Web.Models.MoodTracker> ?? new();
+    var worksheets = ViewBag.Worksheets as List<LightenUp.Web.Models.Worksheet> ?? new();
+}
+
+<div style="max-width:700px; margin:0 auto; padding:24px 16px;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">← Kembali</a>
+        <h2 style="font-size:16px; font-weight:700; margin:0;">@(Model.User?.FullName ?? "—")</h2>
+        <span class="badge @(Model.MentalHealthStatus == "Sehat" ? "bg-success" : Model.MentalHealthStatus == "Beresiko" ? "bg-warning text-dark" : "bg-danger")">
+            @Model.MentalHealthStatus
+        </span>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+        <div class="stat-card">
+            <div class="stat-label">Gender</div>
+            <div class="stat-value" style="font-size:14px;">@(Model.Gender == "Male" ? "Laki-laki" : Model.Gender == "Female" ? "Perempuan" : "—")</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Bergabung</div>
+            <div class="stat-value" style="font-size:14px;">@(Model.OnboardingCompletedAt?.ToString("dd MMM yyyy") ?? "—")</div>
+        </div>
+    </div>
+
+    <div class="psy-card" style="margin-bottom:16px;">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap"><h3 class="psy-card-title" style="font-size:13px;">Mood 7 Hari Terakhir</h3></div>
+        </header>
+        <div style="padding:12px 16px;">
+            @if (!recentMoods.Any())
+            {
+                <p style="font-size:12px; color:var(--color-text-secondary);">Belum ada data mood.</p>
+            }
+            else
+            {
+                @foreach (var m in recentMoods)
+                {
+                    <div style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0; border-bottom:1px solid var(--color-border-secondary);">
+                        <span>@m.MoodDate.ToString("dd MMM")</span>
+                        <span>@m.Feeling</span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="psy-card">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap"><h3 class="psy-card-title" style="font-size:13px;">Worksheet Terbaru</h3></div>
+        </header>
+        <div style="padding:12px 16px;">
+            @if (!worksheets.Any())
+            {
+                <p style="font-size:12px; color:var(--color-text-secondary);">Belum ada worksheet.</p>
+            }
+            else
+            {
+                @foreach (var w in worksheets)
+                {
+                    <div style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0; border-bottom:1px solid var(--color-border-secondary);">
+                        <span>@w.TaskName</span>
+                        <span class="badge @(w.Status == "Completed" ? "bg-success" : "bg-secondary")" style="font-size:10px;">@w.Status</span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

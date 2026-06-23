@@ -1,0 +1,69 @@
+@model List<LightenUp.Web.Models.Patient>
+
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Monitoring Klien Klinik";
+}
+
+<div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
+    @{
+        ViewData["ActiveTab"] = "Mitra";
+        ViewData["SemuaUrl"] = Url.Action("Index", "Client", new { area = "Psychologist" });
+        ViewData["MitraUrl"] = Url.Action("Index", "Monitoring", new { area = "Psychologist" });
+    }
+    <partial name="_MitraTabs" />
+    <section class="psy-card psy-client-card">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap">
+                <h2 class="psy-card-title">Klien Klinik</h2>
+                <span class="psy-count-chip">@Model.Count</span>
+            </div>
+            <div class="psy-card-tools" style="display:flex; gap:8px;">
+                <a asp-action="Statistik" class="btn btn-sm btn-outline-secondary">Statistik</a>
+                <a asp-action="Worksheet" class="btn btn-sm btn-outline-secondary">Worksheet</a>
+                <a asp-action="Jadwal" class="btn btn-sm btn-outline-secondary">Jadwal</a>
+            </div>
+        </header>
+
+        <div class="psy-client-list">
+            @if (!Model.Any())
+            {
+                <div class="psy-empty" style="padding:40px; text-align:center;">
+                    <p style="color:var(--color-text-secondary);">Belum ada klien klinik yang terdaftar.</p>
+                    <p style="font-size:12px; color:var(--color-text-secondary);">Bagikan kode referal Anda ke pasien klinik agar mereka bisa bergabung.</p>
+                    <a asp-controller="Mitra" asp-action="Index" class="btn btn-sm btn-primary" style="margin-top:10px;">Lihat Kode Referal</a>
+                </div>
+            }
+            else
+            {
+                <table class="table table-hover" style="margin:0;">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Gender</th>
+                            <th>Status Mental</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>@(p.User?.FullName ?? "—")</td>
+                                <td>@(p.Gender == "Male" ? "Laki-laki" : p.Gender == "Female" ? "Perempuan" : "—")</td>
+                                <td>
+                                    <span class="badge @(p.MentalHealthStatus == "Sehat" ? "bg-success" : p.MentalHealthStatus == "Beresiko" ? "bg-warning text-dark" : "bg-danger")">
+                                        @p.MentalHealthStatus
+                                    </span>
+                                </td>
+                                <td>
+                                    <a asp-action="Detail" asp-route-id="@p.PatientId" class="btn btn-sm btn-outline-primary">Detail</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </section>
+</div>

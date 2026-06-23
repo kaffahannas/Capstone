@@ -46,7 +46,14 @@ namespace LightenUp.Web.Models
         public bool IsAvailable { get; set; } = true;
         public string? OfficeAddress { get; set; }
 
-        // ─── 1-to-1 notification preferences (Psy slice 10) ───
+        // ─── B2C marketplace pricing ───
+        public decimal? PricePerMonth { get; set; }
+        public int SessionTokensPerMonth { get; set; } = 4;
+
+        // ─── Mitra add-on ───
+        public bool IsMitraActive { get; set; } = false;
+        public string? MitraReferralCode { get; set; }
+        public virtual ICollection<PsychologistSubscription> MitraSubscriptions { get; set; } = new List<PsychologistSubscription>();
 
     }
 }

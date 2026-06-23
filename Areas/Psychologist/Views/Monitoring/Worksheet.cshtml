@@ -1,0 +1,58 @@
+@model List<LightenUp.Web.Models.Worksheet>
+
+@{
+    Layout = "_LayoutDashboard";
+    ViewData["Title"] = "Worksheet Klien Klinik";
+}
+
+<div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
+    @{
+        ViewData["ActiveTab"] = "Mitra";
+        ViewData["SemuaUrl"] = Url.Action("Worksheet", "Worksheet", new { area = "Psychologist" });
+        ViewData["MitraUrl"] = Url.Action("Worksheet", "Monitoring", new { area = "Psychologist" });
+    }
+    <partial name="_MitraTabs" />
+    <section class="psy-card">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap">
+                <h2 class="psy-card-title">Worksheet Klien Klinik</h2>
+                <span class="psy-count-chip">@Model.Count</span>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">← Daftar Klien</a>
+            </div>
+        </header>
+        <div style="padding:0 16px 16px;">
+            @if (!Model.Any())
+            {
+                <p style="padding:24px 0; color:var(--color-text-secondary); text-align:center;">Belum ada worksheet untuk klien klinik.</p>
+            }
+            else
+            {
+                <table class="table table-hover" style="margin:0;">
+                    <thead>
+                        <tr>
+                            <th>Klien</th>
+                            <th>Judul</th>
+                            <th>Status</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var w in Model)
+                        {
+                            <tr>
+                                <td>@(w.Patient?.User?.FullName ?? "—")</td>
+                                <td><a asp-action="Detail" asp-route-id="@w.WorksheetId" class="text-decoration-none"><strong>@w.TaskName</strong></a></td>
+                                <td>
+                                    <span class="badge @(w.Status == "Completed" ? "bg-success" : "bg-secondary")">@w.Status</span>
+                                </td>
+                                <td>@w.CreatedAt.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </section>
+</div>

@@ -5,18 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LightenUp.Web.Models
 {
-    public class Subscription
+    /// <summary>Langganan add-on Mitra untuk psikolog yang ingin monitor pasien kliniknya sendiri.</summary>
+    public class PsychologistSubscription
     {
         [Key]
-        public int SubscriptionId { get; set; }
+        public int PsychologistSubscriptionId { get; set; }
 
         [Required]
-        public int PatientId { get; set; }
-        [ForeignKey("PatientId")]
-        public virtual Patient? Patient { get; set; }
-
-        // B2C: terikat ke 1 psikolog yang dibeli pasien
-        public int? PsychologistId { get; set; }
+        public int PsychologistId { get; set; }
         [ForeignKey("PsychologistId")]
         public virtual Psychologist? Psychologist { get; set; }
 
@@ -26,7 +22,8 @@ namespace LightenUp.Web.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        public int MaxSessionsPerMonth { get; set; } = 4;
+        /// <summary>Jumlah maksimal pasien klinik yang bisa dimonitor.</summary>
+        public int PatientLimit { get; set; } = 50;
 
         public virtual ICollection<PaymentTransaction> Payments { get; set; } = new List<PaymentTransaction>();
     }

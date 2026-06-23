@@ -37,7 +37,6 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 PendingHrs = 0,
                 PendingAdminAssignments = await _context.Assignments.CountAsync(a => a.Status == "PendingAdminApproval"),
                 PendingCancellationByAdmin = await _context.Assignments.CountAsync(a => a.Status == "PendingCancellationByAdmin"),
-                PendingPatientAdminRequests = await _context.PatientAdminAssignmentRequests.CountAsync(r => r.Status == "Pending"),
             };
 
             ViewBag.ActiveNav = "Dashboard";

@@ -22,6 +22,13 @@ namespace LightenUp.Web.Models
         [ForeignKey("CompanyId")]
         public virtual Company? Company { get; set; }
 
+        // --- Sponsor (siapa yang menanggung sesi 1-on-1) ---
+        // "Self" = B2C bayar sendiri, "Company" = B2B ditanggung HR, "Psychologist" = pasien klinik Mitra
+        public string SponsorType { get; set; } = "Self";
+        public int? SponsorPsychologistId { get; set; }
+        [ForeignKey("SponsorPsychologistId")]
+        public virtual Psychologist? SponsorPsychologist { get; set; }
+
         public string? EmployeeId { get; set; }
         public int? DivisionId { get; set; }
         [ForeignKey("DivisionId")]

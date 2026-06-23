@@ -61,39 +61,6 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AssignClient(int patientId)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var psych = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
-            if (psych == null) return NotFound();
-
-            var existing = await _context.Assignments.FirstOrDefaultAsync(a =>
-                a.PatientId == patientId && a.PsychologistId == psych.PsychologistId &&
-                (a.Status == "Active" || a.Status == "PendingAdminApproval"));
-            if (existing != null)
-            {
-                TempData["info"] = "Permintaan untuk klien ini sudah ada atau sedang ditangani.";
-                return RedirectToAction("Index", "Dashboard");
-            }
-
-            var assignment = new PatientPsychologistAssignment
-            {
-                PatientId = patientId,
-                PsychologistId = psych.PsychologistId,
-                Status = "PendingAdminApproval",
-                AssignedAt = DateTime.UtcNow,
-                RequestedByUserId = user.Id,
-                RequestedByRole = "Psychologist"
-            };
-
-            _context.Assignments.Add(assignment);
-            await _context.SaveChangesAsync();
-
-            TempData["success"] = "Permintaan penambahan klien dikirim. Menunggu persetujuan Admin.";
-            return RedirectToAction("Index", "Dashboard");
-        }
-
-        [HttpPost]
         public async Task<IActionResult> CancelAssignment(int assignmentId, string reason)
         {
             var user = await _userManager.GetUserAsync(User);
