@@ -3,51 +3,60 @@
 @{
     Layout = "_LayoutDashboard";
     ViewData["Title"] = "Jadwal Klien Klinik";
+    ViewData["ActiveTab"] = "Mitra";
+    ViewData["SemuaUrl"] = Url.Action("Scheduling", "Schedule", new { area = "Psychologist" });
+    ViewData["MitraUrl"] = Url.Action("Jadwal", "Monitoring", new { area = "Psychologist" });
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
 }
 
 <div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
-    @{
-        ViewData["ActiveTab"] = "Mitra";
-        ViewData["SemuaUrl"] = Url.Action("Scheduling", "Schedule", new { area = "Psychologist" });
-        ViewData["MitraUrl"] = Url.Action("Jadwal", "Monitoring", new { area = "Psychologist" });
-    }
     <partial name="_MitraTabs" />
+
     <section class="psy-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
-                <h2 class="psy-card-title">Jadwal Klien Klinik</h2>
-                <span class="psy-count-chip">@Model.Count</span>
+                <p class="psy-card-eyebrow">Psikolog · Monitoring Klien Klinik</p>
+                <h2 class="psy-card-title">Jadwal Klien Klinik
+                    <span class="psy-count-chip">@Model.Count</span>
+                </h2>
             </div>
-            <div style="display:flex; gap:8px;">
-                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">← Daftar Klien</a>
+            <div class="psy-card-tools">
+                <a asp-action="Index" class="psy-tool-btn">← Daftar Klien</a>
             </div>
         </header>
-        <div style="padding:0 16px 16px;">
+
+        <div class="psy-client-list">
             @if (!Model.Any())
             {
-                <p style="padding:24px 0; color:var(--color-text-secondary); text-align:center;">Tidak ada jadwal mendatang untuk klien klinik.</p>
+                <div class="psy-empty">
+                    <div class="psy-empty-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <p class="psy-empty-title">Belum ada jadwal</p>
+                    <p class="psy-empty-sub">Jadwal konseling klien klinik akan muncul di sini.</p>
+                </div>
             }
             else
             {
-                <table class="table table-hover" style="margin:0;">
-                    <thead>
-                        <tr>
-                            <th>Klien</th>
-                            <th>Tanggal & Waktu</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var s in Model)
-                        {
-                            <tr>
-                                <td>@(s.Patient?.User?.FullName ?? "—")</td>
-                                <td>@s.SessionStart.ToString("dd MMM yyyy, HH:mm")</td>
-                                <td><span class="badge bg-secondary">@s.Status</span></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                @foreach (var s in Model)
+                {
+                    var statusClass = s.Status == "Completed" ? "psy-status--healthy"
+                        : s.Status == "Cancelled" ? "psy-status--danger" : "psy-status--neutral";
+                    var statusLabel = s.Status == "Completed" ? "Selesai"
+                        : s.Status == "Cancelled" ? "Dibatalkan"
+                        : s.Status == "Scheduled" ? "Terjadwal" : s.Status;
+
+                    <div class="psy-client-row">
+                        <div class="psy-client-avatar" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div class="psy-client-meta">
+                            <span class="psy-client-name">@(s.Patient?.User?.FullName ?? "—")</span>
+                            <span class="psy-client-sub">@s.SessionStart.ToString("dddd, d MMMM yyyy · HH:mm", idCulture) · @s.DurationMinutes menit</span>
+                        </div>
+                        <span class="psy-client-status @statusClass">@statusLabel</span>
+                    </div>
+                }
             }
         </div>
     </section>

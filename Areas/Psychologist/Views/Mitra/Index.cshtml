@@ -5,87 +5,266 @@
     var activeSub = ViewBag.ActiveSub as LightenUp.Web.Models.PsychologistSubscription;
     bool isMitraActive = ViewBag.IsMitraActive == true;
     int clientCount = ViewBag.ClientCount ?? 0;
+    var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    int daysLeft = 0;
+    if (isMitraActive && activeSub != null)
+        daysLeft = Math.Max(0, (activeSub.EndDate.Date - DateTime.Today).Days);
+    bool expiringSoon = daysLeft > 0 && daysLeft <= 30;
+    int quotaPct = activeSub != null && activeSub.PatientLimit > 0
+        ? Math.Min(100, (int)Math.Round(clientCount * 100.0 / activeSub.PatientLimit))
+        : 0;
 }
 
-<div style="max-width:800px; margin:0 auto; padding:24px 16px;">
+@section Head {
+    <link rel="stylesheet" href="~/css/psychologist/mitra-index.css" asp-append-version="true" />
+}
 
-    @if (TempData["success"] != null)
-    {
-        <div class="alert alert-success mb-3">@TempData["success"]</div>
-    }
-    @if (TempData["info"] != null)
-    {
-        <div class="alert alert-info mb-3">@TempData["info"]</div>
-    }
+<div class="psymi-page">
 
-    <div class="psy-card" style="margin-bottom:20px;">
-        <header class="psy-card-head">
-            <div class="psy-card-title-wrap">
-                <h2 class="psy-card-title">Add-on Mitra</h2>
+    @* ══ HERO ══ *@
+    <div class="psymi-hero">
+        <div class="psymi-hero-bg" aria-hidden="true"></div>
+        <div class="psymi-hero-inner">
+            <div class="psymi-hero-text">
+                <p class="psymi-hero-eyebrow">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="12" r="2"/></svg>
+                    Psikolog · Add-on Mitra
+                </p>
+                <h1 class="psymi-hero-title">Mitra LightenUp</h1>
+                <p class="psymi-hero-sub">Kelola pasien klinik Anda dengan kode referal, monitoring, dan laporan terpadu.</p>
             </div>
-        </header>
-        <div style="padding:20px;">
             @if (isMitraActive)
             {
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="stat-card">
-                        <div class="stat-label">Status</div>
-                        <div class="stat-value" style="color:#15803d;">Aktif</div>
+                <div class="psymi-hero-status @(expiringSoon ? "psymi-hero-status--warn" : "")">
+                    <div class="psymi-hero-status-icon" aria-hidden="true">
+                        @if (expiringSoon)
+                        {
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        }
+                        else
+                        {
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        }
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Berlaku hingga</div>
-                        <div class="stat-value">@activeSub!.EndDate.ToString("dd MMM yyyy")</div>
+                    <div>
+                        <div class="psymi-hero-status-plan">@(activeSub?.PlanName ?? "Mitra Aktif")</div>
+                        <div class="psymi-hero-status-days">@daysLeft hari tersisa</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Klien Klinik</div>
-                        <div class="stat-value">@clientCount / @activeSub.PatientLimit</div>
-                    </div>
-                </div>
-
-                <div style="padding:16px; background:var(--color-background-secondary, #f9fafb); border-radius:8px; margin-bottom:16px;">
-                    <div style="font-size:13px; font-weight:600; margin-bottom:8px;">Kode Referal Anda</div>
-                    @if (!string.IsNullOrEmpty(psy?.MitraReferralCode))
-                    {
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <span style="font-size:22px; font-weight:800; letter-spacing:4px; color:var(--color-text-primary);">@psy.MitraReferralCode</span>
-                            <button onclick="navigator.clipboard.writeText('@psy.MitraReferralCode')" class="btn btn-sm btn-outline-secondary">Salin</button>
-                        </div>
-                        <p style="font-size:12px; color:var(--color-text-secondary); margin-top:6px;">Bagikan kode ini ke pasien klinik Anda. Mereka masukkan kode ini saat onboarding atau di profil mereka.</p>
-                    }
-                    else
-                    {
-                        <p style="font-size:12px; color:var(--color-text-secondary); margin-bottom:8px;">Belum ada kode referal. Generate sekarang.</p>
-                    }
-                    <form method="post" asp-action="GenerateReferralCode" style="margin-top:8px;">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-primary">
-                            @(string.IsNullOrEmpty(psy?.MitraReferralCode) ? "Generate Kode Referal" : "Generate Ulang Kode")
-                        </button>
-                    </form>
-                </div>
-
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Index" class="btn btn-primary">Monitoring Klien Klinik</a>
-                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Statistik" class="btn btn-outline-secondary">Statistik</a>
-                </div>
-            }
-            else
-            {
-                <div style="text-align:center; padding:32px 16px;">
-                    <div style="font-size:40px; margin-bottom:12px;">🏥</div>
-                    <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Punya pasien di klinik sendiri?</h3>
-                    <p style="font-size:13px; color:var(--color-text-secondary); max-width:440px; margin:0 auto 20px;">
-                        Aktifkan add-on Mitra untuk mendapatkan kode referal, monitoring status kesehatan mental klien klinik Anda, dan akses dashboard laporan — tanpa mengganggu alur pasien reguler Anda.
-                    </p>
-                    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:16px;">
-                        <div style="padding:10px 16px; border:1px solid var(--color-border-secondary); border-radius:8px; font-size:12px;">✅ Kode referal sendiri</div>
-                        <div style="padding:10px 16px; border:1px solid var(--color-border-secondary); border-radius:8px; font-size:12px;">✅ Dashboard monitoring klien</div>
-                        <div style="padding:10px 16px; border:1px solid var(--color-border-secondary); border-radius:8px; font-size:12px;">✅ Cetak laporan</div>
-                    </div>
-                    <a href="#" class="btn btn-primary" style="opacity:.5; cursor:not-allowed;" title="Hubungi LightenUp untuk aktivasi">Aktifkan Mitra</a>
-                    <p style="font-size:11px; color:var(--color-text-secondary); margin-top:8px;">Hubungi admin LightenUp atau tunggu pembayaran diproses.</p>
                 </div>
             }
         </div>
     </div>
+
+    @* ══ ALERTS ══ *@
+    @if (TempData["success"] is string ok)
+    {
+        <div class="psymi-alert psymi-alert--green">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            @ok
+        </div>
+    }
+    @if (TempData["info"] is string info)
+    {
+        <div class="psymi-alert psymi-alert--blue">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            @info
+        </div>
+    }
+
+    @* ══ BODY ══ *@
+    <div class="psymi-body">
+
+        @if (isMitraActive)
+        {
+            @* ── Status aktif ── *@
+            <div class="psymi-active-card @(expiringSoon ? "psymi-active-card--warn" : "")">
+                <div class="psymi-active-icon" aria-hidden="true">
+                    @if (expiringSoon)
+                    {
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    }
+                    else
+                    {
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    }
+                </div>
+                <div class="psymi-active-info">
+                    <div>
+                        @if (expiringSoon)
+                        {
+                            <span class="psymi-active-status-badge psymi-active-status-badge--warn">Segera Habis</span>
+                        }
+                        else
+                        {
+                            <span class="psymi-active-status-badge">Mitra Aktif</span>
+                        }
+                    </div>
+                    <div class="psymi-active-plan-name">@(activeSub?.PlanName ?? "Add-on Mitra")</div>
+                    <div class="psymi-active-expiry">Berlaku hingga @activeSub?.EndDate.ToString("d MMMM yyyy", idCulture)</div>
+                </div>
+                <div class="psymi-active-days-ring @(expiringSoon ? "psymi-active-days-ring--warn" : "")">
+                    <span class="psymi-active-days-num">@daysLeft</span>
+                    <span class="psymi-active-days-lbl">hari</span>
+                </div>
+            </div>
+
+            @if (activeSub != null && activeSub.PatientLimit > 0)
+            {
+                <div class="psymi-active-card psymi-active-card--quota">
+                    <div class="psymi-active-info">
+                        <div class="psymi-active-plan-name">Kuota Klien Klinik</div>
+                        <div class="psymi-active-expiry">@clientCount / @activeSub.PatientLimit klien terdaftar</div>
+                        <div class="psymi-quota-bar-track">
+                            <div class="psymi-quota-bar-fill @(quotaPct >= 90 ? "psymi-quota-bar-fill--warn" : "")" style="--bar-w:@(quotaPct)%"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @* ── Kode Referal ── *@
+            <div class="psymi-section">
+                <div class="psymi-section-head">
+                    <div class="psymi-section-icon psymi-section-icon--teal" aria-hidden="true">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="psymi-section-title">Kode Referal Anda</h2>
+                        <p class="psymi-section-sub">Bagikan kode ini ke pasien klinik Anda agar mereka terhubung ke akun Anda saat onboarding.</p>
+                    </div>
+                </div>
+                <div class="psymi-ref-body">
+                    @if (!string.IsNullOrEmpty(psy?.MitraReferralCode))
+                    {
+                        <div class="psymi-ref-card">
+                            <span class="psymi-ref-code" id="mitraRefCode">@psy.MitraReferralCode</span>
+                            <button type="button" class="psymi-ref-copy" id="copyRefBtn" data-code="@psy.MitraReferralCode" aria-label="Salin kode referal">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                Salin
+                            </button>
+                        </div>
+                        <p class="psymi-ref-hint">Pasien klinik memasukkan kode ini saat onboarding atau melalui halaman profil mereka.</p>
+                    }
+                    else
+                    {
+                        <p class="psymi-ref-hint" style="margin-bottom:12px;">Belum ada kode referal. Generate sekarang untuk mulai menerima pasien klinik.</p>
+                    }
+                    <form method="post" asp-action="GenerateReferralCode">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="psymi-ref-generate-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.34"/></svg>
+                            @(string.IsNullOrEmpty(psy?.MitraReferralCode) ? "Generate Kode Referal" : "Generate Ulang Kode")
+                        </button>
+                    </form>
+                </div>
+                <div class="psymi-actions">
+                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Index" class="psymi-action-btn psymi-action-btn--primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Monitoring Klien
+                    </a>
+                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Statistik" class="psymi-action-btn psymi-action-btn--outline">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        Statistik Klien
+                    </a>
+                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Worksheet" class="psymi-action-btn psymi-action-btn--outline">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Worksheet
+                    </a>
+                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Jadwal" class="psymi-action-btn psymi-action-btn--outline">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Jadwal
+                    </a>
+                </div>
+            </div>
+        }
+        else
+        {
+            @* ══ UPSELL: belum aktif ══ *@
+            <div class="psymi-upsell">
+                <div class="psymi-upsell-top">
+                    <div class="psymi-upsell-icon" aria-hidden="true">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3"/></svg>
+                    </div>
+                    <h2 class="psymi-upsell-title">Punya pasien di klinik sendiri?</h2>
+                    <p class="psymi-upsell-desc">
+                        Aktifkan add-on Mitra untuk mendapatkan kode referal sendiri, monitoring status kesehatan mental pasien klinik Anda, dan akses dashboard laporan — tanpa mengganggu alur pasien reguler Anda.
+                    </p>
+                    <div class="psymi-upsell-features">
+                        <div class="psymi-upsell-feat">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Kode referal sendiri
+                        </div>
+                        <div class="psymi-upsell-feat">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Dashboard monitoring klien
+                        </div>
+                        <div class="psymi-upsell-feat">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Cetak laporan
+                        </div>
+                        <div class="psymi-upsell-feat">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Tidak ganggu pasien reguler
+                        </div>
+                    </div>
+                    <div class="psymi-upsell-cta-wrap">
+                        <a href="mailto:admin@lightenup.com?subject=Aktivasi%20Mitra%20-%20@(psy?.Specialization ?? "Psikolog")"
+                           class="psymi-upsell-cta">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            Hubungi Admin untuk Aktivasi
+                        </a>
+                        <p class="psymi-upsell-hint">Tim LightenUp akan menghubungi Anda dalam 1–2 hari kerja setelah konfirmasi pembayaran.</p>
+                    </div>
+                </div>
+
+                <div class="psymi-upsell-features-grid">
+                    <div class="psymi-upsell-feat-item">
+                        <div class="psymi-upsell-feat-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        </div>
+                        <p class="psymi-upsell-feat-title">Kode Referal Unik</p>
+                        <p class="psymi-upsell-feat-desc">Setiap psikolog Mitra mendapat kode unik. Pasien klinik memasukkan kode ini saat daftar dan otomatis terhubung ke Anda.</p>
+                    </div>
+                    <div class="psymi-upsell-feat-item">
+                        <div class="psymi-upsell-feat-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        </div>
+                        <p class="psymi-upsell-feat-title">Monitoring Kesehatan Mental</p>
+                        <p class="psymi-upsell-feat-desc">Pantau status kesehatan mental seluruh pasien klinik Anda lewat dashboard terpisah dari pasien reguler.</p>
+                    </div>
+                    <div class="psymi-upsell-feat-item">
+                        <div class="psymi-upsell-feat-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        </div>
+                        <p class="psymi-upsell-feat-title">Laporan yang Bisa Dicetak</p>
+                        <p class="psymi-upsell-feat-desc">Cetak laporan perkembangan pasien klinik kapan saja untuk keperluan administrasi atau arsip klinik Anda.</p>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
 </div>
+
+@section Scripts {
+<script>
+(function () {
+    var btn = document.getElementById('copyRefBtn');
+    if (!btn) return;
+    var defaultHtml = btn.innerHTML;
+    var doneHtml = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Tersalin!';
+    btn.addEventListener('click', function () {
+        var code = this.dataset.code;
+        if (!code) return;
+        navigator.clipboard.writeText(code).then(() => {
+            btn.innerHTML = doneHtml;
+            btn.classList.add('is-copied');
+            setTimeout(function () {
+                btn.innerHTML = defaultHtml;
+                btn.classList.remove('is-copied');
+            }, 2000);
+        });
+    });
+})();
+</script>
+}

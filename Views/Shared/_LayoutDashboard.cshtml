@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="~/css/psychologist/components-prf-modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/components-history-card.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/components-status.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/dashboard-index.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
     <link rel="stylesheet" href="~/css/psychologist/components-psy-mobile-text.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/psy-desktop-guard.css" asp-append-version="true" />
@@ -44,6 +45,7 @@
             // Beranda = Dashboard/Index
             var _navBeranda     = _ctrl == "Dashboard" && _action == "Index";
             var _navKlien       = _ctrl == "Client";
+            var _navMitra       = _ctrl == "Mitra" || _ctrl == "Monitoring";
             var _navStatistik   = _ctrl == "Dashboard" && _action == "Statistics";
             var _navJadwal      = _ctrl == "Schedule";
             var _navWorksheet   = _ctrl == "Worksheet";
@@ -60,6 +62,10 @@
                         <a asp-area="Psychologist" asp-controller="Client" asp-action="Index" class="nav-item @(_navKlien ? "active" : "")">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                             Klien
+                        </a>
+                        <a asp-area="Psychologist" asp-controller="Mitra" asp-action="Index" class="nav-item @(_navMitra ? "active" : "")">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/><circle cx="12" cy="7" r="2"/></svg>
+                            Mitra
                         </a>
                         <a asp-area="Psychologist" asp-controller="Dashboard" asp-action="Statistics" class="nav-item @(_navStatistik ? "active" : "")">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>

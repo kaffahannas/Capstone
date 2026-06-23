@@ -1,0 +1,553 @@
+/* #Bagian Mitra Index Psikolog# */
+.psymi-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* ══ HERO ══ */
+.psymi-hero {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.psymi-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #0d9488 0%, #0891b2 55%, #2563eb 100%);
+}
+
+.psymi-hero-bg::before {
+    content: '';
+    position: absolute;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.07);
+    top: -80px; right: 140px;
+}
+
+.psymi-hero-bg::after {
+    content: '';
+    position: absolute;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.05);
+    bottom: -50px; right: 60px;
+}
+
+.psymi-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 28px 32px;
+}
+
+.psymi-hero-text { flex: 1; min-width: 0; }
+
+.psymi-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,.75);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.psymi-hero-title {
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin: 0 0 6px;
+}
+
+.psymi-hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,.8);
+    margin: 0;
+}
+
+.psymi-hero-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 14px;
+    padding: 14px 20px;
+    flex-shrink: 0;
+    min-width: 160px;
+}
+
+.psymi-hero-status--warn {
+    background: rgba(251,191,36,.18);
+    border-color: rgba(251,191,36,.35);
+}
+
+.psymi-hero-status-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.psymi-hero-status-plan {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.psymi-hero-status-days {
+    font-size: 11px;
+    color: rgba(255,255,255,.75);
+    margin-top: 2px;
+}
+
+/* ══ ALERTS ══ */
+.psymi-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+}
+
+.psymi-alert--red {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.psymi-alert--green {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+}
+
+.psymi-alert--blue {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+}
+
+/* ══ BODY ══ */
+.psymi-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Active Card ── */
+.psymi-active-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--color-surface, #fff);
+    border: 1.5px solid #bbf7d0;
+    border-radius: 14px;
+    padding: 20px 24px;
+}
+
+.psymi-active-card--warn {
+    border-color: #fde68a;
+}
+
+.psymi-active-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: #d1fae5;
+    display: flex; align-items: center; justify-content: center;
+    color: #059669;
+    flex-shrink: 0;
+}
+
+.psymi-active-card--warn .psymi-active-icon {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.psymi-active-info { flex: 1; }
+
+.psymi-active-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #059669;
+    background: #d1fae5;
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-bottom: 4px;
+}
+
+.psymi-active-status-badge--warn {
+    color: #d97706;
+    background: #fef3c7;
+}
+
+.psymi-active-plan-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text-primary, #111);
+}
+
+.psymi-active-expiry {
+    font-size: 12px;
+    color: var(--color-text-secondary, #6b7280);
+    margin-top: 2px;
+}
+
+.psymi-active-days-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 3px solid #34d399;
+    flex-shrink: 0;
+}
+
+.psymi-active-days-ring--warn { border-color: #fbbf24; }
+
+.psymi-active-days-num {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-text-primary, #111);
+}
+
+.psymi-active-days-lbl {
+    font-size: 10px;
+    color: var(--color-text-secondary, #6b7280);
+}
+
+/* ── Quota card ── */
+.psymi-active-card--quota { border-color: var(--color-border, #e5e7eb); }
+
+.psymi-quota-bar-track {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-border, #e5e7eb);
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.psymi-quota-bar-fill {
+    height: 100%;
+    width: var(--bar-w, 0%);
+    background: #2563eb;
+    border-radius: 999px;
+    transition: width .4s ease;
+}
+
+.psymi-quota-bar-fill--warn { background: #f59e0b; }
+
+/* ── Section ── */
+.psymi-section {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.psymi-section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.psymi-section-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+.psymi-section-icon--teal { background: #ccfbf1; color: #0d9488; }
+.psymi-section-icon--indigo { background: #e0e7ff; color: #4f46e5; }
+
+.psymi-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 3px;
+    color: var(--color-text-primary, #111);
+}
+
+.psymi-section-sub {
+    font-size: 12px;
+    color: var(--color-text-secondary, #6b7280);
+    margin: 0;
+}
+
+/* ── Referral Code Card ── */
+.psymi-ref-body { padding: 20px 24px; }
+
+.psymi-ref-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--color-background-secondary, #f9fafb);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+}
+
+.psymi-ref-code {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    color: var(--color-text-primary, #111);
+    font-variant-numeric: tabular-nums;
+    flex: 1;
+}
+
+.psymi-ref-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+    border-radius: 8px;
+    background: var(--color-surface, #fff);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-primary, #111);
+    transition: all .15s;
+    white-space: nowrap;
+}
+
+.psymi-ref-copy:hover { border-color: #0d9488; color: #0d9488; }
+.psymi-ref-copy.is-copied { border-color: #059669; color: #059669; background: #f0fdf4; }
+
+.psymi-ref-hint {
+    font-size: 12px;
+    color: var(--color-text-secondary, #6b7280);
+    margin: 0;
+}
+
+.psymi-ref-generate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--color-surface, #fff);
+    border: 1.5px solid var(--color-border, #e5e7eb);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary, #6b7280);
+    cursor: pointer;
+    transition: all .15s;
+    margin-top: 12px;
+}
+
+.psymi-ref-generate-btn:hover {
+    border-color: #0d9488;
+    color: #0d9488;
+}
+
+/* ── Actions ── */
+.psymi-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 16px 24px;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.psymi-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .15s;
+    border: none;
+}
+
+.psymi-action-btn--primary {
+    background: #0d9488;
+    color: #fff;
+}
+
+.psymi-action-btn--primary:hover { background: #0f766e; color: #fff; }
+
+.psymi-action-btn--outline {
+    background: transparent;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+    color: var(--color-text-primary, #111);
+}
+
+.psymi-action-btn--outline:hover { border-color: #0d9488; color: #0d9488; }
+
+/* ══ UPSELL (Mitra belum aktif) ══ */
+.psymi-upsell {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.psymi-upsell-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 32px 32px;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.psymi-upsell-icon {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    background: #ccfbf1;
+    display: flex; align-items: center; justify-content: center;
+    color: #0d9488;
+    font-size: 28px;
+    margin-bottom: 16px;
+}
+
+.psymi-upsell-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0 0 8px;
+    color: var(--color-text-primary, #111);
+}
+
+.psymi-upsell-desc {
+    font-size: 13px;
+    color: var(--color-text-secondary, #6b7280);
+    max-width: 480px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+}
+
+.psymi-upsell-features {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 28px;
+}
+
+.psymi-upsell-feat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-primary, #111);
+    background: var(--color-background-secondary, #f9fafb);
+}
+
+.psymi-upsell-feat svg { color: #0d9488; flex-shrink: 0; }
+
+.psymi-upsell-cta-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+.psymi-upsell-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    background: #0d9488;
+    color: #fff;
+    text-decoration: none;
+    transition: background .15s;
+    cursor: pointer;
+}
+
+.psymi-upsell-cta:hover { background: #0f766e; color: #fff; }
+
+.psymi-upsell-hint {
+    font-size: 11px;
+    color: var(--color-text-secondary, #9ca3af);
+    margin: 0;
+}
+
+/* ── Feature grid below upsell ── */
+.psymi-upsell-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+}
+
+.psymi-upsell-feat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 24px;
+    border-right: 1px solid var(--color-border, #e5e7eb);
+}
+
+.psymi-upsell-feat-item:last-child { border-right: none; }
+
+.psymi-upsell-feat-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: #ccfbf1;
+    display: flex; align-items: center; justify-content: center;
+    color: #0d9488;
+}
+
+.psymi-upsell-feat-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-primary, #111);
+    margin: 0;
+}
+
+.psymi-upsell-feat-desc {
+    font-size: 12px;
+    color: var(--color-text-secondary, #6b7280);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 640px) {
+    .psymi-hero-inner { flex-direction: column; padding: 20px; }
+    .psymi-hero-status { width: 100%; }
+    .psymi-active-card { flex-wrap: wrap; }
+    .psymi-active-days-ring { display: none; }
+    .psymi-upsell-features-grid { grid-template-columns: 1fr; }
+    .psymi-upsell-feat-item { border-right: none; border-bottom: 1px solid var(--color-border, #e5e7eb); }
+    .psymi-upsell-feat-item:last-child { border-bottom: none; }
+    .psymi-ref-card { flex-direction: column; align-items: flex-start; }
+    .psymi-ref-code { font-size: 22px; }
+}

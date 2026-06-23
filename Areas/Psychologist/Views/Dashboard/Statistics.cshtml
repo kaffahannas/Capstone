@@ -26,6 +26,11 @@
     ViewData["SemuaUrl"] = Url.Action("Statistics", "Dashboard", new { area = "Psychologist" });
     ViewData["MitraUrl"] = Url.Action("Statistik", "Monitoring", new { area = "Psychologist" });
 }
+
+@section Head {
+    <link rel="stylesheet" href="~/css/shared/components-stat-dashboard.css" asp-append-version="true" />
+}
+
 <partial name="_MitraTabs" />
 
 @* ── Hero banner ── *@

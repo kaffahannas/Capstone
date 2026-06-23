@@ -20,6 +20,11 @@
     ViewData["SemuaUrl"] = Url.Action("Worksheet", "Worksheet", new { area = "Psychologist" });
     ViewData["MitraUrl"] = Url.Action("Worksheet", "Monitoring", new { area = "Psychologist" });
 }
+
+@section Head {
+    <link rel="stylesheet" href="~/css/shared/components-worksheet-dashboard.css" asp-append-version="true" />
+}
+
 <partial name="_MitraTabs" />
 
 @* ── Hero banner ── *@

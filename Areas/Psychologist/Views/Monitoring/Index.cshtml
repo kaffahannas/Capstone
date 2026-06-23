@@ -3,66 +3,70 @@
 @{
     Layout = "_LayoutDashboard";
     ViewData["Title"] = "Monitoring Klien Klinik";
+    ViewData["ActiveTab"] = "Mitra";
+    ViewData["SemuaUrl"] = Url.Action("Index", "Client", new { area = "Psychologist" });
+    ViewData["MitraUrl"] = Url.Action("Index", "Monitoring", new { area = "Psychologist" });
 }
 
 <div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
-    @{
-        ViewData["ActiveTab"] = "Mitra";
-        ViewData["SemuaUrl"] = Url.Action("Index", "Client", new { area = "Psychologist" });
-        ViewData["MitraUrl"] = Url.Action("Index", "Monitoring", new { area = "Psychologist" });
-    }
     <partial name="_MitraTabs" />
+
     <section class="psy-card psy-client-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
-                <h2 class="psy-card-title">Klien Klinik</h2>
-                <span class="psy-count-chip">@Model.Count</span>
+                <p class="psy-card-eyebrow">Psikolog · Monitoring Klien Klinik</p>
+                <h2 class="psy-card-title">Klien Klinik
+                    <span class="psy-count-chip">@Model.Count</span>
+                </h2>
             </div>
-            <div class="psy-card-tools" style="display:flex; gap:8px;">
-                <a asp-action="Statistik" class="btn btn-sm btn-outline-secondary">Statistik</a>
-                <a asp-action="Worksheet" class="btn btn-sm btn-outline-secondary">Worksheet</a>
-                <a asp-action="Jadwal" class="btn btn-sm btn-outline-secondary">Jadwal</a>
+            <div class="psy-card-tools">
+                <a asp-action="Statistik" class="psy-tool-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    Statistik
+                </a>
+                <a asp-action="Worksheet" class="psy-tool-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Worksheet
+                </a>
+                <a asp-action="Jadwal" class="psy-tool-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Jadwal
+                </a>
             </div>
         </header>
 
         <div class="psy-client-list">
             @if (!Model.Any())
             {
-                <div class="psy-empty" style="padding:40px; text-align:center;">
-                    <p style="color:var(--color-text-secondary);">Belum ada klien klinik yang terdaftar.</p>
-                    <p style="font-size:12px; color:var(--color-text-secondary);">Bagikan kode referal Anda ke pasien klinik agar mereka bisa bergabung.</p>
-                    <a asp-controller="Mitra" asp-action="Index" class="btn btn-sm btn-primary" style="margin-top:10px;">Lihat Kode Referal</a>
+                <div class="psy-empty">
+                    <div class="psy-empty-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <p class="psy-empty-title">Belum ada klien klinik</p>
+                    <p class="psy-empty-sub">Bagikan kode referal Anda ke pasien klinik agar mereka bisa bergabung.</p>
+                    <a asp-controller="Mitra" asp-action="Index" class="psy-empty-cta">Lihat Kode Referal →</a>
                 </div>
             }
             else
             {
-                <table class="table table-hover" style="margin:0;">
-                    <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Gender</th>
-                            <th>Status Mental</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var p in Model)
-                        {
-                            <tr>
-                                <td>@(p.User?.FullName ?? "—")</td>
-                                <td>@(p.Gender == "Male" ? "Laki-laki" : p.Gender == "Female" ? "Perempuan" : "—")</td>
-                                <td>
-                                    <span class="badge @(p.MentalHealthStatus == "Sehat" ? "bg-success" : p.MentalHealthStatus == "Beresiko" ? "bg-warning text-dark" : "bg-danger")">
-                                        @p.MentalHealthStatus
-                                    </span>
-                                </td>
-                                <td>
-                                    <a asp-action="Detail" asp-route-id="@p.PatientId" class="btn btn-sm btn-outline-primary">Detail</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                @foreach (var p in Model)
+                {
+                    var initials = string.IsNullOrWhiteSpace(p.User?.FullName) ? "?" :
+                        string.Join("", p.User.FullName.Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
+                    var statusClass = p.MentalHealthStatus == "Sehat" ? "psy-status--healthy"
+                        : p.MentalHealthStatus == "Beresiko" ? "psy-status--risk" : "psy-status--danger";
+                    var genderLabel = p.Gender == "Male" ? "Laki-laki" : p.Gender == "Female" ? "Perempuan" : "—";
+
+                    <div class="psy-client-row">
+                        <div class="psy-client-avatar" aria-hidden="true">@initials</div>
+                        <div class="psy-client-meta">
+                            <span class="psy-client-name">@(p.User?.FullName ?? "—")</span>
+                            <span class="psy-client-sub">@genderLabel · Klien Klinik</span>
+                        </div>
+                        <span class="psy-client-status @statusClass">@(p.MentalHealthStatus ?? "—")</span>
+                        <a asp-action="Detail" asp-route-id="@p.PatientId" class="psy-client-detail-link">Detail →</a>
+                    </div>
+                }
             }
         </div>
     </section>

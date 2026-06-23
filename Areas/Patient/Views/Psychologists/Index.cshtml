@@ -1,5 +1,10 @@
 @using LightenUp.Web.Models
 @model List<LightenUp.Web.Models.Psychologist>
+
+@section Head {
+    <link rel="stylesheet" href="~/css/patient/psychologists-index.css" asp-append-version="true" />
+}
+
 @{
     ViewData["Title"] = "Pilih Psikolog";
     ViewBag.ActiveNav = "Psikolog";

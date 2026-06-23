@@ -1,70 +1,83 @@
 @{
     Layout = "_LayoutDashboard";
     ViewData["Title"] = "Statistik Klien Klinik";
+    ViewData["ActiveTab"] = "Mitra";
+    ViewData["SemuaUrl"] = Url.Action("Statistics", "Dashboard", new { area = "Psychologist" });
+    ViewData["MitraUrl"] = Url.Action("Statistik", "Monitoring", new { area = "Psychologist" });
+
     int total = ViewBag.TotalClients ?? 0;
     int sehat = ViewBag.SehatCount ?? 0;
     int beresiko = ViewBag.BeresikoCount ?? 0;
     int bahaya = ViewBag.BahayaCount ?? 0;
 }
 
-<div style="max-width:700px; margin:0 auto; padding:24px 16px;">
-    @{
-        ViewData["ActiveTab"] = "Mitra";
-        ViewData["SemuaUrl"] = Url.Action("Statistics", "Dashboard", new { area = "Psychologist" });
-        ViewData["MitraUrl"] = Url.Action("Statistik", "Monitoring", new { area = "Psychologist" });
-    }
+<div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
     <partial name="_MitraTabs" />
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-        <h2 style="font-size:16px; font-weight:700;">Statistik Klien Klinik</h2>
-        <div style="display:flex; gap:8px;">
-            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">← Daftar Klien</a>
-        </div>
-    </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:24px;">
-        <div class="stat-card">
-            <div class="stat-label">Total Klien</div>
-            <div class="stat-value">@total</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Sehat</div>
-            <div class="stat-value" style="color:#15803d;">@sehat</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Berisiko</div>
-            <div class="stat-value" style="color:#b45309;">@beresiko</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Bahaya</div>
-            <div class="stat-value" style="color:#b91c1c;">@bahaya</div>
-        </div>
-    </div>
+    <section class="psy-card">
+        <header class="psy-card-head">
+            <div class="psy-card-title-wrap">
+                <p class="psy-card-eyebrow">Psikolog · Statistik Klien Klinik</p>
+                <h2 class="psy-card-title">Statistik Kesehatan Mental</h2>
+            </div>
+            <div class="psy-card-tools">
+                <a asp-action="Index" class="psy-tool-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    Daftar Klien
+                </a>
+            </div>
+        </header>
 
-    @if (total > 0)
-    {
-        <div class="psy-card" style="padding:20px;">
-            <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Distribusi Status Mental</div>
-            @{
+        <div style="padding: 20px 24px;">
+            @* ── Stat cards ── *@
+            <div class="psy-stat-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;">
+                <div class="psy-stat-mini">
+                    <div class="psy-stat-mini-label">Total Klien</div>
+                    <div class="psy-stat-mini-value">@total</div>
+                </div>
+                <div class="psy-stat-mini psy-stat-mini--healthy">
+                    <div class="psy-stat-mini-label">Sehat</div>
+                    <div class="psy-stat-mini-value">@sehat</div>
+                </div>
+                <div class="psy-stat-mini psy-stat-mini--risk">
+                    <div class="psy-stat-mini-label">Berisiko</div>
+                    <div class="psy-stat-mini-value">@beresiko</div>
+                </div>
+                <div class="psy-stat-mini psy-stat-mini--danger">
+                    <div class="psy-stat-mini-label">Bahaya</div>
+                    <div class="psy-stat-mini-value">@bahaya</div>
+                </div>
+            </div>
+
+            @if (total > 0)
+            {
                 int sehatPct = (int)Math.Round((double)sehat / total * 100);
                 int beresikoPct = (int)Math.Round((double)beresiko / total * 100);
                 int bahayaPct = (int)Math.Round((double)bahaya / total * 100);
+                <div style="background:var(--color-background-secondary,#f9fafb); border:1px solid var(--color-border,#e5e7eb); border-radius:12px; padding:20px;">
+                    <p style="font-size:13px; font-weight:600; margin:0 0 14px; color:var(--color-text-primary,#111);">Distribusi Status Mental</p>
+                    <div style="height:18px; border-radius:999px; overflow:hidden; display:flex; margin-bottom:12px; background:var(--color-border,#e5e7eb);">
+                        @if (sehatPct > 0) { <div style="width:@(sehatPct)%; background:#22c55e; transition:width .4s;"></div> }
+                        @if (beresikoPct > 0) { <div style="width:@(beresikoPct)%; background:#f59e0b; transition:width .4s;"></div> }
+                        @if (bahayaPct > 0) { <div style="width:@(bahayaPct)%; background:#ef4444; transition:width .4s;"></div> }
+                    </div>
+                    <div style="display:flex; gap:20px; font-size:12px; flex-wrap:wrap;">
+                        <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;flex-shrink:0;"></span> Sehat @sehatPct%</span>
+                        <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></span> Berisiko @beresikoPct%</span>
+                        <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span> Bahaya @bahayaPct%</span>
+                    </div>
+                </div>
             }
-            <div style="height:20px; border-radius:10px; overflow:hidden; display:flex; margin-bottom:8px;">
-                @if (sehatPct > 0) { <div style="width:@sehatPct%; background:#22c55e;"></div> }
-                @if (beresikoPct > 0) { <div style="width:@beresikoPct%; background:#f59e0b;"></div> }
-                @if (bahayaPct > 0) { <div style="width:@bahayaPct%; background:#ef4444;"></div> }
-            </div>
-            <div style="display:flex; gap:16px; font-size:12px;">
-                <span style="color:#15803d;">■ Sehat @sehatPct%</span>
-                <span style="color:#b45309;">■ Berisiko @beresikoPct%</span>
-                <span style="color:#b91c1c;">■ Bahaya @bahayaPct%</span>
-            </div>
+            else
+            {
+                <div class="psy-empty">
+                    <div class="psy-empty-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <p class="psy-empty-title">Belum ada data</p>
+                    <p class="psy-empty-sub">Statistik akan muncul setelah klien klinik bergabung melalui kode referal Anda.</p>
+                </div>
+            }
         </div>
-    }
-    else
-    {
-        <div style="text-align:center; padding:40px; color:var(--color-text-secondary);">
-            Belum ada data klien klinik.
-        </div>
-    }
+    </section>
 </div>

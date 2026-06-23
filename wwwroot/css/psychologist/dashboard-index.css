@@ -195,10 +195,19 @@
 }
 .psy-card-title-wrap {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 8px;
     color: var(--text-dark);
     flex-shrink: 0;
+    flex-direction: column;
+}
+.psy-card-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    margin: 0;
 }
 .psy-card-title {
     margin: 0;
@@ -278,6 +287,13 @@
     flex-direction: column;
     gap: 2px;
 }
+.psy-client-meta {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
 .psy-client-name {
     font-size: 14px;
     font-weight: 600;
@@ -286,10 +302,61 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.psy-client-meta {
+.psy-client-sub {
     font-size: 12px;
     color: var(--text-muted);
 }
+/* Tool button in card header */
+.psy-tool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: all .15s;
+    white-space: nowrap;
+}
+.psy-tool-btn:hover { border-color: var(--primary-purple); color: var(--primary-purple); }
+/* Status badges */
+.psy-client-status {
+    flex-shrink: 0;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.psy-status--healthy { background: #d1fae5; color: #059669; }
+.psy-status--risk    { background: #fef3c7; color: #b45309; }
+.psy-status--danger  { background: #fee2e2; color: #dc2626; }
+.psy-status--neutral { background: #f3f4f6; color: #6b7280; }
+/* Stat mini cards */
+.psy-stat-mini {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+.psy-stat-mini-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 4px; }
+.psy-stat-mini-value { font-size: 24px; font-weight: 800; color: var(--text-dark); }
+.psy-stat-mini--healthy .psy-stat-mini-value { color: #059669; }
+.psy-stat-mini--risk    .psy-stat-mini-value { color: #b45309; }
+.psy-stat-mini--danger  .psy-stat-mini-value { color: #dc2626; }
+/* Client detail link */
+.psy-client-detail-link {
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-purple);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.psy-client-detail-link:hover { text-decoration: underline; }
 
 /* #Bagian Perusahaan Rows# */
 /* â”€â”€ Company rows â”€â”€ */
@@ -350,6 +417,11 @@
 .psy-empty p { margin: 0; font-size: 14px; }
 .psy-empty--sm { padding: 24px 20px; min-height: 160px; }
 .psy-empty--sm svg { opacity: 0.3; }
+.psy-empty-icon { color: var(--text-muted); }
+.psy-empty-title { font-size: 14px; font-weight: 600; color: var(--text-dark); margin: 0; }
+.psy-empty-sub { font-size: 12px; color: var(--text-muted); margin: 0; max-width: 300px; }
+.psy-empty-cta { font-size: 13px; font-weight: 600; color: var(--primary-purple); text-decoration: none; }
+.psy-empty-cta:hover { text-decoration: underline; }
 
 /* #Bagian Responsif# */
 /* â”€â”€ Responsive â”€â”€ */

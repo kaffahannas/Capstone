@@ -3,55 +3,60 @@
 @{
     Layout = "_LayoutDashboard";
     ViewData["Title"] = "Worksheet Klien Klinik";
+    ViewData["ActiveTab"] = "Mitra";
+    ViewData["SemuaUrl"] = Url.Action("Worksheet", "Worksheet", new { area = "Psychologist" });
+    ViewData["MitraUrl"] = Url.Action("Worksheet", "Monitoring", new { area = "Psychologist" });
 }
 
 <div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
-    @{
-        ViewData["ActiveTab"] = "Mitra";
-        ViewData["SemuaUrl"] = Url.Action("Worksheet", "Worksheet", new { area = "Psychologist" });
-        ViewData["MitraUrl"] = Url.Action("Worksheet", "Monitoring", new { area = "Psychologist" });
-    }
     <partial name="_MitraTabs" />
+
     <section class="psy-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
-                <h2 class="psy-card-title">Worksheet Klien Klinik</h2>
-                <span class="psy-count-chip">@Model.Count</span>
+                <p class="psy-card-eyebrow">Psikolog · Monitoring Klien Klinik</p>
+                <h2 class="psy-card-title">Worksheet Klien Klinik
+                    <span class="psy-count-chip">@Model.Count</span>
+                </h2>
             </div>
-            <div style="display:flex; gap:8px;">
-                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">← Daftar Klien</a>
+            <div class="psy-card-tools">
+                <a asp-action="Index" class="psy-tool-btn">← Daftar Klien</a>
             </div>
         </header>
-        <div style="padding:0 16px 16px;">
+
+        <div class="psy-client-list">
             @if (!Model.Any())
             {
-                <p style="padding:24px 0; color:var(--color-text-secondary); text-align:center;">Belum ada worksheet untuk klien klinik.</p>
+                <div class="psy-empty">
+                    <div class="psy-empty-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <p class="psy-empty-title">Belum ada worksheet</p>
+                    <p class="psy-empty-sub">Worksheet untuk klien klinik akan muncul di sini.</p>
+                </div>
             }
             else
             {
-                <table class="table table-hover" style="margin:0;">
-                    <thead>
-                        <tr>
-                            <th>Klien</th>
-                            <th>Judul</th>
-                            <th>Status</th>
-                            <th>Tanggal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var w in Model)
-                        {
-                            <tr>
-                                <td>@(w.Patient?.User?.FullName ?? "—")</td>
-                                <td><a asp-action="Detail" asp-route-id="@w.WorksheetId" class="text-decoration-none"><strong>@w.TaskName</strong></a></td>
-                                <td>
-                                    <span class="badge @(w.Status == "Completed" ? "bg-success" : "bg-secondary")">@w.Status</span>
-                                </td>
-                                <td>@w.CreatedAt.ToString("dd MMM yyyy")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                @foreach (var w in Model)
+                {
+                    var statusClass = w.Status == "Completed" ? "psy-status--healthy"
+                        : w.Status == "InReview" ? "psy-status--risk" : "psy-status--neutral";
+                    var statusLabel = w.Status == "Completed" ? "Selesai"
+                        : w.Status == "InReview" ? "Review"
+                        : w.Status == "Assigned" ? "Belum Dikerjakan" : w.Status;
+
+                    <div class="psy-client-row">
+                        <div class="psy-client-avatar" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div class="psy-client-meta">
+                            <a asp-action="Detail" asp-route-id="@w.WorksheetId" class="psy-client-name" style="text-decoration:none; color:inherit;">@w.TaskName</a>
+                            <span class="psy-client-sub">@(w.Patient?.User?.FullName ?? "—") · @w.CreatedAt.ToString("dd MMM yyyy")</span>
+                        </div>
+                        <span class="psy-client-status @statusClass">@statusLabel</span>
+                        <a asp-action="Detail" asp-route-id="@w.WorksheetId" class="psy-client-detail-link">Detail →</a>
+                    </div>
+                }
             }
         </div>
     </section>
