@@ -15,7 +15,6 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 // #Class JadwalController#
 [Area("Patient")]
 [Authorize(Roles = "Patient")]
-[RequiresPatientPremium]
 public class JadwalController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -64,7 +63,7 @@ public class JadwalController : Controller
             vm.UpcomingSessions = allSchedules.Where(s => s.SessionStart >= today || s.Status == "Scheduled").ToList();
             vm.PastSessions = allSchedules.Where(s => s.SessionStart < today && s.Status != "Scheduled").OrderByDescending(s => s.SessionStart).ToList();
 
-            // Populate active psychologist info for the request session modal
+            // Active psychologist assignment
             var activeAssignment = await _context.Assignments
                 .Include(a => a.Psychologist).ThenInclude(p => p!.User)
                 .FirstOrDefaultAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
@@ -72,6 +71,31 @@ public class JadwalController : Controller
             vm.HasActivePsychologist = activeAssignment != null;
             vm.PsychologistName = activeAssignment?.Psychologist?.User?.FullName;
             vm.PsychologistId = activeAssignment?.PsychologistId;
+
+            // Session quota: find active subscription for this patient+psikolog
+            if (activeAssignment != null)
+            {
+                var activeSub = await _context.Subscriptions
+                    .Where(s => s.PatientId == patient.PatientId
+                        && s.PsychologistId == activeAssignment.PsychologistId
+                        && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                    .OrderByDescending(s => s.EndDate)
+                    .FirstOrDefaultAsync();
+
+                var maxSessions = activeSub?.MaxSessionsPerMonth
+                    ?? activeAssignment.Psychologist?.SessionTokensPerMonth
+                    ?? 4;
+                vm.MaxSessionsPerMonth = maxSessions;
+                vm.SubscriptionEndDate = activeSub?.EndDate;
+
+                // Count sessions used this calendar month
+                var monthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                var monthEnd = monthStart.AddMonths(1);
+                vm.SessionsUsedThisMonth = await _context.Schedules
+                    .CountAsync(s => s.PatientId == patient.PatientId
+                        && s.SessionStart >= monthStart && s.SessionStart < monthEnd
+                        && s.Status != "Cancelled");
+            }
 
             // Pass to ViewBag for the modal partial
             ViewBag.PsychologistName = vm.PsychologistName;

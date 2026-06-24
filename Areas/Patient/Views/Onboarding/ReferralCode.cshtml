@@ -6,7 +6,7 @@
 
 @* #Komponen Form Kode Referral# *@
 <div class="onb-step">
-<h1 class="onb-title">Punya kode referral perusahaan?</h1>
+<h1 class="onb-title">Punya kode referral?</h1>
 <p class="onb-subtitle">Opsional. Bisa kamu isi nanti dari halaman profil.</p>
 
 <form asp-action="ReferralCode" method="post" class="onb-content">
@@ -16,7 +16,9 @@
     <span asp-validation-for="ReferralCode" class="text-danger"></span>
 
     <div class="onb-info">
-        Karyawan perusahaan mitra dapat memakai kode referral saat langganan perusahaan masih aktif. Jika langganan HR berakhir, fitur premium dibatasi seperti akun tanpa langganan.
+        Kode referral bisa berasal dari dua sumber:<br />
+        <strong>Perusahaan (B2B)</strong> — karyawan yang terdaftar di perusahaan mitra dapat memakai kode divisi HR selama langganan perusahaan masih aktif.<br />
+        <strong>Psikolog Mitra</strong> — pasien klinik dapat memakai kode referal dari psikolog Anda agar terhubung langsung ke dashboard monitoring psikolog tersebut.
     </div>
 
     <div class="onb-footer">

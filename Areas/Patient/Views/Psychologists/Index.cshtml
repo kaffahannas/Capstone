@@ -8,181 +8,269 @@
 @{
     ViewData["Title"] = "Pilih Psikolog";
     ViewBag.ActiveNav = "Psikolog";
-    var activeAssignment = ViewBag.ActiveAssignment as PatientPsychologistAssignment;
-    var pendingAdminRequest = ViewBag.PendingAdminRequest as PatientAdminAssignmentRequest;
     var hasActivePsychologist = (bool)(ViewBag.HasActivePsychologist ?? false);
+    var patientId = ViewBag.PatientId as int?;
+    var isB2B = (bool)(ViewBag.IsB2B ?? false);
+    var idC = new System.Globalization.CultureInfo("id-ID");
 }
 
 <div class="psy-page">
 
-<div class="psy-hero">
-    <div class="psy-hero-deco">🩺</div>
-    <div class="psy-hero-inner">
-        <h1 class="psy-hero-title">
-            <span class="psy-hero-icon">🩺</span>
-            Pilih Psikolog
-        </h1>
-        <p class="psy-hero-sub">Pilih psikolog yang ingin Anda ajak bekerja sama. Psikolog perlu menyetujui permintaan Anda.</p>
+    <div class="psy-hero">
+        <div class="psy-hero-deco" aria-hidden="true">🩺</div>
+        <div class="psy-hero-inner">
+            <h1 class="psy-hero-title">
+                <span class="psy-hero-icon" aria-hidden="true">🩺</span>
+                Pilih Psikolog
+            </h1>
+            <p class="psy-hero-sub">
+                @if (isB2B)
+                {
+                    <text>Psikolog tersedia dari panel perusahaan Anda. Semua biaya ditanggung perusahaan.</text>
+                }
+                else
+                {
+                    <text>Temukan psikolog yang tepat untuk Anda. Klik Detail untuk melihat profil lengkap dan harga.</text>
+                }
+            </p>
+        </div>
     </div>
-</div>
 
-@if (TempData["success"] is string ok)
-{
-    <div class="psy-alert psy-alert--success">✅ @ok</div>
-}
-@if (TempData["error"] is string err)
-{
-    <div class="psy-alert psy-alert--error">⚠️ @err</div>
-}
+    @if (TempData["success"] is string ok)
+    {
+        <div class="psy-alert psy-alert--success">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            @ok
+        </div>
+    }
+    @if (TempData["error"] is string err)
+    {
+        <div class="psy-alert psy-alert--error">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            @err
+        </div>
+    }
 
-@if (pendingAdminRequest != null)
-{
-    <div class="psy-alert psy-alert--pending">
-        <strong>📨 Permintaan ke Admin sedang diproses.</strong> Tim LightenUp akan menugaskan psikolog untuk Anda.
-    </div>
-}
-@if (activeAssignment == null && !(ViewBag.IsB2B ?? false))
-{
-    <div class="psy-info-box" style="margin-bottom: 24px; padding: 16px; background: #eef2ff; border-radius: 8px; border: 1px solid #c7d2fe;">
-        <strong>Pilih Psikolog Anda</strong>
-        <p style="margin: 0; color: #4b5563; font-size: 0.95rem;">Pilih psikolog yang sesuai dengan kebutuhan Anda. Anda akan diminta untuk melakukan pembayaran bulanan untuk mengaktifkan sesi 1-on-1 dan akses worksheet.</p>
-    </div>
-}
-else if (activeAssignment == null && (ViewBag.IsB2B ?? false))
-{
-    <div class="psy-info-box" style="margin-bottom: 24px; padding: 16px; background: #f0fdf4; border-radius: 8px; border: 1px solid #bbf7d0;">
-        <strong>Akses Karyawan Aktif</strong>
-        <p style="margin: 0; color: #4b5563; font-size: 0.95rem;">Pilih dari panel psikolog yang telah disediakan oleh perusahaan Anda. Semua biaya ditanggung oleh perusahaan.</p>
-    </div>
-}
-
-@if (activeAssignment != null)
-{
-    <div class="psy-status-box">
-        <strong>ℹ️ Status permintaan Anda:</strong> @activeAssignment.Status
-        — dengan Psikolog <strong>@(activeAssignment.Psychologist?.User?.FullName ?? "—")</strong>
-    </div>
-}
-
-<div class="psy-grid">
-@foreach (var psy in Model)
-{
-    <div class="psy-card">
-        <div class="psy-card-head">
-            @if (!string.IsNullOrEmpty(psy.User?.ProfilePicture))
+    @if (!Model.Any())
+    {
+        <div class="psy-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <p>Belum ada psikolog tersedia saat ini.</p>
+        </div>
+    }
+    else
+    {
+        <div class="psy-grid">
+            @foreach (var psy in Model)
             {
-                <img src="@psy.User.ProfilePicture" class="psy-avatar" alt=""/>
-            }
-            else
-            {
-                <div class="psy-avatar-ph">
-                    @(psy.User?.FullName?.Length > 0 ? psy.User.FullName[0].ToString().ToUpper() : "?")
+                var isMyPsy = hasActivePsychologist && ViewBag.ActivePsychologistId != null && (int)ViewBag.ActivePsychologistId == psy.PsychologistId;
+                <div class="psy-card @(isMyPsy ? "psy-card--active" : "")">
+
+                    @* Avatar *@
+                    <div class="psy-card-avatar-wrap">
+                        @if (!string.IsNullOrEmpty(psy.User?.ProfilePicture))
+                        {
+                            <img src="@psy.User.ProfilePicture" class="psy-card-avatar" alt="@psy.User.FullName" />
+                        }
+                        else
+                        {
+                            <div class="psy-card-avatar-ph" aria-hidden="true">
+                                @(psy.User?.FullName?.Length > 0 ? psy.User.FullName[0].ToString().ToUpper() : "?")
+                            </div>
+                        }
+                        @if (isMyPsy)
+                        {
+                            <div class="psy-card-active-ring" aria-hidden="true"></div>
+                        }
+                    </div>
+
+                    @* Info *@
+                    <div class="psy-card-name">@(psy.User?.FullName ?? "—")</div>
+                    <div class="psy-card-spec">@(psy.Specialization ?? "Psikolog Umum")</div>
+
+                    @* Tags mini *@
+                    <div class="psy-card-tags">
+                        @if (psy.ExperienceYears.GetValueOrDefault() > 0)
+                        {
+                            <span class="psy-card-tag">@psy.ExperienceYears thn pengalaman</span>
+                        }
+                        @if (!string.IsNullOrEmpty(psy.PracticeLocation))
+                        {
+                            <span class="psy-card-tag">📍 @psy.PracticeLocation</span>
+                        }
+                        @if (isB2B && psy.AcceptsB2B)
+                        {
+                            <span class="psy-card-tag psy-card-tag--b2b">✔ B2B</span>
+                        }
+                    </div>
+
+                    @* Price *@
+                    <div class="psy-card-price-row">
+                        <span class="psy-card-price">Rp @((psy.PricePerMonth ?? 0).ToString("N0", idC))</span>
+                        <span class="psy-card-price-unit">/ bulan</span>
+                        <span class="psy-card-sessions">· @(psy.SessionTokensPerMonth > 0 ? psy.SessionTokensPerMonth : 4) sesi</span>
+                    </div>
+
+                    @* Status or Button *@
+                    @if (isMyPsy)
+                    {
+                        <div class="psy-card-status-badge">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Psikolog Anda (Aktif)
+                        </div>
+                        <button class="psy-card-btn psy-card-btn--disabled" disabled>Sudah Dipilih</button>
+                    }
+                    else if (hasActivePsychologist)
+                    {
+                        <button class="psy-card-btn psy-card-btn--disabled" disabled>Tidak Tersedia</button>
+                    }
+                    else
+                    {
+                        <button class="psy-card-btn psy-card-btn--detail"
+                                onclick="openDetailModal(@psy.PsychologistId)"
+                                type="button">
+                            Detail
+                        </button>
+                    }
                 </div>
             }
-            <div>
-                <div class="psy-card-name">@(psy.User?.FullName ?? "—")</div>
-                <div class="psy-card-spec">@(psy.Specialization ?? "Umum")</div>
+        </div>
+    }
+
+</div>
+
+@* ══ DETAIL MODAL ══ *@
+<div id="psyDetailModal" class="psy-modal-backdrop" style="display:none;" onclick="closeDetailModal(event)">
+    <div class="psy-modal" role="dialog" aria-modal="true" aria-labelledby="modalPsyName">
+
+        <button class="psy-modal-close" onclick="closeDetailModal()" aria-label="Tutup">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
+        @* Avatar + nama *@
+        <div class="psy-modal-header">
+            <div id="modalAvatarWrap" class="psy-modal-avatar-wrap">
+                <div class="psy-modal-avatar-ph" id="modalAvatarPh" aria-hidden="true">?</div>
+            </div>
+            <div class="psy-modal-header-text">
+                <h2 class="psy-modal-name" id="modalPsyName">—</h2>
+                <p class="psy-modal-spec" id="modalPsySpec">—</p>
             </div>
         </div>
 
-        <div class="psy-tags">
-            @if (psy.ExperienceYears > 0)
-            {
-                <span class="psy-tag">@psy.ExperienceYears tahun pengalaman</span>
-            }
-            @if (!string.IsNullOrEmpty(psy.PracticeLocation))
-            {
-                <span class="psy-tag">📍 @psy.PracticeLocation</span>
-            }
-            @if (psy.AcceptsB2B)
-            {
-                <span class="psy-tag psy-tag--b2b">✔ Menerima B2B</span>
-            }
+        @* Detail *@
+        <div class="psy-modal-details" id="modalDetails">
         </div>
 
-        <div style="margin-top: 16px; margin-bottom: 16px; padding: 12px; background: #f9fafb; border-radius: 8px;">
-            <div style="font-size: 1.1rem; font-weight: bold; color: #111827;">
-                Rp @((psy.PricePerMonth ?? 0).ToString("N0")) <span style="font-size: 0.85rem; font-weight: normal; color: #6b7280;">/ bulan</span>
+        @* Harga + button *@
+        <div class="psy-modal-footer">
+            <div class="psy-modal-price-wrap">
+                <span class="psy-modal-price-label">Harga berlangganan</span>
+                <div class="psy-modal-price-row">
+                    <span class="psy-modal-price" id="modalPrice">Rp 0</span>
+                    <span class="psy-modal-price-unit">/ bulan</span>
+                </div>
+                <span class="psy-modal-sessions" id="modalSessions">0 sesi per bulan</span>
             </div>
-            <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
-                Termasuk @(psy.SessionTokensPerMonth > 0 ? psy.SessionTokensPerMonth : 4) sesi per bulan
-            </div>
-        </div>
-
-        @if (activeAssignment == null && pendingAdminRequest == null)
-        {
-            @if (ViewBag.IsB2B ?? false)
-            {
-                <form asp-action="BuyPsychologist" method="post" class="psy-request-form">
-                    <input type="hidden" name="psychologistId" value="@psy.PsychologistId" />
-                    <button type="submit" class="btn-primary psy-select-btn"
-                        onclick="return confirm('Pilih psikolog @(psy.User?.FullName ?? "") sebagai psikolog Anda?')">
-                        Pilih Psikolog Ini
+            <div class="psy-modal-actions">
+                <button type="button" class="psy-modal-btn psy-modal-btn--cancel" onclick="closeDetailModal()">Batal</button>
+                <form asp-action="BuyPsychologist" method="post" style="display:inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="psychologistId" id="modalPsyId" />
+                    <button type="submit" class="psy-modal-btn psy-modal-btn--buy">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        Beli & Aktifkan
                     </button>
                 </form>
-            }
-            else
-            {
-                <button type="button" class="btn-primary psy-select-btn" onclick="openBuyModal(@psy.PsychologistId, '@(psy.User?.FullName)', @(psy.PricePerMonth ?? 0))">
-                    Beli Psikolog Ini
-                </button>
-            }
-        }
-        else
-        {
-            var btnText = "Tidak Tersedia";
-            if (activeAssignment?.PsychologistId == psy.PsychologistId)
-            {
-                btnText = activeAssignment.Status == "Active" ? "Psikolog Anda (Aktif)" : "Menunggu Persetujuan";
-            }
-
-            <button class="btn-secondary psy-disabled-btn" disabled>
-                @btnText
-            </button>
-        }
-    </div>
-}
-</div>
-
-<!-- Payment Modal (Simulation) -->
-<div id="buyModal" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: white; padding: 24px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-        <h3 style="margin-top: 0;">Selesaikan Pembayaran</h3>
-        <p>Anda akan berlangganan dengan <strong id="modalPsyName">Dr. X</strong></p>
-        <div style="padding: 16px; background: #f3f4f6; border-radius: 8px; margin-bottom: 24px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <span>Harga per bulan</span>
-                <strong id="modalPsyPrice">Rp 0</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; padding-top: 8px; margin-top: 8px;">
-                <span>Total Pembayaran</span>
-                <strong id="modalTotalPrice">Rp 0</strong>
             </div>
         </div>
-        <form asp-action="BuyPsychologist" method="post" style="display: flex; gap: 12px; justify-content: flex-end;">
-            <input type="hidden" name="psychologistId" id="modalPsyId" />
-            <button type="button" class="btn-secondary" onclick="closeBuyModal()">Batal</button>
-            <button type="submit" class="btn-primary">Bayar & Aktifkan</button>
-        </form>
     </div>
 </div>
 
-<script>
-    function openBuyModal(id, name, price) {
-        document.getElementById('modalPsyId').value = id;
-        document.getElementById('modalPsyName').textContent = name;
-        
-        const formattedPrice = 'Rp ' + price.toLocaleString('id-ID');
-        document.getElementById('modalPsyPrice').textContent = formattedPrice;
-        document.getElementById('modalTotalPrice').textContent = formattedPrice;
-        
-        const modal = document.getElementById('buyModal');
-        modal.style.display = 'flex';
-    }
-    
-    function closeBuyModal() {
-        document.getElementById('buyModal').style.display = 'none';
-    }
+@* Data psikolog untuk JS *@
+<script id="psyDataJson" type="application/json">
+@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(p => new {
+    id = p.PsychologistId,
+    name = p.User?.FullName ?? "—",
+    spec = p.Specialization ?? "Psikolog Umum",
+    exp = p.ExperienceYears,
+    location = p.PracticeLocation ?? "",
+    str = p.LicenseNumber ?? "",
+    about = p.Bio ?? "",
+    price = p.PricePerMonth ?? 0,
+    sessions = p.SessionTokensPerMonth > 0 ? p.SessionTokensPerMonth : 4,
+    photo = p.User?.ProfilePicture ?? ""
+})))
 </script>
 
-</div>
+@section Scripts {
+<script>
+(function () {
+    var psyData = JSON.parse(document.getElementById('psyDataJson').textContent);
+
+    function formatRp(n) {
+        return 'Rp ' + n.toLocaleString('id-ID');
+    }
+
+    window.openDetailModal = function(id) {
+        var p = psyData.find(function(x) { return x.id === id; });
+        if (!p) return;
+
+        document.getElementById('modalPsyId').value = id;
+        document.getElementById('modalPsyName').textContent = p.name;
+        document.getElementById('modalPsySpec').textContent = p.spec;
+        document.getElementById('modalPrice').textContent = formatRp(p.price);
+        document.getElementById('modalSessions').textContent = p.sessions + ' sesi per bulan';
+
+        // Avatar
+        var wrap = document.getElementById('modalAvatarWrap');
+        var ph = document.getElementById('modalAvatarPh');
+        wrap.innerHTML = '';
+        if (p.photo) {
+            var img = document.createElement('img');
+            img.src = p.photo;
+            img.className = 'psy-modal-avatar';
+            img.alt = p.name;
+            wrap.appendChild(img);
+        } else {
+            var div = document.createElement('div');
+            div.className = 'psy-modal-avatar-ph';
+            div.textContent = p.name.length > 0 ? p.name[0].toUpperCase() : '?';
+            wrap.appendChild(div);
+        }
+
+        // Details
+        var details = [];
+        if (p.about) details.push({ icon: '💬', label: 'Tentang', value: p.about });
+        if (p.exp && p.exp > 0) details.push({ icon: '🎓', label: 'Pengalaman', value: p.exp + ' tahun' });
+        if (p.location) details.push({ icon: '📍', label: 'Lokasi Praktik', value: p.location });
+        if (p.str) details.push({ icon: '📋', label: 'No. STR', value: p.str });
+
+        var detailEl = document.getElementById('modalDetails');
+        if (details.length > 0) {
+            detailEl.innerHTML = details.map(function(d) {
+                return '<div class="psy-modal-detail-row"><span class="psy-modal-detail-icon">' + d.icon + '</span>' +
+                       '<div><span class="psy-modal-detail-label">' + d.label + '</span>' +
+                       '<span class="psy-modal-detail-value">' + d.value + '</span></div></div>';
+            }).join('');
+            detailEl.style.display = 'flex';
+        } else {
+            detailEl.style.display = 'none';
+        }
+
+        document.getElementById('psyDetailModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeDetailModal = function(e) {
+        if (e && e.target !== document.getElementById('psyDetailModal')) return;
+        document.getElementById('psyDetailModal').style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') window.closeDetailModal();
+    });
+})();
+</script>
+}

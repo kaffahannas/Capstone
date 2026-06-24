@@ -40,8 +40,9 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 .FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (patient == null) return RedirectToAction("Welcome", "Onboarding", new { area = "Patient" });
 
-            var hasActivePsychologist = await _context.Assignments
-                .AnyAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
+            var activeAssignment = await _context.Assignments
+                .FirstOrDefaultAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
+            var hasActivePsychologist = activeAssignment != null;
 
             IQueryable<PsychologistModel> query = _context.Psychologists
                 .Include(p => p.User)
@@ -57,6 +58,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             var psychologists = await query.OrderBy(p => p.User!.FullName).ToListAsync();
 
             ViewBag.HasActivePsychologist = hasActivePsychologist;
+            ViewBag.ActivePsychologistId = activeAssignment?.PsychologistId;
             ViewBag.PatientId = patient.PatientId;
             ViewBag.IsB2B = patient.CompanyId != null;
             ViewBag.ActiveNav = "Psikolog";

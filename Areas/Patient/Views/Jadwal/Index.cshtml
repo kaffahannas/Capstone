@@ -20,17 +20,37 @@
             <span class="jdw-hero-icon">📅</span>
             Jadwal Konseling
         </h1>
-        <p class="jdw-hero-sub">Lihat dan kelola jadwal sesi konselingmu dengan Psikolog.</p>
+
         @if (Model.HasActivePsychologist)
         {
+            <div class="jdw-psy-info-row">
+                <span class="jdw-psy-info-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    @Model.PsychologistName
+                </span>
+                <span class="jdw-psy-info-divider">·</span>
+                <span class="jdw-psy-info-item jdw-psy-info-item--quota @(Model.SessionsUsedThisMonth >= Model.MaxSessionsPerMonth ? "jdw-quota--full" : "")">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    @Model.SessionsUsedThisMonth/@Model.MaxSessionsPerMonth sesi bulan ini
+                </span>
+                @if (Model.SubscriptionEndDate.HasValue)
+                {
+                    <span class="jdw-psy-info-divider">·</span>
+                    <span class="jdw-psy-info-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Aktif s/d @Model.SubscriptionEndDate.Value.ToString("dd MMM yyyy")
+                    </span>
+                }
+            </div>
             <button type="button" class="jdw-hero-btn" onclick="openRequestSessionModal()">
-                + Minta Jadwal Sesi ke Psikolog
+                + Request Sesi Konseling
             </button>
         }
         else
         {
-            <a asp-action="Index" asp-controller="Psychologists" asp-area="Patient" class="jdw-hero-btn jdw-hero-btn--muted">
-                Cari Psikolog Dulu
+            <p class="jdw-hero-sub">Anda belum memilih psikolog. Pilih psikolog untuk bisa request sesi konseling.</p>
+            <a asp-action="Index" asp-controller="Psychologists" asp-area="Patient" class="jdw-hero-btn jdw-hero-btn--cta">
+                Beli Psikolog Dulu
             </a>
         }
     </div>

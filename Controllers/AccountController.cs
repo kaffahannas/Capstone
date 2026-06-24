@@ -183,19 +183,27 @@ namespace LightenUp.Web.Controllers
                     return View(model);
                 }
 
-                string otp = new Random().Next(1000, 9999).ToString();
+                var localOtp = _config["DevMode:LocalOtp"];
+                string otp = !string.IsNullOrWhiteSpace(localOtp) ? localOtp : new Random().Next(1000, 9999).ToString();
                 TempData["ExpectedOtp"] = otp;
 
-                try
+                if (!string.IsNullOrWhiteSpace(localOtp))
                 {
-                    await _emailSender.SendAsync(model.Email, "Kode Verifikasi LightenUp", $"Kode OTP Anda adalah: {otp}. Jangan berikan kode ini kepada siapa pun.");
-                    _logger.LogInformation("Sent OTP {Otp} to {Email}", otp, model.Email); // Logs to console/file, good for dev debugging
+                    _logger.LogWarning("DEV MODE: Skipping SMTP for {Email}, OTP is fixed: {Otp}", model.Email, otp);
                 }
-                catch (Exception ex)
+                else
                 {
-                    _logger.LogError(ex, "Failed to send email OTP to {Email}", model.Email);
-                    ModelState.AddModelError(string.Empty, "Gagal mengirim email OTP. Sistem sedang sibuk atau email tidak valid.");
-                    return View(model);
+                    try
+                    {
+                        await _emailSender.SendAsync(model.Email, "Kode Verifikasi LightenUp", $"Kode OTP Anda adalah: {otp}. Jangan berikan kode ini kepada siapa pun.");
+                        _logger.LogInformation("Sent OTP {Otp} to {Email}", otp, model.Email);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to send email OTP to {Email}", model.Email);
+                        ModelState.AddModelError(string.Empty, "Gagal mengirim email OTP. Sistem sedang sibuk atau email tidak valid.");
+                        return View(model);
+                    }
                 }
 
                 TempData["RegisterData"] = JsonSerializer.Serialize(model);

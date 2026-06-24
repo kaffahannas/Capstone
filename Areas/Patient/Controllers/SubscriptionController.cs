@@ -40,40 +40,12 @@ public class SubscriptionController : Controller
         _access = access;
     }
 
-    // #Function Index#
+    // #Function Index — redirects to Pilih Psikolog (subscription model removed for patients)#
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var patient = await GetPatientAsync();
-        if (patient == null) return RedirectToAction("Welcome", "Onboarding");
-
-        var active = await _context.Subscriptions
-            .Where(s => s.PatientId == patient.PatientId && s.Status == "Active" && s.EndDate >= DateTime.Today)
-            .OrderByDescending(s => s.EndDate)
-            .FirstOrDefaultAsync();
-
-        var companySponsors = patient.CompanyId != null
-            && await _access.HasCompanyActiveSubscriptionAsync(patient.CompanyId.Value);
-
-        string? companyName = null;
-        if (patient.CompanyId != null)
-            companyName = await _context.Companies.Where(c => c.CompanyId == patient.CompanyId)
-                .Select(c => c.Name).FirstOrDefaultAsync();
-
-        ViewBag.ActiveNav = "Langganan";
-        return View(new PatientSubscriptionIndexViewModel
-        {
-            Plans = Plans,
-            HasActiveSubscription = active != null || companySponsors,
-            ActivePlanName = companySponsors ? "Ditanggung perusahaan" : active?.PlanName,
-            ActiveUntil = companySponsors
-                ? (await _access.GetActiveCompanySubscriptionAsync(patient.CompanyId!.Value))?.EndDate
-                : active?.EndDate,
-            IsB2B = patient.CompanyId != null,
-            CompanySponsors = companySponsors,
-            CompanyName = companyName
-        });
+        return RedirectToAction("Index", "Psychologists", new { area = "Patient" });
     }
 
     // #Function Checkout#

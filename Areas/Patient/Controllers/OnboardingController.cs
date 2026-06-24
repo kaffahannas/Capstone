@@ -433,41 +433,56 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             if (!string.IsNullOrWhiteSpace(model.ReferralCode))
             {
                 var code = model.ReferralCode.Trim();
+
+                // ── Cek kode HR (CompanyDivision) ──
                 var division = await _context.CompanyDivisions.FirstOrDefaultAsync(d => d.ReferralCode == code);
-                if (division == null)
+                if (division != null)
                 {
-                    ModelState.AddModelError("ReferralCode", "Kode referral tidak ditemukan. Anda dapat mengisinya nanti di profil.");
-                    ViewBag.Progress = new OnboardingProgress { Current = 9 };
-                    return View(model);
-                }
-
-                if (!await _access.CanUseReferralCodeAsync(division.CompanyId))
-                {
-                    ModelState.AddModelError("ReferralCode", "Langganan perusahaan belum aktif atau sudah berakhir. Hubungi HR perusahaan Anda.");
-                    ViewBag.Progress = new OnboardingProgress { Current = 9 };
-                    return View(model);
-                }
-
-                patient.CompanyId = division.CompanyId;
-                patient.DivisionId = division.DivisionId;
-
-                // Auto-claim a PendingEmployee row (HR pre-registered this email) and copy EmployeeId.
-                var user = await _userManager.GetUserAsync(User);
-                if (user != null && !string.IsNullOrEmpty(user.Email))
-                {
-                    var pending = await _context.PendingEmployees
-                        .FirstOrDefaultAsync(pe => pe.CompanyId == division.CompanyId
-                            && pe.Email == user.Email
-                            && pe.ClaimedByPatientId == null);
-                    if (pending != null)
+                    if (!await _access.CanUseReferralCodeAsync(division.CompanyId))
                     {
-                        if (pending.DivisionId != null)
-                            patient.DivisionId = pending.DivisionId;
-                        if (!string.IsNullOrWhiteSpace(pending.EmployeeId))
-                            patient.EmployeeId = pending.EmployeeId;
-                        pending.ClaimedByPatientId = patient.PatientId;
-                        pending.ClaimedAt = DateTime.UtcNow;
+                        ModelState.AddModelError("ReferralCode", "Langganan perusahaan belum aktif atau sudah berakhir. Hubungi HR perusahaan Anda.");
+                        ViewBag.Progress = new OnboardingProgress { Current = 9 };
+                        return View(model);
                     }
+
+                    patient.CompanyId = division.CompanyId;
+                    patient.DivisionId = division.DivisionId;
+                    patient.SponsorType = "Company";
+
+                    // Auto-claim a PendingEmployee row (HR pre-registered this email) and copy EmployeeId.
+                    var user = await _userManager.GetUserAsync(User);
+                    if (user != null && !string.IsNullOrEmpty(user.Email))
+                    {
+                        var pending = await _context.PendingEmployees
+                            .FirstOrDefaultAsync(pe => pe.CompanyId == division.CompanyId
+                                && pe.Email == user.Email
+                                && pe.ClaimedByPatientId == null);
+                        if (pending != null)
+                        {
+                            if (pending.DivisionId != null)
+                                patient.DivisionId = pending.DivisionId;
+                            if (!string.IsNullOrWhiteSpace(pending.EmployeeId))
+                                patient.EmployeeId = pending.EmployeeId;
+                            pending.ClaimedByPatientId = patient.PatientId;
+                            pending.ClaimedAt = DateTime.UtcNow;
+                        }
+                    }
+                }
+                else
+                {
+                    // ── Cek kode Psikolog Mitra ──
+                    var mitra = await _context.Psychologists
+                        .FirstOrDefaultAsync(p => p.MitraReferralCode == code && p.IsMitraActive);
+
+                    if (mitra == null)
+                    {
+                        ModelState.AddModelError("ReferralCode", "Kode referral tidak ditemukan. Anda dapat mengisinya nanti di profil.");
+                        ViewBag.Progress = new OnboardingProgress { Current = 9 };
+                        return View(model);
+                    }
+
+                    patient.SponsorPsychologistId = mitra.PsychologistId;
+                    patient.SponsorType = "Psychologist";
                 }
 
                 await _context.SaveChangesAsync();

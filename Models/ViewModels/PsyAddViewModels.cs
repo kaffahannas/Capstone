@@ -117,7 +117,9 @@ namespace LightenUp.Web.Models.ViewModels
         // B2B setting
         public bool AcceptsB2B { get; set; }
 
-
+        // B2C pricing
+        public decimal? PricePerMonth { get; set; }
+        public int SessionTokensPerMonth { get; set; } = 4;
 
         // Payroll
         public string? BankDetailsPdfPath { get; set; }
@@ -139,6 +141,10 @@ namespace LightenUp.Web.Models.ViewModels
         public string? SippNumber { get; set; }
         public int? ExperienceYears { get; set; }
         public Microsoft.AspNetCore.Http.IFormFile? BankDocumentFile { get; set; }
+
+        // B2C pricing
+        public decimal? PricePerMonth { get; set; }
+        public int SessionTokensPerMonth { get; set; } = 4;
     }
 
     // #Class EditScheduleViewModel#

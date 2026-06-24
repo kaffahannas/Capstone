@@ -120,6 +120,9 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 ActiveCases = activeCases,
                 AcceptsB2B = psych.AcceptsB2B,
 
+                PricePerMonth = psych.PricePerMonth,
+                SessionTokensPerMonth = psych.SessionTokensPerMonth,
+
                 BankDetailsPdfPath = payrollSetting?.BankDetailsPdfPath
             };
 
@@ -168,14 +171,16 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 }
             }
 
-            psych.Specialization   = model.Specialization?.Trim();
-            psych.Bio              = model.Bio?.Trim();
-            psych.LastDegree       = model.LastDegree?.Trim();
-            psych.University       = model.University?.Trim();
-            psych.PracticeLocation = model.PracticeLocation?.Trim();
-            psych.OfficeAddress    = model.OfficeAddress?.Trim();
-            psych.LicenseNumber    = model.SippNumber?.Trim();
-            psych.ExperienceYears  = model.ExperienceYears;
+            psych.Specialization        = model.Specialization?.Trim();
+            psych.Bio                   = model.Bio?.Trim();
+            psych.LastDegree            = model.LastDegree?.Trim();
+            psych.University            = model.University?.Trim();
+            psych.PracticeLocation      = model.PracticeLocation?.Trim();
+            psych.OfficeAddress         = model.OfficeAddress?.Trim();
+            psych.LicenseNumber         = model.SippNumber?.Trim();
+            psych.ExperienceYears       = model.ExperienceYears;
+            psych.PricePerMonth         = model.PricePerMonth;
+            psych.SessionTokensPerMonth = model.SessionTokensPerMonth > 0 ? model.SessionTokensPerMonth : 4;
 
             await _userManager.UpdateAsync(user);
             await _context.SaveChangesAsync();

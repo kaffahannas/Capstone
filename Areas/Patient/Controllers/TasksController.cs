@@ -13,7 +13,6 @@ namespace LightenUp.Web.Areas.Patient.Controllers
     [Area("Patient")]
     [Authorize(Roles = "Patient")]
     // #Class TasksController#
-    [RequiresPatientPremium]
     public class TasksController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -122,6 +121,25 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 Items = items
             };
             ViewBag.ActiveNav = "Tugas";
+
+            // Active psychologist info for hero
+            var activeAssignment = await _context.Assignments
+                .Include(a => a.Psychologist).ThenInclude(p => p!.User)
+                .FirstOrDefaultAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
+            ViewBag.HasActivePsychologist = activeAssignment != null;
+            ViewBag.PsychologistName = activeAssignment?.Psychologist?.User?.FullName;
+
+            if (activeAssignment != null)
+            {
+                var activeSub = await _context.Subscriptions
+                    .Where(s => s.PatientId == patient.PatientId
+                        && s.PsychologistId == activeAssignment.PsychologistId
+                        && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                    .OrderByDescending(s => s.EndDate)
+                    .FirstOrDefaultAsync();
+                ViewBag.SubscriptionEndDate = activeSub?.EndDate;
+            }
+
             return View(vm);
         }
 

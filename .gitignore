@@ -1,5 +1,4 @@
 ## ── .NET / Visual Studio ──────────────────────────────────────
-## https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # User-specific
 *.rsuser
@@ -26,7 +25,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-# Visual Studio / Rider / VS Code (local overrides)
+# IDE local overrides
 .vs/
 .idea/
 .vscode/
@@ -63,12 +62,12 @@ coverage*.info
 *.coverage
 *.coveragexml
 
-# SQL Server local DB files (if attached)
+# SQL Server local DB files
 *.mdf
 *.ldf
 *.ndf
 
-# Node (if used for tooling)
+# Node (tooling)
 node_modules/
 
 # OS junk
@@ -77,45 +76,29 @@ ehthumbs.db
 Desktop.ini
 .DS_Store
 
-## ── Secrets & local config (never commit) ─────────────────────
+## ── Secrets & local config (JANGAN pernah di-commit) ─────────
+appsettings.Local.json
+appsettings.*.Local.json
 appsettings.*.local.json
+appsettings.Development.local.json
 secrets.json
 .env
 .env.*
 *.pfx
 
-# User Secrets live outside the repo; keep local overrides out
-appsettings.Development.local.json
-
-## ── IDE / AI assistants (local only) ──────────────────────────
-.cursor/
-.claude/
-.claire/
-CLAUDE.md
-AGENTS.md
-
-## ── Capstone / design drafts (local only) ─────────────────────
-Form_Capstone/
-Form4-*/
-_figma/
-*.docx.pdf
-
-# Old internal docs — team uses Google Docs
-docs/
-
-## ── Local scratch & debug ───────────────────────────────────────
-temp_*.css
-temp_*.scss
-debug-*.log
-*.log
-
 ## ── App-specific ──────────────────────────────────────────────
-# User uploads (profiles, documents, worksheets, payout proofs)
+# User uploads (foto profil, dokumen, worksheet, bukti payout)
 wwwroot/uploads/
 
-# Optional: keep empty upload folders in git
-# !wwwroot/uploads/**/
-# !wwwroot/uploads/**/.gitkeep
-
-# DataProtection keys — generated at runtime, never commit
+# DataProtection keys — di-generate saat runtime
 DataProtection-Keys/
+
+## ── Log & error files ──────────────────────────────────────────
+*.log
+*.err
+debug-*.log
+
+## ── Tool lokal (jangan di-commit) ──────────────────────────────
+.claude/
+.cursor/
+.idea/

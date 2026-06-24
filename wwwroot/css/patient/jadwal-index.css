@@ -88,6 +88,42 @@
     opacity: 0.9;
 }
 
+.jdw-hero-btn--cta {
+    background: rgba(255,255,255,.95);
+    color: #4338CA;
+}
+
+/* Psikolog info row in hero */
+.jdw-psy-info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+    margin-top: 8px;
+}
+.jdw-psy-info-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    opacity: 0.92;
+    font-weight: 500;
+}
+.jdw-psy-info-item--quota {
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 2px 10px;
+}
+.jdw-quota--full {
+    background: rgba(239,68,68,0.25);
+    color: #fecaca;
+}
+.jdw-psy-info-divider {
+    opacity: 0.5;
+    font-size: 14px;
+}
+
 .jdw-container {
     flex: 1;
     min-height: 0;

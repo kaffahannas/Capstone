@@ -539,15 +539,213 @@
     line-height: 1.5;
 }
 
+/* ══ PRICING PLANS ══ */
+.psymi-plans-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.psymi-plans-header {
+    text-align: center;
+}
+
+.psymi-plans-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-text-primary, #111);
+    margin: 0 0 6px;
+}
+
+.psymi-plans-sub {
+    font-size: 14px;
+    color: var(--color-text-secondary, #6b7280);
+    margin: 0;
+}
+
+.psymi-plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.psymi-plan {
+    position: relative;
+    background: var(--color-surface, #fff);
+    border: 1.5px solid var(--color-border, #e5e7eb);
+    border-radius: 16px;
+    padding: 24px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: box-shadow .15s;
+}
+
+.psymi-plan:hover {
+    box-shadow: 0 4px 24px rgba(0,0,0,.08);
+}
+
+.psymi-plan--popular {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245,158,11,.15);
+}
+
+.psymi-plan-popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.psymi-plan-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+.psymi-plan-icon--teal {
+    background: rgba(13,148,136,.12);
+    color: #0d9488;
+}
+
+.psymi-plan-icon--yellow {
+    background: rgba(245,158,11,.12);
+    color: #d97706;
+}
+
+.psymi-plan-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-primary, #111);
+    margin: 0;
+}
+
+.psymi-plan-pricing {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.psymi-plan-currency {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-secondary, #6b7280);
+    padding-bottom: 3px;
+}
+
+.psymi-plan-price {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--color-text-primary, #111);
+    line-height: 1;
+}
+
+.psymi-plan-duration {
+    font-size: 12px;
+    color: var(--color-text-secondary, #6b7280);
+    margin-top: -6px;
+}
+
+.psymi-plan-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #d97706;
+    background: rgba(245,158,11,.1);
+    padding: 3px 8px;
+    border-radius: 6px;
+    width: fit-content;
+}
+
+.psymi-plan-desc {
+    font-size: 13px;
+    color: var(--color-text-secondary, #6b7280);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.psymi-plan-features {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.psymi-plan-features li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text-primary, #111);
+}
+
+.psymi-plan-features li svg {
+    color: #16a34a;
+    flex-shrink: 0;
+}
+
+.psymi-plan-form {
+    margin-top: 4px;
+}
+
+.psymi-plan-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+    background: var(--color-surface, #fff);
+    color: var(--color-text-primary, #111);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+
+.psymi-plan-btn:hover {
+    background: var(--color-surface-hover, #f3f4f6);
+}
+
+.psymi-plan-btn--popular {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    border-color: transparent;
+}
+
+.psymi-plan-btn--popular:hover {
+    background: linear-gradient(135deg, #d97706, #b45309);
+}
+
 /* ══ RESPONSIVE ══ */
+@media (max-width: 900px) {
+    .psymi-plans-grid { grid-template-columns: 1fr 1fr; }
+}
+
 @media (max-width: 640px) {
     .psymi-hero-inner { flex-direction: column; padding: 20px; }
     .psymi-hero-status { width: 100%; }
     .psymi-active-card { flex-wrap: wrap; }
     .psymi-active-days-ring { display: none; }
-    .psymi-upsell-features-grid { grid-template-columns: 1fr; }
-    .psymi-upsell-feat-item { border-right: none; border-bottom: 1px solid var(--color-border, #e5e7eb); }
-    .psymi-upsell-feat-item:last-child { border-bottom: none; }
+    .psymi-plans-grid { grid-template-columns: 1fr; }
     .psymi-ref-card { flex-direction: column; align-items: flex-start; }
     .psymi-ref-code { font-size: 22px; }
 }

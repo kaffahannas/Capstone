@@ -148,6 +148,10 @@ namespace LightenUp.Web.Data
                 .IsUnique()
                 .HasFilter("[MitraReferralCode] IS NOT NULL");
 
+            builder.Entity<Psychologist>()
+                .Property(p => p.PricePerMonth)
+                .HasColumnType("decimal(14,2)");
+
             // 2. Relasi Schedule (Jadwal)
             builder.Entity<Schedule>()
                 .HasOne(s => s.Patient)

@@ -1,5 +1,7 @@
 /* #Bagian Psikolog Index Pasien# */
 /* Patient Psychologists — linked from Psychologists/Index.cshtml */
+
+/* ─── Page Shell ─────────────────────────────────────────────── */
 .psy-page {
     display: flex;
     flex-direction: column;
@@ -7,10 +9,10 @@
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    min-height: 0;
     height: auto;
 }
 
+/* ─── Hero Banner ────────────────────────────────────────────── */
 .psy-hero {
     flex-shrink: 0;
     background: linear-gradient(135deg, #312E81 0%, #4338CA 100%);
@@ -22,7 +24,6 @@
     position: relative;
     overflow: hidden;
 }
-
 .psy-hero-deco {
     position: absolute;
     right: -20px;
@@ -31,12 +32,7 @@
     font-size: 150px;
     user-select: none;
 }
-
-.psy-hero-inner {
-    position: relative;
-    z-index: 1;
-}
-
+.psy-hero-inner { position: relative; z-index: 1; }
 .psy-hero-title {
     margin: 0 0 8px;
     font-size: 28px;
@@ -45,7 +41,6 @@
     align-items: center;
     gap: 12px;
 }
-
 .psy-hero-icon {
     background: rgba(255,255,255,0.2);
     border-radius: 12px;
@@ -53,332 +48,439 @@
     font-size: 24px;
     line-height: 1;
 }
-
 .psy-hero-sub {
     margin: 0;
     font-size: 15px;
     opacity: 0.9;
 }
 
+/* ─── Alerts ─────────────────────────────────────────────────── */
 .psy-alert {
     border-radius: 12px;
-    padding: 16px;
+    padding: 12px 16px;
     margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
 }
-
 .psy-alert--success {
     background: #ecfdf5;
     border: 1px solid #6ee7b7;
     color: #065f46;
 }
-
 .psy-alert--error {
     background: #fef2f2;
     border: 1px solid #fca5a5;
     color: #7f1d1d;
 }
 
-.psy-alert--pending {
-    background: #eff6ff;
-    border: 1px solid #93c5fd;
-    margin-bottom: 24px;
-}
-
-.psy-admin-box {
-    background: #f5f3ff;
-    border: 1px solid #c4b5fd;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 24px;
-}
-
-.psy-admin-desc {
-    margin: 8px 0 12px;
-    font-size: 14px;
-    color: #4b5563;
-}
-
-.psy-admin-form {
+/* ─── Empty state ────────────────────────────────────────────── */
+.psy-empty {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 12px;
-    flex-wrap: wrap;
-    align-items: flex-end;
+    padding: 48px 24px;
+    color: #9ca3af;
+    text-align: center;
 }
 
-.psy-admin-field {
-    flex: 1;
-    min-width: 200px;
-}
-
-.psy-admin-field--wide {
-    flex: 2;
-    min-width: 200px;
-}
-
-.psy-admin-label {
-    font-size: 12px;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 4px;
-}
-
-.psy-admin-select,
-.psy-admin-input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-family: inherit;
-}
-
-.psy-admin-submit {
-    padding: 8px 16px;
-    border: none;
-    cursor: pointer;
-    border-radius: 8px;
-}
-
-.psy-status-box {
-    background: #fffbeb;
-    border: 1px solid #fcd34d;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 24px;
-}
-
+/* ─── Card Grid ──────────────────────────────────────────────── */
 .psy-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
 }
 
+/* ─── Card ───────────────────────────────────────────────────── */
 .psy-card {
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-    padding: 24px;
+    border-radius: 18px;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.07);
+    padding: 24px 20px 20px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-}
-
-.psy-card-head {
-    display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0;
+    transition: box-shadow 0.2s, transform 0.2s;
+    border: 2px solid transparent;
+}
+.psy-card:hover {
+    box-shadow: 0 6px 24px rgba(67, 56, 202, 0.13);
+    transform: translateY(-2px);
+}
+.psy-card--active {
+    border-color: #6d28d9;
+    box-shadow: 0 4px 20px rgba(109, 40, 217, 0.15);
 }
 
-.psy-avatar {
-    width: 56px;
-    height: 56px;
+/* Avatar */
+.psy-card-avatar-wrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 14px;
+}
+.psy-card-avatar {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     object-fit: cover;
+    border: 3px solid #e0e7ff;
 }
-
-.psy-avatar-ph {
-    width: 56px;
-    height: 56px;
+.psy-card-avatar-ph {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: #e0e7ff;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 30px;
     font-weight: 700;
     color: #4338ca;
+    border: 3px solid #e0e7ff;
+}
+.psy-card-active-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2.5px solid #7c3aed;
+    pointer-events: none;
 }
 
+/* Name + Spec */
 .psy-card-name {
     font-weight: 700;
-    font-size: 16px;
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 4px;
+    color: #111827;
 }
-
 .psy-card-spec {
     color: #6b7280;
     font-size: 13px;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-.psy-tags {
+/* Tags */
+.psy-card-tags {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 14px;
+    min-height: 22px;
 }
-
-.psy-tag {
+.psy-card-tag {
     background: #f3f4f6;
     border-radius: 8px;
-    padding: 4px 10px;
-    font-size: 12px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: #374151;
 }
-
-.psy-tag--b2b {
+.psy-card-tag--b2b {
     background: #ecfdf5;
     color: #065f46;
 }
 
-.psy-request-form {
+/* Price row */
+.psy-card-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
     margin-top: auto;
+    margin-bottom: 14px;
+    justify-content: center;
+}
+.psy-card-price {
+    font-size: 17px;
+    font-weight: 700;
+    color: #4338ca;
+}
+.psy-card-price-unit {
+    font-size: 12px;
+    color: #6b7280;
+}
+.psy-card-sessions {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-left: 2px;
 }
 
-.psy-select-btn {
+/* Status badge — shown on active card */
+.psy-card-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #ede9fe;
+    color: #5b21b6;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-bottom: 10px;
+}
+
+/* Buttons on card */
+.psy-card-btn {
     width: 100%;
     border: none;
-    padding: 12px;
+    padding: 11px;
     border-radius: 12px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: background 0.2s, opacity 0.2s;
 }
-
-.psy-disabled-btn {
-    margin-top: auto;
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    opacity: 0.7;
+.psy-card-btn--detail {
+    background: linear-gradient(135deg, #6d28d9, #4338ca);
+    color: #fff;
+}
+.psy-card-btn--detail:hover {
+    background: linear-gradient(135deg, #5b21b6, #3730a3);
+}
+.psy-card-btn--disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
     cursor: not-allowed;
+    opacity: 0.8;
 }
 
-/* #Bagian Responsif Mobile — layout vertikal, lebar penuh# */
-@media (max-width: 991.98px) {
-    .psy-page {
-        min-height: 0;
-        width: 100%;
-        max-width: 100%;
-    }
+/* ─── Modal Backdrop ─────────────────────────────────────────── */
+.psy-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
 
+/* ─── Modal Box ──────────────────────────────────────────────── */
+.psy-modal {
+    background: #fff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+    padding: 32px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Close */
+.psy-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #374151;
+    transition: background 0.15s;
+}
+.psy-modal-close:hover { background: #e5e7eb; }
+
+/* Header: Avatar + Name */
+.psy-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.psy-modal-avatar-wrap {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+}
+.psy-modal-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e0e7ff;
+}
+.psy-modal-avatar-ph {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #4338ca;
+    border: 3px solid #e0e7ff;
+}
+.psy-modal-header-text { flex: 1; min-width: 0; }
+.psy-modal-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: #111827;
+}
+.psy-modal-spec {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Detail rows */
+.psy-modal-details {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-top: 1px solid #f3f4f6;
+    padding-top: 16px;
+}
+.psy-modal-detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.psy-modal-detail-icon {
+    font-size: 16px;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.psy-modal-detail-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 2px;
+}
+.psy-modal-detail-value {
+    display: block;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+}
+
+/* Footer: Price + Buttons */
+.psy-modal-footer {
+    border-top: 1px solid #f3f4f6;
+    padding-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.psy-modal-price-wrap { display: flex; flex-direction: column; gap: 2px; }
+.psy-modal-price-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.psy-modal-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.psy-modal-price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #4338ca;
+}
+.psy-modal-price-unit {
+    font-size: 13px;
+    color: #6b7280;
+}
+.psy-modal-sessions {
+    font-size: 12px;
+    color: #9ca3af;
+}
+.psy-modal-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.psy-modal-btn {
+    border: none;
+    padding: 11px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+.psy-modal-btn--cancel {
+    background: #f3f4f6;
+    color: #374151;
+}
+.psy-modal-btn--cancel:hover { background: #e5e7eb; }
+.psy-modal-btn--buy {
+    background: linear-gradient(135deg, #6d28d9, #4338ca);
+    color: #fff;
+}
+.psy-modal-btn--buy:hover {
+    background: linear-gradient(135deg, #5b21b6, #3730a3);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 991.98px) {
     .psy-hero {
         padding: 14px 16px;
         border-radius: 14px;
-        margin-bottom: 12px;
-    }
-
-    .psy-hero-title {
-        font-size: 0.9375rem;
-        flex-wrap: nowrap;
-        gap: 8px;
-        margin-bottom: 6px;
-    }
-
-    .psy-hero-icon {
-        padding: 6px;
-        font-size: 16px;
-    }
-
-    .psy-hero-deco {
-        font-size: 72px;
-        right: -12px;
-        top: -20px;
-    }
-
-    .psy-hero-sub {
-        font-size: 11px;
-        line-height: 1.4;
-    }
-
-    .psy-alert,
-    .psy-status-box {
-        padding: 12px 14px;
-        margin-bottom: 12px;
-        font-size: 12px;
-        line-height: 1.4;
-    }
-
-    .psy-admin-box {
-        padding: 14px;
         margin-bottom: 14px;
-        border-radius: 12px;
     }
-
-    .psy-admin-box > strong {
-        font-size: 13px;
-    }
-
-    .psy-admin-desc {
-        font-size: 11px;
-        line-height: 1.45;
-        margin: 6px 0 12px;
-    }
-
-    .psy-admin-form {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-    }
-
-    .psy-admin-field,
-    .psy-admin-field--wide {
-        min-width: 0;
-        width: 100%;
-        flex: none;
-    }
-
-    .psy-admin-label {
-        font-size: 11px;
-        margin-bottom: 5px;
-    }
-
-    .psy-admin-select,
-    .psy-admin-input {
-        font-size: 12px;
-        padding: 10px 12px;
-        border-radius: 10px;
-    }
-
-    .psy-admin-submit {
-        width: 100%;
-        padding: 11px 16px;
-        font-size: 13px;
-        border-radius: 10px;
-    }
+    .psy-hero-title { font-size: 0.95rem; gap: 8px; margin-bottom: 5px; }
+    .psy-hero-icon { padding: 6px; font-size: 16px; }
+    .psy-hero-deco { font-size: 72px; right: -12px; top: -20px; }
+    .psy-hero-sub { font-size: 11px; line-height: 1.4; }
 
     .psy-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 12px;
     }
+    .psy-card { padding: 16px 14px 14px; border-radius: 14px; }
+    .psy-card-avatar-wrap { width: 64px; height: 64px; margin-bottom: 10px; }
+    .psy-card-avatar, .psy-card-avatar-ph { width: 64px; height: 64px; }
+    .psy-card-avatar-ph { font-size: 24px; }
+    .psy-card-name { font-size: 13px; }
+    .psy-card-spec { font-size: 12px; }
+    .psy-card-price { font-size: 15px; }
+    .psy-card-btn { padding: 10px; font-size: 13px; }
 
-    .psy-card {
-        padding: 14px;
-        border-radius: 14px;
-    }
-
-    .psy-card-name {
-        font-size: 14px;
-    }
-
-    .psy-card-spec {
-        font-size: 12px;
-    }
-
-    .psy-tag {
-        font-size: 10px;
-        padding: 3px 8px;
-    }
-
-    .psy-avatar,
-    .psy-avatar-ph {
-        width: 48px;
-        height: 48px;
-    }
-
-    .psy-avatar-ph {
-        font-size: 18px;
-    }
-
-    .psy-select-btn,
-    .psy-disabled-btn {
-        padding: 10px;
-        font-size: 12px;
-        border-radius: 10px;
-    }
+    .psy-modal { padding: 24px 18px 20px; max-height: 95vh; }
+    .psy-modal-price { font-size: 19px; }
+    .psy-modal-footer { flex-direction: column; align-items: flex-start; }
+    .psy-modal-actions { width: 100%; }
+    .psy-modal-btn { flex: 1; justify-content: center; }
 }
 
-@media (max-width: 639.98px) {
-    .psy-hero {
-        padding: 12px 14px;
-    }
-
-    .psy-hero-title {
-        font-size: 0.875rem;
-    }
+@media (max-width: 479.98px) {
+    .psy-grid { grid-template-columns: 1fr 1fr; }
+    .psy-card-tags { display: none; }
+    .psy-hero { padding: 12px 14px; }
+    .psy-hero-title { font-size: 0.875rem; }
 }

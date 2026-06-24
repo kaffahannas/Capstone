@@ -1,5 +1,16 @@
 namespace LightenUp.Web.Models.ViewModels;
 
+// #Class MitraPlanViewModel#
+public class MitraPlanViewModel
+{
+    public string PlanId { get; set; } = "";
+    public string Name { get; set; } = "";
+    public decimal Price { get; set; }
+    public string Description { get; set; } = "";
+    public int DurationMonths { get; set; } = 1;
+    public int PatientLimit { get; set; }
+}
+
 // #Class SubscriptionPlanViewModel#
 public class SubscriptionPlanViewModel
 {

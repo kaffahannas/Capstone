@@ -75,6 +75,39 @@ public static class PaymentCompletionService
             }
         }
 
+        if (payment.PsychologistSubscriptionId.HasValue)
+        {
+            var psySub = payment.PsychologistSubscription
+                ?? await context.PsychologistSubscriptions
+                    .Include(s => s.Psychologist)
+                    .FirstOrDefaultAsync(s => s.PsychologistSubscriptionId == payment.PsychologistSubscriptionId.Value);
+
+            if (psySub != null)
+            {
+                var existingActive = await context.PsychologistSubscriptions
+                    .Where(s => s.PsychologistId == psySub.PsychologistId
+                        && s.Status == "Active"
+                        && s.EndDate > DateTime.Today
+                        && s.PsychologistSubscriptionId != psySub.PsychologistSubscriptionId)
+                    .OrderByDescending(s => s.EndDate)
+                    .FirstOrDefaultAsync();
+
+                var startDate = existingActive != null ? existingActive.EndDate : DateTime.Today;
+                psySub.Status = "Active";
+                psySub.StartDate = startDate;
+                psySub.EndDate = startDate.AddMonths(1);
+
+                var psy = psySub.Psychologist
+                    ?? await context.Psychologists.FindAsync(psySub.PsychologistId);
+                if (psy != null)
+                {
+                    psy.IsMitraActive = true;
+                    if (string.IsNullOrEmpty(psy.MitraReferralCode))
+                        psy.MitraReferralCode = await new SubscriptionAccessService(context).GenerateUniqueReferralCodeAsync();
+                }
+            }
+        }
+
         await context.SaveChangesAsync();
     }
 }

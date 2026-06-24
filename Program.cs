@@ -10,12 +10,16 @@ using Microsoft.AspNetCore.RateLimiting;
 // #Bagian Startup Aplikasi#
 var builder = WebApplication.CreateBuilder(args);
 
+// Load local secrets — appsettings.Local.json is gitignored, safe for credentials
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 // #Bagian Konfigurasi Services#
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString)
+           .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 // Persist DataProtection keys to SQL DB so correlation cookies survive app restarts
 // and Azure scale-out. Keys stored in DataProtectionKeys table via EF Core.
@@ -188,10 +192,50 @@ using (var scope = app.Services.CreateScope())
 
                 var result = await userManager.CreateAsync(newAdmin, adminPassword);
                 if (result.Succeeded)
-                {
                     await userManager.AddToRoleAsync(newAdmin, "Admin");
+            }
+
+            // 3. Dev seed accounts — only when Seed:AdminPassword is set (dev/staging only)
+            async Task SeedAccount(string email, string fullName, string role, Func<ApplicationUser, Task> createProfile)
+            {
+                if (await userManager.FindByEmailAsync(email) != null) return;
+                var user = new ApplicationUser
+                {
+                    UserName = email, Email = email, EmailConfirmed = true,
+                    FullName = fullName, RoleType = role, IsApprovedByAdmin = true
+                };
+                var r = await userManager.CreateAsync(user, adminPassword);
+                if (r.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, role);
+                    await createProfile(user);
                 }
             }
+
+            await SeedAccount("patient@lightenup.com", "Test Patient", "Patient", async u => {
+                context.Patients.Add(new LightenUp.Web.Models.Patient {
+                    UserId = u.Id, SponsorType = "Self",
+                    OnboardingCompletedAt = DateTime.UtcNow
+                });
+                await context.SaveChangesAsync();
+            });
+
+            await SeedAccount("psikolog@lightenup.com", "Test Psikolog", "Psychologist", async u => {
+                context.Psychologists.Add(new LightenUp.Web.Models.Psychologist {
+                    UserId = u.Id, Specialization = "Umum",
+                    PricePerMonth = 150000, SessionTokensPerMonth = 4,
+                    IsAvailable = true, AcceptsB2B = false,
+                    OnboardingCompletedAt = DateTime.UtcNow
+                });
+                await context.SaveChangesAsync();
+            });
+
+            await SeedAccount("hr@lightenup.com", "Test HR", "HR", async u => {
+                context.HrStaffs.Add(new LightenUp.Web.Models.HrStaff {
+                    UserId = u.Id, OnboardingCompletedAt = DateTime.UtcNow
+                });
+                await context.SaveChangesAsync();
+            });
         }
 
 
