@@ -245,7 +245,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 {
                     // Cek kode Psikolog Mitra
                     var mitra = await _context.Psychologists
-                        .FirstOrDefaultAsync(p => p.MitraReferralCode == code && p.IsMitraActive);
+                        .FirstOrDefaultAsync(p => p.MitraReferralCode == code);
 
                     if (mitra == null)
                     {
