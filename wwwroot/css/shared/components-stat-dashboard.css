@@ -1,46 +1,48 @@
 /* #Bagian Stat Dashboard# */
-﻿/* Shared statistics dashboard (HR Statistik + Psy Statistics) */
+/* Shared statistics dashboard (HR Statistik + Psy Statistics) */
 /* #Komponen Hero Banner# */
 /* ── Hero banner ── */
 .stat-hero {
-    position: relative;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    padding: 26px 30px;
-    border-radius: 16px;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
-    clip-path: inset(0 round 16px);
-}
-.stat-hero-bg {
-    position: absolute;
-    inset: 0;
     background: linear-gradient(130deg, #1E1B4B 0%, #3730A3 30%, #4F46E5 65%, #7C3AED 100%);
-    pointer-events: none;
+    border-radius: 16px;
+    padding: 26px 30px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
 }
-.stat-hero-bg::before {
+.stat-hero::before {
     content: "";
     position: absolute;
     top: -60px; right: -40px;
     width: 220px; height: 220px;
     border-radius: 50%;
     background: rgba(255,255,255,0.06);
+    pointer-events: none;
 }
-.stat-hero-bg::after {
+.stat-hero::after {
     content: "";
     position: absolute;
     bottom: -40px; left: 30%;
     width: 140px; height: 140px;
     border-radius: 50%;
     background: rgba(255,255,255,0.04);
+    pointer-events: none;
 }
 .stat-hero-left {
     flex: 1;
     min-width: 0;
+    position: relative;
+    z-index: 1;
 }
 .stat-hero-eyebrow {
     margin: 0 0 4px;
@@ -71,6 +73,8 @@
     gap: 16px;
     flex-shrink: 1;
     min-width: 0;
+    position: relative;
+    z-index: 1;
 }
 .stat-score-ring {
     position: relative;
@@ -493,7 +497,7 @@
     .stat-kpi-row { grid-template-columns: repeat(2, 1fr); }
     .stat-charts-row { grid-template-columns: 1fr; }
     .stat-chart-card--donut .stat-donut-wrap { flex-direction: row; }
-    .stat-hero-inner { padding: 20px 18px; }
+    .stat-hero { padding: 20px 18px; }
     .stat-hero-title { font-size: 20px; }
     .stat-hero-score { gap: 12px; }
 }

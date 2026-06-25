@@ -1,44 +1,40 @@
 /* #Bagian Worksheet Dashboard# */
 /* Shared worksheet dashboard (Psy Monitor Worksheet) */
 .ws-hero {
-    position: relative;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    padding: 26px 30px;
+    flex-wrap: wrap;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
-    border-radius: 16px;
-    margin-bottom: 18px;
-    clip-path: inset(0 round 16px);
-}
-
-.ws-hero-bg {
-    position: absolute;
-    inset: 0;
     background: linear-gradient(130deg, #1E1B4B 0%, #3730A3 25%, #4F46E5 60%, #7C3AED 100%);
-    pointer-events: none;
+    border-radius: 16px;
+    padding: 26px 30px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
 }
-
-.ws-hero-bg::before {
+.ws-hero::before {
     content: "";
     position: absolute;
     top: -55px; right: -35px;
     width: 200px; height: 200px;
     border-radius: 50%;
     background: rgba(255,255,255,0.06);
+    pointer-events: none;
 }
-
-.ws-hero-bg::after {
+.ws-hero::after {
     content: "";
     position: absolute;
     bottom: -40px; left: 40%;
     width: 150px; height: 150px;
     border-radius: 50%;
     background: rgba(255,255,255,0.04);
+    pointer-events: none;
 }
 
 .ws-hero-left {
@@ -47,6 +43,8 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    position: relative;
+    z-index: 1;
 }
 
 .ws-hero-eyebrow {
@@ -89,6 +87,8 @@
     width: fit-content;
     margin-top: 4px;
     cursor: pointer;
+    position: relative;
+    z-index: 1;
 }
 
 .ws-hero-btn:hover {
@@ -99,7 +99,9 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    flex-shrink: 1;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
     min-width: 0;
 }
 

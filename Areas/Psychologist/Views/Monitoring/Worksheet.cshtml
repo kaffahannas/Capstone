@@ -14,41 +14,40 @@
 
 @section Head {
     <link rel="stylesheet" href="~/css/shared/components-worksheet-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shared/components-schedule-dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-detail-modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet-modal.css" asp-append-version="true" />
 }
 
-<div class="psy-dashboard-grid" style="grid-template-columns: 1fr; align-content: start;">
-    <partial name="_MitraTabs" />
+<partial name="_MitraTabs" />
 
     @* ── Hero banner ── *@
-    <div class="ws-hero">
-        <div class="ws-hero-bg"></div>
-        <div class="ws-hero-left">
-            <p class="ws-hero-eyebrow">Psikolog · Klien Klinik</p>
-            <h1 class="ws-hero-title">Worksheet Klien Klinik</h1>
-            <p class="ws-hero-sub">Kelola dan pantau aktivitas tugas harian klien klinik Anda</p>
-            <button type="button" class="ws-hero-btn" onclick="openAddTaskModal()">
+    <div class="sch-hero" style="margin-bottom: 20px;">
+        <div class="sch-hero-left">
+            <p class="sch-hero-eyebrow">Psikolog · Klien Klinik</p>
+            <h1 class="sch-hero-title">Worksheet Klien Klinik</h1>
+            <p class="sch-hero-sub">Kelola dan pantau aktivitas tugas harian klien klinik Anda</p>
+            <button type="button" class="sch-hero-btn" onclick="openAddTaskModal()">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Tambah Tugas Baru
             </button>
         </div>
-        <div class="ws-hero-stats">
-            <div class="ws-stat-bubble">
-                <span class="ws-stat-value">@Model.Count</span>
-                <span class="ws-stat-label">Total Tugas</span>
+        <div class="sch-hero-stats">
+            <div class="sch-stat-bubble">
+                <span class="sch-stat-value">@Model.Count</span>
+                <span class="sch-stat-label">Total Tugas</span>
             </div>
-            <div class="ws-stat-bubble ws-stat-bubble--belum">
-                <span class="ws-stat-value">@countBelum</span>
-                <span class="ws-stat-label">Belum Dikerjakan</span>
+            <div class="sch-stat-bubble">
+                <span class="sch-stat-value">@countBelum</span>
+                <span class="sch-stat-label">Belum Dikerjakan</span>
             </div>
-            <div class="ws-stat-bubble ws-stat-bubble--review">
-                <span class="ws-stat-value">@countReview</span>
-                <span class="ws-stat-label">Review</span>
+            <div class="sch-stat-bubble">
+                <span class="sch-stat-value text-warning">@countReview</span>
+                <span class="sch-stat-label text-warning">Review</span>
             </div>
-            <div class="ws-stat-bubble ws-stat-bubble--done">
-                <span class="ws-stat-value">@countSelesai</span>
-                <span class="ws-stat-label">Selesai</span>
+            <div class="sch-stat-bubble">
+                <span class="sch-stat-value text-success">@countSelesai</span>
+                <span class="sch-stat-label text-success">Selesai</span>
             </div>
         </div>
     </div>
@@ -119,7 +118,6 @@
             }
         </div>
     }
-</div>
 
 @await Html.PartialAsync("~/Areas/Psychologist/Views/Worksheet/_AddTaskModal.cshtml", ViewBag.AddTaskForm as LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel ?? new LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel())
 

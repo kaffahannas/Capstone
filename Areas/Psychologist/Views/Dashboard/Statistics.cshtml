@@ -29,26 +29,18 @@
 
 @section Head {
     <link rel="stylesheet" href="~/css/shared/components-stat-dashboard.css" asp-append-version="true" />
-    <style>
-        /* Mencegah layout berantakan saat zoom browser (di atas 125%) khusus di desktop */
-        @@media (min-width: 992px) {
-            body {
-                min-width: 1200px !important;
-                overflow-x: auto !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/shared/components-schedule-dashboard.css" asp-append-version="true" />
+
 }
 
 <partial name="_MitraTabs" />
 
 @* ── Hero banner ── *@
-<div class="stat-hero">
-    <div class="stat-hero-bg"></div>
-    <div class="stat-hero-left">
-        <p class="stat-hero-eyebrow">Laporan Kesehatan Mental</p>
-        <h1 class="stat-hero-title">Statistik Keseluruhan</h1>
-        <p class="stat-hero-sub">@DateTime.Now.ToString("dddd, d MMMM yyyy", cid) · Ringkasan semua klien aktif Anda</p>
+<div class="sch-hero" style="margin-bottom: 20px;">
+    <div class="sch-hero-left">
+        <p class="sch-hero-eyebrow">Laporan Kesehatan Mental</p>
+        <h1 class="sch-hero-title">Statistik Keseluruhan</h1>
+        <p class="sch-hero-sub">@DateTime.Now.ToString("dddd, d MMMM yyyy", cid) · Ringkasan semua klien aktif Anda</p>
     </div>
     <div class="stat-hero-score">
         <div class="stat-score-ring">
