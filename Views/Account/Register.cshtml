@@ -117,19 +117,15 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script>
         function copySocialFields(idx) {
-            var fullName = document.getElementById('regFullName').value.trim();
             var accountType = document.querySelector('[name="AccountType"]:checked');
 
-            if (!fullName) {
-                alert('Silakan isi Nama Lengkap terlebih dahulu.');
-                return false;
-            }
             if (!accountType) {
                 alert('Silakan pilih Jenis Akun terlebih dahulu.');
                 return false;
             }
 
-            document.getElementById('socialFullName' + idx).value = fullName;
+            // Nama akan diambil otomatis dari Google
+            document.getElementById('socialFullName' + idx).value = '';
             document.getElementById('socialAccountType' + idx).value = accountType.value;
             return true;
         }

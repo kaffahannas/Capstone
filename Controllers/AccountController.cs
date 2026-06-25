@@ -531,9 +531,9 @@ namespace LightenUp.Web.Controllers
             // Validate register flow data before redirecting to provider
             if (flow == "register")
             {
-                if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(accountType))
+                if (string.IsNullOrWhiteSpace(accountType))
                 {
-                    TempData["ExternalError"] = "Silakan isi Nama Lengkap dan pilih Jenis Akun terlebih dahulu.";
+                    TempData["ExternalError"] = "Silakan pilih Jenis Akun terlebih dahulu.";
                     return RedirectToAction("Register");
                 }
                 if (accountType != "Patient" && accountType != "Psychologist" && accountType != "HR")
@@ -542,7 +542,7 @@ namespace LightenUp.Web.Controllers
                     return RedirectToAction("Register");
                 }
                 TempData["ExternalFlow"] = "register";
-                TempData["ExternalFullName"] = fullName;
+                TempData["ExternalFullName"] = fullName; // bisa kosong, akan diambil dari Google
                 TempData["ExternalAccountType"] = accountType;
             }
             else
@@ -623,8 +623,12 @@ namespace LightenUp.Web.Controllers
                 return RedirectToAction("Login");
             }
 
+            // Ambil nama dari Google kalau tidak diisi manual
+            if (string.IsNullOrWhiteSpace(extFullName))
+                extFullName = info.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Name) ?? email;
+
             // 3. User does not exist
-            if (flow != "register" || string.IsNullOrWhiteSpace(extFullName) || string.IsNullOrWhiteSpace(extAccountType))
+            if (flow != "register" || string.IsNullOrWhiteSpace(extAccountType))
             {
                 // From Login page — don't create account
                 await _signInManager.SignOutAsync();
