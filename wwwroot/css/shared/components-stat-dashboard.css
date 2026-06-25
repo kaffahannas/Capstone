@@ -10,7 +10,6 @@
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
-    overflow: hidden;
 }
 .stat-hero-bg {
     position: absolute;
@@ -500,7 +499,7 @@
     .stat-kpi-row { grid-template-columns: repeat(2, 1fr); }
     .stat-charts-row { grid-template-columns: 1fr; }
     .stat-chart-card--donut .stat-donut-wrap { flex-direction: row; }
-    .stat-hero { padding: 20px 18px; }
+    .stat-hero-inner { padding: 20px 18px; }
     .stat-hero-title { font-size: 20px; }
     .stat-hero-score { gap: 12px; }
 }
