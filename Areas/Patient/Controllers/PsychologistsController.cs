@@ -18,17 +18,20 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AssignmentActivationService _activation;
         private readonly DuitkuService _duitku;
+        private readonly IWebHostEnvironment _env;
 
         public PsychologistsController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             AssignmentActivationService activation,
-            DuitkuService duitku)
+            DuitkuService duitku,
+            IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
             _activation = activation;
             _duitku = duitku;
+            _env = env;
         }
 
         // ─── Daftar psikolog — terbuka untuk semua pasien ───
@@ -294,7 +297,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
 
             if (payment == null) return NotFound();
 
-            if (mock && payment.PaymentStatus == "pending")
+            if ((mock || _env.IsDevelopment()) && payment.PaymentStatus == "pending")
                 await PaymentCompletionService.MarkPaidAsync(_context, payment);
 
             if (payment.PaymentStatus == "paid")
