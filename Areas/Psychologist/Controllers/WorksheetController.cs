@@ -445,6 +445,10 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            if (Request.Headers["X-Requested-With"] == "fetch")
+                return Json(new { success = true, reload = true });
+
             return RedirectToAction(nameof(WorksheetDetailModal), new { id = w.WorksheetId });
         }
     }

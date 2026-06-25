@@ -201,10 +201,16 @@ window.submitWorksheetDetailForm = function(e) {
     var form = document.getElementById('worksheetDetailForm') || e.target.closest('form');
     if (!form) return;
     var data = new FormData(form);
-    fetch(form.action, { method: 'POST', body: data })
+    fetch(form.action, { method: 'POST', body: data, headers: { 'X-Requested-With': 'fetch' } })
         .then(function(res) {
-            if (res.redirected) { window.location.reload(); }
-            else return res.text().then(function(html) {
+            if (res.redirected) { window.location.reload(); return; }
+            var ct = res.headers.get('content-type') || '';
+            if (ct.includes('application/json')) {
+                return res.json().then(function(json) {
+                    if (json.reload) window.location.reload();
+                });
+            }
+            return res.text().then(function(html) {
                 document.getElementById('worksheetDetailModal').innerHTML = html;
             });
         })
