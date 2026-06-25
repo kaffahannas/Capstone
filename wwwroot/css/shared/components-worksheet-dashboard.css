@@ -2,7 +2,7 @@
 /* Shared worksheet dashboard (Psy Monitor Worksheet) */
 .ws-hero {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 20px;
     flex-wrap: wrap;
@@ -15,7 +15,8 @@
     padding: 26px 30px;
     margin-bottom: 18px;
     position: relative;
-    overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 0px;
     flex-shrink: 0;
 }
 
@@ -97,7 +98,8 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    flex-shrink: 0;
+    flex-shrink: 1;
+    min-width: 0;
 }
 
 .ws-stat-bubble {
