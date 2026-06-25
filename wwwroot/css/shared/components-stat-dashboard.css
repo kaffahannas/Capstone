@@ -4,9 +4,14 @@
 /* ── Hero banner ── */
 .stat-hero {
     position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 26px 30px;
     border-radius: 16px;
     margin-bottom: 20px;
-    flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
     clip-path: inset(0 round 16px);
@@ -32,16 +37,6 @@
     width: 140px; height: 140px;
     border-radius: 50%;
     background: rgba(255,255,255,0.04);
-}
-.stat-hero-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    padding: 26px 30px;
 }
 .stat-hero-left {
     flex: 1;

@@ -2,12 +2,17 @@
 /* Shared worksheet dashboard (Psy Monitor Worksheet) */
 .ws-hero {
     position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 26px 30px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
     border-radius: 16px;
     margin-bottom: 18px;
-    flex-shrink: 0;
     clip-path: inset(0 round 16px);
 }
 
@@ -34,17 +39,6 @@
     width: 150px; height: 150px;
     border-radius: 50%;
     background: rgba(255,255,255,0.04);
-}
-
-.ws-hero-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    padding: 26px 30px;
 }
 
 .ws-hero-left {
