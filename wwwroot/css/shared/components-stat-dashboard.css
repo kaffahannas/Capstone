@@ -9,7 +9,7 @@
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
-    overflow: hidden;
+    clip-path: inset(0 round 16px);
 }
 .stat-hero-bg {
     position: absolute;
