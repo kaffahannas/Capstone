@@ -3,39 +3,47 @@
 /* #Komponen Hero Banner# */
 /* ── Hero banner ── */
 .stat-hero {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
+    position: relative;
     background: linear-gradient(130deg, #1E1B4B 0%, #3730A3 30%, #4F46E5 65%, #7C3AED 100%);
     border-radius: 16px;
-    padding: 26px 30px;
     margin-bottom: 20px;
-    position: relative;
-    overflow: clip;
-    overflow-clip-margin: 0px;
     flex-shrink: 0;
-    box-sizing: border-box;
     width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
-.stat-hero::before {
+.stat-hero-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    pointer-events: none;
+}
+.stat-hero-bg::before {
     content: "";
     position: absolute;
     top: -60px; right: -40px;
     width: 220px; height: 220px;
     border-radius: 50%;
     background: rgba(255,255,255,0.06);
-    pointer-events: none;
 }
-.stat-hero::after {
+.stat-hero-bg::after {
     content: "";
     position: absolute;
     bottom: -40px; left: 30%;
     width: 140px; height: 140px;
     border-radius: 50%;
     background: rgba(255,255,255,0.04);
-    pointer-events: none;
+}
+.stat-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 26px 30px;
 }
 .stat-hero-left {
     flex: 1;

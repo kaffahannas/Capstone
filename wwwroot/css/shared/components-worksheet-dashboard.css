@@ -1,43 +1,52 @@
 /* #Bagian Worksheet Dashboard# */
 /* Shared worksheet dashboard (Psy Monitor Worksheet) */
 .ws-hero {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
+    position: relative;
     width: 100%;
     max-width: 100%;
-    min-width: 0;
     box-sizing: border-box;
     background: linear-gradient(130deg, #1E1B4B 0%, #3730A3 25%, #4F46E5 60%, #7C3AED 100%);
     border-radius: 16px;
-    padding: 26px 30px;
     margin-bottom: 18px;
-    position: relative;
-    overflow: clip;
-    overflow-clip-margin: 0px;
     flex-shrink: 0;
+    overflow: hidden;
 }
 
-.ws-hero::before {
+.ws-hero-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.ws-hero-bg::before {
     content: "";
     position: absolute;
     top: -55px; right: -35px;
     width: 200px; height: 200px;
     border-radius: 50%;
     background: rgba(255,255,255,0.06);
-    pointer-events: none;
 }
 
-.ws-hero::after {
+.ws-hero-bg::after {
     content: "";
     position: absolute;
     bottom: -40px; left: 40%;
     width: 150px; height: 150px;
     border-radius: 50%;
     background: rgba(255,255,255,0.04);
-    pointer-events: none;
+}
+
+.ws-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 26px 30px;
 }
 
 .ws-hero-left {
