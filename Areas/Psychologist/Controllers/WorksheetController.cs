@@ -439,6 +439,12 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 w.ReviewedAt = null;
                 TempData["WorksheetSuccess"] = "Worksheet dikembalikan ke pasien untuk direvisi.";
             }
+            else if (submitAction == "Reopen")
+            {
+                w.Status = "InProgress";
+                w.ReviewedAt = null;
+                TempData["WorksheetSuccess"] = "Worksheet dibuka kembali.";
+            }
             else
             {
                 TempData["WorksheetSuccess"] = "Catatan disimpan.";
