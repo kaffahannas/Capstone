@@ -26,6 +26,8 @@ namespace LightenUp.Web.Data
         public DbSet<Psychologist> Psychologists { get; set; }
         public DbSet<HrStaff> HrStaffs { get; set; }
 
+        public DbSet<PendingOtp> PendingOtps { get; set; }
+
         // Tabel Bisnis & Entitas Baru
         public DbSet<Company> Companies { get; set; }
         public DbSet<CompanyDivision> CompanyDivisions { get; set; }

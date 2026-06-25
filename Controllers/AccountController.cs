@@ -7,10 +7,11 @@ using System.Text.Json;
 using System.IO;
 using LightenUp.Web.Services;
 using System.Threading.Tasks;
-using System.Linq; // Tambahan untuk memanipulasi data database (FirstOrDefault)
+using System.Linq;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace LightenUp.Web.Controllers
 {
@@ -185,7 +186,17 @@ namespace LightenUp.Web.Controllers
 
                 var localOtp = _config["DevMode:LocalOtp"];
                 string otp = !string.IsNullOrWhiteSpace(localOtp) ? localOtp : new Random().Next(1000, 9999).ToString();
-                TempData["ExpectedOtp"] = otp;
+
+                // Simpan OTP ke database agar tidak hilang saat app restart
+                var existing = await _context.PendingOtps.FirstOrDefaultAsync(p => p.Email == model.Email);
+                if (existing != null) _context.PendingOtps.Remove(existing);
+                _context.PendingOtps.Add(new PendingOtp
+                {
+                    Email = model.Email,
+                    OtpCode = otp,
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(10)
+                });
+                await _context.SaveChangesAsync();
 
                 if (!string.IsNullOrWhiteSpace(localOtp))
                 {
@@ -219,7 +230,6 @@ namespace LightenUp.Web.Controllers
         public IActionResult VerifyEmail(string email)
         {
             TempData.Keep("RegisterData");
-            TempData.Keep("ExpectedOtp");
             if (string.IsNullOrEmpty(email)) return RedirectToAction("Register");
 
             return View(new VerifyOtpViewModel { Email = email });
@@ -227,17 +237,25 @@ namespace LightenUp.Web.Controllers
 
         // #Function VerifyEmail POST#
         [HttpPost]
-        public IActionResult VerifyEmail(VerifyOtpViewModel model)
+        public async Task<IActionResult> VerifyEmail(VerifyOtpViewModel model)
         {
             TempData.Keep("RegisterData");
-            TempData.Keep("ExpectedOtp");
 
             if (ModelState.IsValid)
             {
-                var expected = TempData["ExpectedOtp"]?.ToString();
-                
-                if (!string.IsNullOrEmpty(expected) && model.OtpCode == expected)
+                var pending = await _context.PendingOtps
+                    .FirstOrDefaultAsync(p => p.Email == model.Email);
+
+                if (pending == null || DateTime.UtcNow > pending.ExpiresAt)
                 {
+                    ModelState.AddModelError("OtpCode", "Kode OTP sudah kadaluarsa. Silakan kirim ulang.");
+                    return View(model);
+                }
+
+                if (model.OtpCode == pending.OtpCode)
+                {
+                    _context.PendingOtps.Remove(pending);
+                    await _context.SaveChangesAsync();
                     return RedirectToAction("CreatePassword", new { email = model.Email });
                 }
 
@@ -245,6 +263,38 @@ namespace LightenUp.Web.Controllers
             }
 
             return View(model);
+        }
+
+        // #Function ResendOtp POST#
+        [HttpPost]
+        public async Task<IActionResult> ResendOtp(string email)
+        {
+            if (string.IsNullOrEmpty(email)) return RedirectToAction("Register");
+
+            var otp = new Random().Next(1000, 9999).ToString();
+
+            var existing = await _context.PendingOtps.FirstOrDefaultAsync(p => p.Email == email);
+            if (existing != null) _context.PendingOtps.Remove(existing);
+            _context.PendingOtps.Add(new PendingOtp
+            {
+                Email = email,
+                OtpCode = otp,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(10)
+            });
+            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _emailSender.SendAsync(email, "Kode Verifikasi LightenUp", $"Kode OTP baru Anda adalah: {otp}. Kode berlaku 10 menit.");
+                TempData["success"] = "Kode OTP baru telah dikirim ke email Anda.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to resend OTP to {Email}", email);
+                TempData["error"] = "Gagal mengirim ulang OTP. Coba beberapa saat lagi.";
+            }
+
+            return RedirectToAction("VerifyEmail", new { email });
         }
 
         // #Bagian Buat Password#
