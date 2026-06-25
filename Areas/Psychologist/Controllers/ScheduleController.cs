@@ -53,14 +53,29 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .ToListAsync();
         }
 
+        private async Task<List<LightenUp.Web.Models.ViewModels.PsyPatientOption>> LoadMitraPatientOptionsAsync(int psyId)
+        {
+            return await _context.Patients
+                .Where(p => p.SponsorPsychologistId == psyId && p.SponsorType == "Psychologist")
+                .Include(p => p.User)
+                .Select(p => new LightenUp.Web.Models.ViewModels.PsyPatientOption
+                {
+                    PatientId = p.PatientId,
+                    FullName = p.User!.FullName,
+                    CompanyName = "Klien Klinik"
+                })
+                .OrderBy(o => o.FullName)
+                .ToListAsync();
+        }
+
         // #Function AddSchedule#
 
         [HttpGet]
-        public async Task<IActionResult> AddSchedule(int? patientId = null)
+        public async Task<IActionResult> AddSchedule(int? patientId = null, bool mitraOnly = false)
         {
             if (patientId.HasValue)
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = patientId.Value, add = true });
-            return RedirectToAction(nameof(Scheduling), new { add = true, patientId });
+            return RedirectToAction(nameof(Scheduling), new { add = true, patientId, mitraOnly });
         }
 
         // #Function AddSchedule POST#
@@ -144,6 +159,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (model.ReturnPatientId.HasValue)
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = model.ReturnPatientId.Value });
+            if (model.MitraOnly)
+                return RedirectToAction("Jadwal", "Monitoring", new { area = "Psychologist" });
             return RedirectToAction(nameof(Scheduling), new { filter = model.ReturnFilter ?? "Semua" });
         }
 
@@ -288,15 +305,20 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         // #Function Scheduling#
 
         [HttpGet]
-        public async Task<IActionResult> Scheduling(string filter = "Semua", bool add = false, int? patientId = null)
+        public async Task<IActionResult> Scheduling(string filter = "Semua", bool add = false, int? patientId = null, bool mitraOnly = false)
         {
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
 
+            var patients = mitraOnly
+                ? await LoadMitraPatientOptionsAsync(psyId.Value)
+                : await LoadPatientOptionsAsync(psyId.Value);
+
             var addForm = new LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel
             {
-                AvailablePatients = await LoadPatientOptionsAsync(psyId.Value),
-                ReturnFilter = filter
+                AvailablePatients = patients,
+                ReturnFilter = filter,
+                MitraOnly = mitraOnly
             };
             if (patientId.HasValue) addForm.PatientId = patientId.Value;
 

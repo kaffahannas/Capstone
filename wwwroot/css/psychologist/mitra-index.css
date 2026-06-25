@@ -8,7 +8,9 @@
     max-width: 100%;
     min-width: 0;
     overflow-x: hidden;
+    overflow-y: auto;
     box-sizing: border-box;
+    padding-bottom: 32px;
 }
 
 /* ══ HERO ══ */
@@ -375,10 +377,24 @@
 /* ── Actions ── */
 .psymi-actions {
     display: flex;
+    align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    padding: 16px 24px;
-    border-top: 1px solid var(--color-border, #e5e7eb);
+    padding: 14px 20px;
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 14px;
+}
+
+.psymi-actions-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    margin-right: 4px;
+    white-space: nowrap;
 }
 
 .psymi-action-btn {
@@ -567,7 +583,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    align-items: start;
+    align-items: stretch;
 }
 
 .psymi-plan {
@@ -701,7 +717,8 @@
 }
 
 .psymi-plan-form {
-    margin-top: 4px;
+    margin-top: auto;
+    padding-top: 12px;
 }
 
 .psymi-plan-btn {
@@ -749,3 +766,15 @@
     .psymi-ref-card { flex-direction: column; align-items: flex-start; }
     .psymi-ref-code { font-size: 22px; }
 }
+
+/* ── Patient List ── */
+.psymi-section-icon--purple { background: rgba(124,58,237,.12); color: #7c3aed; }
+.psymi-patient-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.psymi-patient-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--bg-card,#fff); border: 1px solid var(--border,#e5e7eb); border-radius: 10px; }
+.psymi-patient-avatar { width: 36px; height: 36px; border-radius: 50%; background: #7c3aed22; color: #7c3aed; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.psymi-patient-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.psymi-patient-name { font-size: 14px; font-weight: 600; color: var(--text-primary,#111); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psymi-patient-email { font-size: 12px; color: var(--text-muted,#6b7280); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psymi-patient-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; flex-shrink: 0; }
+.psymi-patient-badge--active { background: #d1fae5; color: #065f46; }
+.psymi-patient-badge--inactive { background: #fee2e2; color: #991b1b; }

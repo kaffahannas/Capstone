@@ -23,8 +23,11 @@
 
 @section Head {
     <link rel="stylesheet" href="~/css/shared/components-worksheet-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-detail-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet-modal.css" asp-append-version="true" />
 }
 
+<div class="psy-dashboard-grid" style="grid-template-columns: 1fr; align-content: start;">
 <partial name="_MitraTabs" />
 
 @* ── Hero banner ── *@
@@ -92,7 +95,7 @@
 else
 {
     <div class="ws-task-list" id="wsTaskList">
-        <div class="ws-no-results" id="wsNoResults">
+        <div class="ws-no-results" id="wsNoResults" style="display:none;">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <p>Tidak ada hasil yang cocok</p>
         </div>
@@ -128,6 +131,8 @@ else
         }
     </div>
 }
+
+</div>@* end psy-dashboard-grid *@
 
 <div class="modal-overlay" id="worksheetDetailModal">
     <!-- content injected via ajax -->
@@ -190,6 +195,34 @@ window.openEditWorksheetModal = async function(id) {
 }
 window.closeWorksheetDetailModal = function() {
     document.getElementById('worksheetDetailModal').classList.remove('active');
+}
+window.submitWorksheetDetailForm = function(e) {
+    e.preventDefault();
+    var form = document.getElementById('worksheetDetailForm') || e.target.closest('form');
+    if (!form) return;
+    var data = new FormData(form);
+    fetch(form.action, { method: 'POST', body: data })
+        .then(function(res) {
+            if (res.redirected) { window.location.reload(); }
+            else return res.text().then(function(html) {
+                document.getElementById('worksheetDetailModal').innerHTML = html;
+            });
+        })
+        .catch(function() { alert('Gagal menyimpan.'); });
+}
+window.submitWorksheetEditForm = function(e) {
+    e.preventDefault();
+    var form = e.target.closest('form');
+    if (!form) return;
+    var data = new FormData(form);
+    fetch(form.action, { method: 'POST', body: data })
+        .then(function(res) {
+            if (res.redirected) { window.location.reload(); }
+            else return res.text().then(function(html) {
+                document.getElementById('worksheetDetailModal').innerHTML = html;
+            });
+        })
+        .catch(function() { alert('Gagal menyimpan.'); });
 }
 </script>
 }

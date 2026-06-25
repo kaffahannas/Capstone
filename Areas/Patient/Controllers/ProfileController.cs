@@ -243,12 +243,36 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("ReferralCode", "Kode referral tidak ditemukan.");
-                    model.CurrentProfilePicture = user.ProfilePicture;
-                    model.IsAlreadyB2B = patient.CompanyId != null;
-                    model.CurrentCompanyName = patient.Company?.Name;
-                    ViewBag.ActiveNav = "Profil";
-                    return View(model);
+                    // Cek kode Psikolog Mitra
+                    var mitra = await _context.Psychologists
+                        .FirstOrDefaultAsync(p => p.MitraReferralCode == code && p.IsMitraActive);
+
+                    if (mitra == null)
+                    {
+                        ModelState.AddModelError("ReferralCode", "Kode referral tidak ditemukan.");
+                        model.CurrentProfilePicture = user.ProfilePicture;
+                        model.IsAlreadyB2B = patient.CompanyId != null;
+                        model.CurrentCompanyName = patient.Company?.Name;
+                        ViewBag.ActiveNav = "Profil";
+                        return View(model);
+                    }
+
+                    patient.SponsorPsychologistId = mitra.PsychologistId;
+                    patient.SponsorType = "Psychologist";
+
+                    // Auto-create assignment jika belum ada
+                    var existingAssignment = await _context.Assignments
+                        .FirstOrDefaultAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
+                    if (existingAssignment == null)
+                    {
+                        _context.Assignments.Add(new PatientPsychologistAssignment
+                        {
+                            PatientId       = patient.PatientId,
+                            PsychologistId  = mitra.PsychologistId,
+                            Status          = "Active",
+                            AssignedAt      = DateTime.UtcNow,
+                        });
+                    }
                 }
             }
 

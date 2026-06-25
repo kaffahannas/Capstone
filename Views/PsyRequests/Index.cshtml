@@ -191,7 +191,7 @@ else
                             <div class="req-party-av req-party-av--hr">@hrInitial</div>
                             <div class="req-party-info">
                                 <span class="req-party-name">@r.HrName</span>
-                                <span class="req-party-meta">HR · @r.CompanyName</span>
+                                <span class="req-party-meta">@(r.IsFromHr ? "HR" : "Pasien") · @r.CompanyName</span>
                             </div>
                         </div>
                     </div>
@@ -235,7 +235,7 @@ else
                     @if (!string.IsNullOrEmpty(r.Notes))
                     {
                         <div class="req-detail-row req-detail-row--notes">
-                            <span class="req-detail-label">Catatan HR</span>
+                            <span class="req-detail-label">@(r.IsFromHr ? "Catatan HR" : "Catatan Pasien")</span>
                             <span class="req-detail-val req-detail-val--note">"@r.Notes"</span>
                         </div>
                     }
@@ -268,7 +268,7 @@ else
                     <form asp-action="Respond" method="post" class="req-action-form">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="Id" value="@r.Id" />
-                        <textarea name="Note" rows="2" placeholder="Catatan untuk HR (opsional)…" class="req-note-input"></textarea>
+                        <textarea name="Note" rows="2" placeholder="Catatan untuk @(r.IsFromHr ? "HR" : "pasien") (opsional)…" class="req-note-input"></textarea>
                         <div class="req-action-btns">
                             <button type="submit" name="Action" value="Reject" class="req-btn req-btn--reject">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>

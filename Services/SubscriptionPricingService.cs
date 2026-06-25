@@ -64,6 +64,7 @@ public class SubscriptionPricingService
     public async Task<(decimal SlotValue, int MaxSessions)> GetB2CSlotValueAsync(int patientId)
     {
         var sub = await _context.Subscriptions
+            .Include(s => s.Psychologist)
             .AsNoTracking()
             .Where(s => s.PatientId == patientId && s.Status == "Active" && s.EndDate >= DateTime.Today)
             .OrderByDescending(s => s.EndDate)
@@ -73,6 +74,11 @@ public class SubscriptionPricingService
             return (0, 4);
 
         var amount = await GetLinkedPaymentAmountAsync(sub.SubscriptionId, companySubscriptionId: null);
+
+        // Fallback: jika belum ada payment transaction, pakai PricePerMonth psikolog
+        if (amount <= 0 && sub.Psychologist?.PricePerMonth > 0)
+            amount = sub.Psychologist.PricePerMonth.Value;
+
         return (amount, sub.MaxSessionsPerMonth);
     }
 

@@ -323,6 +323,8 @@
     white-space: nowrap;
 }
 .psy-tool-btn:hover { border-color: var(--primary-purple); color: var(--primary-purple); }
+.psy-tool-btn--primary { background: var(--primary-purple); color: #fff; border-color: var(--primary-purple); }
+.psy-tool-btn--primary:hover { background: #3730a3; color: #fff; border-color: #3730a3; }
 /* Status badges */
 .psy-client-status {
     flex-shrink: 0;
@@ -479,7 +481,9 @@
 
 .psy-partnership-actions {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
 .psy-partnership-form {
@@ -691,3 +695,5 @@
     cursor: pointer;
     font-weight: bold;
 }
+
+.psy-badge-new { display: inline-block; margin-left: 6px; padding: 1px 7px; font-size: 10px; font-weight: 700; background: #7c3aed; color: #fff; border-radius: 999px; vertical-align: middle; letter-spacing: 0.3px; }

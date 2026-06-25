@@ -127,6 +127,163 @@
     border: none;
 }
 
+/* Override info-grid — ganti ke tabel label:value 1 kolom */
+.usr-detail-main .adm-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--adm-border-soft);
+}
+
+.usr-detail-main .adm-info-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px;
+    align-items: baseline;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--adm-border-soft);
+    flex-direction: unset;
+}
+
+/* reset nth-child overrides dari admin.css */
+.usr-detail-main .adm-info-row:nth-child(odd),
+.usr-detail-main .adm-info-row:nth-child(even) {
+    padding-right: 0;
+    padding-left: 0;
+    border-left: none;
+}
+
+/* #Bagian Kartu Langganan# */
+.usr-sub-card--active {
+    border-color: #86EFAC;
+    background: #F0FDF4;
+}
+
+.usr-sub-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.usr-sub-status--active {
+    color: #15803D;
+}
+
+.usr-sub-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22C55E;
+    flex-shrink: 0;
+}
+
+.usr-sub-exp {
+    font-weight: 400;
+    color: #166534;
+    font-size: 12px;
+}
+
+.usr-sub-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.usr-sub-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--adm-muted);
+}
+
+.usr-sub-select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--adm-border);
+    border-radius: var(--adm-radius-sm);
+    font-size: 13px;
+    background: white;
+    color: var(--adm-text);
+}
+
+.usr-btn-revoke {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #FCA5A5;
+    color: #DC2626;
+}
+
+.usr-btn-revoke:hover {
+    background: #FEF2F2;
+}
+
+/* #Bagian Preview Dokumen# */
+.usr-doc-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.usr-doc-preview-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.usr-doc-preview-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--adm-muted);
+}
+
+.usr-doc-preview-img-wrap {
+    display: block;
+    border: 1px solid var(--adm-border);
+    border-radius: var(--adm-radius-sm);
+    overflow: hidden;
+    background: var(--adm-bg);
+    transition: border-color 0.15s;
+}
+
+.usr-doc-preview-img-wrap:hover {
+    border-color: var(--adm-primary);
+}
+
+.usr-doc-preview-img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    display: block;
+    padding: 8px;
+}
+
+.usr-doc-preview-pdf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px 16px;
+    border: 1px dashed var(--adm-border);
+    border-radius: var(--adm-radius-sm);
+    color: var(--adm-primary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--adm-primary-soft);
+    transition: background 0.15s;
+}
+
+.usr-doc-preview-pdf:hover {
+    background: var(--adm-primary-soft);
+    border-color: var(--adm-primary);
+}
+
 /* #Bagian Responsif Mobile# */
 @media (max-width: 767.98px) {
     .usr-detail-grid {

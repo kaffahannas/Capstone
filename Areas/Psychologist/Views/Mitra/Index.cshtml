@@ -4,6 +4,7 @@
     var psy = ViewBag.Psy as LightenUp.Web.Models.Psychologist;
     var activeSub = ViewBag.ActiveSub as LightenUp.Web.Models.PsychologistSubscription;
     bool isMitraActive = ViewBag.IsMitraActive == true;
+    var mitraPatients = ViewBag.MitraPatients as List<LightenUp.Web.Models.Patient> ?? new List<LightenUp.Web.Models.Patient>();
     int clientCount = ViewBag.ClientCount ?? 0;
     var idCulture = new System.Globalization.CultureInfo("id-ID");
 
@@ -157,8 +158,49 @@
                         </button>
                     </form>
                 </div>
+            </div>
+
+            @* ── List Pasien Mitra ── *@
+            <div class="psymi-section">
+                <div class="psymi-section-head">
+                    <div class="psymi-section-icon psymi-section-icon--purple" aria-hidden="true">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="psymi-section-title">Pasien Klinik Terdaftar</h2>
+                        <p class="psymi-section-sub">@mitraPatients.Count pasien aktif menggunakan kode referral Anda.</p>
+                    </div>
+                </div>
+                <div class="psymi-ref-body" style="padding-top: 12px;">
+                @if (!mitraPatients.Any())
+                {
+                    <p class="psymi-ref-hint">Belum ada pasien yang menggunakan kode referral Anda. Bagikan kode referral ke pasien klinik Anda.</p>
+                }
+                else
+                {
+                    <div class="psymi-patient-list">
+                        @foreach (var p in mitraPatients)
+                        {
+                            bool hasActiveAssignment = p.Assignments.Any();
+                            <div class="psymi-patient-row">
+                                <div class="psymi-patient-avatar">@(p.User?.FullName?.Substring(0,1).ToUpper() ?? "?")</div>
+                                <div class="psymi-patient-info">
+                                    <span class="psymi-patient-name">@(p.User?.FullName ?? "—")</span>
+                                    <span class="psymi-patient-email">@(p.User?.Email ?? "—")</span>
+                                </div>
+                                <span class="psymi-patient-badge @(hasActiveAssignment ? "psymi-patient-badge--active" : "psymi-patient-badge--inactive")">
+                                    @(hasActiveAssignment ? "Terhubung" : "Tidak Aktif")
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
+                </div>
+            </div>
+
                 <div class="psymi-actions">
-                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Index" class="psymi-action-btn psymi-action-btn--primary">
+                    <p class="psymi-actions-label">Akses Cepat</p>
+                    <a asp-area="Psychologist" asp-controller="Monitoring" asp-action="Index" class="psymi-action-btn psymi-action-btn--outline">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         Monitoring Klien
                     </a>
@@ -175,7 +217,6 @@
                         Jadwal
                     </a>
                 </div>
-            </div>
         }
         else
         {

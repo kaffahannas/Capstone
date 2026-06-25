@@ -26,7 +26,7 @@ public class RequiresCompanySubscriptionAttribute : ActionFilterAttribute
         var hr = await db.HrStaffs.FirstOrDefaultAsync(h => h.UserId == userId);
         if (hr?.CompanyId == null)
         {
-            context.Result = new RedirectToActionResult("Company", "Onboarding", new { area = "Hr" });
+            context.Result = new RedirectToActionResult("Resume", "Onboarding", new { area = "Hr" });
             return;
         }
 

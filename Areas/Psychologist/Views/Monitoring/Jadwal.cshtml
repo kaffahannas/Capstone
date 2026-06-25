@@ -6,58 +6,218 @@
     ViewData["ActiveTab"] = "Mitra";
     ViewData["SemuaUrl"] = Url.Action("Scheduling", "Schedule", new { area = "Psychologist" });
     ViewData["MitraUrl"] = Url.Action("Jadwal", "Monitoring", new { area = "Psychologist" });
-    var idCulture = new System.Globalization.CultureInfo("id-ID");
+
+    var idCulture   = new System.Globalization.CultureInfo("id-ID");
+    var today       = (DateTime)(ViewBag.Today ?? DateTime.Today);
+    var filter      = ViewBag.Filter as string ?? "Semua";
+    var now         = DateTime.Now;
+    var countTotal     = (int)(ViewBag.CountTotal ?? 0);
+    var countUpcoming  = (int)(ViewBag.CountUpcoming ?? 0);
+    var countCompleted = (int)(ViewBag.CountCompleted ?? 0);
+    var countCancelled = (int)(ViewBag.CountCancelled ?? 0);
+
+    var grouped = Model
+        .GroupBy(s => s.SessionStart.Date)
+        .OrderBy(g => g.Key)
+        .ToList();
+
+    string DayLabel(DateTime d)
+    {
+        if (d.Date == today)            return "Hari Ini";
+        if (d.Date == today.AddDays(1)) return "Besok";
+        if (d.Date == today.AddDays(-1))return "Kemarin";
+        return d.ToString("dddd", idCulture);
+    }
+
+    (string cls, string label) StatusOf(LightenUp.Web.Models.Schedule s)
+    {
+        if (s.Status == "Cancelled") return ("sch-badge--cancelled", "Dibatalkan");
+        if (s.Status == "Completed") return ("sch-badge--completed", "Selesai");
+        var end = s.SessionStart.AddMinutes(s.DurationMinutes);
+        if (now < s.SessionStart)    return ("sch-badge--upcoming",  "Akan Datang");
+        if (now <= end)              return ("sch-badge--ongoing",   "Sedang Berlangsung");
+        return ("sch-badge--completed", "Selesai");
+    }
+
+    string AccentOf(LightenUp.Web.Models.Schedule s)
+    {
+        if (s.Status == "Cancelled") return "cancelled";
+        if (s.Status == "Completed") return "completed";
+        var end = s.SessionStart.AddMinutes(s.DurationMinutes);
+        if (now >= s.SessionStart && now <= end) return "ongoing";
+        return "upcoming";
+    }
 }
 
-<div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
+@section Head {
+    <link rel="stylesheet" href="~/css/shared/components-schedule-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-schedule-detail-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-edit-schedule-modal.css" asp-append-version="true" />
+}
+
+<div class="psy-dashboard-grid" style="grid-template-columns: 1fr; align-content: start;">
     <partial name="_MitraTabs" />
 
-    <section class="psy-card">
-        <header class="psy-card-head">
-            <div class="psy-card-title-wrap">
-                <p class="psy-card-eyebrow">Psikolog · Monitoring Klien Klinik</p>
-                <h2 class="psy-card-title">Jadwal Klien Klinik
-                    <span class="psy-count-chip">@Model.Count</span>
-                </h2>
+    @* ── Hero banner ── *@
+    <div class="sch-hero">
+        <div class="sch-hero-left">
+            <p class="sch-hero-eyebrow">Psikolog · Klien Klinik</p>
+            <h1 class="sch-hero-title">Jadwal Klien Klinik</h1>
+            <p class="sch-hero-sub">@today.ToString("dddd, d MMMM yyyy", idCulture) · Sesi konseling klien klinik Anda</p>
+            <button type="button" class="sch-hero-btn" onclick="openAddScheduleModal()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Jadwal
+            </button>
+        </div>
+        <div class="sch-hero-stats">
+            <div class="sch-stat-bubble">
+                <span class="sch-stat-value">@countTotal</span>
+                <span class="sch-stat-label">Total</span>
             </div>
-            <div class="psy-card-tools">
-                <a asp-action="Index" class="psy-tool-btn">← Daftar Klien</a>
+            <div class="sch-stat-bubble sch-stat-bubble--upcoming">
+                <span class="sch-stat-value">@countUpcoming</span>
+                <span class="sch-stat-label">Akan Datang</span>
             </div>
-        </header>
+            <div class="sch-stat-bubble sch-stat-bubble--done">
+                <span class="sch-stat-value">@countCompleted</span>
+                <span class="sch-stat-label">Selesai</span>
+            </div>
+            <div class="sch-stat-bubble sch-stat-bubble--cancel">
+                <span class="sch-stat-value">@countCancelled</span>
+                <span class="sch-stat-label">Dibatalkan</span>
+            </div>
+        </div>
+    </div>
 
-        <div class="psy-client-list">
-            @if (!Model.Any())
+    @* ── Filter bar ── *@
+    <div class="sch-filter-bar">
+        <div class="sch-month-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span class="sch-month-label">@today.ToString("MMMM yyyy", idCulture)</span>
+        </div>
+        <div class="sch-filter-tabs">
+            <a class="sch-filter-tab @(filter == "Semua"      ? "sch-filter-tab--active" : "")" href="?filter=Semua">Semua</a>
+            <a class="sch-filter-tab @(filter == "Selesai"    ? "sch-filter-tab--active" : "")" href="?filter=Selesai">Selesai</a>
+            <a class="sch-filter-tab @(filter == "Dibatalkan" ? "sch-filter-tab--active" : "")" href="?filter=Dibatalkan">Dibatalkan</a>
+        </div>
+    </div>
+
+    @* ── Timeline ── *@
+    @if (!grouped.Any())
+    {
+        <div class="sch-empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <p class="sch-empty-title">Tidak ada jadwal ditemukan</p>
+            <p class="sch-empty-sub">Tambah jadwal baru atau ubah filter untuk melihat sesi lainnya.</p>
+            <button type="button" class="sch-empty-btn" onclick="openAddScheduleModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Jadwal
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="sch-timeline">
+            @foreach (var dayGroup in grouped)
             {
-                <div class="psy-empty">
-                    <div class="psy-empty-icon" aria-hidden="true">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <div class="sch-day-group">
+                    <div class="sch-day-head">
+                        <span class="sch-day-label @(dayGroup.Key.Date == today ? "sch-day-label--today" : "")">
+                            @DayLabel(dayGroup.Key)
+                        </span>
+                        <span class="sch-day-date">@dayGroup.Key.ToString("d MMMM yyyy", idCulture)</span>
+                        <span class="sch-day-count">@dayGroup.Count() sesi</span>
                     </div>
-                    <p class="psy-empty-title">Belum ada jadwal</p>
-                    <p class="psy-empty-sub">Jadwal konseling klien klinik akan muncul di sini.</p>
+                    <div class="sch-sessions">
+                        @foreach (var s in dayGroup.OrderBy(x => x.SessionStart))
+                        {
+                            var (badgeCls, badgeLabel) = StatusOf(s);
+                            var accent = AccentOf(s);
+                            var durationHours   = s.DurationMinutes / 60;
+                            var durationMins    = s.DurationMinutes % 60;
+                            var durationDisplay = durationHours > 0
+                                ? (durationMins > 0 ? $"{durationHours}j {durationMins}m" : $"{durationHours} jam")
+                                : $"{s.DurationMinutes} menit";
+                            var patientName = s.Patient?.User?.FullName ?? "—";
+                            var initial     = patientName.Length > 0 ? patientName.Substring(0, 1).ToUpper() : "?";
+
+                            <div class="sch-session sch-session--@accent psy-sched-card sch-session--clickable" onclick="openScheduleDetailModal(@s.ScheduleId)" style="cursor:pointer;">
+                                <div class="sch-session-time">
+                                    <span class="sch-session-hour">@s.SessionStart.ToString("HH:mm")</span>
+                                    <span class="sch-session-tz">WIB</span>
+                                    <span class="sch-session-dur">@durationDisplay</span>
+                                </div>
+                                <div class="sch-session-sep"></div>
+                                <div class="sch-session-avatar sch-avatar--@accent">@initial</div>
+                                <div class="sch-session-info">
+                                    <span class="sch-session-name">@patientName</span>
+                                    <div class="sch-session-meta">
+                                        <span class="sch-company-tag">Klien Klinik</span>
+                                        @if (!string.IsNullOrEmpty(s.Notes))
+                                        {
+                                            <span class="sch-session-notes">· @s.Notes</span>
+                                        }
+                                    </div>
+                                </div>
+                                <span class="sch-badge @badgeCls">@badgeLabel</span>
+                            </div>
+                        }
+                    </div>
                 </div>
             }
-            else
-            {
-                @foreach (var s in Model)
-                {
-                    var statusClass = s.Status == "Completed" ? "psy-status--healthy"
-                        : s.Status == "Cancelled" ? "psy-status--danger" : "psy-status--neutral";
-                    var statusLabel = s.Status == "Completed" ? "Selesai"
-                        : s.Status == "Cancelled" ? "Dibatalkan"
-                        : s.Status == "Scheduled" ? "Terjadwal" : s.Status;
-
-                    <div class="psy-client-row">
-                        <div class="psy-client-avatar" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        </div>
-                        <div class="psy-client-meta">
-                            <span class="psy-client-name">@(s.Patient?.User?.FullName ?? "—")</span>
-                            <span class="psy-client-sub">@s.SessionStart.ToString("dddd, d MMMM yyyy · HH:mm", idCulture) · @s.DurationMinutes menit</span>
-                        </div>
-                        <span class="psy-client-status @statusClass">@statusLabel</span>
-                    </div>
-                }
-            }
         </div>
-    </section>
+    }
 </div>
+
+@await Html.PartialAsync("~/Areas/Psychologist/Views/Schedule/_AddScheduleModal.cshtml", ViewBag.AddScheduleForm as LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel ?? new LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel())
+
+<div class="modal-overlay" id="scheduleDetailModal"></div>
+
+@section Scripts {
+<script>
+    window.openScheduleDetailModal = async function(id) {
+        try {
+            const res = await fetch(`/Psychologist/Schedule/ScheduleDetailModal/${id}`);
+            if (!res.ok) throw new Error('Failed to load');
+            const html = await res.text();
+            document.getElementById('scheduleDetailModal').innerHTML = html;
+            document.getElementById('scheduleDetailModal').classList.add('active');
+        } catch (err) {
+            console.error(err);
+            alert("Gagal memuat detail jadwal.");
+        }
+    }
+    window.closeScheduleDetailModal = function() {
+        document.getElementById('scheduleDetailModal').classList.remove('active');
+    }
+    window.openEditScheduleModal = async function(id) {
+        try {
+            const res = await fetch(`/Psychologist/Schedule/EditScheduleModal/${id}`);
+            if (!res.ok) throw new Error('Failed to load');
+            const html = await res.text();
+            document.getElementById('scheduleDetailModal').innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            alert("Gagal memuat form edit jadwal.");
+        }
+    }
+    window.toggleProofUpload = function(status) {
+        var el = document.getElementById('proofUploadContainer');
+        if (el) el.style.display = (status === 'Completed') ? 'block' : 'none';
+    }
+    window.submitEditScheduleForm = function(e) {
+        e.preventDefault();
+        var form = document.getElementById('editScheduleForm');
+        if (!form) return;
+        var data = new FormData(form);
+        fetch(form.action, { method: 'POST', body: data })
+            .then(function(res) {
+                if (res.redirected) { window.location.href = res.url; }
+                else return res.text().then(function(html) {
+                    document.getElementById('scheduleDetailModal').innerHTML = html;
+                });
+            })
+            .catch(function(err) { alert('Gagal menyimpan perubahan.'); });
+    }
+</script>
+}

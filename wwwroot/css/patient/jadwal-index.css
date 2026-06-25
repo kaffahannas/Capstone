@@ -491,3 +491,21 @@
         font-size: 12px;
     }
 }
+
+
+/* ── Expired / token-habis banner ── */
+.jdw-expired-banner {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: 12px; padding: 10px 14px;
+  background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px;
+  color: #b91c1c; font-size: 13px; font-weight: 500;
+}
+.jdw-expired-banner--token {
+  background: #fffbeb; border-color: #fde68a; color: #92400e;
+}
+.jdw-expired-btn {
+  margin-left: auto; padding: 4px 12px;
+  background: #7c3aed; color: #fff; border-radius: 6px;
+  font-size: 12px; font-weight: 600; text-decoration: none;
+}
+.jdw-expired-btn:hover { background: #6d28d9; }

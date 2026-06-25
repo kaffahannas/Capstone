@@ -17,7 +17,8 @@ public static class PaymentCompletionService
 
         if (payment.SubscriptionId.HasValue)
         {
-            var sub = payment.Subscription ?? await context.Subscriptions.FindAsync(payment.SubscriptionId.Value);
+            var sub = payment.Subscription ?? await context.Subscriptions
+                .FirstOrDefaultAsync(s => s.SubscriptionId == payment.SubscriptionId.Value);
             if (sub != null)
             {
                 var existingActive = await context.Subscriptions
@@ -31,6 +32,24 @@ public static class PaymentCompletionService
                 sub.Status = "Active";
                 sub.StartDate = startDate;
                 sub.EndDate = startDate.AddMonths(durationMonths);
+
+                // Buat Assignment B2C jika belum ada yang Active
+                if (sub.PsychologistId.HasValue)
+                {
+                    var existingAssignment = await context.Assignments
+                        .AnyAsync(a => a.PatientId == sub.PatientId && a.Status == "Active");
+                    if (!existingAssignment)
+                    {
+                        context.Assignments.Add(new PatientPsychologistAssignment
+                        {
+                            PatientId = sub.PatientId,
+                            PsychologistId = sub.PsychologistId.Value,
+                            Status = "Active",
+                            AssignedAt = DateTime.UtcNow,
+                            RequestedByRole = "Patient"
+                        });
+                    }
+                }
             }
         }
 

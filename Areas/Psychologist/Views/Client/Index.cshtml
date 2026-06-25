@@ -6,7 +6,7 @@
     var cid = new System.Globalization.CultureInfo("id-ID");
 }
 
-<div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
+<div class="psy-dashboard-grid" style="grid-template-columns: 1fr; align-content: start;">
     @{
         ViewData["ActiveTab"] = "Semua";
         ViewData["SemuaUrl"] = Url.Action("Index", "Client", new { area = "Psychologist" });
@@ -50,11 +50,17 @@
                         <div class="psy-client-avatar psy-avatar--@statusCss">@initials</div>
                         <div class="psy-client-info">
                             <span class="psy-client-name">@patient.FullName</span>
-                            <span class="psy-client-meta">@patient.Gender · Sejak @patient.JoinedDate.ToString("d MMM yyyy", cid)</span>
+                            <span class="psy-client-meta">@patient.Gender &middot; Sejak @patient.JoinedDate.ToString("d MMM yyyy", cid)</span>
                             <span class="psy-client-meta" style="display:block; margin-top: 4px; color: #6B7280; font-size: 12px;">@patient.CompanyName</span>
                         </div>
+                        @if (patient.IsSubscriptionExpired)
+                        {
+                            <span class="psy-sub-expired-badge">
+                                @(patient.CompanyId != null ? "Menunggu HR" : "Langganan Habis")
+                            </span>
+                        }
                         <span class="psy-status-chip psy-status--@statusCss">@patient.Status</span>
-                        <a href="/Psychologist/Client/PatientDetail/@patient.PatientId" class="psy-btn psy-btn--ghost psy-btn--sm">Detail →</a>
+                        <a href="/Psychologist/Client/PatientDetail/@patient.PatientId" class="psy-btn psy-btn--ghost psy-btn--sm">Detail &rarr;</a>
                     </div>
                 }
             }

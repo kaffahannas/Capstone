@@ -101,7 +101,9 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             }
             else if (user.RoleType == "Psychologist")
             {
-                var psy = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == user.Id);
+                var psy = await _context.Psychologists
+                    .Include(p => p.MitraSubscriptions)
+                    .FirstOrDefaultAsync(p => p.UserId == user.Id);
                 if (psy != null)
                 {
                     vm.Specialization = psy.Specialization;
@@ -113,11 +115,19 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                     vm.PracticeLocation = psy.PracticeLocation;
                     vm.AcademicDocumentUrl = psy.AcademicDocumentUrl;
                     vm.StrDocumentUrl = psy.StrDocumentUrl;
+                    vm.PsychologistId = psy.PsychologistId;
+                    vm.IsMitraActive = psy.IsMitraActive;
+                    var activeMitra = psy.MitraSubscriptions
+                        .Where(s => s.Status == "Active" && s.EndDate >= DateTime.Today)
+                        .OrderByDescending(s => s.EndDate).FirstOrDefault();
+                    vm.MitraEndDate = activeMitra?.EndDate;
                 }
             }
             else if (user.RoleType == "HR")
             {
-                var hr = await _context.HrStaffs.Include(h => h.Company).FirstOrDefaultAsync(h => h.UserId == user.Id);
+                var hr = await _context.HrStaffs
+                    .Include(h => h.Company).ThenInclude(c => c!.Subscriptions)
+                    .FirstOrDefaultAsync(h => h.UserId == user.Id);
                 if (hr != null)
                 {
                     vm.CompanyName = hr.Company?.Name;
@@ -128,6 +138,12 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                     vm.LastDegree = hr.LastDegree;
                     vm.University = hr.University;
                     vm.AcademicDocumentUrl = hr.AcademicDocumentUrl;
+                    vm.CompanyId = hr.Company?.CompanyId;
+                    var activeSub = hr.Company?.Subscriptions
+                        .Where(s => s.Status == "Active" && s.EndDate >= DateTime.Today)
+                        .OrderByDescending(s => s.EndDate).FirstOrDefault();
+                    vm.IsCompanySubscriptionActive = activeSub != null;
+                    vm.CompanySubscriptionEndDate = activeSub?.EndDate;
                 }
             }
 
@@ -149,6 +165,120 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Detail), new { id });
         }
 
+
+        // Plans mirrored from MitraController and Hr/SubscriptionController
+        private static readonly (string PlanId, string Name, int DurationMonths, int PatientLimit)[] MitraPlans =
+        {
+            ("mitra-10", "Mitra 10 Klien (1 bln)",  1, 10),
+            ("mitra-25", "Mitra 25 Klien (1 bln)",  1, 25),
+            ("mitra-50", "Mitra 50 Klien (1 bln)",  1, 50),
+        };
+        private static readonly (string PlanId, string Name, int DurationMonths, int EmployeeLimit)[] HrPlans =
+        {
+            ("company-10", "Perusahaan 10 Karyawan (12 bln)", 12, 10),
+            ("company-25", "Perusahaan 25 Karyawan (12 bln)", 12, 25),
+            ("company-50", "Perusahaan 50 Karyawan (12 bln)", 12, 50),
+        };
+
+        // #Function GrantSubscription#
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GrantSubscription(string userId, string role, string planId, int? psychologistId, int? companyId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return NotFound();
+
+            var start = DateTime.Today;
+
+            if (role == "Psychologist" && psychologistId.HasValue)
+            {
+                var plan = MitraPlans.FirstOrDefault(p => p.PlanId == planId);
+                if (plan == default) return BadRequest("Plan tidak valid.");
+
+                var psy = await _context.Psychologists.FindAsync(psychologistId.Value);
+                if (psy == null) return NotFound();
+
+                var old = await _context.PsychologistSubscriptions
+                    .Where(s => s.PsychologistId == psychologistId.Value && s.Status == "Active")
+                    .ToListAsync();
+                foreach (var s in old) s.Status = "Expired";
+
+                var end = start.AddMonths(plan.DurationMonths);
+                _context.PsychologistSubscriptions.Add(new PsychologistSubscription
+                {
+                    PsychologistId = psychologistId.Value,
+                    PlanName = plan.Name + " (Sponsor Admin)",
+                    Status = "Active",
+                    StartDate = start,
+                    EndDate = end,
+                    PatientLimit = plan.PatientLimit,
+                });
+                psy.IsMitraActive = true;
+                await _context.SaveChangesAsync();
+                TempData["success"] = $"Langganan {plan.Name} untuk {user.FullName} diaktifkan hingga {end:dd MMMM yyyy}.";
+            }
+            else if (role == "HR" && companyId.HasValue)
+            {
+                var plan = HrPlans.FirstOrDefault(p => p.PlanId == planId);
+                if (plan == default) return BadRequest("Plan tidak valid.");
+
+                var company = await _context.Companies.FindAsync(companyId.Value);
+                if (company == null) return NotFound();
+
+                var old = await _context.CompanySubscriptions
+                    .Where(s => s.CompanyId == companyId.Value && s.Status == "Active")
+                    .ToListAsync();
+                foreach (var s in old) s.Status = "Expired";
+
+                var end = start.AddMonths(plan.DurationMonths);
+                _context.CompanySubscriptions.Add(new CompanySubscription
+                {
+                    CompanyId = companyId.Value,
+                    PlanName = plan.Name + " (Sponsor Admin)",
+                    Status = "Active",
+                    StartDate = start,
+                    EndDate = end,
+                    EmployeeLimit = plan.EmployeeLimit,
+                    MaxSessionsPerMonth = 4,
+                });
+                await _context.SaveChangesAsync();
+                TempData["success"] = $"Langganan {plan.Name} untuk {user.FullName} ({company.Name}) diaktifkan hingga {end:dd MMMM yyyy}.";
+            }
+
+            return RedirectToAction(nameof(Detail), new { id = userId });
+        }
+
+        // #Function RevokeSubscription#
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RevokeSubscription(string userId, string role, int? psychologistId, int? companyId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return NotFound();
+
+            if (role == "Psychologist" && psychologistId.HasValue)
+            {
+                var psy = await _context.Psychologists.FindAsync(psychologistId.Value);
+                if (psy != null) psy.IsMitraActive = false;
+                var active = await _context.PsychologistSubscriptions
+                    .Where(s => s.PsychologistId == psychologistId.Value && s.Status == "Active")
+                    .ToListAsync();
+                foreach (var s in active) s.Status = "Expired";
+                await _context.SaveChangesAsync();
+                TempData["success"] = $"Langganan Mitra {user.FullName} dicabut.";
+            }
+            else if (role == "HR" && companyId.HasValue)
+            {
+                var active = await _context.CompanySubscriptions
+                    .Where(s => s.CompanyId == companyId.Value && s.Status == "Active")
+                    .ToListAsync();
+                foreach (var s in active) s.Status = "Expired";
+                await _context.SaveChangesAsync();
+                TempData["success"] = $"Langganan HR dicabut.";
+            }
+
+            return RedirectToAction(nameof(Detail), new { id = userId });
+        }
 
         // #Function Edit#
 

@@ -50,12 +50,20 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             if (psy == null) return RedirectToAction("Login", "Account", new { area = "" });
 
             var activeSub = await _access.GetActivePsychologistSubscriptionAsync(psy.PsychologistId);
-            var clientCount = await _context.Patients
-                .CountAsync(p => p.SponsorPsychologistId == psy.PsychologistId);
+
+            var mitraPatients = await _context.Patients
+                .Include(p => p.User)
+                .Include(p => p.Assignments.Where(a => a.Status == "Active" && a.PsychologistId == psy.PsychologistId))
+                .Where(p => p.SponsorPsychologistId == psy.PsychologistId && p.SponsorType == "Psychologist")
+                .OrderBy(p => p.User!.FullName)
+                .ToListAsync();
+
+            var clientCount = mitraPatients.Count;
 
             ViewBag.Psy = psy;
             ViewBag.ActiveSub = activeSub;
             ViewBag.ClientCount = clientCount;
+            ViewBag.MitraPatients = mitraPatients;
             ViewBag.IsMitraActive = activeSub != null;
             ViewBag.Plans = Plans;
             ViewBag.ActiveNav = "Mitra";

@@ -18,10 +18,11 @@
         </div>
 
         @* #Komponen FormJadwal# *@
-        <form asp-action="AddSchedule" method="post" autocomplete="off">
+        <form asp-area="Psychologist" asp-controller="Schedule" asp-action="AddSchedule" method="post" autocomplete="off">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ReturnFilter" />
             <input type="hidden" asp-for="ReturnPatientId" />
+            <input type="hidden" asp-for="MitraOnly" />
 
             <div class="prf-modal-body" style="max-height: 60vh; overflow-y: auto;">
                 <p class="asm-intro">Buat jadwal sesi baru untuk salah satu pasien aktif Anda.</p>

@@ -70,27 +70,6 @@
     </div>
 </div>
 
-@* #Komponen AlertPenugasan# *@
-@if (Model.PendingAssignmentsTotal > 0)
-{
-    <div class="adm-card dash-alert-assignments">
-        <div class="adm-card-inner dash-card-inner-nowrap">
-            <div class="dash-alert-content">
-                <div class="dash-alert-icon dash-alert-icon--purple">📋</div>
-                <div>
-                    <div class="dash-alert-title--purple">@Model.PendingAssignmentsTotal Permintaan Penugasan</div>
-                    <div class="dash-alert-sub--purple">
-                        @Model.PendingAdminAssignments Psy→Pasien &nbsp;·&nbsp;
-                        @Model.PendingCancellationByAdmin Pembatalan HR
-                    </div>
-                </div>
-            </div>
-            <a class="btn btn-primary dash-alert-action" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
-                Kelola Penugasan →
-            </a>
-        </div>
-    </div>
-}
 
 @* #Komponen AlertPersetujuan# *@
 @if (Model.PendingTotal > 0)
@@ -143,16 +122,6 @@
             <div class="adm-quick-sub">@Model.TotalCompanies mitra</div>
         </a>
 
-        <a class="adm-quick-item adm-quick-item--purple" asp-area="Admin" asp-controller="Assignments" asp-action="Index">
-            <div class="adm-quick-icon dash-quick-icon--purple">📋</div>
-            <div class="adm-quick-label">Penugasan</div>
-            <div class="adm-quick-sub">
-                @if (Model.PendingAssignmentsTotal > 0)
-                { <span class="dash-quick-pending-primary">@Model.PendingAssignmentsTotal menunggu</span> }
-                else
-                { <text>Semua bersih</text> }
-            </div>
-        </a>
 
         <a class="adm-quick-item adm-quick-item--green" asp-area="Admin" asp-controller="Payroll" asp-action="Index">
             <div class="adm-quick-icon dash-quick-icon--green">💰</div>

@@ -38,7 +38,6 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 TotalCompanies = await _context.Companies.CountAsync(),
                 PendingPsychologists = allUsers.Count(u => u.RoleType == "Psychologist" && !u.IsApprovedByAdmin),
                 PendingHrs = 0,
-                PendingAdminAssignments = await _context.Assignments.CountAsync(a => a.Status == "PendingAdminApproval"),
                 PendingCancellationByAdmin = await _context.Assignments.CountAsync(a => a.Status == "PendingCancellationByAdmin"),
             };
 

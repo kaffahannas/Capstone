@@ -268,8 +268,11 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                     ?? assignment?.PsychologistRevenuePercentage
                     ?? SubscriptionPricingService.DefaultPsychologistRevenuePercentage;
 
+                // Klien Klinik (SponsorType=Psychologist) dan B2C tanpa subscription tidak masuk transfer
+                if (subscriptionValue <= 0) continue;
+
                 decimal patientTotalEarning = 0;
-                if (subscriptionValue > 0 && maxSessions > 0)
+                if (maxSessions > 0)
                 {
                     var perSessionValue = Math.Round(subscriptionValue / maxSessions, 2, MidpointRounding.AwayFromZero);
                     patientTotalEarning = perSessionValue * pct / 100 * schedCount;

@@ -44,16 +44,48 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                 .ToListAsync();
 
-            var patients = activeAssignments.Select(a => new LightenUp.Web.Models.ViewModels.PatientListItem
+            // Batch-check subscription status (hindari N+1 queries)
+            var b2cPatientIds = activeAssignments
+                .Where(a => a.Patient?.CompanyId == null && a.Patient?.SponsorType != "Psychologist")
+                .Select(a => a.Patient!.PatientId).ToList();
+
+            var activeB2cSubIds = (await _context.Subscriptions
+                .Where(s => s.Status == "Active" && s.EndDate >= DateTime.Today
+                    && s.PsychologistId == psyId && b2cPatientIds.Contains(s.PatientId))
+                .Select(s => s.PatientId).ToListAsync()).ToHashSet();
+
+            var companyIds = activeAssignments
+                .Where(a => a.Patient?.CompanyId != null)
+                .Select(a => a.Patient!.CompanyId!.Value).Distinct().ToList();
+
+            var activeCompanyIds = (await _context.CompanySubscriptions
+                .Where(s => s.Status == "Active" && s.EndDate >= DateTime.Today
+                    && companyIds.Contains(s.CompanyId))
+                .Select(s => s.CompanyId).ToListAsync()).ToHashSet();
+
+            var patients = activeAssignments.Select(a =>
             {
-                PatientId = a.Patient?.PatientId ?? 0,
-                FullName = a.Patient?.User?.FullName ?? "Anonim",
-                Gender = a.Patient?.Gender == "Male" ? "Laki-laki" : (a.Patient?.Gender == "Female" ? "Perempuan" : "Belum diatur"),
-                JoinedDate = a.AssignedAt,
-                Status = a.Patient?.MentalHealthStatus ?? "Sehat",
-                CompanyId = a.Patient?.CompanyId,
-                CompanyName = a.Patient?.Company?.Name ?? "Klien Publik",
-                AssignmentId = a.AssignmentId
+                bool expired;
+                if (a.Patient?.CompanyId != null)
+                    expired = !activeCompanyIds.Contains(a.Patient.CompanyId.Value);
+                else if (a.Patient?.SponsorType == "Psychologist")
+                    expired = false; // mitra yang expired sudah lazy-cancelled
+                else
+                    expired = !activeB2cSubIds.Contains(a.Patient?.PatientId ?? 0);
+
+                return new LightenUp.Web.Models.ViewModels.PatientListItem
+                {
+                    PatientId = a.Patient?.PatientId ?? 0,
+                    FullName = a.Patient?.User?.FullName ?? "Anonim",
+                    Gender = a.Patient?.Gender == "Male" ? "Laki-laki" : (a.Patient?.Gender == "Female" ? "Perempuan" : "Belum diatur"),
+                    JoinedDate = a.AssignedAt,
+                    Status = a.Patient?.MentalHealthStatus ?? "Sehat",
+                    CompanyId = a.Patient?.CompanyId,
+                    CompanyName = a.Patient?.Company?.Name ?? "Klien Publik",
+                    AssignmentId = a.AssignmentId,
+                    IsSubscriptionExpired = expired,
+                    SponsorType = a.Patient?.SponsorType ?? "Self"
+                };
             }).ToList();
 
             return View(patients);

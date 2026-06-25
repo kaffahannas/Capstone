@@ -32,6 +32,9 @@ namespace LightenUp.Web.Models.ViewModels
 
         /// <summary>When set, success/error returns to PatientScheduleHistory for this patient.</summary>
         public int? ReturnPatientId { get; set; }
+
+        /// <summary>When true, dropdown only shows Mitra (klinik) patients and redirects to Monitoring/Jadwal after submit.</summary>
+        public bool MitraOnly { get; set; }
     }
 
     // #Class PsyAddTaskViewModel#
@@ -56,6 +59,9 @@ namespace LightenUp.Web.Models.ViewModels
 
         /// <summary>When set, success/error returns to PatientWorksheetHistory for this patient.</summary>
         public int? ReturnPatientId { get; set; }
+
+        /// <summary>When true, dropdown only shows Mitra (klinik) patients and redirects to Monitoring/Worksheet after submit.</summary>
+        public bool MitraOnly { get; set; }
     }
 
     // #Class PsyWorksheetEditViewModel#

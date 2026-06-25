@@ -71,6 +71,10 @@
             </div>
 
             <!-- Info grid -->
+            <div class="adm-card-title" style="margin-top:4px; margin-bottom:14px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+                Informasi Detail
+            </div>
             <div class="adm-info-grid">
                 <div class="adm-info-row">
                     <span class="adm-info-label">Telepon</span>
@@ -160,16 +164,6 @@
                             <span class="adm-info-value"><code>@Model.SiapNumber</code></span>
                         </div>
                     }
-                    @if (!string.IsNullOrEmpty(Model.AcademicDocumentUrl) || !string.IsNullOrEmpty(Model.StrDocumentUrl))
-                    {
-                        <div class="adm-info-row">
-                            <span class="adm-info-label">Dokumen</span>
-                            <span class="adm-info-value usr-doc-links">
-                                @if (!string.IsNullOrEmpty(Model.AcademicDocumentUrl)) { <a href="@Model.AcademicDocumentUrl" target="_blank" class="usr-doc-link">📄 Ijazah</a> }
-                                @if (!string.IsNullOrEmpty(Model.StrDocumentUrl)) { <a href="@Model.StrDocumentUrl" target="_blank" class="usr-doc-link">📄 STR</a> }
-                            </span>
-                        </div>
-                    }
                 }
 
                 @if (Model.Role == "HR")
@@ -193,24 +187,216 @@
                         <span class="adm-info-label">Pendidikan HR</span>
                         <span class="adm-info-value">@(Model.LastDegree ?? "—") @(string.IsNullOrEmpty(Model.University) ? "" : $" - {Model.University}")</span>
                     </div>
-                    @if (!string.IsNullOrEmpty(Model.SupportDocumentUrl) || !string.IsNullOrEmpty(Model.AcademicDocumentUrl))
-                    {
-                        <div class="adm-info-row">
-                            <span class="adm-info-label">Dokumen Verifikasi</span>
-                            <span class="adm-info-value usr-doc-links">
-                                @if (!string.IsNullOrEmpty(Model.AcademicDocumentUrl)) { <a href="@Model.AcademicDocumentUrl" target="_blank" class="usr-doc-link">📄 Ijazah</a> }
-                                @if (!string.IsNullOrEmpty(Model.SupportDocumentUrl)) { <a href="@Model.SupportDocumentUrl" target="_blank" class="usr-doc-link">📄 Dokumen Bukti</a> }
-                            </span>
-                        </div>
-                    }
                 }
             </div>
         </div>
+
+        @* Dokumen preview card — Psikolog *@
+        @if (Model.Role == "Psychologist" && (!string.IsNullOrEmpty(Model.AcademicDocumentUrl) || !string.IsNullOrEmpty(Model.StrDocumentUrl)))
+        {
+            <div class="adm-card">
+                <div class="adm-card-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Dokumen Verifikasi
+                </div>
+                <div class="usr-doc-preview-grid">
+                    @if (!string.IsNullOrEmpty(Model.AcademicDocumentUrl))
+                    {
+                        <div class="usr-doc-preview-item">
+                            <div class="usr-doc-preview-label">Ijazah</div>
+                            @if (Model.AcademicDocumentUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <a href="@Model.AcademicDocumentUrl" target="_blank" class="usr-doc-preview-pdf">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                    <span>Buka PDF</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Model.AcademicDocumentUrl" target="_blank" class="usr-doc-preview-img-wrap">
+                                    <img src="@Model.AcademicDocumentUrl" alt="Ijazah" class="usr-doc-preview-img" />
+                                </a>
+                            }
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.StrDocumentUrl))
+                    {
+                        <div class="usr-doc-preview-item">
+                            <div class="usr-doc-preview-label">STR</div>
+                            @if (Model.StrDocumentUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <a href="@Model.StrDocumentUrl" target="_blank" class="usr-doc-preview-pdf">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                    <span>Buka PDF</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Model.StrDocumentUrl" target="_blank" class="usr-doc-preview-img-wrap">
+                                    <img src="@Model.StrDocumentUrl" alt="STR" class="usr-doc-preview-img" />
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @* Dokumen preview card — HR *@
+        @if (Model.Role == "HR" && (!string.IsNullOrEmpty(Model.AcademicDocumentUrl) || !string.IsNullOrEmpty(Model.SupportDocumentUrl)))
+        {
+            <div class="adm-card">
+                <div class="adm-card-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Dokumen Verifikasi
+                </div>
+                <div class="usr-doc-preview-grid">
+                    @if (!string.IsNullOrEmpty(Model.AcademicDocumentUrl))
+                    {
+                        <div class="usr-doc-preview-item">
+                            <div class="usr-doc-preview-label">Ijazah</div>
+                            @if (Model.AcademicDocumentUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <a href="@Model.AcademicDocumentUrl" target="_blank" class="usr-doc-preview-pdf">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                    <span>Buka PDF</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Model.AcademicDocumentUrl" target="_blank" class="usr-doc-preview-img-wrap">
+                                    <img src="@Model.AcademicDocumentUrl" alt="Ijazah" class="usr-doc-preview-img" />
+                                </a>
+                            }
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.SupportDocumentUrl))
+                    {
+                        <div class="usr-doc-preview-item">
+                            <div class="usr-doc-preview-label">Dokumen Bukti</div>
+                            @if (Model.SupportDocumentUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <a href="@Model.SupportDocumentUrl" target="_blank" class="usr-doc-preview-pdf">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                    <span>Buka PDF</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Model.SupportDocumentUrl" target="_blank" class="usr-doc-preview-img-wrap">
+                                    <img src="@Model.SupportDocumentUrl" alt="Dokumen Bukti" class="usr-doc-preview-img" />
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
 
     <!-- Right column: actions -->
     <div class="usr-sidebar">
-    
+
+        @* Kartu Langganan — Psikolog *@
+        @if (Model.Role == "Psychologist" && Model.PsychologistId.HasValue)
+        {
+            <div class="adm-card @(Model.IsMitraActive ? "usr-sub-card--active" : "")">
+                <div class="adm-card-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/></svg>
+                    Langganan Mitra
+                </div>
+                @if (Model.IsMitraActive)
+                {
+                    <div class="usr-sub-status usr-sub-status--active">
+                        <span class="usr-sub-dot"></span> Aktif
+                        @if (Model.MitraEndDate.HasValue)
+                        { <span class="usr-sub-exp">s/d @Model.MitraEndDate.Value.ToString("dd MMM yyyy")</span> }
+                    </div>
+                    <form asp-action="RevokeSubscription" method="post" style="margin-top:12px;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@Model.UserId" />
+                        <input type="hidden" name="role" value="Psychologist" />
+                        <input type="hidden" name="psychologistId" value="@Model.PsychologistId" />
+                        <button type="submit" class="btn btn-sm usr-btn-full usr-btn-revoke"
+                                onclick="return confirm('Cabut langganan Mitra psikolog ini?');">
+                            Cabut Langganan
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <p class="usr-card-desc">Belum berlangganan Mitra. Aktifkan atas nama sponsor.</p>
+                    <form asp-action="GrantSubscription" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@Model.UserId" />
+                        <input type="hidden" name="role" value="Psychologist" />
+                        <input type="hidden" name="psychologistId" value="@Model.PsychologistId" />
+                        <div class="usr-sub-field">
+                            <label class="usr-sub-label">Pilih Paket</label>
+                            <select name="planId" class="usr-sub-select">
+                                <option value="mitra-10">Mitra 10 Klien (1 bln)</option>
+                                <option value="mitra-25" selected>Mitra 25 Klien (1 bln)</option>
+                                <option value="mitra-50">Mitra 50 Klien (1 bln)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm usr-btn-full" style="margin-top:10px;">
+                            Aktifkan Mitra
+                        </button>
+                    </form>
+                }
+            </div>
+        }
+
+        @* Kartu Langganan — HR *@
+        @if (Model.Role == "HR" && Model.CompanyId.HasValue)
+        {
+            <div class="adm-card @(Model.IsCompanySubscriptionActive ? "usr-sub-card--active" : "")">
+                <div class="adm-card-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/></svg>
+                    Langganan HR
+                </div>
+                @if (Model.IsCompanySubscriptionActive)
+                {
+                    <div class="usr-sub-status usr-sub-status--active">
+                        <span class="usr-sub-dot"></span> Aktif
+                        @if (Model.CompanySubscriptionEndDate.HasValue)
+                        { <span class="usr-sub-exp">s/d @Model.CompanySubscriptionEndDate.Value.ToString("dd MMM yyyy")</span> }
+                    </div>
+                    <form asp-action="RevokeSubscription" method="post" style="margin-top:12px;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@Model.UserId" />
+                        <input type="hidden" name="role" value="HR" />
+                        <input type="hidden" name="companyId" value="@Model.CompanyId" />
+                        <button type="submit" class="btn btn-sm usr-btn-full usr-btn-revoke"
+                                onclick="return confirm('Cabut langganan HR perusahaan ini?');">
+                            Cabut Langganan
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <p class="usr-card-desc">Perusahaan belum berlangganan. Aktifkan atas nama sponsor.</p>
+                    <form asp-action="GrantSubscription" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@Model.UserId" />
+                        <input type="hidden" name="role" value="HR" />
+                        <input type="hidden" name="companyId" value="@Model.CompanyId" />
+                        <div class="usr-sub-field">
+                            <label class="usr-sub-label">Pilih Paket</label>
+                            <select name="planId" class="usr-sub-select">
+                                <option value="company-10" selected>Perusahaan 10 Karyawan (12 bln)</option>
+                                <option value="company-25">Perusahaan 25 Karyawan (12 bln)</option>
+                                <option value="company-50">Perusahaan 50 Karyawan (12 bln)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm usr-btn-full" style="margin-top:10px;">
+                            Aktifkan Langganan HR
+                        </button>
+                    </form>
+                }
+            </div>
+        }
+
         <!-- Edit Profile -->
         <div class="adm-card">
             <div class="adm-card-title">

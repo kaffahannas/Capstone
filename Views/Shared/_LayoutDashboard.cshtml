@@ -44,11 +44,11 @@
 
             // Beranda = Dashboard/Index
             var _navBeranda     = _ctrl == "Dashboard" && _action == "Index";
-            var _navKlien       = _ctrl == "Client";
-            var _navMitra       = _ctrl == "Mitra" || _ctrl == "Monitoring";
-            var _navStatistik   = _ctrl == "Dashboard" && _action == "Statistics";
-            var _navJadwal      = _ctrl == "Schedule";
-            var _navWorksheet   = _ctrl == "Worksheet";
+            var _navKlien       = _ctrl == "Client" || (_ctrl == "Monitoring" && _action == "Index");
+            var _navMitra       = _ctrl == "Mitra";
+            var _navStatistik   = (_ctrl == "Dashboard" && _action == "Statistics") || (_ctrl == "Monitoring" && _action == "Statistik");
+            var _navJadwal      = _ctrl == "Schedule" || (_ctrl == "Monitoring" && _action == "Jadwal");
+            var _navWorksheet   = _ctrl == "Worksheet" || (_ctrl == "Monitoring" && _action == "Worksheet");
             var _navProfil      = _ctrl == "Profile";
             var _navPermintaan  = _ctrl == "PsyRequests";
             var _navPendapatan  = _ctrl == "Dashboard" && _action == "Payslip";

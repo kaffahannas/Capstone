@@ -37,7 +37,6 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         {
             ViewBag.CountAccounts = await _userManager.Users.CountAsync(u => !u.IsApprovedByAdmin && u.RoleType == "Psychologist");
             ViewBag.CountRemovals = await _context.HrEmployeeRemovalRequests.CountAsync(r => r.Status == "Pending");
-            ViewBag.CountAssignments = await _context.Assignments.CountAsync(a => a.Status == "PendingAdminApproval");
             ViewBag.CountCancellations = await _context.Assignments.CountAsync(a => a.Status == "PendingCancellationByAdmin");
         }
 
@@ -277,26 +276,6 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         }
 
         // --- ASSIGNMENT & CANCELLATION REQUESTS ---
-        // #Function AssignmentRequests#
-        // #Bagian Permintaan Batalkan Penugasan#
-        [HttpGet]
-        public async Task<IActionResult> AssignmentRequests()
-        {
-            await SetNavCountsAsync();
-            var pendingAssignments = await _context.Assignments
-                .Include(a => a.Patient).ThenInclude(p => p!.User)
-                .Include(a => a.Patient).ThenInclude(p => p!.Company)
-                .Include(a => a.Psychologist).ThenInclude(p => p!.User)
-                .Include(a => a.RequestedBy)
-                .Where(a => a.Status == "PendingAdminApproval")
-                .OrderByDescending(a => a.AssignedAt)
-                .ToListAsync();
-
-            ViewBag.ActiveNav = "Approvals";
-            ViewData["Title"] = "Persetujuan Penugasan";
-            return View(pendingAssignments);
-        }
-
         // #Function CancellationRequests#
 
         [HttpGet]
@@ -327,13 +306,9 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             var a = await _context.Assignments.FindAsync(assignmentId);
             if (a == null) return NotFound();
 
-            var returnAction = a.Status == "PendingCancellationByAdmin" ? nameof(CancellationRequests) : nameof(AssignmentRequests);
+            var returnAction = nameof(CancellationRequests);
 
-            if (a.Status == "PendingAdminApproval")
-            {
-                await _activation.ActivateAsync(a, user?.Id, note, psychologistRevenuePercentage);
-            }
-            else if (a.Status == "PendingCancellationByAdmin")
+            if (a.Status == "PendingCancellationByAdmin")
             {
                 a.Status = "Cancelled";
                 a.DecisionByUserId = user?.Id;
@@ -356,7 +331,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             var a = await _context.Assignments.FindAsync(assignmentId);
             if (a == null) return NotFound();
 
-            var returnAction = a.Status == "PendingCancellationByAdmin" ? nameof(CancellationRequests) : nameof(AssignmentRequests);
+            var returnAction = nameof(CancellationRequests);
 
             if (a.Status == "PendingCancellationByAdmin")
                 a.Status = "Active";

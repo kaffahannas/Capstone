@@ -273,6 +273,9 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 subscriptionTotal += subscriptionValue;
                 psyShareThisMonth += psyShare;
 
+                // B2C tanpa subscription aktif (Rp0) tidak ditampilkan di payroll
+                if (!pricing.IsB2B && subscriptionValue <= 0) continue;
+
                 assignmentRows.Add(new LightenUp.Web.Models.ViewModels.PayslipAssignmentRow
                 {
                     PatientName = a.Patient?.User?.FullName ?? "Unknown",

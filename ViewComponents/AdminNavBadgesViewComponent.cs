@@ -21,17 +21,10 @@ public class AdminNavBadgesViewComponent : ViewComponent
         int count = 0;
         if (type == "Approvals")
         {
-            var psyPending = await _context.Assignments.CountAsync(a => a.Status == "PendingAdminApproval");
             var cancelPending = await _context.Assignments.CountAsync(a => a.Status == "PendingCancellationByAdmin");
             var accPending = await _context.Users.CountAsync(u => u.IsApprovedByAdmin == false && u.RoleType != "Patient" && u.RoleType != "HR");
             var removalPending = await _context.HrEmployeeRemovalRequests.CountAsync(r => r.Status == "Pending");
-            count = psyPending + cancelPending + accPending + removalPending;
-        }
-        else if (type == "Assignments")
-        {
-            var patientPending = 0;
-            var b2bPending = await _context.CompanyPsychologistRequests.CountAsync(r => r.PsychologistId == null && r.Status == "Pending");
-            count = patientPending + b2bPending;
+            count = cancelPending + accPending + removalPending;
         }
 
         return View(new AdminNavBadgesViewModel

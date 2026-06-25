@@ -17,9 +17,7 @@ namespace LightenUp.Web.Models.ViewModels
         public int PendingHrs { get; set; }
         public int PendingTotal => PendingPsychologists + PendingHrs;
 
-        public int PendingAdminAssignments { get; set; }
         public int PendingCancellationByAdmin { get; set; }
-        public int PendingAssignmentsTotal => PendingAdminAssignments + PendingCancellationByAdmin;
     }
 
     // ─── Approvals queue ───
@@ -145,6 +143,15 @@ namespace LightenUp.Web.Models.ViewModels
         public string? Gender { get; set; }
         public string? EmergencyContactName { get; set; }
         public string? EmergencyContactPhone { get; set; }
+
+        // Subscription info (for Psychologist and HR)
+        public int? PsychologistId { get; set; }
+        public bool IsMitraActive { get; set; }
+        public DateTime? MitraEndDate { get; set; }
+
+        public int? CompanyId { get; set; }
+        public bool IsCompanySubscriptionActive { get; set; }
+        public DateTime? CompanySubscriptionEndDate { get; set; }
     }
 
     // #Class AdminUserEditViewModel#

@@ -13,6 +13,7 @@ namespace LightenUp.Web.Models.ViewModels
         public string PatientName { get; set; } = "";
         public string CompanyName { get; set; } = "";
         public string HrName { get; set; } = "";
+        public bool IsFromHr { get; set; }
         public string? Notes { get; set; }
         public string? ProposedTaskName { get; set; }
         public DateTime? ProposedDeadline { get; set; }

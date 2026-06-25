@@ -31,6 +31,8 @@
     var hasActivePsy = (bool)(ViewBag.HasActivePsychologist ?? false);
     var psyName = ViewBag.PsychologistName as string;
     var subEndDate = ViewBag.SubscriptionEndDate as DateTime?;
+    var isSubExpired = (bool)(ViewBag.IsSubscriptionExpired ?? false);
+    var tasksIsB2B = (bool)(ViewBag.IsB2B ?? false);
 }
 @* #Komponen Hero Tugas# *@
 <div class="tasks-hero">
@@ -47,7 +49,7 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     @psyName
                 </span>
-                @if (subEndDate.HasValue)
+                @if (subEndDate.HasValue && !isSubExpired)
                 {
                     <span class="tasks-psy-info-divider">·</span>
                     <span class="tasks-psy-info-item">
@@ -56,6 +58,21 @@
                     </span>
                 }
             </div>
+            @if (isSubExpired)
+            {
+                <div class="tasks-expired-banner">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    @if (tasksIsB2B)
+                    {
+                        <span>Akses tidak aktif. Hubungi HR perusahaan untuk memperbarui langganan. Kamu masih bisa melihat tugas yang sudah ada.</span>
+                    }
+                    else
+                    {
+                        <span>Masa aktif langganan habis. Kamu masih bisa melihat tugas yang sudah ada.</span>
+                        <a asp-action="Index" asp-controller="Psychologists" asp-area="Patient" class="tasks-expired-btn">Pilih Psikolog Lagi →</a>
+                    }
+                </div>
+            }
         }
         else
         {

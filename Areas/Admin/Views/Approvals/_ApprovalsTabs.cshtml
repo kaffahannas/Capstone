@@ -14,11 +14,7 @@
        asp-action="EmployeeRemovals">
         Pemberhentian Karyawan (HR) @if (ViewBag.CountRemovals != null && ViewBag.CountRemovals > 0) { <span class="nav-badge apr-tab-badge">@ViewBag.CountRemovals</span> }
     </a>
-    <a class="adm-tab @(activeTab == "AssignmentRequests" ? "active" : "")"
-       asp-action="AssignmentRequests">
-        Penambahan Klien (Psy) @if (ViewBag.CountAssignments != null && ViewBag.CountAssignments > 0) { <span class="nav-badge apr-tab-badge">@ViewBag.CountAssignments</span> }
-    </a>
-    <a class="adm-tab @(activeTab == "CancellationRequests" ? "active" : "")"
+<a class="adm-tab @(activeTab == "CancellationRequests" ? "active" : "")"
        asp-action="CancellationRequests">
         Pembatalan (HR) @if (ViewBag.CountCancellations != null && ViewBag.CountCancellations > 0) { <span class="nav-badge apr-tab-badge">@ViewBag.CountCancellations</span> }
     </a>

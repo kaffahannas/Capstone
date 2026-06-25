@@ -65,6 +65,8 @@
 
 @section Head {
     <link rel="stylesheet" href="~/css/shared/components-schedule-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-schedule-detail-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/schedule-edit-schedule-modal.css" asp-append-version="true" />
 }
 
 <partial name="_MitraTabs" />
@@ -203,6 +205,35 @@ else
         }
         window.closeScheduleDetailModal = function() {
             document.getElementById('scheduleDetailModal').classList.remove('active');
+        }
+        window.openEditScheduleModal = async function(id) {
+            try {
+                const res = await fetch(`/Psychologist/Schedule/EditScheduleModal/${id}`);
+                if (!res.ok) throw new Error('Failed to load');
+                const html = await res.text();
+                document.getElementById('scheduleDetailModal').innerHTML = html;
+            } catch (err) {
+                console.error(err);
+                alert("Gagal memuat form edit jadwal.");
+            }
+        }
+        window.toggleProofUpload = function(status) {
+            var el = document.getElementById('proofUploadContainer');
+            if (el) el.style.display = (status === 'Completed') ? 'block' : 'none';
+        }
+        window.submitEditScheduleForm = function(e) {
+            e.preventDefault();
+            var form = document.getElementById('editScheduleForm');
+            if (!form) return;
+            var data = new FormData(form);
+            fetch(form.action, { method: 'POST', body: data })
+                .then(function(res) {
+                    if (res.redirected) { window.location.href = res.url; }
+                    else return res.text().then(function(html) {
+                        document.getElementById('scheduleDetailModal').innerHTML = html;
+                    });
+                })
+                .catch(function(err) { alert('Gagal menyimpan perubahan.'); });
         }
     </script>
 }

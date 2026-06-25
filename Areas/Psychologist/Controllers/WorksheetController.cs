@@ -50,6 +50,21 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .ToListAsync();
         }
 
+        private async Task<List<LightenUp.Web.Models.ViewModels.PsyPatientOption>> LoadMitraPatientOptionsAsync(int psyId)
+        {
+            return await _context.Patients
+                .Where(p => p.SponsorPsychologistId == psyId && p.SponsorType == "Psychologist")
+                .Include(p => p.User)
+                .Select(p => new LightenUp.Web.Models.ViewModels.PsyPatientOption
+                {
+                    PatientId = p.PatientId,
+                    FullName = p.User!.FullName,
+                    CompanyName = "Klien Klinik"
+                })
+                .OrderBy(o => o.FullName)
+                .ToListAsync();
+        }
+
         private static (string Label, string Css) MapStatus(string dbStatus) => dbStatus switch
         {
             "Assigned"   => ("Belum Dikerjakan", "belum"),
@@ -61,11 +76,11 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         // #Function AddTask#
 
         [HttpGet]
-        public async Task<IActionResult> AddTask(int? patientId = null)
+        public async Task<IActionResult> AddTask(int? patientId = null, bool mitraOnly = false)
         {
             if (patientId.HasValue)
                 return RedirectToAction(nameof(PatientWorksheetHistory), new { id = patientId.Value, add = true });
-            return RedirectToAction(nameof(Worksheet), new { add = true, patientId });
+            return RedirectToAction(nameof(Worksheet), new { add = true, patientId, mitraOnly });
         }
 
         // #Function AddTask POST#
@@ -104,6 +119,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (model.ReturnPatientId.HasValue)
                 return RedirectToAction(nameof(PatientWorksheetHistory), new { id = model.ReturnPatientId.Value });
+            if (model.MitraOnly)
+                return RedirectToAction("Worksheet", "Monitoring", new { area = "Psychologist" });
             return RedirectToAction(nameof(Worksheet));
         }
 
@@ -166,14 +183,19 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         // #Function Worksheet#
 
         [HttpGet]
-        public async Task<IActionResult> Worksheet(bool add = false, int? patientId = null)
+        public async Task<IActionResult> Worksheet(bool add = false, int? patientId = null, bool mitraOnly = false)
         {
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
 
+            var patients = mitraOnly
+                ? await LoadMitraPatientOptionsAsync(psyId.Value)
+                : await LoadPatientOptionsAsync(psyId.Value);
+
             var addForm = new LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel
             {
-                AvailablePatients = await LoadPatientOptionsAsync(psyId.Value)
+                AvailablePatients = patients,
+                MitraOnly = mitraOnly
             };
             if (patientId.HasValue) addForm.PatientId = patientId.Value;
 

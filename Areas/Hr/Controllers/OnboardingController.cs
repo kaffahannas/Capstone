@@ -50,6 +50,19 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             return nameof(Success);
         }
 
+        // Lanjutkan ke langkah onboarding yang belum selesai (dipanggil dari filter)
+        [HttpGet]
+        public async Task<IActionResult> Resume()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
+            var hr = await GetHrAsync();
+            if (hr == null) return RedirectToAction("Login", "Account", new { area = "" });
+            if (hr.OnboardingCompletedAt != null && hr.CompanyId != null)
+                return RedirectToAction("Index", "Home");
+            return RedirectToAction(NextStepFor(hr, user));
+        }
+
         // #Bagian Welcome#
         // #Function Welcome#
         [HttpGet]

@@ -39,6 +39,7 @@ public class JadwalController : Controller
                 .Include(p => p.Schedules)
                     .ThenInclude(s => s.Psychologist)
                         .ThenInclude(psy => psy.User)
+                .Include(p => p.Company)
                 .FirstOrDefaultAsync(p => p.UserId == user.Id);
 
             if (patient == null) return NotFound("Patient record not found.");
@@ -63,6 +64,10 @@ public class JadwalController : Controller
             vm.UpcomingSessions = allSchedules.Where(s => s.SessionStart >= today || s.Status == "Scheduled").ToList();
             vm.PastSessions = allSchedules.Where(s => s.SessionStart < today && s.Status != "Scheduled").OrderByDescending(s => s.SessionStart).ToList();
 
+            bool isB2B = patient.CompanyId != null;
+            bool isMitra = !isB2B && patient.SponsorType == "Psychologist" && patient.SponsorPsychologistId != null;
+            vm.IsB2B = isB2B;
+
             // Active psychologist assignment
             var activeAssignment = await _context.Assignments
                 .Include(a => a.Psychologist).ThenInclude(p => p!.User)
@@ -72,29 +77,70 @@ public class JadwalController : Controller
             vm.PsychologistName = activeAssignment?.Psychologist?.User?.FullName;
             vm.PsychologistId = activeAssignment?.PsychologistId;
 
-            // Session quota: find active subscription for this patient+psikolog
             if (activeAssignment != null)
             {
-                var activeSub = await _context.Subscriptions
-                    .Where(s => s.PatientId == patient.PatientId
-                        && s.PsychologistId == activeAssignment.PsychologistId
-                        && s.Status == "Active" && s.EndDate >= DateTime.Today)
-                    .OrderByDescending(s => s.EndDate)
-                    .FirstOrDefaultAsync();
-
-                var maxSessions = activeSub?.MaxSessionsPerMonth
-                    ?? activeAssignment.Psychologist?.SessionTokensPerMonth
-                    ?? 4;
-                vm.MaxSessionsPerMonth = maxSessions;
-                vm.SubscriptionEndDate = activeSub?.EndDate;
-
-                // Count sessions used this calendar month
                 var monthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 var monthEnd = monthStart.AddMonths(1);
                 vm.SessionsUsedThisMonth = await _context.Schedules
                     .CountAsync(s => s.PatientId == patient.PatientId
                         && s.SessionStart >= monthStart && s.SessionStart < monthEnd
                         && s.Status != "Cancelled");
+
+                if (isB2B)
+                {
+                    var companySub = await _context.CompanySubscriptions
+                        .Where(s => s.CompanyId == patient.CompanyId && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                        .OrderByDescending(s => s.EndDate)
+                        .FirstOrDefaultAsync();
+
+                    vm.IsSubscriptionExpired = companySub == null;
+                    vm.MaxSessionsPerMonth = companySub?.MaxSessionsPerMonth ?? 4;
+                    vm.SubscriptionEndDate = companySub?.EndDate;
+                }
+                else if (isMitra)
+                {
+                    var mitraSub = await _context.PsychologistSubscriptions
+                        .Where(s => s.PsychologistId == patient.SponsorPsychologistId
+                            && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                        .FirstOrDefaultAsync();
+
+                    if (mitraSub == null)
+                    {
+                        // Lazy cancel: psikolog tidak perpanjang → patient balik B2C
+                        activeAssignment.Status = "Cancelled";
+                        activeAssignment.CancellationReason = "Mitra subscription expired";
+                        activeAssignment.CancellationRequestedAt = DateTime.UtcNow;
+                        patient.SponsorType = "Self";
+                        patient.SponsorPsychologistId = null;
+                        await _context.SaveChangesAsync();
+
+                        vm.HasActivePsychologist = false;
+                        vm.PsychologistName = null;
+                        vm.PsychologistId = null;
+                        TempData["info"] = "Akses klinik Anda sudah berakhir. Silakan pilih psikolog baru atau masukkan kode referral dari psikolog klinik Anda.";
+                    }
+                    else
+                    {
+                        vm.IsSubscriptionExpired = false;
+                        vm.MaxSessionsPerMonth = activeAssignment.Psychologist?.SessionTokensPerMonth ?? 4;
+                        vm.SubscriptionEndDate = mitraSub.EndDate;
+                    }
+                }
+                else
+                {
+                    var activeSub = await _context.Subscriptions
+                        .Where(s => s.PatientId == patient.PatientId
+                            && s.PsychologistId == activeAssignment.PsychologistId
+                            && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                        .OrderByDescending(s => s.EndDate)
+                        .FirstOrDefaultAsync();
+
+                    vm.IsSubscriptionExpired = activeSub == null;
+                    vm.MaxSessionsPerMonth = activeSub?.MaxSessionsPerMonth
+                        ?? activeAssignment.Psychologist?.SessionTokensPerMonth
+                        ?? 4;
+                    vm.SubscriptionEndDate = activeSub?.EndDate;
+                }
             }
 
             // Pass to ViewBag for the modal partial
@@ -151,6 +197,64 @@ public class JadwalController : Controller
             if (assignment == null)
             {
                 TempData["error"] = "Anda belum memiliki psikolog aktif.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Gate: cek validitas subscription dan token sesi
+            bool patientIsB2B = patient.CompanyId != null;
+            bool patientIsMitra = !patientIsB2B && patient.SponsorType == "Psychologist" && patient.SponsorPsychologistId != null;
+            int maxTokens = 4;
+
+            if (patientIsB2B)
+            {
+                var companySub = await _context.CompanySubscriptions
+                    .Where(s => s.CompanyId == patient.CompanyId && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                    .FirstOrDefaultAsync();
+                if (companySub == null)
+                {
+                    TempData["error"] = "Akses Anda tidak aktif. Hubungi HR perusahaan untuk memperbarui langganan.";
+                    return RedirectToAction(nameof(Index));
+                }
+                maxTokens = companySub.MaxSessionsPerMonth > 0 ? companySub.MaxSessionsPerMonth : 4;
+            }
+            else if (patientIsMitra)
+            {
+                var mitraSub = await _context.PsychologistSubscriptions
+                    .Where(s => s.PsychologistId == patient.SponsorPsychologistId
+                        && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                    .FirstOrDefaultAsync();
+                if (mitraSub == null)
+                {
+                    TempData["error"] = "Akses klinik Anda sudah berakhir. Hubungi psikolog klinik Anda.";
+                    return RedirectToAction(nameof(Index));
+                }
+                var psyForToken = await _context.Psychologists.FindAsync(patient.SponsorPsychologistId);
+                maxTokens = psyForToken?.SessionTokensPerMonth > 0 ? psyForToken.SessionTokensPerMonth : 4;
+            }
+            else
+            {
+                var activeSub = await _context.Subscriptions
+                    .Where(s => s.PatientId == patient.PatientId
+                        && s.PsychologistId == assignment.PsychologistId
+                        && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                    .FirstOrDefaultAsync();
+                if (activeSub == null)
+                {
+                    TempData["error"] = "Masa aktif langganan Anda sudah habis. Silakan pilih psikolog kembali.";
+                    return RedirectToAction("Index", "Psychologists");
+                }
+                maxTokens = activeSub.MaxSessionsPerMonth > 0 ? activeSub.MaxSessionsPerMonth : 4;
+            }
+
+            var mStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            var mEnd = mStart.AddMonths(1);
+            var sessionsThisMonth = await _context.Schedules
+                .CountAsync(s => s.PatientId == patient.PatientId
+                    && s.SessionStart >= mStart && s.SessionStart < mEnd
+                    && s.Status != "Cancelled");
+            if (sessionsThisMonth >= maxTokens)
+            {
+                TempData["info"] = $"Token sesi bulan ini sudah habis ({sessionsThisMonth}/{maxTokens}). Tersedia lagi bulan depan.";
                 return RedirectToAction(nameof(Index));
             }
 

@@ -129,15 +129,59 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             ViewBag.HasActivePsychologist = activeAssignment != null;
             ViewBag.PsychologistName = activeAssignment?.Psychologist?.User?.FullName;
 
+            bool taskIsB2B = patient.CompanyId != null;
+            bool taskIsMitra = !taskIsB2B && patient.SponsorType == "Psychologist" && patient.SponsorPsychologistId != null;
+            ViewBag.IsB2B = taskIsB2B;
+
             if (activeAssignment != null)
             {
-                var activeSub = await _context.Subscriptions
-                    .Where(s => s.PatientId == patient.PatientId
-                        && s.PsychologistId == activeAssignment.PsychologistId
-                        && s.Status == "Active" && s.EndDate >= DateTime.Today)
-                    .OrderByDescending(s => s.EndDate)
-                    .FirstOrDefaultAsync();
-                ViewBag.SubscriptionEndDate = activeSub?.EndDate;
+                if (taskIsB2B)
+                {
+                    var companySub = await _context.CompanySubscriptions
+                        .Where(s => s.CompanyId == patient.CompanyId && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                        .OrderByDescending(s => s.EndDate)
+                        .FirstOrDefaultAsync();
+                    ViewBag.SubscriptionEndDate = companySub?.EndDate;
+                    ViewBag.IsSubscriptionExpired = companySub == null;
+                }
+                else if (taskIsMitra)
+                {
+                    var mitraSub = await _context.PsychologistSubscriptions
+                        .Where(s => s.PsychologistId == patient.SponsorPsychologistId
+                            && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                        .FirstOrDefaultAsync();
+
+                    if (mitraSub == null)
+                    {
+                        // Lazy cancel
+                        activeAssignment.Status = "Cancelled";
+                        activeAssignment.CancellationReason = "Mitra subscription expired";
+                        activeAssignment.CancellationRequestedAt = DateTime.UtcNow;
+                        patient.SponsorType = "Self";
+                        patient.SponsorPsychologistId = null;
+                        await _context.SaveChangesAsync();
+
+                        ViewBag.HasActivePsychologist = false;
+                        ViewBag.PsychologistName = null;
+                        ViewBag.IsSubscriptionExpired = false;
+                    }
+                    else
+                    {
+                        ViewBag.SubscriptionEndDate = mitraSub.EndDate;
+                        ViewBag.IsSubscriptionExpired = false;
+                    }
+                }
+                else
+                {
+                    var activeSub = await _context.Subscriptions
+                        .Where(s => s.PatientId == patient.PatientId
+                            && s.PsychologistId == activeAssignment.PsychologistId
+                            && s.Status == "Active" && s.EndDate >= DateTime.Today)
+                        .OrderByDescending(s => s.EndDate)
+                        .FirstOrDefaultAsync();
+                    ViewBag.SubscriptionEndDate = activeSub?.EndDate;
+                    ViewBag.IsSubscriptionExpired = activeSub == null;
+                }
             }
 
             return View(vm);

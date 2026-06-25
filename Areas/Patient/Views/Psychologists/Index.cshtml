@@ -106,9 +106,17 @@
 
                     @* Price *@
                     <div class="psy-card-price-row">
-                        <span class="psy-card-price">Rp @((psy.PricePerMonth ?? 0).ToString("N0", idC))</span>
-                        <span class="psy-card-price-unit">/ bulan</span>
-                        <span class="psy-card-sessions">· @(psy.SessionTokensPerMonth > 0 ? psy.SessionTokensPerMonth : 4) sesi</span>
+                        @if (isB2B)
+                        {
+                            <span class="psy-card-price" style="font-size:13px; color:#10B981;">Ditanggung perusahaan</span>
+                            <span class="psy-card-sessions">· 4 sesi</span>
+                        }
+                        else
+                        {
+                            <span class="psy-card-price">Rp @((psy.PricePerMonth ?? 0).ToString("N0", idC))</span>
+                            <span class="psy-card-price-unit">/ bulan</span>
+                            <span class="psy-card-sessions">· @(psy.SessionTokensPerMonth > 0 ? psy.SessionTokensPerMonth : 4) sesi</span>
+                        }
                     </div>
 
                     @* Status or Button *@
@@ -219,8 +227,20 @@
         document.getElementById('modalPsyId').value = id;
         document.getElementById('modalPsyName').textContent = p.name;
         document.getElementById('modalPsySpec').textContent = p.spec;
-        document.getElementById('modalPrice').textContent = formatRp(p.price);
-        document.getElementById('modalSessions').textContent = p.sessions + ' sesi per bulan';
+        var isB2B = @(isB2B ? "true" : "false");
+        if (isB2B) {
+            document.getElementById('modalPrice').textContent = 'Ditanggung perusahaan';
+            document.getElementById('modalPrice').style.color = '#10B981';
+            document.getElementById('modalPrice').style.fontSize = '14px';
+            document.querySelector('.psy-modal-price-unit').style.display = 'none';
+            document.getElementById('modalSessions').textContent = '4 sesi per bulan';
+        } else {
+            document.getElementById('modalPrice').textContent = formatRp(p.price);
+            document.getElementById('modalPrice').style.color = '';
+            document.getElementById('modalPrice').style.fontSize = '';
+            document.querySelector('.psy-modal-price-unit').style.display = '';
+            document.getElementById('modalSessions').textContent = p.sessions + ' sesi per bulan';
+        }
 
         // Avatar
         var wrap = document.getElementById('modalAvatarWrap');

@@ -18,9 +18,10 @@
         </div>
 
         @* #Komponen FormTugas# *@
-        <form asp-action="AddTask" method="post" autocomplete="off">
+        <form asp-area="Psychologist" asp-controller="Worksheet" asp-action="AddTask" method="post" autocomplete="off">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ReturnPatientId" />
+            <input type="hidden" asp-for="MitraOnly" />
 
             <div class="prf-modal-body">
                 <p class="atm-intro">Berikan tugas/aktivitas baru untuk salah satu pasien aktif Anda.</p>

@@ -28,5 +28,9 @@ namespace LightenUp.Web.Models.ViewModels
         public int SessionsUsedThisMonth { get; set; }
         public int MaxSessionsPerMonth { get; set; }
         public DateTime? SubscriptionEndDate { get; set; }
+
+        // Subscription state
+        public bool IsSubscriptionExpired { get; set; }
+        public bool IsB2B { get; set; }
     }
 }

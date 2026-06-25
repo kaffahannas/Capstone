@@ -21,7 +21,28 @@
             Jadwal Konseling
         </h1>
 
-        @if (Model.HasActivePsychologist)
+        @if (Model.HasActivePsychologist && Model.IsSubscriptionExpired)
+        {
+            <div class="jdw-psy-info-row">
+                <span class="jdw-psy-info-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    @Model.PsychologistName
+                </span>
+            </div>
+            <div class="jdw-expired-banner">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                @if (Model.IsB2B)
+                {
+                    <span>Akses tidak aktif. Hubungi HR perusahaan Anda untuk memperbarui langganan.</span>
+                }
+                else
+                {
+                    <span>Masa aktif langganan habis.</span>
+                    <a asp-action="Index" asp-controller="Psychologists" asp-area="Patient" class="jdw-expired-btn">Pilih Psikolog Lagi →</a>
+                }
+            </div>
+        }
+        else if (Model.HasActivePsychologist)
         {
             <div class="jdw-psy-info-row">
                 <span class="jdw-psy-info-item">
@@ -42,9 +63,19 @@
                     </span>
                 }
             </div>
-            <button type="button" class="jdw-hero-btn" onclick="openRequestSessionModal()">
-                + Request Sesi Konseling
-            </button>
+            @if (Model.SessionsUsedThisMonth >= Model.MaxSessionsPerMonth)
+            {
+                <div class="jdw-expired-banner jdw-expired-banner--token">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>Token sesi bulan ini sudah habis (@Model.SessionsUsedThisMonth/@Model.MaxSessionsPerMonth). Tersedia lagi bulan depan.</span>
+                </div>
+            }
+            else
+            {
+                <button type="button" class="jdw-hero-btn" onclick="openRequestSessionModal()">
+                    + Request Sesi Konseling
+                </button>
+            }
         }
         else
         {

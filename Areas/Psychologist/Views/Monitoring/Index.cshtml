@@ -6,68 +6,72 @@
     ViewData["ActiveTab"] = "Mitra";
     ViewData["SemuaUrl"] = Url.Action("Index", "Client", new { area = "Psychologist" });
     ViewData["MitraUrl"] = Url.Action("Index", "Monitoring", new { area = "Psychologist" });
+    var cid = new System.Globalization.CultureInfo("id-ID");
 }
 
-<div class="psy-dashboard-grid" style="grid-template-columns: 1fr;">
+<div class="psy-dashboard-grid" style="grid-template-columns: 1fr; align-content: start;">
     <partial name="_MitraTabs" />
 
     <section class="psy-card psy-client-card">
         <header class="psy-card-head">
             <div class="psy-card-title-wrap">
-                <p class="psy-card-eyebrow">Psikolog · Monitoring Klien Klinik</p>
-                <h2 class="psy-card-title">Klien Klinik
-                    <span class="psy-count-chip">@Model.Count</span>
-                </h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <h2 class="psy-card-title">Klien Klinik</h2>
+                <span class="psy-count-chip">@Model.Count</span>
             </div>
             <div class="psy-card-tools">
-                <a asp-action="Statistik" class="psy-tool-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                    Statistik
-                </a>
-                <a asp-action="Worksheet" class="psy-tool-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    Worksheet
-                </a>
-                <a asp-action="Jadwal" class="psy-tool-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    Jadwal
-                </a>
+                <div class="psy-search-wrap">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="mitraSearch" placeholder="Cari klien..." class="psy-search" oninput="filterMitraSearch()" />
+                </div>
             </div>
         </header>
 
-        <div class="psy-client-list">
+        <div class="psy-client-list" id="mitraListView">
             @if (!Model.Any())
             {
                 <div class="psy-empty">
-                    <div class="psy-empty-icon" aria-hidden="true">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    </div>
-                    <p class="psy-empty-title">Belum ada klien klinik</p>
-                    <p class="psy-empty-sub">Bagikan kode referal Anda ke pasien klinik agar mereka bisa bergabung.</p>
-                    <a asp-controller="Mitra" asp-action="Index" class="psy-empty-cta">Lihat Kode Referal →</a>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <p>Belum ada klien klinik</p>
                 </div>
             }
             else
             {
                 @foreach (var p in Model)
                 {
-                    var initials = string.IsNullOrWhiteSpace(p.User?.FullName) ? "?" :
-                        string.Join("", p.User.FullName.Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
-                    var statusClass = p.MentalHealthStatus == "Sehat" ? "psy-status--healthy"
-                        : p.MentalHealthStatus == "Beresiko" ? "psy-status--risk" : "psy-status--danger";
+                    var initials = string.IsNullOrWhiteSpace(p.User?.FullName) ? "?" : p.User.FullName.Substring(0, 1).ToUpper();
+                    var statusKey = p.MentalHealthStatus?.ToLower() switch {
+                        "bahaya"   => "bahaya",
+                        "beresiko" => "beresiko",
+                        _          => "sehat"
+                    };
                     var genderLabel = p.Gender == "Male" ? "Laki-laki" : p.Gender == "Female" ? "Perempuan" : "—";
+                    var assignment = p.Assignments.FirstOrDefault(a => a.Status == "Active");
+                    var joinDate = assignment?.AssignedAt ?? DateTime.UtcNow;
 
-                    <div class="psy-client-row">
-                        <div class="psy-client-avatar" aria-hidden="true">@initials</div>
-                        <div class="psy-client-meta">
+                    <div class="psy-client-row client-mitra-searchable" data-name="@(p.User?.FullName?.ToLower())">
+                        <div class="psy-client-avatar psy-avatar--@statusKey">@initials</div>
+                        <div class="psy-client-info">
                             <span class="psy-client-name">@(p.User?.FullName ?? "—")</span>
-                            <span class="psy-client-sub">@genderLabel · Klien Klinik</span>
+                            <span class="psy-client-meta">@genderLabel &middot; Sejak @joinDate.ToString("d MMM yyyy", cid)</span>
+                            <span class="psy-client-meta" style="display:block; margin-top:4px; color:#6B7280; font-size:12px;">Klien Klinik</span>
                         </div>
-                        <span class="psy-client-status @statusClass">@(p.MentalHealthStatus ?? "—")</span>
-                        <a asp-action="Detail" asp-route-id="@p.PatientId" class="psy-client-detail-link">Detail →</a>
+                        <span class="psy-status-chip psy-status--@statusKey">@(p.MentalHealthStatus ?? "Sehat")</span>
+                        <a href="/Psychologist/Monitoring/Detail/@p.PatientId" class="psy-btn psy-btn--ghost psy-btn--sm">Detail &rarr;</a>
                     </div>
                 }
             }
         </div>
     </section>
 </div>
+
+@section Scripts {
+<script>
+    function filterMitraSearch() {
+        var q = document.getElementById("mitraSearch").value.toLowerCase();
+        document.querySelectorAll(".client-mitra-searchable").forEach(function(row) {
+            row.style.display = row.dataset.name && row.dataset.name.includes(q) ? "" : "none";
+        });
+    }
+</script>
+}

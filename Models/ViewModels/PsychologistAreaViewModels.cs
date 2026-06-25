@@ -32,6 +32,10 @@ namespace LightenUp.Web.Models.ViewModels
 
         // Assignment tracking
         public int AssignmentId { get; set; }
+
+        // Subscription status
+        public bool IsSubscriptionExpired { get; set; }
+        public string SponsorType { get; set; } = "Self";
     }
 
     // #Class PatientDetailViewModel#

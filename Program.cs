@@ -39,7 +39,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
-    options.AccessDeniedPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
 
     options.Events.OnRedirectToLogin = context =>
     {
@@ -72,7 +72,7 @@ builder.Services.ConfigureApplicationCookie(options =>
             return Task.CompletedTask;
         }
 
-        context.Response.Redirect("/Account/Login");
+        context.Response.Redirect("/Account/AccessDenied");
         return Task.CompletedTask;
     };
 });
