@@ -61,8 +61,13 @@ public class JadwalController : Controller
 
             var today = DateTime.UtcNow;
 
-            vm.UpcomingSessions = allSchedules.Where(s => s.SessionStart >= today || s.Status == "Scheduled").ToList();
-            vm.PastSessions = allSchedules.Where(s => s.SessionStart < today && s.Status != "Scheduled").OrderByDescending(s => s.SessionStart).ToList();
+            vm.UpcomingSessions = allSchedules
+                .Where(s => s.Status == "Scheduled" && s.SessionStart >= today)
+                .ToList();
+            vm.PastSessions = allSchedules
+                .Where(s => s.Status == "Completed" || s.Status == "Cancelled" || (s.Status == "Scheduled" && s.SessionStart < today))
+                .OrderByDescending(s => s.SessionStart)
+                .ToList();
 
             bool isB2B = patient.CompanyId != null;
             bool isMitra = !isB2B && patient.SponsorType == "Psychologist" && patient.SponsorPsychologistId != null;

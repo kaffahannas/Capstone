@@ -29,6 +29,15 @@
 
 @section Head {
     <link rel="stylesheet" href="~/css/shared/components-stat-dashboard.css" asp-append-version="true" />
+    <style>
+        /* Mencegah layout berantakan saat zoom browser (di atas 125%) khusus di desktop */
+        @@media (min-width: 992px) {
+            body {
+                min-width: 1200px !important;
+                overflow-x: auto !important;
+            }
+        }
+    </style>
 }
 
 <partial name="_MitraTabs" />

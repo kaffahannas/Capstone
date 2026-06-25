@@ -25,6 +25,15 @@
     <link rel="stylesheet" href="~/css/shared/components-worksheet-dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-detail-modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/worksheet-edit-worksheet-modal.css" asp-append-version="true" />
+    <style>
+        /* Mencegah layout berantakan saat zoom browser (di atas 125%) khusus di desktop */
+        @@media (min-width: 992px) {
+            body {
+                min-width: 1200px !important;
+                overflow-x: auto !important;
+            }
+        }
+    </style>
 }
 
 <div class="psy-dashboard-grid" style="grid-template-columns: 1fr; align-content: start;">
