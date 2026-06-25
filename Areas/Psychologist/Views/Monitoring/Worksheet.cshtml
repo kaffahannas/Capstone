@@ -151,6 +151,7 @@
         var form = document.getElementById('worksheetDetailForm') || e.target.closest('form');
         if (!form) return;
         var data = new FormData(form);
+        if (e.submitter && e.submitter.name) data.append(e.submitter.name, e.submitter.value);
         fetch(form.action, { method: 'POST', body: data, headers: { 'X-Requested-With': 'fetch' } })
             .then(function(res) {
                 if (res.redirected) { window.location.reload(); return; }
