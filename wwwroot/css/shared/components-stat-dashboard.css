@@ -4,18 +4,17 @@
 /* ── Hero banner ── */
 .stat-hero {
     position: relative;
-    background: linear-gradient(130deg, #1E1B4B 0%, #3730A3 30%, #4F46E5 65%, #7C3AED 100%);
     border-radius: 16px;
     margin-bottom: 20px;
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
+    overflow: hidden;
 }
 .stat-hero-bg {
     position: absolute;
     inset: 0;
-    border-radius: 16px;
-    overflow: hidden;
+    background: linear-gradient(130deg, #1E1B4B 0%, #3730A3 30%, #4F46E5 65%, #7C3AED 100%);
     pointer-events: none;
 }
 .stat-hero-bg::before {
