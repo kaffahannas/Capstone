@@ -135,7 +135,7 @@
                     </div>
                 </div>
                 <div class="psymi-ref-body">
-                    @if (!string.IsNullOrEmpty(psy?.MitraReferralCode))
+                    @if (!string.IsNullOrEmpty(psy?.MitraReferralCode) && (bool)(ViewBag.IsMitraActive ?? false))
                     {
                         <div class="psymi-ref-card">
                             <span class="psymi-ref-code" id="mitraRefCode">@psy.MitraReferralCode</span>
