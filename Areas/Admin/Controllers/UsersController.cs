@@ -361,6 +361,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             {
                 int pid = patient.PatientId;
                 _context.PsychologistRequests.RemoveRange(_context.PsychologistRequests.Where(r => r.PatientId == pid));
+                _context.PaymentTransactions.RemoveRange(_context.PaymentTransactions.Where(t => t.PatientId == pid));
                 _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PatientId == pid));
                 _context.Schedules.RemoveRange(_context.Schedules.Where(s => s.PatientId == pid));
                 _context.Worksheets.RemoveRange(_context.Worksheets.Where(w => w.PatientId == pid));
