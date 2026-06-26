@@ -360,6 +360,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             if (patient != null)
             {
                 int pid = patient.PatientId;
+                _context.PsychologistRequests.RemoveRange(_context.PsychologistRequests.Where(r => r.PatientId == pid));
                 _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PatientId == pid));
                 _context.Schedules.RemoveRange(_context.Schedules.Where(s => s.PatientId == pid));
                 _context.Worksheets.RemoveRange(_context.Worksheets.Where(w => w.PatientId == pid));
@@ -375,7 +376,13 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             if (psychologist != null)
             {
                 int psyId = psychologist.PsychologistId;
+                _context.PsychologistRequests.RemoveRange(_context.PsychologistRequests.Where(r => r.PsychologistId == psyId));
                 _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PsychologistId == psyId));
+                _context.Schedules.RemoveRange(_context.Schedules.Where(s => s.PsychologistId == psyId));
+                _context.Worksheets.RemoveRange(_context.Worksheets.Where(w => w.PsychologistId == psyId));
+                _context.Reports.RemoveRange(_context.Reports.Where(r => r.PsychologistId == psyId));
+                _context.PayrollSettings.RemoveRange(_context.PayrollSettings.Where(p => p.PsychologistId == psyId));
+                _context.PsychologistSubscriptions.RemoveRange(_context.PsychologistSubscriptions.Where(s => s.PsychologistId == psyId));
                 _context.Psychologists.Remove(psychologist);
                 await _context.SaveChangesAsync();
             }
