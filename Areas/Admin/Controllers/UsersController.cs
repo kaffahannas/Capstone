@@ -355,10 +355,38 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
 
-            // Additional logic to delete from Patient/Psychologist/HR tables if necessary.
-            // But EF Core Cascade Delete should handle it if configured, or we can just delete the identity user.
+            // Hapus data terkait sesuai role sebelum hapus user (semua FK pakai Restrict)
+            var patient = await _context.Patients.FindAsync(id);
+            if (patient != null)
+            {
+                _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PatientId == id));
+                _context.Schedules.RemoveRange(_context.Schedules.Where(s => s.PatientId == id));
+                _context.Worksheets.RemoveRange(_context.Worksheets.Where(w => w.PatientId == id));
+                _context.MoodTrackers.RemoveRange(_context.MoodTrackers.Where(m => m.PatientId == id));
+                _context.Journals.RemoveRange(_context.Journals.Where(j => j.PatientId == id));
+                _context.JournalCheckIns.RemoveRange(_context.JournalCheckIns.Where(c => c.PatientId == id));
+                _context.Reports.RemoveRange(_context.Reports.Where(r => r.PatientId == id));
+                _context.Patients.Remove(patient);
+                await _context.SaveChangesAsync();
+            }
+
+            var psychologist = await _context.Psychologists.FindAsync(id);
+            if (psychologist != null)
+            {
+                _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PsychologistId == id));
+                _context.Psychologists.Remove(psychologist);
+                await _context.SaveChangesAsync();
+            }
+
+            var hr = await _context.HrStaffs.FindAsync(id);
+            if (hr != null)
+            {
+                _context.HrStaffs.Remove(hr);
+                await _context.SaveChangesAsync();
+            }
+
             var result = await _userManager.DeleteAsync(user);
-            
+
             if (result.Succeeded)
             {
                 TempData["success"] = $"Pengguna {user.FullName} berhasil dihapus permanen.";
