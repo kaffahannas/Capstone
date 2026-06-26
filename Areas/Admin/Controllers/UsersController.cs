@@ -356,29 +356,31 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             if (user == null) return NotFound();
 
             // Hapus data terkait sesuai role sebelum hapus user (semua FK pakai Restrict)
-            var patient = await _context.Patients.FindAsync(id);
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.UserId == id);
             if (patient != null)
             {
-                _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PatientId == id));
-                _context.Schedules.RemoveRange(_context.Schedules.Where(s => s.PatientId == id));
-                _context.Worksheets.RemoveRange(_context.Worksheets.Where(w => w.PatientId == id));
-                _context.MoodTrackers.RemoveRange(_context.MoodTrackers.Where(m => m.PatientId == id));
-                _context.Journals.RemoveRange(_context.Journals.Where(j => j.PatientId == id));
-                _context.JournalCheckIns.RemoveRange(_context.JournalCheckIns.Where(c => c.PatientId == id));
-                _context.Reports.RemoveRange(_context.Reports.Where(r => r.PatientId == id));
+                int pid = patient.PatientId;
+                _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PatientId == pid));
+                _context.Schedules.RemoveRange(_context.Schedules.Where(s => s.PatientId == pid));
+                _context.Worksheets.RemoveRange(_context.Worksheets.Where(w => w.PatientId == pid));
+                _context.MoodTrackers.RemoveRange(_context.MoodTrackers.Where(m => m.PatientId == pid));
+                _context.Journals.RemoveRange(_context.Journals.Where(j => j.PatientId == pid));
+                _context.JournalCheckIns.RemoveRange(_context.JournalCheckIns.Where(c => c.PatientId == pid));
+                _context.Reports.RemoveRange(_context.Reports.Where(r => r.PatientId == pid));
                 _context.Patients.Remove(patient);
                 await _context.SaveChangesAsync();
             }
 
-            var psychologist = await _context.Psychologists.FindAsync(id);
+            var psychologist = await _context.Psychologists.FirstOrDefaultAsync(p => p.UserId == id);
             if (psychologist != null)
             {
-                _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PsychologistId == id));
+                int psyId = psychologist.PsychologistId;
+                _context.Assignments.RemoveRange(_context.Assignments.Where(a => a.PsychologistId == psyId));
                 _context.Psychologists.Remove(psychologist);
                 await _context.SaveChangesAsync();
             }
 
-            var hr = await _context.HrStaffs.FindAsync(id);
+            var hr = await _context.HrStaffs.FirstOrDefaultAsync(h => h.UserId == id);
             if (hr != null)
             {
                 _context.HrStaffs.Remove(hr);
