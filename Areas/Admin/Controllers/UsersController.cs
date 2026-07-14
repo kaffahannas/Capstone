@@ -214,6 +214,8 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                     PatientLimit = plan.PatientLimit,
                 });
                 psy.IsMitraActive = true;
+                if (string.IsNullOrEmpty(psy.MitraReferralCode))
+                    psy.MitraReferralCode = await new LightenUp.Web.Services.SubscriptionAccessService(_context).GenerateUniqueReferralCodeAsync();
                 await _context.SaveChangesAsync();
                 TempData["success"] = $"Langganan {plan.Name} untuk {user.FullName} diaktifkan hingga {end:dd MMMM yyyy}.";
             }

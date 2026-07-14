@@ -472,7 +472,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 {
                     // ── Cek kode Psikolog Mitra ──
                     var mitra = await _context.Psychologists
-                        .FirstOrDefaultAsync(p => p.MitraReferralCode == code && p.IsMitraActive);
+                        .FirstOrDefaultAsync(p => p.MitraReferralCode == code);
 
                     if (mitra == null)
                     {
@@ -481,8 +481,32 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                         return View(model);
                     }
 
+                    // Aktif jika flag menyala ATAU ada langganan Mitra yang masih berlaku
+                    bool mitraActive = mitra.IsMitraActive
+                        || await _access.HasPsychologistMitraActiveAsync(mitra.PsychologistId);
+                    if (!mitraActive)
+                    {
+                        ModelState.AddModelError("ReferralCode", "Langganan Mitra psikolog ini belum aktif atau sudah berakhir.");
+                        ViewBag.Progress = new OnboardingProgress { Current = 9 };
+                        return View(model);
+                    }
+
                     patient.SponsorPsychologistId = mitra.PsychologistId;
                     patient.SponsorType = "Psychologist";
+
+                    // Auto-create assignment jika belum ada (konsisten dengan alur profil)
+                    var hasActiveAssignment = await _context.Assignments
+                        .AnyAsync(a => a.PatientId == patient.PatientId && a.Status == "Active");
+                    if (!hasActiveAssignment)
+                    {
+                        _context.Assignments.Add(new PatientPsychologistAssignment
+                        {
+                            PatientId      = patient.PatientId,
+                            PsychologistId = mitra.PsychologistId,
+                            Status         = "Active",
+                            AssignedAt     = DateTime.UtcNow,
+                        });
+                    }
                 }
 
                 await _context.SaveChangesAsync();

@@ -94,16 +94,16 @@ namespace LightenUp.Web.Controllers
                         var currentHost = HttpContext.Request.Host.ToString();
                         bool isAdminAccount = await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin";
                         bool onAdminHost = !string.IsNullOrEmpty(adminHost) && currentHost.Equals(adminHost, StringComparison.OrdinalIgnoreCase);
-                        bool onCustomerHost = !string.IsNullOrEmpty(patientHost) && currentHost.Equals(patientHost, StringComparison.OrdinalIgnoreCase);
 
-                        if (isAdminAccount && onCustomerHost && !string.IsNullOrEmpty(adminHost))
+                        // Akun Admin TIDAK PERNAH boleh login lewat halaman login utama.
+                        // Admin hanya bisa masuk melalui /AdminAuth/Login.
+                        if (isAdminAccount)
                         {
                             await _signInManager.SignOutAsync();
-                            ModelState.AddModelError(string.Empty,
-                                $"Akun Admin harus login di https://{adminHost}/");
+                            ModelState.AddModelError(string.Empty, "Email atau kata sandi salah.");
                             return View(model);
                         }
-                        if (!isAdminAccount && onAdminHost && !string.IsNullOrEmpty(patientHost))
+                        if (onAdminHost && !string.IsNullOrEmpty(patientHost))
                         {
                             await _signInManager.SignOutAsync();
                             ModelState.AddModelError(string.Empty,
@@ -713,23 +713,21 @@ namespace LightenUp.Web.Controllers
             var currentHost = HttpContext.Request.Host.ToString();
             bool isAdminAccount = await _userManager.IsInRoleAsync(user, "Admin") || user.RoleType == "Admin";
             bool onAdminHost = !string.IsNullOrEmpty(adminHost) && currentHost.Equals(adminHost, StringComparison.OrdinalIgnoreCase);
-            bool onCustomerHost = !string.IsNullOrEmpty(patientHost) && currentHost.Equals(patientHost, StringComparison.OrdinalIgnoreCase);
 
-            if (isAdminAccount && onCustomerHost && !string.IsNullOrEmpty(adminHost))
+            // Akun Admin TIDAK PERNAH boleh login lewat jalur login pelanggan.
+            // Admin hanya bisa masuk melalui /AdminAuth/Login.
+            if (isAdminAccount)
             {
                 await _signInManager.SignOutAsync();
-                TempData["ExternalError"] = $"Akun Admin harus login di https://{adminHost}/";
+                TempData["ExternalError"] = "Email atau kata sandi salah.";
                 return RedirectToAction("Login");
             }
-            if (!isAdminAccount && onAdminHost && !string.IsNullOrEmpty(patientHost))
+            if (onAdminHost && !string.IsNullOrEmpty(patientHost))
             {
                 await _signInManager.SignOutAsync();
                 TempData["ExternalError"] = $"Akun ini bukan akun Admin. Silakan login di https://{patientHost}/";
                 return RedirectToAction("Login");
             }
-
-            if (isAdminAccount)
-                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
 
             bool isPsy = await _userManager.IsInRoleAsync(user, "Psychologist") || user.RoleType == "Psychologist";
             bool isHr = await _userManager.IsInRoleAsync(user, "HR") || user.RoleType == "HR";

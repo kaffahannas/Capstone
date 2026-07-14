@@ -245,11 +245,24 @@ namespace LightenUp.Web.Areas.Patient.Controllers
                 {
                     // Cek kode Psikolog Mitra
                     var mitra = await _context.Psychologists
-                        .FirstOrDefaultAsync(p => p.MitraReferralCode == code && p.IsMitraActive);
+                        .FirstOrDefaultAsync(p => p.MitraReferralCode == code);
 
                     if (mitra == null)
                     {
                         ModelState.AddModelError("ReferralCode", "Kode referral tidak ditemukan.");
+                        model.CurrentProfilePicture = user.ProfilePicture;
+                        model.IsAlreadyB2B = patient.CompanyId != null;
+                        model.CurrentCompanyName = patient.Company?.Name;
+                        ViewBag.ActiveNav = "Profil";
+                        return View(model);
+                    }
+
+                    // Aktif jika flag menyala ATAU ada langganan Mitra yang masih berlaku
+                    bool mitraActive = mitra.IsMitraActive
+                        || await _access.HasPsychologistMitraActiveAsync(mitra.PsychologistId);
+                    if (!mitraActive)
+                    {
+                        ModelState.AddModelError("ReferralCode", "Langganan Mitra psikolog ini belum aktif atau sudah berakhir.");
                         model.CurrentProfilePicture = user.ProfilePicture;
                         model.IsAlreadyB2B = patient.CompanyId != null;
                         model.CurrentCompanyName = patient.Company?.Name;
