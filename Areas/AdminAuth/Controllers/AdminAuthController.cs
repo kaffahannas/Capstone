@@ -40,10 +40,15 @@ namespace LightenUp.Web.Areas.AdminAuth.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            // Block if we're not on the configured admin host (security defense in depth)
+            // Block if we're not on the configured admin host (security defense in depth).
+            // Aturan dual-host hanya berlaku jika request datang dari salah satu host yang
+            // dikonfigurasi (mis. localhost:7040/7041 saat development). Di deployment
+            // single-host (Azure), host tidak ada di konfigurasi → login admin tetap boleh.
             var adminHost = _config["Site:AdminHost"];
+            var patientHost = _config["Site:PatientHost"];
             var currentHost = HttpContext.Request.Host.ToString();
-            if (!string.IsNullOrEmpty(adminHost) && !currentHost.Equals(adminHost, StringComparison.OrdinalIgnoreCase))
+            bool onPatientHost = !string.IsNullOrEmpty(patientHost) && currentHost.Equals(patientHost, StringComparison.OrdinalIgnoreCase);
+            if (!string.IsNullOrEmpty(adminHost) && onPatientHost)
             {
                 ModelState.AddModelError(string.Empty, $"Login Admin hanya tersedia di {adminHost}.");
                 return View(model);
