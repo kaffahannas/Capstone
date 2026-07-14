@@ -10,7 +10,10 @@
     if (user != null)
     {
         var psy = DbContext.Psychologists.FirstOrDefault(p => p.UserId == user.Id);
-        isMitra = psy?.IsMitraActive ?? false;
+        // Aktif jika flag menyala ATAU ada langganan Mitra yang masih berlaku
+        isMitra = psy != null && (psy.IsMitraActive
+            || DbContext.PsychologistSubscriptions.Any(s => s.PsychologistId == psy.PsychologistId
+                && s.Status == "Active" && s.EndDate >= DateTime.Today));
     }
 
     var activeTab = ViewData["ActiveTab"]?.ToString() ?? "Semua";
