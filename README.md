@@ -56,53 +56,9 @@ dotnet user-secrets set "Seed:AdminPassword" "YourSecurePassword123!"
 
 Optional override: `Seed:AdminEmail` (default `admin@lightenup.com` in `appsettings.json`).
 
-## Dummy / seed data
-
-On first startup, `Data/DummyDataSeed.cs` seeds a compact demo dataset (one company, a few users per role, sample data for every feature table). **Default password for all demo users:** `Password123!`
-
-Seed is **idempotent** — it only runs when company **PT Sasindo** does not exist yet.
-
-### Demo accounts
-
-| Role | Email | Password | Login URL |
-|------|-------|----------|-----------|
-| Admin | `admin@lightenup.com` | *(User Secrets)* | https://localhost:7041/AdminAuth/Login |
-| HR | `hr@sasindo.com` | `Password123!` | https://localhost:7040/Account/Login |
-| Psychologist | `dr.dina@lightenup.com` | `Password123!` | https://localhost:7040/Account/Login |
-| Psychologist | `dr.andi@lightenup.com` | `Password123!` | https://localhost:7040/Account/Login |
-| Psychologist (pending approval) | `dr.baru@lightenup.com` | `Password123!` | https://localhost:7040/Account/Login |
-| Patient B2B | `kaffah@sasindo.com` | `Password123!` | https://localhost:7040/Account/Login |
-| Patient B2B | `siti@sasindo.com` | `Password123!` | https://localhost:7040/Account/Login |
-| Patient B2B | `budi@sasindo.com` | `Password123!` | https://localhost:7040/Account/Login |
-| Patient B2C | `riza@gmail.com` | `Password123!` | https://localhost:7040/Account/Login |
-| Patient B2C | `maya@gmail.com` | `Password123!` | https://localhost:7040/Account/Login |
-
-### Referral codes (PT Sasindo)
-
-| Division | Code |
-|----------|------|
-| Pusat | `SAS-PUSAT` |
-| IT & Engineering | `SAS-IT-01` |
-| Human Resources | `SAS-HR-01` |
-
-### Which account to use per feature
-
-| Feature | Suggested account |
-|---------|-------------------|
-| Active assignment + completed session | `kaffah@sasindo.com` |
-| Pending cancellation (HR → admin) | `siti@sasindo.com` |
-| Pending psychologist approval (patient request) | `budi@sasindo.com` |
-| B2C subscription + schedule | `riza@gmail.com` |
-| Pending admin assignment | `maya@gmail.com` |
-| HR approvals, employees, reports | `hr@sasindo.com` |
-| Admin approval queue (new psychologist) | `dr.baru@lightenup.com` |
-| Payroll / payouts | `dr.dina@lightenup.com` |
-
-> Change all passwords before any public deployment.
-
 ## Database errors & reset
 
-If you see migration errors, seed failures, stale schema, or login/data that does not match this README (e.g. old `Perusahaan A` accounts), **drop the database first**, then recreate it:
+If you see migration errors, seed failures, or stale schema, **drop the database first**, then recreate it:
 
 ```powershell
 # Stop the running app first (Ctrl+C), then:
@@ -111,13 +67,12 @@ dotnet ef database update
 dotnet run --launch-profile https
 ```
 
-This removes `LightenUpDB` on LocalDB and applies all migrations from scratch. On the next startup, admin + demo seed run again automatically.
+This removes `LightenUpDB` on LocalDB and applies all migrations from scratch. On the next startup, the admin account seeds again automatically (from `Seed:AdminPassword`).
 
 **Common symptoms that need a DB reset:**
 
 - `dotnet ef database update` fails with column/table already exists or missing
 - Seed log errors or partial data after pulling new migrations
-- Demo emails from an older seed still in the database
 
 Alternative (SQL Server Management Studio / Azure Data Studio): delete database `LightenUpDB`, then run `dotnet ef database update`.
 
@@ -166,7 +121,7 @@ Areas/
   Hr/             # HR portal
   Psychologist/   # Psychologist portal
 Controllers/      # Shared controllers (Account, …)
-Data/             # DbContext, DummyDataSeed, DbInitializer
+Data/             # DbContext, EF Core configuration
 Models/           # Domain + view models
 Services/         # Duitku, subscriptions, uploads, email
 Views/            # Shared views (Account, onboarding)
