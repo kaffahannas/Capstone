@@ -1,4 +1,9 @@
 /* #Bagian Cetak Laporan Psikolog# */
+@page {
+    size: A4;
+    margin: 14mm;
+}
+
 @media print {
     * {
         -webkit-print-color-adjust: exact !important;
@@ -16,6 +21,7 @@
 
     body.psychologist-body {
         background: #fff !important;
+        font-size: 15px !important;
     }
 
     .app-shell {
@@ -48,5 +54,34 @@
 
     .stat-canvas-wrap canvas {
         max-width: 100% !important;
+    }
+
+    /* ── Perbesar teks laporan agar jelas saat dicetak ── */
+    .sch-hero-eyebrow { font-size: 14px !important; }
+    .sch-hero-title { font-size: 32px !important; }
+    .sch-hero-sub { font-size: 15px !important; }
+    .stat-score-pct { font-size: 26px !important; }
+    .stat-score-name { font-size: 17px !important; }
+    .stat-score-label { font-size: 14px !important; }
+
+    .stat-kpi-value { font-size: 34px !important; }
+    .stat-kpi-label { font-size: 15px !important; }
+
+    .stat-chart-title { font-size: 20px !important; }
+    .stat-section-title { font-size: 20px !important; }
+    .stat-section-chip { font-size: 14px !important; }
+
+    .stat-div-name { font-size: 17px !important; }
+    .stat-div-count { font-size: 14px !important; }
+    .stat-div-chip { font-size: 14px !important; }
+    .stat-div-footer { font-size: 14px !important; }
+
+    .stat-chart-card--donut .stat-canvas-wrap {
+        width: 340px !important;
+        height: 340px !important;
+    }
+
+    .stat-chart-card--bar .stat-canvas-wrap {
+        height: 320px !important;
     }
 }
