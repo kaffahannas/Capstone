@@ -1,0 +1,52 @@
+/* #Bagian Cetak Laporan Psikolog# */
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    .sidebar,
+    .sidebar-backdrop,
+    .dashboard-header,
+    .psy-tabs-container,
+    .no-print {
+        display: none !important;
+    }
+
+    body.psychologist-body {
+        background: #fff !important;
+    }
+
+    .app-shell {
+        display: block !important;
+    }
+
+    .main-content.app-main {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .app-content.lu-scroll-host {
+        padding: 0 !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    .sch-hero,
+    .stat-kpi-row,
+    .stat-kpi,
+    .stat-charts-row,
+    .stat-chart-card,
+    .stat-div-card,
+    .stat-division-grid,
+    .pd-hero,
+    .pd-card {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .stat-canvas-wrap canvas {
+        max-width: 100% !important;
+    }
+}
