@@ -104,6 +104,15 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .FirstOrDefaultAsync();
             var openWorksheetCount = await _context.Worksheets.CountAsync(w => w.PatientId == id && w.Status != "Completed");
 
+            var todayJournal = await _context.Journals
+                .Where(j => j.PatientId == id && j.JournalDate.Date == DateTime.Today)
+                .OrderByDescending(j => j.UpdatedAt)
+                .FirstOrDefaultAsync();
+
+            var activeAssignment = await _context.Assignments
+                .Where(a => a.PatientId == id && a.PsychologistId == psy.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellation"))
+                .FirstOrDefaultAsync();
+
             string ageStr = "Belum diatur";
             if (patient.DateOfBirth.HasValue)
             {
@@ -123,9 +132,44 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             ViewBag.TodaySession = todaySession;
             ViewBag.OpenWorksheetCount = openWorksheetCount;
             ViewBag.AgeStr = ageStr;
+            ViewBag.JournalContent = string.IsNullOrEmpty(todayJournal?.Content) ? "Belum ada catatan jurnal hari ini." : todayJournal!.Content;
+            ViewBag.Complaint = string.IsNullOrEmpty(patient.Symptoms) ? "Tidak ada keluhan" : patient.Symptoms;
+            ViewBag.AssignmentId = activeAssignment?.AssignmentId;
             ViewBag.ActiveTab = "Mitra";
             ViewData["Title"] = $"Detail — {patient.User?.FullName}";
             return View(patient);
+        }
+
+        // ─── Batalkan kemitraan klien klinik (langsung, tanpa approval HR/Admin) ───
+        [HttpPost]
+        public async Task<IActionResult> CancelMitraLink(int patientId, string reason)
+        {
+            var psy = await GetPsyAsync();
+            if (psy == null) return RedirectToAction("Login", "Account", new { area = "" });
+
+            var patient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.PatientId == patientId && p.SponsorPsychologistId == psy.PsychologistId && p.SponsorType == "Psychologist");
+            if (patient == null) return NotFound();
+
+            patient.SponsorPsychologistId = null;
+            patient.SponsorType = "Self";
+
+            var assignment = await _context.Assignments
+                .FirstOrDefaultAsync(a => a.PatientId == patientId && a.PsychologistId == psy.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellation"));
+            if (assignment != null)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                assignment.Status = "Cancelled";
+                assignment.CancellationRequestedByUserId = user?.Id;
+                assignment.CancellationReason = reason;
+                assignment.CancellationRequestedAt = DateTime.UtcNow;
+                assignment.DecisionByUserId = user?.Id;
+                assignment.DecisionAt = DateTime.UtcNow;
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Kemitraan dengan klien berhasil dibatalkan.";
+            return RedirectToAction(nameof(Index));
         }
 
         // ─── Statistik agregat klien klinik ───
