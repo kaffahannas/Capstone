@@ -60,6 +60,16 @@
         display: none !important;
     }
 
+    /* Bar chart is redundant with the print client table below (same risk %); drop it to save pages */
+    .stat-chart-card--bar {
+        display: none !important;
+    }
+
+    .stat-charts-row {
+        display: flex !important;
+        justify-content: center !important;
+    }
+
     .stat-print-client-table {
         display: block !important;
     }
