@@ -194,6 +194,31 @@
                 </a>
             }
         </div>
+
+        <div class="stat-print-client-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama Klien</th>
+                        <th>Status</th>
+                        <th>Tingkat Risiko</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in clinicClients)
+                    {
+                        var statusCss  = c.Status == "Bahaya" ? "bahaya" : c.Status == "Beresiko" ? "beresiko" : "sehat";
+                        var statusLbl  = c.Status == "Bahaya" ? "Bahaya" : c.Status == "Beresiko" ? "Beresiko" : "Sehat";
+                        var riskPct    = c.Status == "Bahaya" ? 85 : c.Status == "Beresiko" ? 55 : 20;
+                        <tr>
+                            <td>@c.Name</td>
+                            <td><span class="stat-div-chip stat-div-chip--@statusCss">@statusLbl</span></td>
+                            <td>@riskPct%</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
