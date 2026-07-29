@@ -280,14 +280,17 @@
                             legend: { display: false },
                             tooltip: {
                                 callbacks: {
-                                    label: function(ctx) { return ' ' + (ctx.raw >= 85 ? 'Bahaya' : ctx.raw >= 55 ? 'Beresiko' : 'Sehat'); }
+                                    label: function(ctx) {
+                                        var statusLabel = ctx.raw >= 85 ? 'Bahaya' : ctx.raw >= 55 ? 'Beresiko' : 'Sehat';
+                                        return ' ' + statusLabel + ': ' + ctx.raw + '%';
+                                    }
                                 }
                             }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true, max: 100,
-                                ticks: { display: false },
+                                ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 } },
                                 grid: { color: '#F3F4F6' }
                             },
                             x: {
