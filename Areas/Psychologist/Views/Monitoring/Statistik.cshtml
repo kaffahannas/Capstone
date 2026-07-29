@@ -25,6 +25,10 @@
 @{
     var clinicClients = (ViewBag.ClinicClients as List<LightenUp.Web.Areas.Psychologist.Controllers.MonitoringController.ClinicClientRow>)
                          ?? new List<LightenUp.Web.Areas.Psychologist.Controllers.MonitoringController.ClinicClientRow>();
+
+    var clientLabels = System.Text.Json.JsonSerializer.Serialize(clinicClients.Select(c => c.Name));
+    var clientRisk   = System.Text.Json.JsonSerializer.Serialize(clinicClients.Select(c => c.Status == "Bahaya" ? 85 : c.Status == "Beresiko" ? 55 : 20));
+    var clientColors = System.Text.Json.JsonSerializer.Serialize(clinicClients.Select(c => c.Status == "Bahaya" ? "#EF4444" : c.Status == "Beresiko" ? "#F59E0B" : "#10B981"));
 }
 
 <partial name="_MitraTabs" />
@@ -117,8 +121,8 @@
         </div>
     </div>
 
-    @* ── Chart: distribusi status ── *@
-    <div class="stat-charts-row" style="display: flex; margin-bottom: 22px;">
+    @* ── Chart: distribusi status + risiko per klien ── *@
+    <div class="stat-charts-row">
         <div class="stat-chart-card stat-chart-card--donut">
             <div class="stat-chart-head">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
@@ -153,6 +157,24 @@
                         </li>
                     </ul>
                 </div>
+            }
+        </div>
+
+        <div class="stat-chart-card stat-chart-card--bar">
+            <div class="stat-chart-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <h3 class="stat-chart-title">Tingkat Risiko per Klien</h3>
+            </div>
+            @if (!clinicClients.Any())
+            {
+                <div class="stat-empty">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <p>Belum ada klien klinik</p>
+                </div>
+            }
+            else
+            {
+                <div class="stat-canvas-wrap"><canvas id="clinicRiskBarChart"></canvas></div>
             }
         </div>
     </div>
@@ -231,6 +253,46 @@
                                         return ' ' + ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
                                     }
                                 }
+                            }
+                        }
+                    }
+                });
+            }
+
+            var barCtx = document.getElementById('clinicRiskBarChart');
+            if (barCtx) {
+                new Chart(barCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: @Html.Raw(clientLabels),
+                        datasets: [{
+                            label: 'Tingkat Risiko',
+                            data: @Html.Raw(clientRisk),
+                            backgroundColor: @Html.Raw(clientColors),
+                            borderRadius: 6,
+                            barPercentage: 0.55
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) { return ' ' + (ctx.raw >= 85 ? 'Bahaya' : ctx.raw >= 55 ? 'Beresiko' : 'Sehat'); }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true, max: 100,
+                                ticks: { display: false },
+                                grid: { color: '#F3F4F6' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { family: 'Inter', size: 12 } }
                             }
                         }
                     }
