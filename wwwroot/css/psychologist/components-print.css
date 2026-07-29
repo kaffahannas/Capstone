@@ -19,24 +19,37 @@
         display: none !important;
     }
 
-    body.psychologist-body {
+    html, body.psychologist-body {
         background: #fff !important;
         font-size: 15px !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
     }
 
     .app-shell {
         display: block !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
     }
 
+    .main-content,
     .main-content.app-main {
         margin: 0 !important;
         width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
     }
 
+    .app-content,
     .app-content.lu-scroll-host {
         padding: 0 !important;
         overflow: visible !important;
         height: auto !important;
+        max-height: none !important;
     }
 
     .sch-hero,
