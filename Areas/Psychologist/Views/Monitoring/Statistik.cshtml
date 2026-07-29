@@ -138,7 +138,7 @@
             else
             {
                 <div class="stat-donut-wrap" style="justify-content: center;">
-                    <div class="stat-canvas-wrap"><canvas id="clinicPieChart"></canvas></div>
+                    <div class="stat-canvas-wrap" style="flex: none; width: 260px; height: 260px;"><canvas id="clinicPieChart"></canvas></div>
                 </div>
             }
         </div>
@@ -228,6 +228,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         cutout: '68%',
+                        layout: { padding: 28 },
                         plugins: {
                             legend: { display: false },
                             tooltip: {
@@ -240,13 +241,19 @@
                                 }
                             },
                             datalabels: {
-                                color: '#fff',
+                                color: function(ctx) { return ctx.chart.data.datasets[ctx.datasetIndex].backgroundColor[ctx.dataIndex]; },
+                                anchor: 'end',
+                                align: 'end',
+                                offset: 8,
                                 font: { family: 'Inter', size: 12, weight: '700' },
+                                textAlign: 'center',
                                 formatter: function(value, ctx) {
                                     var data = ctx.chart.data.datasets[ctx.datasetIndex].data;
                                     var total = data.reduce((a, b) => a + b, 0);
                                     if (!value || total === 0) return '';
-                                    return Math.round(value / total * 100) + '%';
+                                    var label = ctx.chart.data.labels[ctx.dataIndex];
+                                    var pct = Math.round(value / total * 100);
+                                    return [label, pct + '%'];
                                 }
                             }
                         }
