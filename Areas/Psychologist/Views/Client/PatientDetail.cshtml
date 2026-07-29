@@ -385,7 +385,7 @@
 
             try {
                 const days = this.dataset.days;
-                const res  = await fetch('/Psychologist/GetMoodData?patientId=' + patientId + '&days=' + days);
+                const res  = await fetch('/Psychologist/Client/GetMoodData?patientId=' + patientId + '&days=' + days);
                 const d    = await res.json();
 
                 moodChart.data.labels           = d.labels;
