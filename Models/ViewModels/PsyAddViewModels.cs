@@ -35,6 +35,9 @@ namespace LightenUp.Web.Models.ViewModels
 
         /// <summary>When true, dropdown only shows Mitra (klinik) patients and redirects to Monitoring/Jadwal after submit.</summary>
         public bool MitraOnly { get; set; }
+
+        /// <summary>When set, dropdown only shows this company's patients and redirects to ScheduleHistory for this company after submit.</summary>
+        public string? ReturnCompany { get; set; }
     }
 
     // #Class PsyAddTaskViewModel#
@@ -62,6 +65,9 @@ namespace LightenUp.Web.Models.ViewModels
 
         /// <summary>When true, dropdown only shows Mitra (klinik) patients and redirects to Monitoring/Worksheet after submit.</summary>
         public bool MitraOnly { get; set; }
+
+        /// <summary>When set, dropdown only shows this company's patients and redirects to WorksheetHistory for this company after submit.</summary>
+        public string? ReturnCompany { get; set; }
     }
 
     // #Class PsyWorksheetEditViewModel#

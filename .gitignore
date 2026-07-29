@@ -102,3 +102,6 @@ debug-*.log
 .claude/
 .cursor/
 .idea/
+
+## ── SQL scripts lokal (seed/reset demo — jangan pernah di-push) ─
+scripts/

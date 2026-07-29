@@ -68,6 +68,23 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .ToListAsync();
         }
 
+        private async Task<List<LightenUp.Web.Models.ViewModels.PsyPatientOption>> LoadCompanyPatientOptionsAsync(int psyId, string companyName)
+        {
+            return await _context.Assignments
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellation")
+                            && a.Patient!.Company != null && a.Patient.Company.Name == companyName)
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Select(a => new LightenUp.Web.Models.ViewModels.PsyPatientOption
+                {
+                    PatientId = a.PatientId,
+                    FullName = a.Patient!.User!.FullName,
+                    CompanyName = companyName
+                })
+                .Distinct()
+                .OrderBy(o => o.FullName)
+                .ToListAsync();
+        }
+
         // #Function AddSchedule#
 
         [HttpGet]
@@ -92,9 +109,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.AvailablePatients = await LoadPatientOptionsAsync(psyId.Value);
+                model.AvailablePatients = !string.IsNullOrEmpty(model.ReturnCompany)
+                    ? await LoadCompanyPatientOptionsAsync(psyId.Value, model.ReturnCompany)
+                    : await LoadPatientOptionsAsync(psyId.Value);
                 if (model.ReturnPatientId.HasValue)
                     return await PatientScheduleHistoryViewAsync(model.ReturnPatientId.Value, model, openModal: true);
+                if (!string.IsNullOrEmpty(model.ReturnCompany))
+                    return await ScheduleHistoryViewAsync(model.ReturnCompany, model, openModal: true);
                 return await SchedulingViewAsync(model.ReturnFilter ?? "Semua", model, openModal: true);
             }
 
@@ -130,9 +151,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 if (monthlySessionsCount >= maxSessions)
                 {
                     ModelState.AddModelError(string.Empty, $"Klien telah mencapai batas maksimal {maxSessions} sesi per bulan berdasarkan kontrak perusahaan atau langganan B2C.");
-                    model.AvailablePatients = await LoadPatientOptionsAsync(psyId.Value);
+                    model.AvailablePatients = !string.IsNullOrEmpty(model.ReturnCompany)
+                        ? await LoadCompanyPatientOptionsAsync(psyId.Value, model.ReturnCompany)
+                        : await LoadPatientOptionsAsync(psyId.Value);
                     if (model.ReturnPatientId.HasValue)
                         return await PatientScheduleHistoryViewAsync(model.ReturnPatientId.Value, model, openModal: true);
+                    if (!string.IsNullOrEmpty(model.ReturnCompany))
+                        return await ScheduleHistoryViewAsync(model.ReturnCompany, model, openModal: true);
                     return await SchedulingViewAsync(model.ReturnFilter ?? "Semua", model, openModal: true);
                 }
 
@@ -161,6 +186,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = model.ReturnPatientId.Value });
             if (model.MitraOnly)
                 return RedirectToAction("Jadwal", "Monitoring", new { area = "Psychologist" });
+            if (!string.IsNullOrEmpty(model.ReturnCompany))
+                return RedirectToAction(nameof(ScheduleHistory), new { company = model.ReturnCompany });
             return RedirectToAction(nameof(Scheduling), new { filter = model.ReturnFilter ?? "Semua" });
         }
 
@@ -367,20 +394,53 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         // #Function ScheduleHistory#
 
         [HttpGet]
-        public async Task<IActionResult> ScheduleHistory()
+        public async Task<IActionResult> ScheduleHistory(string? company = null, bool add = false)
         {
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
 
-            var sessions = await _context.Schedules
+            var addForm = new LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel
+            {
+                AvailablePatients = string.IsNullOrEmpty(company)
+                    ? await LoadPatientOptionsAsync(psyId.Value)
+                    : await LoadCompanyPatientOptionsAsync(psyId.Value, company),
+                ReturnCompany = company
+            };
+
+            return await ScheduleHistoryViewAsync(company, addForm, openModal: add);
+        }
+
+        private async Task<IActionResult> ScheduleHistoryViewAsync(
+            string? company,
+            LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel? addForm = null,
+            bool openModal = false)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction("Index", "Dashboard");
+
+            var q = _context.Schedules
                 .Include(s => s.Patient).ThenInclude(p => p!.User)
-                .Where(s => s.PsychologistId == psyId)
+                .Where(s => s.PsychologistId == psyId);
+
+            if (!string.IsNullOrEmpty(company))
+                q = q.Where(s => s.Patient!.Company != null && s.Patient.Company.Name == company);
+
+            var sessions = await q
                 .OrderByDescending(s => s.SessionStart)
                 .Take(50)
                 .ToListAsync();
 
             ViewBag.Sessions = sessions;
-            return View();
+            ViewBag.Company = company;
+            ViewBag.AddScheduleForm = addForm ?? new LightenUp.Web.Models.ViewModels.PsyAddScheduleViewModel
+            {
+                AvailablePatients = string.IsNullOrEmpty(company)
+                    ? await LoadPatientOptionsAsync(psyId.Value)
+                    : await LoadCompanyPatientOptionsAsync(psyId.Value, company),
+                ReturnCompany = company
+            };
+            ViewBag.OpenAddScheduleModal = openModal;
+            return View("ScheduleHistory");
         }
 
         // #Function ScheduleDetailModal#

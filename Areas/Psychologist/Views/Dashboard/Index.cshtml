@@ -344,6 +344,11 @@
         window.closeCompanyDetailModal = function() {
             document.getElementById('companyDetailModal').classList.remove('active');
         }
+
+        var openCompanyParam = new URLSearchParams(window.location.search).get('openCompany');
+        if (openCompanyParam) {
+            window.openCompanyDetailModal(encodeURIComponent(openCompanyParam));
+        }
     });
 </script>
 }

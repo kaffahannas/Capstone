@@ -3,6 +3,7 @@
     var beresikoCount = (int)(ViewBag.BeresikoCount ?? 0);
     var bahayaCount = (int)(ViewBag.BahayaCount ?? 0);
     var total = sehatCount + beresikoCount + bahayaCount;
+    int Pct(int n) => total > 0 ? (int)Math.Round(n * 100.0 / total) : 0;
 }
 
 
@@ -38,16 +39,19 @@
                 <div class="csm-stat-card">
                     <div class="csm-stat-emoji">✅</div>
                     <div class="csm-stat-val csm-stat-val--sehat">@sehatCount</div>
+                    <div class="csm-stat-pct">@Pct(sehatCount)%</div>
                     <div class="csm-stat-lbl">Sehat</div>
                 </div>
                 <div class="csm-stat-card">
                     <div class="csm-stat-emoji">⚠️</div>
                     <div class="csm-stat-val csm-stat-val--beresiko">@beresikoCount</div>
+                    <div class="csm-stat-pct">@Pct(beresikoCount)%</div>
                     <div class="csm-stat-lbl">Beresiko</div>
                 </div>
                 <div class="csm-stat-card">
                     <div class="csm-stat-emoji">🔴</div>
                     <div class="csm-stat-val csm-stat-val--bahaya">@bahayaCount</div>
+                    <div class="csm-stat-pct">@Pct(bahayaCount)%</div>
                     <div class="csm-stat-lbl">Bahaya</div>
                 </div>
             </div>

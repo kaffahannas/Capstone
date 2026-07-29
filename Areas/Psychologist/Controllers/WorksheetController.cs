@@ -65,6 +65,23 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .ToListAsync();
         }
 
+        private async Task<List<LightenUp.Web.Models.ViewModels.PsyPatientOption>> LoadCompanyPatientOptionsAsync(int psyId, string companyName)
+        {
+            return await _context.Assignments
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellation")
+                            && a.Patient!.Company != null && a.Patient.Company.Name == companyName)
+                .Include(a => a.Patient).ThenInclude(p => p!.User)
+                .Select(a => new LightenUp.Web.Models.ViewModels.PsyPatientOption
+                {
+                    PatientId = a.PatientId,
+                    FullName = a.Patient!.User!.FullName,
+                    CompanyName = companyName
+                })
+                .Distinct()
+                .OrderBy(o => o.FullName)
+                .ToListAsync();
+        }
+
         private static (string Label, string Css) MapStatus(string dbStatus) => dbStatus switch
         {
             "Assigned"   => ("Belum Dikerjakan", "belum"),
@@ -97,9 +114,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.AvailablePatients = await LoadPatientOptionsAsync(psyId.Value);
+                model.AvailablePatients = !string.IsNullOrEmpty(model.ReturnCompany)
+                    ? await LoadCompanyPatientOptionsAsync(psyId.Value, model.ReturnCompany)
+                    : await LoadPatientOptionsAsync(psyId.Value);
                 if (model.ReturnPatientId.HasValue)
                     return await PatientWorksheetHistoryViewAsync(model.ReturnPatientId.Value, model, openModal: true);
+                if (!string.IsNullOrEmpty(model.ReturnCompany))
+                    return await WorksheetHistoryViewAsync(model.ReturnCompany, model, openModal: true);
                 return await WorksheetViewAsync(model, openModal: true);
             }
 
@@ -121,6 +142,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 return RedirectToAction(nameof(PatientWorksheetHistory), new { id = model.ReturnPatientId.Value });
             if (model.MitraOnly)
                 return RedirectToAction("Worksheet", "Monitoring", new { area = "Psychologist" });
+            if (!string.IsNullOrEmpty(model.ReturnCompany))
+                return RedirectToAction(nameof(WorksheetHistory), new { company = model.ReturnCompany });
             return RedirectToAction(nameof(Worksheet));
         }
 
@@ -302,20 +325,53 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         // #Function WorksheetHistory#
 
         [HttpGet]
-        public async Task<IActionResult> WorksheetHistory()
+        public async Task<IActionResult> WorksheetHistory(string? company = null, bool add = false)
         {
             var psyId = await CurrentPsychologistIdAsync();
             if (psyId == null) return RedirectToAction("Index", "Dashboard");
 
-            var worksheets = await _context.Worksheets
+            var addForm = new LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel
+            {
+                AvailablePatients = string.IsNullOrEmpty(company)
+                    ? await LoadPatientOptionsAsync(psyId.Value)
+                    : await LoadCompanyPatientOptionsAsync(psyId.Value, company),
+                ReturnCompany = company
+            };
+
+            return await WorksheetHistoryViewAsync(company, addForm, openModal: add);
+        }
+
+        private async Task<IActionResult> WorksheetHistoryViewAsync(
+            string? company,
+            LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel? addForm = null,
+            bool openModal = false)
+        {
+            var psyId = await CurrentPsychologistIdAsync();
+            if (psyId == null) return RedirectToAction("Index", "Dashboard");
+
+            var q = _context.Worksheets
                 .Include(w => w.Patient).ThenInclude(p => p!.User)
-                .Where(w => w.PsychologistId == psyId)
+                .Where(w => w.PsychologistId == psyId);
+
+            if (!string.IsNullOrEmpty(company))
+                q = q.Where(w => w.Patient!.Company != null && w.Patient.Company.Name == company);
+
+            var worksheets = await q
                 .OrderByDescending(w => w.CreatedAt)
                 .Take(50)
                 .ToListAsync();
 
             ViewBag.Worksheets = worksheets;
-            return View();
+            ViewBag.Company = company;
+            ViewBag.AddTaskForm = addForm ?? new LightenUp.Web.Models.ViewModels.PsyAddTaskViewModel
+            {
+                AvailablePatients = string.IsNullOrEmpty(company)
+                    ? await LoadPatientOptionsAsync(psyId.Value)
+                    : await LoadCompanyPatientOptionsAsync(psyId.Value, company),
+                ReturnCompany = company
+            };
+            ViewBag.OpenAddTaskModal = openModal;
+            return View("WorksheetHistory");
         }
 
         // #Function PatientWorksheetHistory#

@@ -1,11 +1,14 @@
 @using LightenUp.Web.Models
+@using LightenUp.Web.Models.ViewModels
 @{
     Layout = "_LayoutDashboard";
     ViewData["Title"] = "Riwayat Worksheet";
 
     var worksheets = ViewBag.Worksheets as List<Worksheet> ?? new List<Worksheet>();
-    string? companyName = Context.Request.Query["company"].FirstOrDefault();
-    string backUrl = string.IsNullOrEmpty(companyName) ? "/Psychologist/Index" : $"/Psychologist/CompanyDetail?companyName={Uri.EscapeDataString(companyName!)}";
+    string? companyName = ViewBag.Company as string;
+    string backUrl = string.IsNullOrEmpty(companyName)
+        ? "/Psychologist/Dashboard/Index"
+        : $"/Psychologist/Dashboard/Index?openCompany={Uri.EscapeDataString(companyName!)}";
     var idCulture = new System.Globalization.CultureInfo("id-ID");
 
     string StatusClass(string status) => status switch
@@ -28,6 +31,7 @@
 @section Head {
     <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-history.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/worksheet-worksheet-detail-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/psychologist/worksheet-add-task-modal.css" asp-append-version="true" />
 }
 
 
@@ -38,7 +42,7 @@
 <div class="dashboard-header wh-header">
     <div>
         <h1 class="text-header">Riwayat Worksheet</h1>
-        <p class="text-subtitle">Pantau seluruh riwayat dan progres tugas worksheet client Anda.</p>
+        <p class="text-subtitle">Pantau seluruh riwayat dan progres tugas worksheet client@(string.IsNullOrEmpty(companyName) ? " Anda" : " dari " + companyName).</p>
     </div>
 </div>
 
@@ -53,16 +57,16 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-purple)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input type="text" id="wsSearch" placeholder="Cari berdasarkan tugas atau nama..." class="wh-search-input" />
         </div>
-        <a href="@Url.Action("Worksheet", "Worksheet", new { add = true })" class="wh-add-btn">
+        <button type="button" class="wh-add-btn" onclick="openAddTaskModal()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Tambah Tugas
-        </a>
+        </button>
     </div>
 
     @if (!worksheets.Any())
     {
         <div class="wh-empty">
-            Belum ada worksheet.
+            Belum ada worksheet@(string.IsNullOrEmpty(companyName) ? "" : " untuk " + companyName).
         </div>
     }
     else
@@ -84,6 +88,8 @@
         </div>
     }
 </div>
+
+@await Html.PartialAsync("_AddTaskModal", ViewBag.AddTaskForm as PsyAddTaskViewModel ?? new PsyAddTaskViewModel())
 
 <script>
     const input = document.getElementById('wsSearch');

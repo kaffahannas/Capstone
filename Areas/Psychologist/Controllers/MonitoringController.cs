@@ -137,15 +137,30 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             var clients = await _context.Patients
                 .Where(p => p.SponsorPsychologistId == psy.PsychologistId)
+                .Include(p => p.User)
+                .OrderBy(p => p.User!.FullName)
                 .ToListAsync();
 
             ViewBag.TotalClients = clients.Count;
             ViewBag.SehatCount = clients.Count(p => p.MentalHealthStatus == "Sehat");
             ViewBag.BeresikoCount = clients.Count(p => p.MentalHealthStatus == "Beresiko");
             ViewBag.BahayaCount = clients.Count(p => p.MentalHealthStatus == "Bahaya");
+            ViewBag.ClinicClients = clients.Select(p => new ClinicClientRow
+            {
+                PatientId = p.PatientId,
+                Name = p.User?.FullName ?? "—",
+                Status = p.MentalHealthStatus
+            }).ToList();
             ViewBag.ActiveTab = "Mitra";
             ViewData["Title"] = "Statistik Klien Klinik";
             return View();
+        }
+
+        public class ClinicClientRow
+        {
+            public int PatientId { get; set; }
+            public string Name { get; set; } = "";
+            public string Status { get; set; } = "";
         }
 
         // ─── Progress worksheet klien klinik ───
