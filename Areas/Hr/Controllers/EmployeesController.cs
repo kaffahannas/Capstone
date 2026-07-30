@@ -200,7 +200,7 @@ namespace LightenUp.Web.Areas.Hr.Controllers
 
             var activeAssignment = await _context.Assignments
                 .Include(a => a.Psychologist).ThenInclude(psy => psy!.User)
-                .FirstOrDefaultAsync(a => a.PatientId == id && (a.Status == "Active" || a.Status == "PendingCancellation" || a.Status == "PendingCancellationByAdmin"));
+                .FirstOrDefaultAsync(a => a.PatientId == id && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"));
 
             ViewBag.ActiveNav = "Klien";
             return View(new HrEmployeeDetailViewModel

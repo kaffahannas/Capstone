@@ -101,7 +101,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
 
             var assignment = await _context.Assignments
                 .Include(a => a.Patient)
-                .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId && a.PsychologistId == psych.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellation"));
+                .FirstOrDefaultAsync(a => a.AssignmentId == assignmentId && a.PsychologistId == psych.PsychologistId && a.Status == "Active");
             if (assignment == null) return NotFound();
 
             var isB2B = assignment.Patient?.CompanyId != null;

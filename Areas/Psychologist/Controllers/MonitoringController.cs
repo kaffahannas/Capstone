@@ -157,7 +157,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             patient.SponsorType = "Self";
 
             var assignment = await _context.Assignments
-                .FirstOrDefaultAsync(a => a.PatientId == patientId && a.PsychologistId == psy.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellation"));
+                .FirstOrDefaultAsync(a => a.PatientId == patientId && a.PsychologistId == psy.PsychologistId && a.Status == "Active");
             if (assignment != null)
             {
                 var user = await _userManager.GetUserAsync(User);

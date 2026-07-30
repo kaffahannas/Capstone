@@ -36,7 +36,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         private async Task<List<LightenUp.Web.Models.ViewModels.PsyPatientOption>> LoadPatientOptionsAsync(int psyId)
         {
             return await _context.Assignments
-                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellation"))
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                 .Include(a => a.Patient).ThenInclude(p => p!.User)
                 .Include(a => a.Patient).ThenInclude(p => p!.Company)
                 .Select(a => new LightenUp.Web.Models.ViewModels.PsyPatientOption
@@ -68,7 +68,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         private async Task<List<LightenUp.Web.Models.ViewModels.PsyPatientOption>> LoadCompanyPatientOptionsAsync(int psyId, string companyName)
         {
             return await _context.Assignments
-                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellation")
+                .Where(a => a.PsychologistId == psyId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin")
                             && a.Patient!.Company != null && a.Patient.Company.Name == companyName)
                 .Include(a => a.Patient).ThenInclude(p => p!.User)
                 .Select(a => new LightenUp.Web.Models.ViewModels.PsyPatientOption

@@ -126,7 +126,7 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             // Cegah duplikat jika masih dalam proses pembatalan
             var pendingCancel = await _context.Assignments.AnyAsync(a =>
                 a.PatientId == patient.PatientId &&
-                (a.Status == "PendingCancellation" || a.Status == "PendingCancellationByHr"));
+                (a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"));
             if (pendingCancel)
             {
                 TempData["error"] = "Terdapat permintaan pembatalan yang sedang diproses.";

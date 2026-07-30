@@ -227,7 +227,7 @@
                     </button>
                     @if (Model.ActiveAssignmentId.HasValue)
                     {
-                        @if (Model.AssignmentStatus == "PendingCancellation" || Model.AssignmentStatus == "PendingCancellationByAdmin")
+                        @if (Model.AssignmentStatus == "PendingCancellationByHr" || Model.AssignmentStatus == "PendingCancellationByAdmin")
                         {
                             <button type="button" disabled class="hrdt-action-btn hrdt-action-btn--danger hrdt-action-btn--danger-disabled">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" class="hrdt-action-btn-icon"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>

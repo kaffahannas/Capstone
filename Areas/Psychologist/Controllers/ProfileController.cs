@@ -90,7 +90,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             if (psych == null) return NotFound();
 
             var activeCases = await _context.Assignments
-                .CountAsync(a => a.PsychologistId == psych.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellation"));
+                .CountAsync(a => a.PsychologistId == psych.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"));
             var employeesCount = await _context.Assignments
                 .Where(a => a.PsychologistId == psych.PsychologistId)
                 .Select(a => a.PatientId).Distinct().CountAsync();
