@@ -110,7 +110,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .FirstOrDefaultAsync();
 
             var activeAssignment = await _context.Assignments
-                .Where(a => a.PatientId == id && a.PsychologistId == psy.PsychologistId && (a.Status == "Active" || a.Status == "PendingCancellation"))
+                .Where(a => a.PatientId == id && a.PsychologistId == psy.PsychologistId
+                    && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                 .FirstOrDefaultAsync();
 
             string ageStr = "Belum diatur";
@@ -134,7 +135,8 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             ViewBag.AgeStr = ageStr;
             ViewBag.JournalContent = string.IsNullOrEmpty(todayJournal?.Content) ? "Belum ada catatan jurnal hari ini." : todayJournal!.Content;
             ViewBag.Complaint = string.IsNullOrEmpty(patient.Symptoms) ? "Tidak ada keluhan" : patient.Symptoms;
-            ViewBag.AssignmentId = activeAssignment?.AssignmentId;
+            ViewBag.AssignmentId = activeAssignment?.Status == "Active" ? activeAssignment.AssignmentId : (int?)null;
+            ViewBag.AssignmentPendingCancellation = activeAssignment != null && activeAssignment.Status != "Active";
             ViewBag.ActiveTab = "Mitra";
             ViewData["Title"] = $"Detail — {patient.User?.FullName}";
             return View(patient);

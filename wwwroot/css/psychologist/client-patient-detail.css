@@ -783,6 +783,13 @@
     border: 1px solid #FECACA;
     cursor: pointer;
 }
+.pd-pending-cancel {
+    background: #FFFBEB;
+    color: #B45309;
+    border: 1px solid #FDE68A;
+    cursor: default;
+}
+.pd-pending-cancel:hover { transform: none; }
 .pd-cancel-modal { max-width: 480px; }
 .pd-cancel-title { color: #B91C1C; }
 .pd-cancel-title-icon { vertical-align: -3px; margin-right: 8px; }

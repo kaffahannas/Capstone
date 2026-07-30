@@ -192,9 +192,11 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             if (psyId != null)
             {
                 var activeAssignment = await _context.Assignments
-                    .Where(a => a.PatientId == id && a.PsychologistId == psyId.Value && (a.Status == "Active" || a.Status == "PendingCancellation"))
+                    .Where(a => a.PatientId == id && a.PsychologistId == psyId.Value
+                        && (a.Status == "Active" || a.Status == "PendingCancellationByHr" || a.Status == "PendingCancellationByAdmin"))
                     .FirstOrDefaultAsync();
-                ViewBag.AssignmentId = activeAssignment?.AssignmentId;
+                ViewBag.AssignmentId = activeAssignment?.Status == "Active" ? activeAssignment.AssignmentId : (int?)null;
+                ViewBag.AssignmentPendingCancellation = activeAssignment != null && activeAssignment.Status != "Active";
             }
 
             ViewBag.SehatPct = (int)Math.Round((double)sehatN / totalN * 100);
