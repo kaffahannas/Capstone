@@ -74,7 +74,17 @@ else
                         <span class="apr-patient-tag">@(a.Patient?.CompanyId != null ? (a.Patient.Company?.Name ?? "B2B") : "Publik (B2C)")</span>
                     </td>
                     <td class="apr-request-td apr-psy-name">@(a.Psychologist?.User?.FullName ?? "—")</td>
-                    <td class="apr-request-td"><span class="apr-status-hr-cancel">HR minta batalkan</span></td>
+                    <td class="apr-request-td">
+                        @{
+                            var requesterLabel = a.CancellationRequestedBy?.RoleType switch
+                            {
+                                "HR" => "HR minta batalkan",
+                                "Psychologist" => "Psikolog minta batalkan",
+                                _ => "Menunggu persetujuan"
+                            };
+                        }
+                        <span class="apr-status-hr-cancel">@requesterLabel</span>
+                    </td>
                     <td class="apr-request-td">@(a.CancellationRequestedBy?.FullName ?? "—")</td>
                     <td class="apr-request-td">
                         @if (!string.IsNullOrEmpty(a.CancellationReason))
