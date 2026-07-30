@@ -142,7 +142,7 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             return View(patient);
         }
 
-        // ─── Batalkan kemitraan klien klinik (langsung, tanpa approval HR/Admin) ───
+        // ─── Batalkan kemitraan klien klinik (perlu persetujuan Admin, sama seperti B2C) ───
         [HttpPost]
         public async Task<IActionResult> CancelMitraLink(int patientId, string reason)
         {
@@ -153,24 +153,18 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
                 .FirstOrDefaultAsync(p => p.PatientId == patientId && p.SponsorPsychologistId == psy.PsychologistId && p.SponsorType == "Psychologist");
             if (patient == null) return NotFound();
 
-            patient.SponsorPsychologistId = null;
-            patient.SponsorType = "Self";
-
             var assignment = await _context.Assignments
                 .FirstOrDefaultAsync(a => a.PatientId == patientId && a.PsychologistId == psy.PsychologistId && a.Status == "Active");
-            if (assignment != null)
-            {
-                var user = await _userManager.GetUserAsync(User);
-                assignment.Status = "Cancelled";
-                assignment.CancellationRequestedByUserId = user?.Id;
-                assignment.CancellationReason = reason;
-                assignment.CancellationRequestedAt = DateTime.UtcNow;
-                assignment.DecisionByUserId = user?.Id;
-                assignment.DecisionAt = DateTime.UtcNow;
-            }
+            if (assignment == null) return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+            assignment.Status = "PendingCancellationByAdmin";
+            assignment.CancellationRequestedByUserId = user?.Id;
+            assignment.CancellationReason = reason;
+            assignment.CancellationRequestedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            TempData["success"] = "Kemitraan dengan klien berhasil dibatalkan.";
+            TempData["success"] = "Permintaan pembatalan kemitraan dikirim ke Admin untuk disetujui.";
             return RedirectToAction(nameof(Index));
         }
 

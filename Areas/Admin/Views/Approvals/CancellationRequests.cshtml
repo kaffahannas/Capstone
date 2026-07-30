@@ -71,7 +71,11 @@ else
                 <tr class="apr-request-tr">
                     <td class="apr-request-td">
                         <strong class="apr-patient-name">@(a.Patient?.User?.FullName ?? "—")</strong>
-                        <span class="apr-patient-tag">@(a.Patient?.CompanyId != null ? (a.Patient.Company?.Name ?? "B2B") : "Publik (B2C)")</span>
+                        <span class="apr-patient-tag">
+                            @(a.Patient?.CompanyId != null ? (a.Patient.Company?.Name ?? "B2B")
+                                : a.Patient?.SponsorType == "Psychologist" ? "Klien Klinik (Mitra)"
+                                : "Publik (B2C)")
+                        </span>
                     </td>
                     <td class="apr-request-td apr-psy-name">@(a.Psychologist?.User?.FullName ?? "—")</td>
                     <td class="apr-request-td">

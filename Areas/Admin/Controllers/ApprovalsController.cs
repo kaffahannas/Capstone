@@ -303,7 +303,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         public async Task<IActionResult> ApproveAssignment(int assignmentId, string? note, decimal? psychologistRevenuePercentage)
         {
             var user = await _userManager.GetUserAsync(User);
-            var a = await _context.Assignments.FindAsync(assignmentId);
+            var a = await _context.Assignments.Include(x => x.Patient).FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
             if (a == null) return NotFound();
 
             var returnAction = nameof(CancellationRequests);
@@ -314,6 +314,14 @@ namespace LightenUp.Web.Areas.Admin.Controllers
                 a.DecisionByUserId = user?.Id;
                 a.DecisionAt = DateTime.UtcNow;
                 a.DecisionNote = note;
+
+                // Klien klinik (Mitra) juga melacak hubungannya lewat kode referal —
+                // putuskan itu juga saat pembatalan disetujui, bukan hanya Assignment-nya.
+                if (a.Patient != null && a.Patient.SponsorType == "Psychologist")
+                {
+                    a.Patient.SponsorPsychologistId = null;
+                    a.Patient.SponsorType = "Self";
+                }
             }
 
             await _context.SaveChangesAsync();
