@@ -141,25 +141,8 @@
         }
         else
         {
-            <div class="stat-donut-wrap">
-                <div class="stat-canvas-wrap"><canvas id="pieChart"></canvas></div>
-                <ul class="stat-legend">
-                    <li class="stat-legend-item">
-                        <span class="stat-legend-dot stat-legend-dot--sehat"></span>
-                        <span>Sehat</span>
-                        <strong>@Model.HealthyCount</strong>
-                    </li>
-                    <li class="stat-legend-item">
-                        <span class="stat-legend-dot stat-legend-dot--beresiko"></span>
-                        <span>Beresiko</span>
-                        <strong>@Model.AtRiskCount</strong>
-                    </li>
-                    <li class="stat-legend-item">
-                        <span class="stat-legend-dot stat-legend-dot--bahaya"></span>
-                        <span>Bahaya</span>
-                        <strong>@Model.DangerCount</strong>
-                    </li>
-                </ul>
+            <div class="stat-donut-wrap" style="justify-content: center;">
+                <div class="stat-canvas-wrap" style="flex: none; width: 280px; height: 280px;"><canvas id="pieChart"></canvas></div>
             </div>
         }
     </div>
@@ -248,6 +231,7 @@ else
 
 @section Scripts {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -269,10 +253,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     hoverOffset: 6
                 }]
             },
+            plugins: [ChartDataLabels],
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 cutout: '68%',
+                layout: { padding: 60 },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -282,6 +268,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                 var pct = total > 0 ? Math.round(ctx.parsed / total * 100) : 0;
                                 return ' ' + ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
                             }
+                        }
+                    },
+                    datalabels: {
+                        color: function(ctx) { return ctx.chart.data.datasets[ctx.datasetIndex].backgroundColor[ctx.dataIndex]; },
+                        anchor: 'end',
+                        align: 'end',
+                        offset: 8,
+                        font: { family: 'Inter', size: 12, weight: '700' },
+                        textAlign: 'center',
+                        formatter: function(value, ctx) {
+                            var data = ctx.chart.data.datasets[ctx.datasetIndex].data;
+                            var total = data.reduce((a, b) => a + b, 0);
+                            if (!value || total === 0) return '';
+                            var label = ctx.chart.data.labels[ctx.dataIndex];
+                            var pct = Math.round(value / total * 100);
+                            return [label, pct + '%'];
                         }
                     }
                 }
@@ -324,7 +326,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     legend: {
                         position: 'top',
                         labels: { font: { family: 'Inter', size: 12 }, padding: 16, usePointStyle: true }
-                    }
+                    },
+                    datalabels: { display: false }
                 },
                 scales: {
                     y: {
@@ -375,7 +378,8 @@ window.openCompanyStatsModal = async function(companyNameUri) {
                     responsive: true,
                     cutout: '70%',
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        datalabels: { display: false }
                     }
                 }
             });
