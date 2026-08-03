@@ -118,7 +118,7 @@ else
                 <div class="sch-sessions">
                     @foreach (var s in dayGroup.OrderBy(x => x.SessionStart))
                     {
-                        var accent = s.DisplayStatus switch {
+                        var accent = s.DbStatus switch {
                             "Cancelled" => "cancelled",
                             "Completed" => "completed",
                             _ => now >= s.SessionStart && now <= s.SessionStart.AddMinutes(s.DurationMinutes) ? "ongoing" : "upcoming"
