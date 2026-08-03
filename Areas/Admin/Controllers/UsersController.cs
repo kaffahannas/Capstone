@@ -393,8 +393,36 @@ namespace LightenUp.Web.Areas.Admin.Controllers
             var hr = await _context.HrStaffs.FirstOrDefaultAsync(h => h.UserId == id);
             if (hr != null)
             {
+                int? companyId = hr.CompanyId;
                 _context.HrStaffs.Remove(hr);
                 await _context.SaveChangesAsync();
+
+                // Perusahaan yatim: kalau HR yang dihapus itu HR terakhir dan belum
+                // punya karyawan (Patient) terdaftar, hapus juga perusahaannya —
+                // jangan tinggalkan baris Companies tanpa HR selamanya.
+                if (companyId != null)
+                {
+                    var hasOtherHr = await _context.HrStaffs.AnyAsync(h => h.CompanyId == companyId);
+                    var hasPatients = await _context.Patients.AnyAsync(p => p.CompanyId == companyId);
+                    if (!hasOtherHr && !hasPatients)
+                    {
+                        var company = await _context.Companies
+                            .Include(c => c.PartneredPsychologists)
+                            .FirstOrDefaultAsync(c => c.CompanyId == companyId);
+                        if (company != null)
+                        {
+                            company.PartneredPsychologists.Clear();
+                            _context.PendingEmployees.RemoveRange(_context.PendingEmployees.Where(e => e.CompanyId == companyId));
+                            _context.CompanyPsychologistRequests.RemoveRange(_context.CompanyPsychologistRequests.Where(r => r.CompanyId == companyId));
+                            var subIds = await _context.CompanySubscriptions.Where(s => s.CompanyId == companyId).Select(s => s.CompanySubscriptionId).ToListAsync();
+                            _context.PaymentTransactions.RemoveRange(_context.PaymentTransactions.Where(t => t.CompanyId == companyId));
+                            _context.CompanySubscriptions.RemoveRange(_context.CompanySubscriptions.Where(s => s.CompanyId == companyId));
+                            _context.CompanyDivisions.RemoveRange(_context.CompanyDivisions.Where(d => d.CompanyId == companyId));
+                            _context.Companies.Remove(company);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
             }
 
             var result = await _userManager.DeleteAsync(user);

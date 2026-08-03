@@ -37,6 +37,7 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         {
             var psychologists = await _context.Psychologists
                 .Include(p => p.User)
+                .Where(p => p.User!.IsApprovedByAdmin)
                 .OrderBy(p => p.User!.FullName)
                 .ToListAsync();
 
