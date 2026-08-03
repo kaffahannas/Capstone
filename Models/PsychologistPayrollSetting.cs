@@ -26,6 +26,7 @@ namespace LightenUp.Web.Models
         /// Used as a fallback if a patient assignment doesn't snapshot it.
         /// </summary>
         [Column(TypeName = "decimal(5,2)")]
+        [Range(0, 100, ErrorMessage = "Persentase harus antara 0 dan 100.")]
         public decimal PsychologistPercentage { get; set; } = 40m;
 
         // --- Two-Way Approval Flow ---
@@ -33,6 +34,7 @@ namespace LightenUp.Web.Models
         public string Status { get; set; } = "Active"; // Active, PendingPsyApproval, RejectedByPsy
 
         [Column(TypeName = "decimal(5,2)")]
+        [Range(0, 100, ErrorMessage = "Persentase harus antara 0 dan 100.")]
         public decimal? ProposedPercentage { get; set; }
 
         public string? AdminReason { get; set; }
