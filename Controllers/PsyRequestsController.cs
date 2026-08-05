@@ -16,15 +16,18 @@ namespace LightenUp.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AssignmentActivationService _activation;
+        private readonly INotificationService _notificationService;
 
         public PsyRequestsController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            AssignmentActivationService activation)
+            AssignmentActivationService activation,
+            INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
             _activation = activation;
+            _notificationService = notificationService;
         }
 
         private async Task<Psychologist?> GetPsyAsync()
@@ -116,6 +119,18 @@ namespace LightenUp.Web.Controllers
             await _activation.ActivateAsync(a, user?.Id);
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan pasien diterima. Penugasan kini aktif.";
+
+            var acceptedPatientUserId = await _context.Patients
+                .Where(p => p.PatientId == a.PatientId)
+                .Select(p => p.UserId)
+                .FirstOrDefaultAsync();
+            if (!string.IsNullOrEmpty(acceptedPatientUserId))
+            {
+                await _notificationService.NotifyAsync(acceptedPatientUserId, "Permintaan Diterima",
+                    "Psikolog menerima permintaan Anda. Penugasan kini aktif.",
+                    "Assignment", Url.Action("Index", "Psychologists", new { area = "Patient" }));
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -139,6 +154,18 @@ namespace LightenUp.Web.Controllers
             a.DecisionNote = note;
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan pasien ditolak.";
+
+            var rejectedPatientUserId = await _context.Patients
+                .Where(p => p.PatientId == a.PatientId)
+                .Select(p => p.UserId)
+                .FirstOrDefaultAsync();
+            if (!string.IsNullOrEmpty(rejectedPatientUserId))
+            {
+                await _notificationService.NotifyAsync(rejectedPatientUserId, "Permintaan Ditolak",
+                    "Psikolog menolak permintaan Anda.",
+                    "Assignment", Url.Action("Index", "Psychologists", new { area = "Patient" }));
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="~/css/patient/components-patient-mobile-text.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/patient/components-patient-mobile-compact.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/shared/alert-popup.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shared/notifications.css" asp-append-version="true" />
 </head>
 <body class="patient-body">
     <div class="app-shell" id="appShell">
@@ -91,6 +92,7 @@
                 {
                     <div class="pat-topbar-title"><h1>@ViewData["Title"]</h1></div>
                 }
+                @await Component.InvokeAsync("Notifications")
             </header>
 
             <div class="app-content lu-scroll-host">

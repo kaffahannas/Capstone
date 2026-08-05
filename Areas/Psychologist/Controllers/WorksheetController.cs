@@ -1,5 +1,6 @@
 using LightenUp.Web.Data;
 using LightenUp.Web.Models;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,13 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly INotificationService _notificationService;
 
-        public WorksheetController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public WorksheetController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         private async Task<int?> CurrentPsychologistIdAsync()
@@ -137,6 +140,17 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             });
             await _context.SaveChangesAsync();
             TempData["success"] = "Worksheet baru ditambahkan.";
+
+            var taskPatientUserId = await _context.Patients
+                .Where(p => p.PatientId == model.PatientId)
+                .Select(p => p.UserId)
+                .FirstOrDefaultAsync();
+            if (!string.IsNullOrEmpty(taskPatientUserId))
+            {
+                await _notificationService.NotifyAsync(taskPatientUserId, "Worksheet Baru",
+                    $"Psikolog Anda menambahkan tugas baru: \"{model.TaskName}\".",
+                    "Worksheet", Url.Action("Index", "Tasks", new { area = "Patient" }));
+            }
 
             if (model.ReturnPatientId.HasValue)
                 return RedirectToAction(nameof(PatientWorksheetHistory), new { id = model.ReturnPatientId.Value });

@@ -54,6 +54,9 @@ namespace LightenUp.Web.Data
         public DbSet<PsychologistPayrollSetting> PayrollSettings { get; set; }
         public DbSet<MonthlyPayout> MonthlyPayouts { get; set; }
 
+        // Notification tables
+        public DbSet<Notification> Notifications { get; set; }
+
         // #Bagian Fluent API Relasi#
         // ==========================================
         // KONFIGURASI RELASI (Fluent API)
@@ -390,6 +393,12 @@ namespace LightenUp.Web.Data
                 .WithMany(c => c.Subscriptions)
                 .HasForeignKey(s => s.CompanyId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Notification>()
+                .HasOne(n => n.Recipient)
+                .WithMany()
+                .HasForeignKey(n => n.RecipientUserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

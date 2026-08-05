@@ -20,12 +20,14 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env;
+        private readonly INotificationService _notificationService;
 
-        public ScheduleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
+        public ScheduleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
             _env = env;
+            _notificationService = notificationService;
         }
 
         private async Task<int?> CurrentPsychologistIdAsync()
@@ -181,6 +183,17 @@ namespace LightenUp.Web.Areas.Psychologist.Controllers
             });
             await _context.SaveChangesAsync();
             TempData["ScheduleSuccess"] = "Jadwal konseling baru ditambahkan.";
+
+            var scheduledPatientUserId = await _context.Patients
+                .Where(p => p.PatientId == model.PatientId)
+                .Select(p => p.UserId)
+                .FirstOrDefaultAsync();
+            if (!string.IsNullOrEmpty(scheduledPatientUserId))
+            {
+                await _notificationService.NotifyAsync(scheduledPatientUserId, "Jadwal Konseling Baru",
+                    $"Psikolog Anda menambahkan jadwal konseling baru pada {sessionStart:d MMM yyyy, HH:mm}.",
+                    "Schedule", Url.Action("Index", "Jadwal", new { area = "Patient" }));
+            }
 
             if (model.ReturnPatientId.HasValue)
                 return RedirectToAction(nameof(PatientScheduleHistory), new { id = model.ReturnPatientId.Value });

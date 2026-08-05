@@ -18,17 +18,20 @@ namespace LightenUp.Web.Areas.Patient.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AssignmentActivationService _activation;
         private readonly DuitkuService _duitku;
+        private readonly INotificationService _notificationService;
 
         public PsychologistsController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             AssignmentActivationService activation,
-            DuitkuService duitku)
+            DuitkuService duitku,
+            INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
             _activation = activation;
             _duitku = duitku;
+            _notificationService = notificationService;
         }
 
         // ─── Daftar psikolog — terbuka untuk semua pasien ───
@@ -281,6 +284,11 @@ namespace LightenUp.Web.Areas.Patient.Controllers
             await _context.SaveChangesAsync();
 
             TempData["success"] = "Psikolog berhasil dipilih. Anda sekarang bisa menjadwalkan sesi.";
+
+            await _notificationService.NotifyAsync(psy.UserId, "Klien Baru",
+                $"{user.FullName} memilih Anda sebagai psikolog.",
+                "Assignment", Url.Action("Index", "Client", new { area = "Psychologist" }));
+
             return RedirectToAction(nameof(Index));
         }
 

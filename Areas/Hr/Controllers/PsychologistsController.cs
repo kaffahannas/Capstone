@@ -2,6 +2,7 @@ using LightenUp.Web.Data;
 using LightenUp.Web.Filters;
 using LightenUp.Web.Models;
 using LightenUp.Web.Models.ViewModels;
+using LightenUp.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,13 @@ namespace LightenUp.Web.Areas.Hr.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly INotificationService _notificationService;
 
-        public PsychologistsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public PsychologistsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         private async Task<HrStaff?> GetHrAsync()
@@ -155,6 +158,10 @@ namespace LightenUp.Web.Areas.Hr.Controllers
             _context.CompanyPsychologistRequests.Add(request);
             await _context.SaveChangesAsync();
             TempData["success"] = $"Permintaan kemitraan kepada {psy.User?.FullName ?? "Psikolog"} berhasil dikirim.";
+
+            await _notificationService.NotifyAsync(psy.UserId, "Permintaan Kemitraan Baru",
+                $"{company.Name} mengajukan permintaan kemitraan dengan Anda.",
+                "Partnership", Url.Action("Index", "Dashboard", new { area = "Psychologist" }));
 
             return RedirectToAction(nameof(Index));
         }

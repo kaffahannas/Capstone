@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="~/css/psychologist/components-psy-mobile-text.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/psy-desktop-guard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/shared/alert-popup.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shared/notifications.css" asp-append-version="true" />
 </head>
 <body class="psychologist-body">
 
@@ -118,6 +119,9 @@
                     {
                         <h1 class="text-header lu-h2">@ViewData["Title"]</h1>
                     }
+                </div>
+                <div class="lu-topbar-right">
+                    @await Component.InvokeAsync("Notifications")
                 </div>
             </header>
 

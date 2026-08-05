@@ -118,6 +118,7 @@ builder.Services.AddScoped<LightenUp.Web.Services.SubscriptionPricingService>();
 builder.Services.AddScoped<LightenUp.Web.Services.PsychologistWorkloadService>();
 builder.Services.AddScoped<LightenUp.Web.Services.AssignmentActivationService>();
 builder.Services.AddScoped<LightenUp.Web.Services.IEmailSender, LightenUp.Web.Services.SmtpEmailSender>();
+builder.Services.AddScoped<LightenUp.Web.Services.INotificationService, LightenUp.Web.Services.NotificationService>();
 
 // #Bagian Rate Limiting#
 // Rate limiting for login/register endpoints

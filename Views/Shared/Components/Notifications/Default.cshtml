@@ -1,0 +1,77 @@
+@model LightenUp.Web.Models.ViewModels.NotificationBellViewModel
+
+@* #Bagian Lonceng Notifikasi# *@
+
+<div class="lu-notif-wrap">
+    <button type="button" class="lu-notif-bell" id="luNotifBellBtn" aria-label="Notifikasi">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        </svg>
+        @if (Model.UnreadCount > 0)
+        {
+            <span class="lu-notif-badge">@(Model.UnreadCount > 9 ? "9+" : Model.UnreadCount.ToString())</span>
+        }
+    </button>
+
+    <div class="lu-notif-panel" id="luNotifPanel">
+        <div class="lu-notif-panel-head">
+            <span>Notifikasi</span>
+            @if (Model.UnreadCount > 0)
+            {
+                <button type="button" class="lu-notif-markall" id="luNotifMarkAll">Tandai semua dibaca</button>
+            }
+        </div>
+        <div class="lu-notif-list">
+            @if (!Model.Recent.Any())
+            {
+                <div class="lu-notif-empty">Belum ada notifikasi.</div>
+            }
+            else
+            {
+                @foreach (var n in Model.Recent)
+                {
+                    <a class="lu-notif-item @(n.IsRead ? "" : "lu-notif-item--unread")"
+                       href="@(string.IsNullOrEmpty(n.LinkUrl) ? "#" : Url.Action("Open", "Notifications", new { id = n.Id }))">
+                        <span class="lu-notif-item-title">@n.Title</span>
+                        <span class="lu-notif-item-msg">@n.Message</span>
+                        <span class="lu-notif-item-time">@n.CreatedAt.ToLocalTime().ToString("d MMM yyyy, HH:mm")</span>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+    @Html.AntiForgeryToken()
+</div>
+
+<script>
+    (function () {
+        var btn = document.getElementById('luNotifBellBtn');
+        var panel = document.getElementById('luNotifPanel');
+        var markAllBtn = document.getElementById('luNotifMarkAll');
+        if (!btn || !panel) return;
+
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            panel.classList.toggle('lu-notif-panel--open');
+        });
+        document.addEventListener('click', function (e) {
+            if (!panel.contains(e.target) && e.target !== btn) {
+                panel.classList.remove('lu-notif-panel--open');
+            }
+        });
+
+        if (markAllBtn) {
+            markAllBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var wrap = btn.closest('.lu-notif-wrap');
+                var token = wrap.querySelector('input[name="__RequestVerificationToken"]').value;
+                fetch('/Notifications/MarkAllRead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: '__RequestVerificationToken=' + encodeURIComponent(token)
+                }).then(function () { window.location.reload(); });
+            });
+        }
+    })();
+</script>

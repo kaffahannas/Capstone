@@ -19,18 +19,21 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         private readonly IEmailSender _email;
         private readonly ILogger<ApprovalsController> _log;
         private readonly AssignmentActivationService _activation;
+        private readonly INotificationService _notificationService;
 
         public ApprovalsController(ApplicationDbContext context,
                                    UserManager<ApplicationUser> userManager,
                                    IEmailSender email,
                                    ILogger<ApprovalsController> log,
-                                   AssignmentActivationService activation)
+                                   AssignmentActivationService activation,
+                                   INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
             _email = email;
             _log = log;
             _activation = activation;
+            _notificationService = notificationService;
         }
 
         private async Task SetNavCountsAsync()
@@ -326,6 +329,14 @@ namespace LightenUp.Web.Areas.Admin.Controllers
 
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan disetujui.";
+
+            if (a.Patient != null && !string.IsNullOrEmpty(a.Patient.UserId))
+            {
+                await _notificationService.NotifyAsync(a.Patient.UserId, "Pembatalan Konseling Disetujui",
+                    "Permintaan pembatalan konseling Anda telah disetujui oleh admin.",
+                    "Assignment");
+            }
+
             return RedirectToAction(returnAction);
         }
 
@@ -336,12 +347,13 @@ namespace LightenUp.Web.Areas.Admin.Controllers
         public async Task<IActionResult> RejectAssignment(int assignmentId, string? note)
         {
             var user = await _userManager.GetUserAsync(User);
-            var a = await _context.Assignments.FindAsync(assignmentId);
+            var a = await _context.Assignments.Include(x => x.Patient).FirstOrDefaultAsync(x => x.AssignmentId == assignmentId);
             if (a == null) return NotFound();
 
             var returnAction = nameof(CancellationRequests);
+            var wasCancellationRequest = a.Status == "PendingCancellationByAdmin";
 
-            if (a.Status == "PendingCancellationByAdmin")
+            if (wasCancellationRequest)
                 a.Status = "Active";
             else
                 a.Status = "Rejected";
@@ -352,6 +364,14 @@ namespace LightenUp.Web.Areas.Admin.Controllers
 
             await _context.SaveChangesAsync();
             TempData["success"] = "Permintaan ditolak.";
+
+            if (wasCancellationRequest && a.Patient != null && !string.IsNullOrEmpty(a.Patient.UserId))
+            {
+                await _notificationService.NotifyAsync(a.Patient.UserId, "Pembatalan Konseling Ditolak",
+                    "Permintaan pembatalan konseling Anda ditolak oleh admin.",
+                    "Assignment");
+            }
+
             return RedirectToAction(returnAction);
         }
     }
