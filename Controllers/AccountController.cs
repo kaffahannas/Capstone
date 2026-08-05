@@ -406,6 +406,192 @@ namespace LightenUp.Web.Controllers
             return View();
         }
 
+        // #Bagian Lupa Password#
+        // #Function ForgotPassword GET#
+        [HttpGet]
+        public IActionResult ForgotPassword() => View();
+
+        // #Function ForgotPassword POST#
+        [HttpPost]
+        [EnableRateLimiting("auth")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("Email", "Email tidak ditemukan.");
+                return View(model);
+            }
+
+            var localOtp = _config["DevMode:LocalOtp"];
+            string otp = !string.IsNullOrWhiteSpace(localOtp) ? localOtp : new Random().Next(1000, 9999).ToString();
+
+            var existing = await _context.PendingOtps.FirstOrDefaultAsync(p => p.Email == model.Email);
+            if (existing != null) _context.PendingOtps.Remove(existing);
+            _context.PendingOtps.Add(new PendingOtp
+            {
+                Email = model.Email,
+                OtpCode = otp,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(10)
+            });
+            await _context.SaveChangesAsync();
+
+            if (!string.IsNullOrWhiteSpace(localOtp))
+            {
+                _logger.LogWarning("DEV MODE: Skipping SMTP for {Email}, reset OTP is fixed: {Otp}", model.Email, otp);
+            }
+            else
+            {
+                try
+                {
+                    await _emailSender.SendAsync(model.Email, "Reset Kata Sandi LightenUp",
+                        $"Kode OTP untuk reset kata sandi Anda adalah: {otp}. Kode berlaku 10 menit. " +
+                        "Abaikan email ini jika Anda tidak meminta reset kata sandi.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send password reset OTP to {Email}", model.Email);
+                    ModelState.AddModelError(string.Empty, "Gagal mengirim email OTP. Sistem sedang sibuk, coba lagi nanti.");
+                    return View(model);
+                }
+            }
+
+            return RedirectToAction("VerifyResetOtp", new { email = model.Email });
+        }
+
+        // #Bagian Verifikasi OTP Reset Password#
+        // #Function VerifyResetOtp GET#
+        [HttpGet]
+        public IActionResult VerifyResetOtp(string email)
+        {
+            if (string.IsNullOrEmpty(email)) return RedirectToAction("ForgotPassword");
+            return View(new VerifyOtpViewModel { Email = email });
+        }
+
+        // #Function VerifyResetOtp POST#
+        [HttpPost]
+        public async Task<IActionResult> VerifyResetOtp(VerifyOtpViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var pending = await _context.PendingOtps.FirstOrDefaultAsync(p => p.Email == model.Email);
+            if (pending == null || DateTime.UtcNow > pending.ExpiresAt)
+            {
+                ModelState.AddModelError("OtpCode", "Kode OTP sudah kadaluarsa. Silakan kirim ulang.");
+                return View(model);
+            }
+
+            if (model.OtpCode != pending.OtpCode)
+            {
+                ModelState.AddModelError("OtpCode", "Kode OTP salah.");
+                return View(model);
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) return RedirectToAction("ForgotPassword");
+
+            _context.PendingOtps.Remove(pending);
+            await _context.SaveChangesAsync();
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            TempData["ResetPasswordToken"] = token;
+            TempData["ResetPasswordEmail"] = model.Email;
+            return RedirectToAction("ResetPassword", new { email = model.Email });
+        }
+
+        // #Function ResendResetOtp POST#
+        [HttpPost]
+        public async Task<IActionResult> ResendResetOtp(string email)
+        {
+            if (string.IsNullOrEmpty(email)) return RedirectToAction("ForgotPassword");
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return RedirectToAction("ForgotPassword");
+
+            var localOtp = _config["DevMode:LocalOtp"];
+            var otp = !string.IsNullOrWhiteSpace(localOtp) ? localOtp : new Random().Next(1000, 9999).ToString();
+
+            var existing = await _context.PendingOtps.FirstOrDefaultAsync(p => p.Email == email);
+            if (existing != null) _context.PendingOtps.Remove(existing);
+            _context.PendingOtps.Add(new PendingOtp { Email = email, OtpCode = otp, ExpiresAt = DateTime.UtcNow.AddMinutes(10) });
+            await _context.SaveChangesAsync();
+
+            if (!string.IsNullOrWhiteSpace(localOtp))
+            {
+                _logger.LogWarning("DEV MODE: Skipping SMTP for {Email}, reset OTP is fixed: {Otp}", email, otp);
+                TempData["success"] = "Kode OTP baru telah dikirim ke email Anda.";
+            }
+            else
+            {
+                try
+                {
+                    await _emailSender.SendAsync(email, "Reset Kata Sandi LightenUp", $"Kode OTP baru untuk reset kata sandi Anda adalah: {otp}. Kode berlaku 10 menit.");
+                    TempData["success"] = "Kode OTP baru telah dikirim ke email Anda.";
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to resend password reset OTP to {Email}", email);
+                    TempData["error"] = "Gagal mengirim ulang OTP. Coba beberapa saat lagi.";
+                }
+            }
+
+            return RedirectToAction("VerifyResetOtp", new { email });
+        }
+
+        // #Bagian Reset Password#
+        // #Function ResetPassword GET#
+        [HttpGet]
+        public IActionResult ResetPassword(string email)
+        {
+            TempData.Keep("ResetPasswordToken");
+            TempData.Keep("ResetPasswordEmail");
+            if (string.IsNullOrEmpty(email) || TempData.Peek("ResetPasswordToken") == null)
+                return RedirectToAction("ForgotPassword");
+
+            return View(new ResetPasswordViewModel { Email = email });
+        }
+
+        // #Function ResetPassword POST#
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var token = TempData["ResetPasswordToken"] as string;
+            var tokenEmail = TempData["ResetPasswordEmail"] as string;
+
+            if (string.IsNullOrEmpty(token) || tokenEmail != model.Email)
+            {
+                TempData["error"] = "Sesi reset password sudah kadaluarsa. Silakan ulangi.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                TempData["ResetPasswordToken"] = token;
+                TempData["ResetPasswordEmail"] = tokenEmail;
+                return View(model);
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) return RedirectToAction("ForgotPassword");
+
+            var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                TempData["ResetPasswordToken"] = token;
+                TempData["ResetPasswordEmail"] = tokenEmail;
+                return View(model);
+            }
+
+            TempData["success"] = "Kata sandi berhasil diubah. Silakan masuk dengan kata sandi baru Anda.";
+            return RedirectToAction("Login");
+        }
+
         // ==========================================
         // 6. GOOGLE / EXTERNAL LOGIN  (legacy — replaced by ExternalLoginCallback below)
         // ==========================================

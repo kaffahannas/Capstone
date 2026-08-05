@@ -1,0 +1,123 @@
+@model LightenUp.Web.Models.ViewModels.VerifyOtpViewModel
+
+@{
+    ViewData["Title"] = "Verifikasi Kode OTP";
+    Layout = null;
+}
+
+@* #Bagian Verifikasi OTP Reset Password# *@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LightenUp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LightenUp.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shared/alert-popup.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+
+    <div class="auth-wrapper">
+        <div class="auth-container register-card register-card--verify">
+
+            @* #Komponen Header Verifikasi Reset# *@
+            <header class="verify-header">
+                <a href="/Account/ForgotPassword" class="back-button verify-back" aria-label="Kembali">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
+                <div class="verify-header-text">
+                    <h1 class="auth-title verify-title">Verifikasi Kode OTP</h1>
+                    <p class="auth-subtitle verify-subtitle">Masukkan 4 digit kode OTP yang dikirim ke alamat email <strong class="auth-subtitle-email">@Model.Email</strong></p>
+                </div>
+            </header>
+
+            @* #Komponen Form OTP Reset Password# *@
+            <form id="otpForm" asp-action="VerifyResetOtp" method="post">
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="OtpCode" id="OtpCode" />
+
+                @* #Komponen Input OTP# *@
+                <div class="otp-wrapper">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" />
+                </div>
+
+                <span asp-validation-for="OtpCode" class="text-danger mb-3 text-center d-block"></span>
+
+                @* #Komponen Timer OTP# *@
+                <div class="otp-text-info text-center" id="timerContainer">
+                    Belum menerima kode OTP? <span id="countdownTimer">01:15</span>
+                </div>
+
+                <button type="submit" class="btn-submit">Verifikasi</button>
+            </form>
+
+            @* #Komponen Form Kirim Ulang OTP (tersembunyi, disubmit via JS)# *@
+            <form id="resendForm" asp-action="ResendResetOtp" method="post" class="d-none">
+                <input type="hidden" name="email" value="@Model.Email" />
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll('.otp-input');
+        const hiddenOtp = document.getElementById('OtpCode');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                if (e.target.value !== '' && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+                updateHiddenOtp();
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        function updateHiddenOtp() {
+            let otpValue = '';
+            inputs.forEach(input => { otpValue += input.value; });
+            hiddenOtp.value = otpValue;
+        }
+
+        let timeLeft = 75;
+        const timerElement = document.getElementById('countdownTimer');
+        const timerContainer = document.getElementById('timerContainer');
+
+        const countdownInterval = setInterval(() => {
+            timeLeft--;
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            let formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+            let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+            timerElement.textContent = formattedMinutes + ":" + formattedSeconds;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                timerContainer.innerHTML = `Waktu habis. <a href="#" id="resendLink" class="otp-resend-link">Kirim Ulang OTP</a>`;
+                document.getElementById('resendLink').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.getElementById('resendForm').requestSubmit();
+                });
+            }
+        }, 1000);
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/js/shared/alert-popup.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_TempDataAlertPopup")
+</body>
+</html>
