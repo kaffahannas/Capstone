@@ -1,0 +1,73 @@
+/* #Bagian Popup Alert Global (Berhasil/Gagal/Info)# */
+.lu-alert-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.lu-alert-popup-overlay--open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lu-alert-popup {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 28px;
+    max-width: 380px;
+    width: calc(100% - 32px);
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    transform: translateY(8px);
+    transition: transform 0.15s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.lu-alert-popup-overlay--open .lu-alert-popup {
+    transform: translateY(0);
+}
+
+.lu-alert-popup-icon {
+    font-size: 40px;
+    line-height: 1;
+    margin-bottom: 14px;
+}
+
+.lu-alert-popup-msg {
+    font-size: 15px;
+    color: #1F2937;
+    margin: 0 0 22px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.lu-alert-popup-btn {
+    background: #7C3AED;
+    color: #fff;
+    border: none;
+    padding: 10px 32px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.lu-alert-popup-btn:hover {
+    filter: brightness(0.94);
+}
+
+.lu-alert-popup--error .lu-alert-popup-btn {
+    background: #DC2626;
+}
+
+.lu-alert-popup--info .lu-alert-popup-btn {
+    background: #2563EB;
+}

@@ -23,6 +23,7 @@
     @await RenderSectionAsync("Head", required: false)
     <link rel="stylesheet" href="~/css/admin/admin-overrides.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin/admin-desktop-guard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shared/alert-popup.css" asp-append-version="true" />
 </head>
 <body class="admin-body">
     <div class="admin-shell app-shell" id="appShell">
@@ -146,6 +147,8 @@
     </div>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/shared/alert-popup.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_TempDataAlertPopup")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

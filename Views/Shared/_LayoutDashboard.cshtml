@@ -23,6 +23,7 @@
     @await RenderSectionAsync("Head", required: false)
     <link rel="stylesheet" href="~/css/psychologist/components-psy-mobile-text.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/psychologist/psy-desktop-guard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shared/alert-popup.css" asp-append-version="true" />
 </head>
 <body class="psychologist-body">
 
@@ -129,6 +130,8 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/shared/alert-popup.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_TempDataAlertPopup")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
