@@ -6,16 +6,19 @@
     string? popupMessage = null;
     string popupType = "success";
 
-    if (TempData.Peek("error") is string e1) { popupMessage = e1; popupType = "error"; }
-    else if (TempData.Peek("Error") is string e2) { popupMessage = e2; popupType = "error"; }
-    else if (TempData.Peek("ScheduleError") is string e3) { popupMessage = e3; popupType = "error"; }
-    else if (TempData.Peek("WorksheetError") is string e4) { popupMessage = e4; popupType = "error"; }
-    else if (TempData.Peek("info") is string i1) { popupMessage = i1; popupType = "info"; }
-    else if (TempData.Peek("success") is string s1) { popupMessage = s1; popupType = "success"; }
-    else if (TempData.Peek("SuccessMessage") is string s2) { popupMessage = s2; popupType = "success"; }
-    else if (TempData.Peek("ScheduleSuccess") is string s3) { popupMessage = s3; popupType = "success"; }
-    else if (TempData.Peek("SchedulesSuccess") is string s4) { popupMessage = s4; popupType = "success"; }
-    else if (TempData.Peek("WorksheetSuccess") is string s5) { popupMessage = s5; popupType = "success"; }
+    // Uses the indexer (not Peek) so the key is actually consumed and marked
+    // for removal at the end of this request — Peek alone never clears it,
+    // which made the popup reappear on every subsequent page load forever.
+    if (TempData["error"] is string e1) { popupMessage = e1; popupType = "error"; }
+    else if (TempData["Error"] is string e2) { popupMessage = e2; popupType = "error"; }
+    else if (TempData["ScheduleError"] is string e3) { popupMessage = e3; popupType = "error"; }
+    else if (TempData["WorksheetError"] is string e4) { popupMessage = e4; popupType = "error"; }
+    else if (TempData["info"] is string i1) { popupMessage = i1; popupType = "info"; }
+    else if (TempData["success"] is string s1) { popupMessage = s1; popupType = "success"; }
+    else if (TempData["SuccessMessage"] is string s2) { popupMessage = s2; popupType = "success"; }
+    else if (TempData["ScheduleSuccess"] is string s3) { popupMessage = s3; popupType = "success"; }
+    else if (TempData["SchedulesSuccess"] is string s4) { popupMessage = s4; popupType = "success"; }
+    else if (TempData["WorksheetSuccess"] is string s5) { popupMessage = s5; popupType = "success"; }
 }
 @if (popupMessage != null)
 {
