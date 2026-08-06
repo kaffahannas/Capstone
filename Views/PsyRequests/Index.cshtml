@@ -55,16 +55,6 @@
     </div>
 </div>
 
-@* #Komponen Alert Pesan# *@
-@if (TempData["success"] is string ok)
-{
-    <div class="lu-alert-success" role="status">@ok</div>
-}
-@if (TempData["error"] is string err)
-{
-    <div class="lu-alert-error" role="alert">@err</div>
-}
-
 @* #Komponen Filter Tab# *@
 <div class="req-toolbar">
     <div class="req-tabs">

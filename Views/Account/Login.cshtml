@@ -88,11 +88,6 @@
             </form>
 
             @* #Komponen Alert Pesan# *@
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="auth-alert auth-alert--success">@TempData["SuccessMessage"]</div>
-            }
-
             @if (TempData["ExternalError"] != null)
             {
                 <div class="auth-alert auth-alert--error">@TempData["ExternalError"]</div>
